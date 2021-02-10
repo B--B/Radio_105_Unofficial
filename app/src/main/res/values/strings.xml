@@ -1,13 +1,17 @@
 <resources>
-    <string name="app_name">The 105 Zoo</string>
+    <string name="app_name">Radio 105</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Impostazioni</string>
 
-    <string name="menu_home">Home</string>
+    <string name="menu_home">Radio</string>
     <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_slideshow">Scenette</string>
+    <string name="diretta">Ascolta la diretta</string>
+    <string name="pausa">Metti in pausa</string>
+    <string name="restart">Sincronizza Stream</string>
+    <string name="logo">105 Logo</string>
 </resources>

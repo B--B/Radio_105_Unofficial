@@ -454,7 +454,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
                     "Foreground Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_LOW
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);

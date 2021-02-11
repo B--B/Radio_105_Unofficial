@@ -1,10 +1,16 @@
 package com.bb.the105zoo.ui.home;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,17 +24,18 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bb.the105zoo.MusicService;
 import com.bb.the105zoo.R;
 
 import java.io.IOException;
+import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private HomeViewModel homeViewModel;
-    private static MediaPlayer mPlayer;
-    private Button button1;
-    private Button button2;
-    private Button button3;
+    Button button1;
+    Button button2;
+    Button button3;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -40,30 +47,9 @@ public class HomeFragment extends Fragment {
         button2 = root.findViewById(R.id.button2);
         button3 = root.findViewById(R.id.button3);
 
-        button1.setEnabled(false);
-        button2.setEnabled(false);
-        button3.setEnabled(false);
-        String url = "http://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
-        mPlayer = new MediaPlayer();
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
-            AudioAttributes.Builder b = new AudioAttributes.Builder();
-            b.setUsage(AudioAttributes.USAGE_MEDIA);
-            mPlayer.setAudioAttributes(b.build());
-        } else {
-            mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        }
-        try {
-            mPlayer.setDataSource(url);
-            mPlayer.prepareAsync();
-            mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    button1.setEnabled(true);
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        button1.setOnClickListener(this);
+        button2.setOnClickListener(this);
+        button3.setOnClickListener(this);
 //        final TextView textView = root.findViewById(R.id.text_home);
 //        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
 //            @Override
@@ -72,47 +58,28 @@ public class HomeFragment extends Fragment {
 //            }
 //        });
 
-        button1.setOnClickListener(v -> {
-            if (mPlayer.isPlaying()) {
-//                Do nothing
-            } else {
-                mPlayer.start();
-                button1.setEnabled(false);
-                button2.setEnabled(true);
-            }
-        });
-
-        button2.setOnClickListener(v -> {
-            if (mPlayer.isPlaying()) {
-                mPlayer.pause();
-                button1.setEnabled(true);
-                button2.setEnabled(false);
-                button3.setEnabled(true);
-            } else {
-//                Do nothing
-            }
-        });
-
-        button3.setOnClickListener(v -> {
-            mPlayer.reset();
-            try {
-                mPlayer.setDataSource(url);
-                mPlayer.prepareAsync();
-                mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        mPlayer.start();
-                        button1.setEnabled(false);
-                        button2.setEnabled(true);
-                        button3.setEnabled(false);
-                    }
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        });
-
         return root;
+    }
+
+    public void onClick(View target) {
+        // Send the correct intent to the MusicService, according to the button that was clicked
+        if (target == button1) {
+            Intent mIntent = new Intent();
+            mIntent.setAction("com.bb.the105zoo.action.PLAY");
+            mIntent.setPackage(getContext().getPackageName());
+            getContext().startService(mIntent);
+        }
+        else if (target == button2) {
+            Intent mIntent = new Intent();
+            mIntent.setAction("com.bb.the105zoo.action.PAUSE");
+            mIntent.setPackage(getContext().getPackageName());
+            getContext().startService(mIntent);
+        }
+        else if (target == button3) {
+            Intent mIntent = new Intent();
+            mIntent.setAction("com.bb.the105zoo.action.STOP");
+            mIntent.setPackage(getContext().getPackageName());
+            getContext().startService(mIntent);
+        }
     }
 }

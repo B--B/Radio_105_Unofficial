@@ -46,6 +46,8 @@ import androidx.core.app.NotificationManagerCompat;
 
 import java.io.IOException;
 
+import static android.media.RemoteControlClient.*;
+
 /**
  * Service that handles media playback.
  */
@@ -203,7 +205,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         // Tell any remote controls that our playback state is 'playing'.
         if (mRemoteControlClientCompat != null) {
             mRemoteControlClientCompat
-                    .setPlaybackState(RemoteControlClient.PLAYSTATE_PLAYING);
+                    .setPlaybackState(PLAYSTATE_PLAYING);
         }
     }
 
@@ -219,7 +221,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         // Tell any remote controls that our playback state is 'paused'.
         if (mRemoteControlClientCompat != null) {
             mRemoteControlClientCompat
-                    .setPlaybackState(RemoteControlClient.PLAYSTATE_PAUSED);
+                    .setPlaybackState(PLAYSTATE_PAUSED);
         }
     }
 
@@ -248,7 +250,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             // Tell any remote controls that our playback state is 'paused'.
             if (mRemoteControlClientCompat != null) {
                 mRemoteControlClientCompat
-                        .setPlaybackState(RemoteControlClient.PLAYSTATE_STOPPED);
+                        .setPlaybackState(PLAYSTATE_STOPPED);
             }
 
             // service is no longer necessary. Will be started again if needed.
@@ -328,13 +330,13 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             }
 
             mRemoteControlClientCompat.setPlaybackState(
-                    RemoteControlClient.PLAYSTATE_PLAYING);
+                    PLAYSTATE_PLAYING);
 
             mRemoteControlClientCompat.setTransportControlFlags(
-                    RemoteControlClient.FLAG_KEY_MEDIA_PLAY |
-                            RemoteControlClient.FLAG_KEY_MEDIA_PAUSE |
-                            RemoteControlClient.FLAG_KEY_MEDIA_NEXT |
-                            RemoteControlClient.FLAG_KEY_MEDIA_STOP);
+                    FLAG_KEY_MEDIA_PLAY |
+                            FLAG_KEY_MEDIA_PAUSE |
+                            FLAG_KEY_MEDIA_NEXT |
+                            FLAG_KEY_MEDIA_STOP);
 
             // starts preparing the media player in the background. When it's done, it will call
             // our OnPreparedListener (that is, the onPrepared() method on this class, since we set

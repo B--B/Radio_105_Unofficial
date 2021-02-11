@@ -171,10 +171,20 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
-        if (action.equals(ACTION_TOGGLE_PLAYBACK)) processTogglePlaybackRequest();
-        else if (action.equals(ACTION_PLAY)) processPlayRequest();
-        else if (action.equals(ACTION_PAUSE)) processPauseRequest();
-        else if (action.equals(ACTION_STOP)) processStopRequest();
+        switch (action) {
+            case ACTION_TOGGLE_PLAYBACK:
+                processTogglePlaybackRequest();
+                break;
+            case ACTION_PLAY:
+                processPlayRequest();
+                break;
+            case ACTION_PAUSE:
+                processPauseRequest();
+                break;
+            case ACTION_STOP:
+                processStopRequest();
+                break;
+        }
 
         return START_NOT_STICKY; // Means we started the service, but don't want it to
         // restart in case it's killed.

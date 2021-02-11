@@ -10,8 +10,8 @@ android {
         applicationId "com.bb.the105zoo"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 2
-        versionName "0.8"
+        versionCode 3
+        versionName "0.85"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

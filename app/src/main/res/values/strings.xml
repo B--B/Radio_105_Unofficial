@@ -12,6 +12,6 @@
     <string name="menu_slideshow">Scenette</string>
     <string name="diretta">Ascolta la diretta</string>
     <string name="pausa">Metti in pausa</string>
-    <string name="restart">Ferma lo Streaming</string>
+    <string name="stop">Ferma lo Streaming</string>
     <string name="logo">105 Logo</string>
 </resources>

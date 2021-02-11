@@ -394,9 +394,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
     // Building notification here
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
-        mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
-        mNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher_round);
-        mNotificationBuilder.setContentTitle("Radio105Player");
+        mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio105_notification));
+        mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
+        mNotificationBuilder.setContentTitle("Radio 105 Player");
         mNotificationBuilder.setContentText(text);
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);

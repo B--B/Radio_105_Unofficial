@@ -12,13 +12,13 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
+        android:id="@+id/nav_tv"
         android:name="com.bb.the105zoo.ui.tv.TvFragment"
         android:label="@string/menu_gallery"
         tools:layout="@layout/fragment_tv" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
+        android:id="@+id/nav_podcast"
         android:name="com.bb.the105zoo.ui.podcast.PodcastFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_podcast" />

@@ -36,13 +36,12 @@ public class TvFragment extends Fragment {
         videoUrl = "https://live2t-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8?hdnts=st=1613162433~exp=1613176863~acl=/content/hls_h0_clr_vos/live/channel(ec)*~hmac=aaffca0db29392483c0720e80adbf3f1d30e773e1068063265fa81970cfb982e";
 
         progressBar.setVisibility(View.VISIBLE);
+        videoView.setOnInfoListener(onInfoToPlayStateListener);
         MediaController mediaController = new MediaController(getContext());
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
         videoView.setVideoURI(Uri.parse(videoUrl));
         videoView.start();
-
-        videoView.setOnInfoListener(onInfoToPlayStateListener);
 
         return root;
     }

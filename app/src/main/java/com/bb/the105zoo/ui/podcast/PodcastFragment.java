@@ -1,4 +1,4 @@
-package com.bb.the105zoo.ui.slideshow;
+package com.bb.the105zoo.ui.podcast;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,17 +12,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bb.the105zoo.R;
 
-public class SlideshowFragment extends Fragment {
+public class PodcastFragment extends Fragment {
 
-    private SlideshowViewModel slideshowViewModel;
+    private PodcastViewModel podcastViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        slideshowViewModel =
-                new ViewModelProvider(this).get(SlideshowViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_slideshow, container, false);
+        podcastViewModel =
+                new ViewModelProvider(this).get(PodcastViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_podcast, container, false);
         final TextView textView = root.findViewById(R.id.text_slideshow);
-        slideshowViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        podcastViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 }

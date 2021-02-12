@@ -1,4 +1,4 @@
-package com.bb.the105zoo.ui.gallery;
+package com.bb.the105zoo.ui.tv;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,17 +12,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bb.the105zoo.R;
 
-public class GalleryFragment extends Fragment {
+public class TvFragment extends Fragment {
 
-    private GalleryViewModel galleryViewModel;
+    private TvViewModel tvViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel =
-                new ViewModelProvider(this).get(GalleryViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_gallery, container, false);
+        tvViewModel =
+                new ViewModelProvider(this).get(TvViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_tv, container, false);
         final TextView textView = root.findViewById(R.id.text_gallery);
-        galleryViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        tvViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 }

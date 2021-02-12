@@ -16,7 +16,6 @@
 
 package com.bb.the105zoo;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -27,12 +26,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
-import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
-import android.media.RemoteControlClient;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
@@ -80,13 +77,13 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         // paused in this state if we don't have audio focus. But we stay in this state
         // so that we know we have to resume playback once we get focus back)
         Paused      // playback paused (media player ready!)
-    };
+    }
 
     State mState = State.Stopped;
 
     enum PauseReason {
         UserRequest,  // paused by user request
-    };
+    }
 
     // why did we pause? (only relevant if mState == State.Paused)
     PauseReason mPauseReason = PauseReason.UserRequest;
@@ -408,7 +405,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
         mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
         mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
-        mNotificationBuilder.setContentTitle("R.string.notification_content");
+        mNotificationBuilder.setContentTitle("Radio 105 Streaming");
         mNotificationBuilder.setContentText(text);
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
@@ -423,7 +420,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     public boolean onError(MediaPlayer mp, int what, int extra) {
         Toast.makeText(getApplicationContext(), "Media player error! Resetting.",
                 Toast.LENGTH_SHORT).show();
-        Log.e(TAG, "Error: what=" + String.valueOf(what) + ", extra=" + String.valueOf(extra));
+        Log.e(TAG, "Error: what=" + what + ", extra=" + extra);
 
         mState = State.Stopped;
         relaxResources(true);

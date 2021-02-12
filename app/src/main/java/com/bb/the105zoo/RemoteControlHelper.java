@@ -20,12 +20,13 @@ import android.media.AudioManager;
 import android.util.Log;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * Contains methods to handle registering/unregistering remote control clients.  These methods only
  * run on ICS devices.  On previous devices, all methods are no-ops.
  */
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class RemoteControlHelper {
     private static final String TAG = "RemoteControlHelper";
 
@@ -38,11 +39,11 @@ public class RemoteControlHelper {
         try {
             ClassLoader classLoader = RemoteControlHelper.class.getClassLoader();
             Class sRemoteControlClientClass =
-                    RemoteControlClientCompat.getActualRemoteControlClientClass(classLoader);
+                    RemoteControlClientCompat.getActualRemoteControlClientClass(Objects.requireNonNull(classLoader));
             sRegisterRemoteControlClientMethod = AudioManager.class.getMethod(
-                    "registerRemoteControlClient", new Class[]{sRemoteControlClientClass});
+                    "registerRemoteControlClient", sRemoteControlClientClass);
             sUnregisterRemoteControlClientMethod = AudioManager.class.getMethod(
-                    "unregisterRemoteControlClient", new Class[]{sRemoteControlClientClass});
+                    "unregisterRemoteControlClient", sRemoteControlClientClass);
             sHasRemoteControlAPIs = true;
         } catch (ClassNotFoundException | SecurityException | IllegalArgumentException | NoSuchMethodException e) {
             // Silently fail when running on an OS before ICS.

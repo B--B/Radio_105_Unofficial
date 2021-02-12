@@ -19,7 +19,6 @@ package com.bb.the105zoo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 

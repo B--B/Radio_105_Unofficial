@@ -17,12 +17,12 @@
 package com.bb.the105zoo;
 
 import android.app.PendingIntent;
-import android.graphics.Bitmap;
 import android.os.Looper;
 import android.util.Log;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * RemoteControlClient enables exposing information meant to be consumed by remote controls capable
@@ -50,7 +50,7 @@ public class RemoteControlClientCompat {
     static {
         try {
             ClassLoader classLoader = RemoteControlClientCompat.class.getClassLoader();
-            sRemoteControlClientClass = getActualRemoteControlClientClass(classLoader);
+            sRemoteControlClientClass = getActualRemoteControlClientClass(Objects.requireNonNull(classLoader));
             // dynamically populate the playstate and flag values in case they change
             // in future versions.
             for (Field field : RemoteControlClientCompat.class.getFields()) {

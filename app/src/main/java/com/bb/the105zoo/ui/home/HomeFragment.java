@@ -35,6 +35,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
 
+        button1.setEnabled(true);
+        button2.setEnabled(false);
+        button3.setEnabled(false);
+
         return root;
     }
 
@@ -45,18 +49,27 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             mIntent.setAction("com.bb.the105zoo.action.PLAY");
             mIntent.setPackage(requireContext().getPackageName());
             requireContext().startService(mIntent);
+            button1.setEnabled(false);
+            button2.setEnabled(true);
+            button3.setEnabled(true);
         }
         else if (target == button2) {
             Intent mIntent = new Intent();
             mIntent.setAction("com.bb.the105zoo.action.PAUSE");
             mIntent.setPackage(requireContext().getPackageName());
             requireContext().startService(mIntent);
+            button1.setEnabled(true);
+            button2.setEnabled(false);
+            button3.setEnabled(true);
         }
         else if (target == button3) {
             Intent mIntent = new Intent();
             mIntent.setAction("com.bb.the105zoo.action.STOP");
             mIntent.setPackage(requireContext().getPackageName());
             requireContext().startService(mIntent);
+            button1.setEnabled(true);
+            button2.setEnabled(false);
+            button3.setEnabled(false);
         }
     }
 }

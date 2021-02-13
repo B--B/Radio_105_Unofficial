@@ -11,4 +11,14 @@
     <string name="pausa">Metti in pausa</string>
     <string name="stop">Ferma lo Streaming</string>
     <string name="logo">105 Logo</string>
+    <string name="title_activity_settings">Impostazioni</string>
+
+    <!-- Theme Preferences -->
+    <string name="theme_title">Seleziona Tema</string>
+
+    <!-- Service Kill Preferences -->
+    <string name="service_kill_title">Impostazioni stop streaming</string>
+    <string name="service_kill_summary_on">Lo streaming verrà fermato quando l\' app viene chiusa
+    </string>
+    <string name="service_kill_summary_off">Lo streaming deve essere fermato manualmente cliccando il tasto "Ferma lo Streaming"</string>
 </resources>

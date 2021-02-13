@@ -1,7 +1,9 @@
 package com.bb.the105zoo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 
 // import com.google.android.material.floatingactionbutton.FloatingActionButton;
 // import com.google.android.material.snackbar.Snackbar;
@@ -64,5 +66,30 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    /**
+     * Handles option menu selections and automatically handles clicks
+     * on the Up button in the app bar.
+     *
+     * @param item Item in options menu
+     * @return True if Settings is selected in the options menu.
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        // If option menu item is Settings, return true.
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(this,
+                    SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -1,0 +1,17 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+         <ListPreference
+            app:defaultValue="system_default"
+            app:entries="@array/theme_entries"
+            app:entryValues="@array/theme_values"
+            app:key="theme"
+            app:title="@string/theme_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            app:key="service_kill"
+            app:summaryOff="@string/service_kill_summary_off"
+            app:summaryOn="@string/service_kill_summary_on"
+            app:title="@string/service_kill_title" />
+
+</PreferenceScreen>

@@ -1,0 +1,14 @@
+<resources>
+    <!-- Theme Preference -->
+    <string-array name="theme_entries">
+        <item>System Default</item>
+        <item>Dark Theme</item>
+        <item>Light Theme</item>
+    </string-array>
+
+    <string-array name="theme_values" translatable="false">
+        <item>system_default</item>
+        <item>dark_theme</item>
+        <item>light_theme</item>
+    </string-array>
+</resources>

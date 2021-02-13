@@ -4,8 +4,8 @@
     package="com.bb.the105zoo">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -18,9 +18,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
+        <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.The105Zoo.NoActionBar" >
+            android:theme="@style/Theme.The105Zoo.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +31,9 @@
             </intent-filter>
         </activity>
 
-        <service android:exported="false" android:name=".MusicService">
+        <service
+            android:name=".MusicService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.bb.the105zoo.action.TOGGLE_PLAYBACK" />
                 <action android:name="com.bb.the105zoo.action.PLAY" />

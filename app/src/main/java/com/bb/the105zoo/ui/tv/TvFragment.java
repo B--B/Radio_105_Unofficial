@@ -1,45 +1,60 @@
 package com.bb.the105zoo.ui.tv;
 
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.MediaController;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.bb.the105zoo.R;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
 public class TvFragment extends Fragment {
 
-    private TvViewModel tvViewModel;
     private ProgressBar progressBar;
-    private int mCurrentPosition = 0;
     VideoView videoView;
     String videoUrl;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        tvViewModel =
-                new ViewModelProvider(this).get(TvViewModel.class);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
+        }
+        else {
+            requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
+        }
         View root = inflater.inflate(R.layout.fragment_tv, container, false);
 
         videoView = root.findViewById(R.id.videoView);
         progressBar = root.findViewById(R.id.progressBar);
-        videoUrl = "https://live2t-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8?hdnts=st=1613162433~exp=1613176863~acl=/content/hls_h0_clr_vos/live/channel(ec)*~hmac=aaffca0db29392483c0720e80adbf3f1d30e773e1068063265fa81970cfb982e";
+        videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
 
+        // Stop radio streaming if running
+        Intent mIntent = new Intent();
+        mIntent.setAction("com.bb.the105zoo.action.STOP");
+        mIntent.setPackage(requireContext().getPackageName());
+        requireContext().startService(mIntent);
+
+        // Start video streaming
         progressBar.setVisibility(View.VISIBLE);
+        videoView.requestFocus();
         videoView.setOnInfoListener(onInfoToPlayStateListener);
-        MediaController mediaController = new MediaController(getContext());
-        mediaController.setAnchorView(videoView);
-        videoView.setMediaController(mediaController);
         videoView.setVideoURI(Uri.parse(videoUrl));
         videoView.start();
 
@@ -62,4 +77,23 @@ public class TvFragment extends Fragment {
             return false;
         }
     };
+
+    @Override
+    public void onConfigurationChanged(@NotNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
+    }
 }

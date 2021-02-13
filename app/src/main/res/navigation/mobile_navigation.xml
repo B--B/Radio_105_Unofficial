@@ -14,12 +14,12 @@
     <fragment
         android:id="@+id/nav_tv"
         android:name="com.bb.the105zoo.ui.tv.TvFragment"
-        android:label="@string/menu_gallery"
+        android:label="@string/menu_tv"
         tools:layout="@layout/fragment_tv" />
 
     <fragment
         android:id="@+id/nav_podcast"
         android:name="com.bb.the105zoo.ui.podcast.PodcastFragment"
-        android:label="@string/menu_slideshow"
+        android:label="@string/menu_podcast"
         tools:layout="@layout/fragment_podcast" />
 </navigation>

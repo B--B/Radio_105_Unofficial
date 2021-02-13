@@ -31,6 +31,8 @@ public class TvFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
+        View root = inflater.inflate(R.layout.fragment_tv, container, false);
+
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
@@ -39,7 +41,6 @@ public class TvFragment extends Fragment {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
         }
-        View root = inflater.inflate(R.layout.fragment_tv, container, false);
 
         videoView = root.findViewById(R.id.videoView);
         progressBar = root.findViewById(R.id.progressBar);

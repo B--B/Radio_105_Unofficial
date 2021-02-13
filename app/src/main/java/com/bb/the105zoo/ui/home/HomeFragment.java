@@ -1,40 +1,34 @@
 package com.bb.the105zoo.ui.home;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
+import com.bb.the105zoo.MusicService;
 import com.bb.the105zoo.R;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
-    private HomeViewModel homeViewModel;
     Button button1;
     Button button2;
     Button button3;
+    private final String STATUS_KEY = "STATUS_KEY";
+    String status;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
+        boolean service = isRadioStreamingRunning();
         button1 = root.findViewById(R.id.button1);
         button2 = root.findViewById(R.id.button2);
         button3 = root.findViewById(R.id.button3);
@@ -43,9 +37,40 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
 
-        button1.setEnabled(true);
-        button2.setEnabled(false);
-        button3.setEnabled(false);
+        if (savedInstanceState != null) {
+            status = savedInstanceState.getString(STATUS_KEY);
+            switch (status) {
+                case "play":
+                    button1.setEnabled(false);
+                    button2.setEnabled(true);
+                    button3.setEnabled(true);
+                    break;
+                case "pause":
+                    button1.setEnabled(true);
+                    button2.setEnabled(false);
+                    button3.setEnabled(true);
+                    break;
+                case "stop":
+                    button1.setEnabled(true);
+                    button2.setEnabled(false);
+                    button3.setEnabled(false);
+                    break;
+            }
+        } else {
+            // If user close the app while MusicService is running we don't have a valid STATUS_KEY.
+            // We must check if MusicService is running and set enabled buttons accordingly.
+            if (service) {
+                // Radio service is running
+                button1.setEnabled(false);
+                button2.setEnabled(true);
+                button3.setEnabled(true);
+            } else {
+                // Radio service is not running
+                button1.setEnabled(true);
+                button2.setEnabled(false);
+                button3.setEnabled(false);
+            }
+        }
 
         return root;
     }
@@ -60,6 +85,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             button1.setEnabled(false);
             button2.setEnabled(true);
             button3.setEnabled(true);
+            status = "play";
         }
         else if (target == button2) {
             Intent mIntent = new Intent();
@@ -69,6 +95,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             button1.setEnabled(true);
             button2.setEnabled(false);
             button3.setEnabled(true);
+            status = "pause";
         }
         else if (target == button3) {
             Intent mIntent = new Intent();
@@ -78,6 +105,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             button1.setEnabled(true);
             button2.setEnabled(false);
             button3.setEnabled(false);
+            status = "stop";
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATUS_KEY, status);
+    }
+
+    private boolean isRadioStreamingRunning() {
+        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (MusicService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

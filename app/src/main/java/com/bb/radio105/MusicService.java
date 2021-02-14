@@ -40,6 +40,7 @@ import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.preference.PreferenceManager;
 
 import java.io.IOException;
 
@@ -362,6 +363,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             Log.e("MusicService", "IOException playing next song: " + ex.getMessage());
             ex.printStackTrace();
         }
+
     }
 
     /** Called when media player is done playing current song. */
@@ -445,7 +447,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             configAndStartMediaPlayer();
     }
 
-
     @Override
     public void onDestroy() {
         // Service is being killed, so make sure we release our resources
@@ -468,5 +469,18 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
         }
+    }
+
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.service_kill_key), false);
+        if (pref) {
+            // Kill service when task is removed enabled, stop music service
+            mState = State.Stopped;
+            relaxResources(true);
+        }
+        super.onTaskRemoved(rootIntent);
     }
 }

@@ -22,6 +22,7 @@
     <string name="theme_default_value" translatable="false">MODE_NIGHT_FOLLOW_SYSTEM</string>
 
     <!-- Service Kill Preferences -->
+    <string name="service_kill_key" translatable="false">service_kill</string>
     <string name="service_kill_title">Stop streaming settings</string>
     <string name="service_kill_summary_on">Radio streaming will be stopped when app is closed
     </string>

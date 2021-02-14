@@ -9,7 +9,7 @@
             app:useSimpleSummaryProvider="true" />
 
         <SwitchPreferenceCompat
-            app:key="service_kill"
+            app:key="@string/service_kill_key"
             app:summaryOff="@string/service_kill_summary_off"
             app:summaryOn="@string/service_kill_summary_on"
             app:title="@string/service_kill_title" />

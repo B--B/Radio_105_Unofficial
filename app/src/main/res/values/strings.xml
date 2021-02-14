@@ -18,6 +18,8 @@
 
     <!-- Theme Preferences -->
     <string name="theme_title">Select Theme</string>
+    <string name="theme_key" translatable="false">theme</string>
+    <string name="theme_default_value" translatable="false">MODE_NIGHT_FOLLOW_SYSTEM</string>
 
     <!-- Service Kill Preferences -->
     <string name="service_kill_title">Stop streaming settings</string>

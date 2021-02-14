@@ -37,7 +37,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
 
-        if (savedInstanceState != null) {
+        // If STATUS_KEY is null then we are starting the Activity for the first time
+        if (status != null) {
             status = savedInstanceState.getString(STATUS_KEY);
             switch (status) {
                 case "play":
@@ -55,10 +56,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     button2.setEnabled(false);
                     button3.setEnabled(false);
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + status);
             }
         } else {
             // If user close the app while MusicService is running we don't have a valid STATUS_KEY.
             // We must check if MusicService is running and set enabled buttons accordingly.
+            // This is also needed after theme pref addition, as (savedInstanceState != null) no longer works
             if (service) {
                 // Radio service is running
                 button1.setEnabled(false);

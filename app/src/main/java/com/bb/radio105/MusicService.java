@@ -61,10 +61,10 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     // service can handle are the <action> tags in the <intent-filters> tag for our service in
     // AndroidManifest.xml.
     public static final String ACTION_TOGGLE_PLAYBACK =
-            "com.bb.the105zoo.action.TOGGLE_PLAYBACK";
-    public static final String ACTION_PLAY = "com.bb.the105zoo.action.PLAY";
-    public static final String ACTION_PAUSE = "com.bb.the105zoo.action.PAUSE";
-    public static final String ACTION_STOP = "com.bb.the105zoo.action.STOP";
+            "com.bb.radio105.action.TOGGLE_PLAYBACK";
+    public static final String ACTION_PLAY = "com.bb.radio105.action.PLAY";
+    public static final String ACTION_PAUSE = "com.bb.radio105.action.PAUSE";
+    public static final String ACTION_STOP = "com.bb.radio105.action.STOP";
 
     // our media player
     MediaPlayer mPlayer = null;

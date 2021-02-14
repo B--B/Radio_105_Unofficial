@@ -35,10 +35,10 @@
             android:name="com.bb.radio105.MusicService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.bb.the105zoo.action.TOGGLE_PLAYBACK" />
-                <action android:name="com.bb.the105zoo.action.PLAY" />
-                <action android:name="com.bb.the105zoo.action.PAUSE" />
-                <action android:name="com.bb.the105zoo.action.STOP" />
+                <action android:name="com.bb.radio105.action.TOGGLE_PLAYBACK" />
+                <action android:name="com.bb.radio105.action.PLAY" />
+                <action android:name="com.bb.radio105.action.PAUSE" />
+                <action android:name="com.bb.radio105.action.STOP" />
             </intent-filter>
         </service>
 

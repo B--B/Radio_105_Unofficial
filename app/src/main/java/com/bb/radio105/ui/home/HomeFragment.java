@@ -83,7 +83,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         // Send the correct intent to the MusicService, according to the button that was clicked
         if (target == button1) {
             Intent mIntent = new Intent();
-            mIntent.setAction("com.bb.the105zoo.action.PLAY");
+            mIntent.setAction("com.bb.radio105.action.PLAY");
             mIntent.setPackage(requireContext().getPackageName());
             requireContext().startService(mIntent);
             button1.setEnabled(false);
@@ -93,7 +93,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
         else if (target == button2) {
             Intent mIntent = new Intent();
-            mIntent.setAction("com.bb.the105zoo.action.PAUSE");
+            mIntent.setAction("com.bb.radio105.action.PAUSE");
             mIntent.setPackage(requireContext().getPackageName());
             requireContext().startService(mIntent);
             button1.setEnabled(true);
@@ -103,7 +103,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
         else if (target == button3) {
             Intent mIntent = new Intent();
-            mIntent.setAction("com.bb.the105zoo.action.STOP");
+            mIntent.setAction("com.bb.radio105.action.STOP");
             mIntent.setPackage(requireContext().getPackageName());
             requireContext().startService(mIntent);
             button1.setEnabled(true);

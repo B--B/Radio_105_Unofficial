@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.bb.the105zoo"
+        applicationId "com.bb.radio105"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 4

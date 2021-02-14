@@ -48,7 +48,7 @@ public class TvFragment extends Fragment {
 
         // Stop radio streaming if running
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.the105zoo.action.STOP");
+        mIntent.setAction("com.bb.radio105.action.STOP");
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
 

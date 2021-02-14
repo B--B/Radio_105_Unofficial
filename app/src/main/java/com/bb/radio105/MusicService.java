@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bb.the105zoo;
+package com.bb.radio105;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;

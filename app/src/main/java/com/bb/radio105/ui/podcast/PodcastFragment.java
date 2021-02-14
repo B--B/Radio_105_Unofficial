@@ -1,4 +1,4 @@
-package com.bb.the105zoo.ui.podcast;
+package com.bb.radio105.ui.podcast;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.bb.the105zoo.R;
+import com.bb.radio105.R;
 
 public class PodcastFragment extends Fragment {
 

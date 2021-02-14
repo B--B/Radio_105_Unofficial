@@ -1,4 +1,4 @@
-package com.bb.the105zoo.ui.tv;
+package com.bb.radio105.ui.tv;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.bb.the105zoo.R;
+import com.bb.radio105.R;
 
 import org.jetbrains.annotations.NotNull;
 

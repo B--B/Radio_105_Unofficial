@@ -1,4 +1,4 @@
-package com.bb.the105zoo.ui.home;
+package com.bb.radio105.ui.home;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -12,8 +12,8 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.bb.the105zoo.MusicService;
-import com.bb.the105zoo.R;
+import com.bb.radio105.MusicService;
+import com.bb.radio105.R;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 

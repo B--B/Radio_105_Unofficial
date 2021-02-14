@@ -1,4 +1,4 @@
-package com.bb.the105zoo.ui.podcast;
+package com.bb.radio105.ui.podcast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

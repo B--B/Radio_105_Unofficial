@@ -1,4 +1,4 @@
-package com.bb.the105zoo;
+package com.bb.radio105;
 
 import android.content.Intent;
 import android.os.Bundle;

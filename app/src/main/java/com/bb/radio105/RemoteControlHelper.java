@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bb.the105zoo;
+package com.bb.radio105;
 
 import android.media.AudioManager;
 import android.util.Log;

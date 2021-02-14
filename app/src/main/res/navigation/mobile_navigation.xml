@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.bb.the105zoo.ui.home.HomeFragment"
+        android:name="com.bb.radio105.ui.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_tv"
-        android:name="com.bb.the105zoo.ui.tv.TvFragment"
+        android:name="com.bb.radio105.ui.tv.TvFragment"
         android:label="@string/menu_tv"
         tools:layout="@layout/fragment_tv" />
 
     <fragment
         android:id="@+id/nav_podcast"
-        android:name="com.bb.the105zoo.ui.podcast.PodcastFragment"
+        android:name="com.bb.radio105.ui.podcast.PodcastFragment"
         android:label="@string/menu_podcast"
         tools:layout="@layout/fragment_podcast" />
 </navigation>

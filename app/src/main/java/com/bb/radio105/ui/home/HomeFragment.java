@@ -21,7 +21,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     Button button2;
     Button button3;
     private final String STATUS_KEY = "STATUS_KEY";
-    String status;
+    public static String status;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

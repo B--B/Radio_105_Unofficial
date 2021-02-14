@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.bb.radio105.R;
+import com.bb.radio105.ui.home.HomeFragment;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -51,6 +52,7 @@ public class TvFragment extends Fragment {
         mIntent.setAction("com.bb.radio105.action.STOP");
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
+        HomeFragment.status = "stop";
 
         // Start video streaming
         progressBar.setVisibility(View.VISIBLE);

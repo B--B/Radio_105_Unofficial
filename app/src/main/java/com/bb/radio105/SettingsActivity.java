@@ -2,6 +2,7 @@ package com.bb.radio105;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,6 +66,15 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
             if (key.equals(getString(R.string.theme_key)))
                 return preference.getEntry();
         return null;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
+            super.onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 
     @Override

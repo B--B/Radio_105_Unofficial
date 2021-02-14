@@ -7,8 +7,8 @@
     <string name="menu_home">Radio</string>
     <string name="menu_podcast">Podcast</string>
     <string name="menu_tv">105 TV</string>
-    <string name="diretta">Avvia lo Streaming</string>
-    <string name="pausa">Metti in pausa</string>
+    <string name="streaming">Avvia lo Streaming</string>
+    <string name="pause">Metti in pausa</string>
     <string name="stop">Ferma lo Streaming</string>
     <string name="logo">105 Logo</string>
     <string name="title_activity_settings">Impostazioni</string>
@@ -18,7 +18,6 @@
 
     <!-- Service Kill Preferences -->
     <string name="service_kill_title">Impostazioni stop streaming</string>
-    <string name="service_kill_summary_on">Lo streaming verrà fermato quando l\' app viene chiusa
-    </string>
+    <string name="service_kill_summary_on">Lo streaming verrà fermato quando l\' app viene rimossa dalla lista dalle app recenti</string>
     <string name="service_kill_summary_off">Lo streaming deve essere fermato manualmente cliccando il tasto "Ferma lo Streaming"</string>
 </resources>

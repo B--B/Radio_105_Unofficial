@@ -2,7 +2,7 @@
     <!-- Theme Preference -->
     <string-array name="theme_entries">
         <item>Default di Sistema</item>
-        <item>Tema Scuro</item>
         <item>Tema Chiaro</item>
+        <item>Tema Scuro</item>
     </string-array>
 </resources>

@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-// import com.google.android.material.floatingactionbutton.FloatingActionButton;
-// import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.appcompat.app.AppCompatDelegate;
@@ -51,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_tv, R.id.nav_podcast)
-                .setDrawerLayout(drawer)
+                .setOpenableLayout(drawer)
                 .build();
         NavHostFragment navHostFragment =
                 (NavHostFragment) getSupportFragmentManager()

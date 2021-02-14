@@ -92,9 +92,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     // title of the song we are currently playing
     String mSongTitle = "Radio 105 Streaming";
 
-    // whether the song we are playing is streaming from the network
-    boolean mIsStreaming = true;
-
     // Wifi lock that we hold when streaming files from the internet, in order to prevent the
     // device from shutting off the Wifi radio
     WifiLock mWifiLock;
@@ -151,7 +148,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
         // Create the Wifi lock (this does not acquire the lock, this just creates it)
         mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
-                .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
+                .createWifiLock(WifiManager.WIFI_MODE_FULL, "radio105lock");
 
         mNotificationManager = NotificationManagerCompat.from(this);
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -233,17 +230,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         }
     }
 
-    void processRewindRequest() {
-        if (mState == State.Playing || mState == State.Paused)
-            mPlayer.seekTo(0);
-    }
-
-    void processSkipRequest() {
-        if (mState == State.Playing || mState == State.Paused) {
-            playNextSong();
-        }
-    }
-
     void processStopRequest() {
         processStopRequest(false);
     }
@@ -319,12 +305,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             mState = State.Preparing;
             setUpAsForeground(mSongTitle + " (loading)");
 
-            // Use the media button APIs (if available) to register ourselves for media button
-            // events
-
-            MediaButtonHelper.registerMediaButtonEventReceiverCompat(
-                    mAudioManager, mMediaButtonReceiverComponent);
-
             // Use the remote control APIs (if available) to set the playback state
 
             if (mRemoteControlClientCompat == null) {
@@ -356,8 +336,8 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             // If we are streaming from the internet, we want to hold a Wifi lock, which prevents
             // the Wifi radio from going to sleep while the song is playing. If, on the other hand,
             // we are *not* streaming, we want to release the lock if we were holding it before.
-            if (mIsStreaming) mWifiLock.acquire();
-            else if (mWifiLock.isHeld()) mWifiLock.release();
+            mWifiLock.acquire();
+            if (mWifiLock.isHeld()) mWifiLock.release();
         }
         catch (IOException ex) {
             Log.e("MusicService", "IOException playing next song: " + ex.getMessage());
@@ -429,24 +409,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         return true; // true indicates we handled the error
     }
 
-    public void onGainedAudioFocus() {
-        Toast.makeText(getApplicationContext(), "gained audio focus.", Toast.LENGTH_SHORT).show();
-
-
-        // restart media player with new focus settings
-        if (mState == State.Playing)
-            configAndStartMediaPlayer();
-    }
-
-    public void onLostAudioFocus(boolean canDuck) {
-        Toast.makeText(getApplicationContext(), "lost audio focus." + (canDuck ? "can duck" :
-                "no duck"), Toast.LENGTH_SHORT).show();
-
-        // start/restart/pause media player with new focus settings
-        if (mPlayer != null && mPlayer.isPlaying())
-            configAndStartMediaPlayer();
-    }
-
     @Override
     public void onDestroy() {
         // Service is being killed, so make sure we release our resources
@@ -471,15 +433,15 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         }
     }
 
-
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        Boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
+        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.service_kill_key), false);
         if (pref) {
-            // Kill service when task is removed enabled, stop music service
+            // Stop music service when the user enabled the option
             mState = State.Stopped;
             relaxResources(true);
+            stopSelf();
         }
         super.onTaskRemoved(rootIntent);
     }

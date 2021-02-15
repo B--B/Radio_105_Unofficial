@@ -2,6 +2,7 @@ package com.bb.radio105;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -96,5 +97,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+            case KeyEvent.KEYCODE_HEADSETHOOK:
+                startService(new Intent(MusicService.ACTION_TOGGLE_PLAYBACK));
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

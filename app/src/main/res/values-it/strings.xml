@@ -20,4 +20,7 @@
     <string name="service_kill_title">Impostazioni stop streaming</string>
     <string name="service_kill_summary_on">Lo streaming verrà fermato quando l\' app viene rimossa dalla lista dalle app recenti</string>
     <string name="service_kill_summary_off">Lo streaming deve essere fermato manualmente cliccando il tasto "Ferma lo Streaming"</string>
+
+    <!-- Service Kill Preferences -->
+    <string name="special_thanks">Ringraziamenti</string>
 </resources>

@@ -26,4 +26,8 @@
     <string name="service_kill_title">Stop streaming settings</string>
     <string name="service_kill_summary_on">Radio streaming will be stopped when app is cleared from recent apps</string>
     <string name="service_kill_summary_off">Radio streaming must be stopped manually clicking on "Stop Streaming" button</string>
+
+    <!-- Service Kill Preferences -->
+    <string name="thanks" translatable="false">thanks</string>
+    <string name="special_thanks">Special Thanks</string>
 </resources>

@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ListPreference
+        app:defaultValue="@string/theme_default_value"
+        app:entries="@array/theme_entries"
+        app:entryValues="@array/theme_values"
+        app:key="@string/theme_key"
+        app:title="@string/theme_title"
+        app:useSimpleSummaryProvider="true" />
 
-         <ListPreference
-            app:defaultValue="@string/theme_default_value"
-            app:entries="@array/theme_entries"
-            app:entryValues="@array/theme_values"
-            app:key="@string/theme_key"
-            app:title="@string/theme_title"
-            app:useSimpleSummaryProvider="true" />
+    <SwitchPreferenceCompat
+        app:key="@string/service_kill_key"
+        app:summaryOff="@string/service_kill_summary_off"
+        app:summaryOn="@string/service_kill_summary_on"
+        app:title="@string/service_kill_title" />
 
-        <SwitchPreferenceCompat
-            app:key="@string/service_kill_key"
-            app:summaryOff="@string/service_kill_summary_off"
-            app:summaryOn="@string/service_kill_summary_on"
-            app:title="@string/service_kill_title" />
-
+    <Preference
+        app:key="@string/thanks"
+        app:title="@string/special_thanks" />
 </PreferenceScreen>

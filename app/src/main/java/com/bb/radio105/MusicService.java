@@ -108,10 +108,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     // Dummy album art we will pass to the remote control (if the APIs are available).
     Bitmap mDummyAlbumArt;
 
-    // The component name of MusicIntentReceiver, for use with media button and remote control
-    // APIs
-    ComponentName mMediaButtonReceiverComponent;
-
     AudioManager mAudioManager;
     NotificationManagerCompat mNotificationManager;
 
@@ -154,8 +150,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
         mDummyAlbumArt = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
-
-        mMediaButtonReceiverComponent = new ComponentName(this, MusicIntentReceiver.class);
     }
 
     /**
@@ -309,7 +303,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
             if (mRemoteControlClientCompat == null) {
                 Intent intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
-                intent.setComponent(mMediaButtonReceiverComponent);
                 mRemoteControlClientCompat = new RemoteControlClientCompat(
                         PendingIntent.getBroadcast(this /*context*/,
                                 0 /*requestCode, ignored*/, intent /*intent*/, 0 /*flags*/));
@@ -414,6 +407,8 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         // Service is being killed, so make sure we release our resources
         mState = State.Stopped;
         relaxResources(true);
+        RemoteControlHelper.unregisterRemoteControlClient(mAudioManager,
+                mRemoteControlClientCompat);
     }
 
     @Override

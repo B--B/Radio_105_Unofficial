@@ -14,6 +14,12 @@
         app:summaryOn="@string/service_kill_summary_on"
         app:title="@string/service_kill_title" />
 
+    <SwitchPreferenceCompat
+        app:key="@string/headset_key"
+        app:summaryOff="@string/headset_key_summary_off"
+        app:summaryOn="@string/headset_key_summary_on"
+        app:title="@string/headset_key_title" />
+
     <Preference
         app:key="@string/thanks"
         app:title="@string/special_thanks" />

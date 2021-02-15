@@ -23,4 +23,9 @@
 
     <!-- Service Kill Preferences -->
     <string name="special_thanks">Ringraziamenti</string>
+
+    <!-- Headset Preferences -->
+    <string name="headset_key_summary_off">Lo streaming non si fermerà quando le cuffie vengono disconnesse</string>
+    <string name="headset_key_summary_on">Lo streaming si fermerà quando le cuffie vengono disconnesse</string>
+    <string name="headset_key_title">Impostazioni Cuffie</string>
 </resources>

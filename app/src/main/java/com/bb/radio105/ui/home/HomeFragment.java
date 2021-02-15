@@ -1,8 +1,6 @@
 package com.bb.radio105.ui.home;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,7 +11,6 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.bb.radio105.MusicService;
 import com.bb.radio105.R;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
@@ -22,7 +19,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     Button button2;
     Button button3;
     private final String STATUS_KEY = "STATUS_KEY";
-    public static String status;
+    private final String BUTTON1_ENABLED = "button1_selected";
+    private final String BUTTON2_ENABLED = "button2_selected";
+    private final String BUTTON3_ENABLED = "button3_selected";
+    public static Boolean button1enabled;
+    public static Boolean button2enabled;
+    public static Boolean button3enabled;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -37,14 +39,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
 
-        // If STATUS_KEY is null then we are starting the Activity for the first time
         if (savedInstanceState != null) {
-            status = savedInstanceState.getString(STATUS_KEY);
-            updateButtonsState();
-        } else {
-            updateButtonsService();
+            boolean isButton1Enabled = savedInstanceState.getBoolean(BUTTON1_ENABLED);
+            boolean isButton2Enabled = savedInstanceState.getBoolean(BUTTON2_ENABLED);
+            boolean isButton3Enabled = savedInstanceState.getBoolean(BUTTON3_ENABLED);
+            button1.setEnabled(isButton1Enabled);
+            button2.setEnabled(isButton2Enabled);
+            button3.setEnabled(isButton3Enabled);
         }
-
         return root;
     }
 
@@ -64,42 +66,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState)
     {
-        outState.putString(STATUS_KEY, status);
+        button1enabled = button1.isEnabled();
+        button2enabled = button2.isEnabled();
+        button3enabled = button3.isEnabled();
+        outState.putBoolean(BUTTON1_ENABLED, button1.isEnabled());
+        outState.putBoolean(BUTTON2_ENABLED, button2.isEnabled());
+        outState.putBoolean(BUTTON3_ENABLED, button3.isEnabled());
         super.onSaveInstanceState(outState);
-    }
-
-    private void updateButtonsService() {
-        // If user close the app while MusicService is running we don't have a valid STATUS_KEY.
-        // We must check if MusicService is running and set enabled buttons accordingly.
-        boolean service = isRadioStreamingRunning();
-        if (service) {
-            // Radio service is running
-            button1.setEnabled(false);
-            button2.setEnabled(true);
-            button3.setEnabled(true);
-        }
-    }
-
-    void updateButtonsState() {
-        switch (HomeFragment.status) {
-            case "play":
-                button1.setEnabled(false);
-                button2.setEnabled(true);
-                button3.setEnabled(true);
-                break;
-            case "pause":
-                button1.setEnabled(true);
-                button2.setEnabled(false);
-                button3.setEnabled(true);
-                break;
-            case "stop":
-                button1.setEnabled(true);
-                button2.setEnabled(false);
-                button3.setEnabled(false);
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + HomeFragment.status);
-        }
     }
 
     private void radioPlay(Activity context) {
@@ -110,7 +83,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         button1.setEnabled(false);
         button2.setEnabled(true);
         button3.setEnabled(true);
-        status = "play";
     }
 
     private void radioPause(Activity context) {
@@ -121,7 +93,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         button1.setEnabled(true);
         button2.setEnabled(false);
         button3.setEnabled(true);
-        status = "pause";
     }
 
     private void radioStop(Activity activity) {
@@ -132,16 +103,5 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         button1.setEnabled(true);
         button2.setEnabled(false);
         button3.setEnabled(false);
-        status = "stop";
-    }
-
-    boolean isRadioStreamingRunning() {
-        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (MusicService.class.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
     }
 }

@@ -1,6 +1,8 @@
-package com.bb.radio105.ui.home;
+package com.bb.radio105;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,20 +13,12 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.bb.radio105.R;
-
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
     Button button1;
     Button button2;
     Button button3;
-    private final String STATUS_KEY = "STATUS_KEY";
-    private final String BUTTON1_ENABLED = "button1_selected";
-    private final String BUTTON2_ENABLED = "button2_selected";
-    private final String BUTTON3_ENABLED = "button3_selected";
-    public static Boolean button1enabled;
-    public static Boolean button2enabled;
-    public static Boolean button3enabled;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -39,14 +33,26 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
 
-        if (savedInstanceState != null) {
-            boolean isButton1Enabled = savedInstanceState.getBoolean(BUTTON1_ENABLED);
-            boolean isButton2Enabled = savedInstanceState.getBoolean(BUTTON2_ENABLED);
-            boolean isButton3Enabled = savedInstanceState.getBoolean(BUTTON3_ENABLED);
-            button1.setEnabled(isButton1Enabled);
-            button2.setEnabled(isButton2Enabled);
-            button3.setEnabled(isButton3Enabled);
+        boolean service = isRadioStreamingRunning();
+        boolean serviceInForeground = isRadioStreamingRunningInForeground();
+        if (service) {
+            if (!serviceInForeground) {
+                // Pause state
+                button1.setEnabled(true);
+                button2.setEnabled(false);
+            } else {
+                // Playing state
+                button1.setEnabled(false);
+                button2.setEnabled(true);
+            }
+            button3.setEnabled(true);
+        } else {
+            // Stop state
+            button1.setEnabled(true);
+            button2.setEnabled(false);
+            button3.setEnabled(false);
         }
+
         return root;
     }
 
@@ -61,18 +67,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         else if (target == button3) {
             radioStop(getActivity());
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState)
-    {
-        button1enabled = button1.isEnabled();
-        button2enabled = button2.isEnabled();
-        button3enabled = button3.isEnabled();
-        outState.putBoolean(BUTTON1_ENABLED, button1.isEnabled());
-        outState.putBoolean(BUTTON2_ENABLED, button2.isEnabled());
-        outState.putBoolean(BUTTON3_ENABLED, button3.isEnabled());
-        super.onSaveInstanceState(outState);
     }
 
     private void radioPlay(Activity context) {
@@ -103,5 +97,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         button1.setEnabled(true);
         button2.setEnabled(false);
         button3.setEnabled(false);
+    }
+
+    private boolean isRadioStreamingRunning() {
+        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (MusicService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isRadioStreamingRunningInForeground() {
+        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (MusicService.class.getName().equals(service.service.getClassName())) {
+                return service.foreground;
+            }
+        }
+        return false;
     }
 }

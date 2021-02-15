@@ -50,7 +50,7 @@ public class TvFragment extends Fragment {
         videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
 
         // Stop radio streaming if running
-        boolean service = isRadioStreamingRunning();
+        boolean service = isRadioStreamingRunningInForeground();
         if (service) {
             Intent mIntent = new Intent();
             mIntent.setAction("com.bb.radio105.action.STOP");
@@ -104,11 +104,11 @@ public class TvFragment extends Fragment {
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
     }
 
-    boolean isRadioStreamingRunning() {
+    private boolean isRadioStreamingRunningInForeground() {
         ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (MusicService.class.getName().equals(service.service.getClassName())) {
-                return true;
+                return service.foreground;
             }
         }
         return false;

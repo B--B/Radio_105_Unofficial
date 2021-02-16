@@ -34,8 +34,6 @@ public class HeadsetIntentReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.noisy_key), true);
-        boolean pref1 = PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.headset_key), true);
         if (intent.getAction().equals(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
             if (pref) {
                 Intent mIntent = new Intent();

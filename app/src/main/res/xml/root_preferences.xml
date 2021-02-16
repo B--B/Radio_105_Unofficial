@@ -12,13 +12,16 @@
         app:key="@string/service_kill_key"
         app:summaryOff="@string/service_kill_summary_off"
         app:summaryOn="@string/service_kill_summary_on"
-        app:title="@string/service_kill_title" />
+        app:title="@string/service_kill_title"
+        app:defaultValue="false"
+        />
 
     <SwitchPreferenceCompat
-        app:key="@string/headset_key"
-        app:summaryOff="@string/headset_key_summary_off"
-        app:summaryOn="@string/headset_key_summary_on"
-        app:title="@string/headset_key_title" />
+        app:key="@string/noisy_key"
+        app:summaryOff="@string/noisy_key_summary_off"
+        app:summaryOn="@string/noisy_key_summary_on"
+        app:title="@string/noisy_key_title"
+        app:defaultValue="true"/>
 
     <Preference
         app:key="@string/thanks"

@@ -30,10 +30,10 @@
     <!-- Service Kill Preferences -->
     <string name="thanks" translatable="false">thanks</string>
     <string name="special_thanks">Special Thanks</string>
-    <string name="headset_key" translatable="false">headset</string>
 
     <!-- Headset Preferences -->
-    <string name="headset_key_summary_off">Streaming will not stop when headset are disconnected</string>
-    <string name="headset_key_summary_on">Streaming will stop when headset are disconnected</string>
-    <string name="headset_key_title">Headset Settings</string>
+    <string name="noisy_key" translatable="false">noisy_key</string>
+    <string name="noisy_key_summary_off">Streaming will not stop when an audio device is disconnected</string>
+    <string name="noisy_key_summary_on">Streaming will stop when an audio device is disconnected</string>
+    <string name="noisy_key_title">Audio Device Settings</string>
 </resources>

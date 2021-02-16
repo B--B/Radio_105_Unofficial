@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +54,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             button2.setEnabled(false);
             button3.setEnabled(false);
         }
+
+        IntentFilter receiverFilter1 = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        HeadsetIntentReceiver receiver1 = new HeadsetIntentReceiver();
+        getContext().registerReceiver(receiver1, receiverFilter1);
+
+        IntentFilter receiverFilter2 = new IntentFilter(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        HeadsetIntentReceiver receiver2 = new HeadsetIntentReceiver();
+        getContext().registerReceiver(receiver2, receiverFilter2);
 
         return root;
     }

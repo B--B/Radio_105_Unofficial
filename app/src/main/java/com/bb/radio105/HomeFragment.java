@@ -1,8 +1,6 @@
 package com.bb.radio105;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -34,8 +32,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
 
-        boolean service = isRadioStreamingRunning();
-        boolean serviceInForeground = isRadioStreamingRunningInForeground();
+        boolean service = Utils.isRadioStreamingRunning(getContext());
+        boolean serviceInForeground = Utils.isRadioStreamingRunningInForeground(getContext());
         if (service) {
             if (!serviceInForeground) {
                 // Pause state
@@ -106,25 +104,5 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         button1.setEnabled(true);
         button2.setEnabled(false);
         button3.setEnabled(false);
-    }
-
-    private boolean isRadioStreamingRunning() {
-        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (MusicService.class.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isRadioStreamingRunningInForeground() {
-        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (MusicService.class.getName().equals(service.service.getClassName())) {
-                return service.foreground;
-            }
-        }
-        return false;
     }
 }

@@ -1,7 +1,5 @@
-package com.bb.radio105.ui.tv;
+package com.bb.radio105;
 
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
@@ -18,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.bb.radio105.MusicService;
 import com.bb.radio105.R;
 
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +47,7 @@ public class TvFragment extends Fragment {
         videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
 
         // Stop radio streaming if running
-        boolean service = isRadioStreamingRunningInForeground();
+        boolean service = Utils.isRadioStreamingRunningInForeground(getContext());
         if (service) {
             Intent mIntent = new Intent();
             mIntent.setAction("com.bb.radio105.action.STOP");
@@ -102,15 +99,5 @@ public class TvFragment extends Fragment {
         super.onDetach();
         requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
-    }
-
-    private boolean isRadioStreamingRunningInForeground() {
-        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (MusicService.class.getName().equals(service.service.getClassName())) {
-                return service.foreground;
-            }
-        }
-        return false;
     }
 }

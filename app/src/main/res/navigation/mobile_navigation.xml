@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/nav_tv"
-        android:name="com.bb.radio105.ui.tv.TvFragment"
+        android:name="com.bb.radio105.TvFragment"
         android:label="@string/menu_tv"
         tools:layout="@layout/fragment_tv" />
 

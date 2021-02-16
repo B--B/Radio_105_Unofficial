@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 public class PodcastViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private final MutableLiveData<String> mText;
 
     public PodcastViewModel() {
         mText = new MutableLiveData<>();

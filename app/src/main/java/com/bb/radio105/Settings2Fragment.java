@@ -4,16 +4,15 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.appcompat.app.ActionBar;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.fragment.app.Fragment;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -21,40 +20,24 @@ import androidx.preference.PreferenceManager;
 
 import java.util.Objects;
 
-public class SettingsActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener,
+public class Settings2Fragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener,
         Preference.SummaryProvider<androidx.preference.ListPreference> {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings_activity);
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_settings, container, false);
+
         if (savedInstanceState == null) {
-            getSupportFragmentManager()
+            getActivity().getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.settings, new SettingsFragment())
+                    .replace(R.id.settings, new Settings2Fragment.SettingsFragment())
                     .commit();
         }
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        PreferenceManager.getDefaultSharedPreferences(this)
+
+        PreferenceManager.getDefaultSharedPreferences(getContext())
                 .registerOnSharedPreferenceChangeListener(this);
-    }
 
-    public void stackThanks(View view) {
-    }
-
-    public void googleThanks(View view) {
-    }
-
-    public void unitedRadioThanks(View view) {
-    }
-
-    public void mediasetPlayThanks(View view) {
-    }
-
-    public void pngIOThanks(View view) {
+        return root;
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
@@ -95,7 +78,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
             if (key.equals(darkModeString)) {
                 final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
                 // The apps theme is decided depending upon the saved preferences on app startup
-                String pref = PreferenceManager.getDefaultSharedPreferences(this)
+                String pref = PreferenceManager.getDefaultSharedPreferences(getContext())
                         .getString(getString(R.string.theme_key), getString(R.string.theme_default_value));
                 // Comparing to see which preference is selected and applying those theme settings
                 if (pref.equals(darkModeValues[0]))
@@ -117,18 +100,9 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == android.R.id.home) {
-            super.onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(menuItem);
-    }
-
-    @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
-        PreferenceManager.getDefaultSharedPreferences(this)
+        PreferenceManager.getDefaultSharedPreferences(getContext())
                 .unregisterOnSharedPreferenceChangeListener(this);
     }
 }

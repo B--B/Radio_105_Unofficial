@@ -23,6 +23,6 @@
 
     <style name="Theme.The105Zoo.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:backgroundTint">@color/yellow_700</item>
-        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
     </style>
 </resources>

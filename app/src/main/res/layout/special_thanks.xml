@@ -26,7 +26,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="googleThanks"
                 android:text="@string/google"
                 android:textSize="20sp"
                 android:id="@+id/google"
@@ -35,7 +34,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="unitedRadioThanks"
                 android:text="@string/unitedradio"
                 android:textSize="20sp"
                 android:id="@+id/unitedradio"
@@ -44,7 +42,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="mediasetPlayThanks"
                 android:text="@string/mediaset"
                 android:textSize="20sp"
                 android:id="@+id/mediasetplay"
@@ -53,7 +50,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="pngIOThanks"
                 android:text="@string/pngio"
                 android:textSize="20sp"
                 android:id="@+id/pngIO"

@@ -28,4 +28,11 @@
     <string name="noisy_key_summary_off">Lo streaming non si fermerà quando un dispositivo audio viene disconnesso</string>
     <string name="noisy_key_summary_on">Lo streaming si fermerà quando un dispositivo audio viene disconnesso</string>
     <string name="noisy_key_title">Impostazioni Dispositivi Audio</string>
+
+    <!-- Special Thanks -->
+    <string name="pngio"><a href="https://pngio.com/png">PngIO</a> per le icone</string>
+    <string name="mediaset"><a href="https://www.mediasetplay.mediaset.it/">Mediaset Play</a> per lo streaming video</string>
+    <string name="unitedradio"><a href="https://www.unitedmusic.com/">Unitedradio</a> per lo streaming radio</string>
+    <string name="google"><a href="https://www.google.com/">Google</a> per l\' esempio nel loro vecchissimo SDK</string>
+    <string name="stackoverflow"><a href="https://stackoverflow.com/">StackOverflow</a> (come sempre) per l\' aiuto e  suggerimenti</string>
 </resources>

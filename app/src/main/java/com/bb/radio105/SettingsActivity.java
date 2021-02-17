@@ -3,9 +3,12 @@ package com.bb.radio105;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -15,6 +18,8 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+
+import java.util.Objects;
 
 public class SettingsActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener,
         Preference.SummaryProvider<androidx.preference.ListPreference> {
@@ -37,6 +42,21 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
                 .registerOnSharedPreferenceChangeListener(this);
     }
 
+    public void stackThanks(View view) {
+    }
+
+    public void googleThanks(View view) {
+    }
+
+    public void unitedRadioThanks(View view) {
+    }
+
+    public void mediasetPlayThanks(View view) {
+    }
+
+    public void pngIOThanks(View view) {
+    }
+
     public static class SettingsFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -57,6 +77,12 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
                         });
                 AlertDialog dialog = builder.create();
                 dialog.show();
+
+                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.stack))).setMovementMethod(LinkMovementMethod.getInstance());
+                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.google))).setMovementMethod(LinkMovementMethod.getInstance());
+                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.unitedradio))).setMovementMethod(LinkMovementMethod.getInstance());
+                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.mediasetplay))).setMovementMethod(LinkMovementMethod.getInstance());
+                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.pngIO))).setMovementMethod(LinkMovementMethod.getInstance());
             }
             return false;
         }

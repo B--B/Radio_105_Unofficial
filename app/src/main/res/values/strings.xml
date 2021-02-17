@@ -36,4 +36,11 @@
     <string name="noisy_key_summary_off">Streaming will not stop when an audio device is disconnected</string>
     <string name="noisy_key_summary_on">Streaming will stop when an audio device is disconnected</string>
     <string name="noisy_key_title">Audio Device Settings</string>
+
+    <!-- Special Thanks -->
+    <string name="pngio"><a href="https://pngio.com/png">PngIO</a> for icons</string>
+    <string name="mediaset"><a href="https://www.mediasetplay.mediaset.it/">Mediaset Play</a> for video streaming</string>
+    <string name="unitedradio"><a href="https://www.unitedmusic.com/">Unitedradio</a> for radio streaming</string>
+    <string name="google"><a href="https://www.google.com/">Google</a> for the example in their really old SDK</string>
+    <string name="stackoverflow"><a href="https://stackoverflow.com/">StackOverflow</a> (as ever) for all hints and suggestions</string>
 </resources>

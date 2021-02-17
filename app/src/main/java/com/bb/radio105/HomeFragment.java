@@ -12,12 +12,13 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-public class HomeFragment extends Fragment implements View.OnClickListener {
+public class HomeFragment extends Fragment implements View.OnClickListener, UpdateHeadphoneStatusListener {
 
     Button button1;
     Button button2;
     Button button3;
 
+    static UpdateHeadphoneStatusListener headphoneDisconnected;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -31,6 +32,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         button1.setOnClickListener(this);
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
+
+        headphoneDisconnected = this;
 
         boolean service = Utils.isRadioStreamingRunning(getContext());
         boolean serviceInForeground = Utils.isRadioStreamingRunningInForeground(getContext());
@@ -73,6 +76,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         }
         else if (target == button3) {
             radioStop(getActivity());
+        }
+    }
+
+    @Override
+    public void onUpdate (boolean disconnected) {
+        if (disconnected){
+            button1.setEnabled(true);
+            button2.setEnabled(false);
+            button3.setEnabled(false);
         }
     }
 

@@ -39,6 +39,7 @@ public class HeadsetIntentReceiver extends BroadcastReceiver {
                 mIntent.setAction("com.bb.radio105.action.PAUSE");
                 mIntent.setPackage(context.getPackageName());
                 context.startService(mIntent);
+                HomeFragment.headphoneDisconnected.onUpdate(true);
             }
 //            We receive this intent + extra state every time the app is open, not so useful for us
 //        } else if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {

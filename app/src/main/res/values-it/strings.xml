@@ -2,7 +2,6 @@
     <string name="app_name">Radio 105 Streaming</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="action_settings">Impostazioni</string>
 
     <string name="menu_home">Radio 105</string>
     <string name="menu_podcast">Podcast</string>

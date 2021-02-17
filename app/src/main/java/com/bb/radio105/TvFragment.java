@@ -47,7 +47,7 @@ public class TvFragment extends Fragment {
         videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
 
         // Stop radio streaming if running
-        boolean service = Utils.isRadioStreamingRunningInForeground(getContext());
+        boolean service = Utils.isRadioStreamingRunningInForeground(requireContext());
         if (service) {
             Intent mIntent = new Intent();
             mIntent.setAction("com.bb.radio105.action.STOP");

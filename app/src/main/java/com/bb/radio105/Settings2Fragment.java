@@ -1,6 +1,5 @@
 package com.bb.radio105;
 
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -28,13 +27,13 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
         View root = inflater.inflate(R.layout.fragment_settings, container, false);
 
         if (savedInstanceState == null) {
-            getActivity().getSupportFragmentManager()
+            requireActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.settings, new Settings2Fragment.SettingsFragment())
                     .commit();
         }
 
-        PreferenceManager.getDefaultSharedPreferences(getContext())
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .registerOnSharedPreferenceChangeListener(this);
 
         return root;
@@ -48,15 +47,12 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
         @Override
         public boolean onPreferenceTreeClick(Preference p) {
             if (p.getKey().equals("thanks")) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
                 LayoutInflater inflater = requireActivity().getLayoutInflater();
                 View dialogView = inflater.inflate(R.layout.special_thanks, null);
                 builder.setView(dialogView).
-                        setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        setPositiveButton("Ok", (dialog, which) -> {
 //                                Ok
-                            }
                         });
                 AlertDialog dialog = builder.create();
                 dialog.show();
@@ -78,7 +74,7 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             if (key.equals(darkModeString)) {
                 final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
                 // The apps theme is decided depending upon the saved preferences on app startup
-                String pref = PreferenceManager.getDefaultSharedPreferences(getContext())
+                String pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                         .getString(getString(R.string.theme_key), getString(R.string.theme_default_value));
                 // Comparing to see which preference is selected and applying those theme settings
                 if (pref.equals(darkModeValues[0]))
@@ -102,7 +98,7 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
     @Override
     public void onDestroy() {
         super.onDestroy();
-        PreferenceManager.getDefaultSharedPreferences(getContext())
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .unregisterOnSharedPreferenceChangeListener(this);
     }
 }

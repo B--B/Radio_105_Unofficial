@@ -35,8 +35,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
 
         headphoneDisconnected = this;
 
-        boolean service = Utils.isRadioStreamingRunning(getContext());
-        boolean serviceInForeground = Utils.isRadioStreamingRunningInForeground(getContext());
+        boolean service = Utils.isRadioStreamingRunning(requireContext());
+        boolean serviceInForeground = Utils.isRadioStreamingRunningInForeground(requireContext());
         if (service) {
             if (!serviceInForeground) {
                 // Pause state
@@ -57,11 +57,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
 
         IntentFilter receiverFilter1 = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         HeadsetIntentReceiver receiver1 = new HeadsetIntentReceiver();
-        getContext().registerReceiver(receiver1, receiverFilter1);
+        requireContext().registerReceiver(receiver1, receiverFilter1);
 
         IntentFilter receiverFilter2 = new IntentFilter(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         HeadsetIntentReceiver receiver2 = new HeadsetIntentReceiver();
-        getContext().registerReceiver(receiver2, receiverFilter2);
+        requireContext().registerReceiver(receiver2, receiverFilter2);
 
         return root;
     }
@@ -69,13 +69,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
     public void onClick(View target) {
         // Send the correct intent to the MusicService, according to the button that was clicked
         if (target == button1) {
-            radioPlay(getActivity());
+            radioPlay(requireActivity());
         }
         else if (target == button2) {
-            radioPause(getActivity());
+            radioPause(requireActivity());
         }
         else if (target == button3) {
-            radioStop(getActivity());
+            radioStop(requireActivity());
         }
     }
 

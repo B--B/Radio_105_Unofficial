@@ -21,8 +21,5 @@
 
     <style name="Theme.The105Zoo.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.The105Zoo.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:backgroundTint">@color/yellow_700</item>
-        <item name="android:textColorPrimary">@color/white</item>
-    </style>
+    <style name="Theme.The105Zoo.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

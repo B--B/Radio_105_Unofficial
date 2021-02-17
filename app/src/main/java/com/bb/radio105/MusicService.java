@@ -43,8 +43,6 @@ import androidx.preference.PreferenceManager;
 
 import java.io.IOException;
 
-import static android.media.RemoteControlClient.*;
-
 /**
  * Service that handles media playback.
  */
@@ -99,10 +97,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     // area at the top of the screen as an icon -- and as text as well if the user expands the
     // notification area).
     final int NOTIFICATION_ID = 1;
-
-    // our RemoteControlClient object, which will use remote control APIs available in
-    // SDK level >= 14, if they're available.
-    RemoteControlClientCompat mRemoteControlClientCompat;
 
     // Dummy album art we will pass to the remote control (if the APIs are available).
     Bitmap mDummyAlbumArt;
@@ -199,12 +193,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             setUpAsForeground(mSongTitle + " (playing)");
             configAndStartMediaPlayer();
         }
-
-        // Tell any remote controls that our playback state is 'playing'.
-        if (mRemoteControlClientCompat != null) {
-            mRemoteControlClientCompat
-                    .setPlaybackState(PLAYSTATE_PLAYING);
-        }
     }
 
     void processPauseRequest() {
@@ -214,12 +202,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             mPlayer.pause();
             relaxResources(false); // while paused, we always retain the MediaPlayer
             // do not give up audio focus
-        }
-
-        // Tell any remote controls that our playback state is 'paused'.
-        if (mRemoteControlClientCompat != null) {
-            mRemoteControlClientCompat
-                    .setPlaybackState(PLAYSTATE_PAUSED);
         }
     }
 
@@ -233,12 +215,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
             // let go of all resources...
             relaxResources(true);
-
-            // Tell any remote controls that our playback state is 'paused'.
-            if (mRemoteControlClientCompat != null) {
-                mRemoteControlClientCompat
-                        .setPlaybackState(PLAYSTATE_STOPPED);
-            }
 
             // service is no longer necessary. Will be started again if needed.
             stopSelf();
@@ -297,26 +273,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
             mState = State.Preparing;
             setUpAsForeground(mSongTitle + " (loading)");
-
-            // Use the remote control APIs (if available) to set the playback state
-
-            if (mRemoteControlClientCompat == null) {
-                Intent intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
-                mRemoteControlClientCompat = new RemoteControlClientCompat(
-                        PendingIntent.getBroadcast(this /*context*/,
-                                0 /*requestCode, ignored*/, intent /*intent*/, 0 /*flags*/));
-                RemoteControlHelper.registerRemoteControlClient(mAudioManager,
-                        mRemoteControlClientCompat);
-            }
-
-            mRemoteControlClientCompat.setPlaybackState(
-                    PLAYSTATE_PLAYING);
-
-            mRemoteControlClientCompat.setTransportControlFlags(
-                    FLAG_KEY_MEDIA_PLAY |
-                            FLAG_KEY_MEDIA_PAUSE |
-                            FLAG_KEY_MEDIA_NEXT |
-                            FLAG_KEY_MEDIA_STOP);
 
             // starts preparing the media player in the background. When it's done, it will call
             // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
@@ -406,8 +362,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         // Service is being killed, so make sure we release our resources
         mState = State.Stopped;
         relaxResources(true);
-        RemoteControlHelper.unregisterRemoteControlClient(mAudioManager,
-                mRemoteControlClientCompat);
     }
 
     @Override

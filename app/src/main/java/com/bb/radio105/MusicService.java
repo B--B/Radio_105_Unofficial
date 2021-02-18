@@ -326,12 +326,27 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
 
     void setUpAsForeground(String text) {
-    // Creating notification channel
-    createNotificationChannel();
-    Intent intent = new Intent(this, MainActivity.class);
-    // Use System.currentTimeMillis() to have a unique ID for the pending intent
-    PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    // Building notification here
+        //Intent for Play
+//        Intent playIntent = new Intent(this, MusicService.class);
+//        playIntent.setAction("com.bb.radio105.action.PLAY");
+//        PendingIntent mPlayIntent = PendingIntent.getService(this, 0, playIntent, 0);
+
+        //Intent for Pause
+        Intent pauseIntent = new Intent(this, MusicService.class);
+        pauseIntent.setAction("com.bb.radio105.action.PAUSE");
+        PendingIntent mPauseIntent = PendingIntent.getService(this, 0, pauseIntent, 0);
+
+        //Intent for Close
+        Intent stopIntent = new Intent(this, MusicService.class);
+        stopIntent.setAction("com.bb.radio105.action.STOP");
+        PendingIntent mStopIntent = PendingIntent.getService(this, 0, stopIntent, 0);
+
+        // Creating notification channel
+        createNotificationChannel();
+        Intent intent = new Intent(this, MainActivity.class);
+        // Use System.currentTimeMillis() to have a unique ID for the pending intent
+        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // Building notification here
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
         mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
         mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
@@ -339,8 +354,11 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mNotificationBuilder.setContentText(text);
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-    // Launch notification
-    startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
+//        mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mPlayIntent);
+        mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mPauseIntent);
+        mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mStopIntent);
+        // Launch notification
+        startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
 }
 
     /**

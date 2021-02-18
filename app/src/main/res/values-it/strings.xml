@@ -7,8 +7,8 @@
     <string name="menu_podcast">Podcast</string>
     <string name="menu_tv">105 TV</string>
     <string name="streaming">Avvia lo Streaming</string>
-    <string name="pause">Metti in pausa</string>
-    <string name="stop">Ferma lo Streaming</string>
+    <string name="pause_streaming">Metti in pausa</string>
+    <string name="stop_streaming">Ferma lo Streaming</string>
     <string name="logo">105 Logo</string>
     <string name="title_activity_settings">Impostazioni</string>
 
@@ -34,4 +34,9 @@
     <string name="unitedradio"><a href="https://www.unitedmusic.com/">Unitedradio</a> per lo streaming radio</string>
     <string name="google"><a href="https://www.google.com/">Google</a> per l\' esempio nel loro vecchissimo SDK</string>
     <string name="stackoverflow"><a href="https://stackoverflow.com/">StackOverflow</a> (come sempre) per l\' aiuto e  suggerimenti</string>
+
+    <!-- Notification commands -->
+    <string name="play">Riproduci</string>
+    <string name="pause">Pausa</string>
+    <string name="stop">Ferma</string>
 </resources>

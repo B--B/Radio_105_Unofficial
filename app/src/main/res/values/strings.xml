@@ -8,8 +8,8 @@
     <string name="menu_podcast">Podcast</string>
     <string name="menu_tv">105 TV</string>
     <string name="streaming">Start Streaming</string>
-    <string name="pause">Pause Streaming</string>
-    <string name="stop">Stop Streaming</string>
+    <string name="pause_streaming">Pause Streaming</string>
+    <string name="stop_streaming">Stop Streaming</string>
     <string name="logo">105 Logo</string>
     <string name="title_activity_settings">Settings</string>
 
@@ -40,4 +40,9 @@
     <string name="unitedradio"><a href="https://www.unitedmusic.com/">Unitedradio</a> for radio streaming</string>
     <string name="google"><a href="https://www.google.com/">Google</a> for the example in their really old SDK</string>
     <string name="stackoverflow"><a href="https://stackoverflow.com/">StackOverflow</a> (as ever) for all hints and suggestions</string>
+
+    <!-- Notification commands -->
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="stop">Stop</string>
 </resources>

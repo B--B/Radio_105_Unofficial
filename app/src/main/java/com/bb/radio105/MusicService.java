@@ -54,16 +54,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     final static String TAG = "Radio105Player";
     public static final String CHANNEL_ID = "Radio105ServiceChannel";
 
-    // These are the Intent actions that we are prepared to handle. Notice that the fact these
-    // constants exist in our class is a mere convenience: what really defines the actions our
-    // service can handle are the <action> tags in the <intent-filters> tag for our service in
-    // AndroidManifest.xml.
-    public static final String ACTION_TOGGLE_PLAYBACK =
-            "com.bb.radio105.action.TOGGLE_PLAYBACK";
-    public static final String ACTION_PLAY = "com.bb.radio105.action.PLAY";
-    public static final String ACTION_PAUSE = "com.bb.radio105.action.PAUSE";
-    public static final String ACTION_STOP = "com.bb.radio105.action.STOP";
-
     // our media player
     MediaPlayer mPlayer = null;
 
@@ -154,16 +144,16 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
         switch (action) {
-            case ACTION_TOGGLE_PLAYBACK:
+            case Constants.ACTION_TOGGLE_PLAYBACK:
                 processTogglePlaybackRequest();
                 break;
-            case ACTION_PLAY:
+            case Constants.ACTION_PLAY:
                 processPlayRequest();
                 break;
-            case ACTION_PAUSE:
+            case Constants.ACTION_PAUSE:
                 processPauseRequest();
                 break;
-            case ACTION_STOP:
+            case Constants.ACTION_STOP:
                 processStopRequest();
                 break;
         }
@@ -333,12 +323,12 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
         //Intent for Pause
         Intent pauseIntent = new Intent(this, MusicService.class);
-        pauseIntent.setAction("com.bb.radio105.action.PAUSE");
+        pauseIntent.setAction(Constants.ACTION_PAUSE);
         PendingIntent mPauseIntent = PendingIntent.getService(this, 0, pauseIntent, 0);
 
         //Intent for Close
         Intent stopIntent = new Intent(this, MusicService.class);
-        stopIntent.setAction("com.bb.radio105.action.STOP");
+        stopIntent.setAction(Constants.ACTION_STOP);
         PendingIntent mStopIntent = PendingIntent.getService(this, 0, stopIntent, 0);
 
         // Creating notification channel

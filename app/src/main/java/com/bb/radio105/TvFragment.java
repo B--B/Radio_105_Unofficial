@@ -50,7 +50,7 @@ public class TvFragment extends Fragment {
         boolean service = Utils.isRadioStreamingRunningInForeground(requireContext());
         if (service) {
             Intent mIntent = new Intent();
-            mIntent.setAction("com.bb.radio105.action.STOP");
+            mIntent.setAction(Constants.ACTION_STOP);
             mIntent.setPackage(requireContext().getPackageName());
             requireContext().startService(mIntent);
          }

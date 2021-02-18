@@ -36,7 +36,7 @@ public class HeadsetIntentReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
             if (pref) {
                 Intent mIntent = new Intent();
-                mIntent.setAction("com.bb.radio105.action.PAUSE");
+                mIntent.setAction(Constants.ACTION_PAUSE);
                 mIntent.setPackage(context.getPackageName());
                 context.startService(mIntent);
                 HomeFragment.headphoneDisconnected.onUpdate(true);

@@ -90,7 +90,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
 
     private void radioPlay(Activity context) {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.PLAY");
+        mIntent.setAction(Constants.ACTION_PLAY);
         mIntent.setPackage(context.getPackageName());
         context.startService(mIntent);
         button1.setEnabled(false);
@@ -100,7 +100,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
 
     private void radioPause(Activity context) {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.PAUSE");
+        mIntent.setAction(Constants.ACTION_PAUSE);
         mIntent.setPackage(context.getPackageName());
         context.startService(mIntent);
         button1.setEnabled(true);
@@ -110,7 +110,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
 
     private void radioStop(Activity activity) {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.STOP");
+        mIntent.setAction(Constants.ACTION_STOP);
         mIntent.setPackage(activity.getPackageName());
         activity.startService(mIntent);
         button1.setEnabled(true);

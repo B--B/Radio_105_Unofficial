@@ -319,17 +319,17 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         //Intent for Play
 //        Intent playIntent = new Intent(this, MusicService.class);
 //        playIntent.setAction("com.bb.radio105.action.PLAY");
-//        PendingIntent mPlayIntent = PendingIntent.getService(this, 0, playIntent, 0);
+//        PendingIntent mPlayIntent = PendingIntent.getService(this, 100, playIntent, 0);
 
         //Intent for Pause
-        Intent pauseIntent = new Intent(this, MusicService.class);
+        Intent pauseIntent = new Intent();
         pauseIntent.setAction(Constants.ACTION_PAUSE);
-        PendingIntent mPauseIntent = PendingIntent.getService(this, 0, pauseIntent, 0);
+        PendingIntent mPauseIntent = PendingIntent.getService(this, 101, pauseIntent, 0);
 
         //Intent for Close
-        Intent stopIntent = new Intent(this, MusicService.class);
+        Intent stopIntent = new Intent();
         stopIntent.setAction(Constants.ACTION_STOP);
-        PendingIntent mStopIntent = PendingIntent.getService(this, 0, stopIntent, 0);
+        PendingIntent mStopIntent = PendingIntent.getService(this, 102, stopIntent, 0);
 
         // Creating notification channel
         createNotificationChannel();

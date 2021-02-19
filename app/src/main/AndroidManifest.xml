@@ -36,6 +36,9 @@
                 <action android:name="com.bb.radio105.action.PLAY" />
                 <action android:name="com.bb.radio105.action.PAUSE" />
                 <action android:name="com.bb.radio105.action.STOP" />
+                <action android:name="com.bb.radio105.action.PLAY_NOTIFICATION" />
+                <action android:name="com.bb.radio105.action.PAUSE_NOTIFICATION" />
+                <action android:name="com.bb.radio105.action.STOP_NOTIFICATION" />
             </intent-filter>
         </service>
 

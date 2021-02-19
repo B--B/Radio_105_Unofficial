@@ -23,6 +23,13 @@
         app:title="@string/noisy_key_title"
         app:defaultValue="true"/>
 
+    <SwitchPreferenceCompat
+        app:key="@string/notification_key"
+        app:summaryOff="@string/notification_key_summary_off"
+        app:summaryOn="@string/notification_key_summary_on"
+        app:title="@string/notification_key_title"
+        app:defaultValue="false"/>
+
     <Preference
         app:key="@string/thanks"
         app:title="@string/special_thanks" />

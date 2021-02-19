@@ -12,13 +12,15 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-public class HomeFragment extends Fragment implements View.OnClickListener, UpdateHeadphoneStatusListener {
+public class HomeFragment extends Fragment implements View.OnClickListener, UpdateHeadphoneStatusListener,
+ NotificationStatusListener {
 
     Button button1;
     Button button2;
     Button button3;
 
     static UpdateHeadphoneStatusListener headphoneDisconnected;
+    static NotificationStatusListener notificationStatusListener;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -34,6 +36,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
         button3.setOnClickListener(this);
 
         headphoneDisconnected = this;
+        notificationStatusListener = this;
 
         boolean service = Utils.isRadioStreamingRunning(requireContext());
         boolean serviceInForeground = Utils.isRadioStreamingRunningInForeground(requireContext());
@@ -55,13 +58,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
             button3.setEnabled(false);
         }
 
-        IntentFilter receiverFilter1 = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-        HeadsetIntentReceiver receiver1 = new HeadsetIntentReceiver();
-        requireContext().registerReceiver(receiver1, receiverFilter1);
+//        IntentFilter receiverFilter1 = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+//        HeadsetIntentReceiver receiver1 = new HeadsetIntentReceiver();
+//        requireContext().registerReceiver(receiver1, receiverFilter1);
 
         IntentFilter receiverFilter2 = new IntentFilter(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         HeadsetIntentReceiver receiver2 = new HeadsetIntentReceiver();
         requireContext().registerReceiver(receiver2, receiverFilter2);
+
+        IntentFilter receiverFilter3 = new IntentFilter();
+        receiverFilter3.addAction(Constants.ACTION_PLAY);
+        receiverFilter3.addAction(Constants.ACTION_PAUSE);
+        receiverFilter3.addAction(Constants.ACTION_STOP);
+        receiverFilter3.addAction(Constants.ACTION_PLAY_NOTIFICATION);
+        receiverFilter3.addAction(Constants.ACTION_PAUSE_NOTIFICATION);
+        receiverFilter3.addAction(Constants.ACTION_STOP_NOTIFICATION);
+        NotificationIntentReceiver notificationIntentReceiver = new NotificationIntentReceiver();
+        requireContext().registerReceiver(notificationIntentReceiver, receiverFilter3);
 
         return root;
     }
@@ -93,9 +106,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
         mIntent.setAction(Constants.ACTION_PLAY);
         mIntent.setPackage(context.getPackageName());
         context.startService(mIntent);
-        button1.setEnabled(false);
-        button2.setEnabled(true);
-        button3.setEnabled(true);
     }
 
     private void radioPause(Activity context) {
@@ -103,9 +113,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
         mIntent.setAction(Constants.ACTION_PAUSE);
         mIntent.setPackage(context.getPackageName());
         context.startService(mIntent);
-        button1.setEnabled(true);
-        button2.setEnabled(false);
-        button3.setEnabled(true);
     }
 
     private void radioStop(Activity activity) {
@@ -113,8 +120,34 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
         mIntent.setAction(Constants.ACTION_STOP);
         mIntent.setPackage(activity.getPackageName());
         activity.startService(mIntent);
-        button1.setEnabled(true);
-        button2.setEnabled(false);
-        button3.setEnabled(false);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onButtonStatusChange(String status) {
+        switch (status) {
+            case "Play":
+            case "Play_Notification":
+                button1.setEnabled(false);
+                button2.setEnabled(true);
+                button3.setEnabled(true);
+                break;
+            case "Pause":
+            case "Pause_Notification":
+                button1.setEnabled(true);
+                button2.setEnabled(false);
+                button3.setEnabled(true);
+                break;
+            case "Stop":
+            case "Stop_Notification":
+                button1.setEnabled(true);
+                button2.setEnabled(false);
+                button3.setEnabled(false);
+                break;
+        }
     }
 }

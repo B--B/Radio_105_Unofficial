@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -149,12 +150,21 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                 break;
             case Constants.ACTION_PLAY:
                 processPlayRequest();
+                sendBroadcast(intent);
+                break;
+            case Constants.ACTION_PLAY_NOTIFICATION:
+                processPlayRequestNotification();
+                sendBroadcast(intent);
                 break;
             case Constants.ACTION_PAUSE:
+            case Constants.ACTION_PAUSE_NOTIFICATION:
                 processPauseRequest();
+                sendBroadcast(intent);
                 break;
             case Constants.ACTION_STOP:
+            case Constants.ACTION_STOP_NOTIFICATION:
                 processStopRequest();
+                sendBroadcast(intent);
                 break;
         }
 
@@ -180,17 +190,30 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         else if (mState == State.Paused) {
             // If we're paused, just continue playback and restore the 'foreground service' state.
             mState = State.Playing;
-            setUpAsForeground(mSongTitle + " (playing)");
+            setUpAsForeground(mSongTitle + " playing");
             configAndStartMediaPlayer();
         }
     }
 
+    void processPlayRequestNotification() {
+        mState = State.Playing;
+        updateNotification(mSongTitle + " playing");
+        configAndStartMediaPlayer();
+    }
+
     void processPauseRequest() {
         if (mState == State.Playing) {
+            boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean(getString(R.string.notification_key), false);
             // Pause media player and cancel the 'foreground service' state.
             mState = State.Paused;
             mPlayer.pause();
-            relaxResources(false); // while paused, we always retain the MediaPlayer
+            if (!pref) {
+                relaxResources(false); // while paused, we always retain the MediaPlayer
+            } else {
+                updateNotification(mSongTitle + " pause");
+                relaxResources();
+            }
             // do not give up audio focus
         }
     }
@@ -232,6 +255,11 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         if (mWifiLock.isHeld()) mWifiLock.release();
     }
 
+    void relaxResources() {
+        // we can release the Wifi lock, if we're holding it
+        if (mWifiLock.isHeld()) mWifiLock.release();
+    }
+
     /**
      * Reconfigures MediaPlayer according to audio focus settings and starts/restarts it. This
      * method starts/restarts the MediaPlayer respecting the current audio focus state. So if
@@ -258,11 +286,17 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
         try {
             createMediaPlayerIfNeeded();
-            mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            if (android.os.Build.VERSION.SDK_INT >= 21) {
+                AudioAttributes.Builder b = new AudioAttributes.Builder();
+                b.setUsage(AudioAttributes.USAGE_MEDIA);
+                mPlayer.setAudioAttributes(b.build());
+            } else {
+                mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            }
             mPlayer.setDataSource(manualUrl);
 
             mState = State.Preparing;
-            setUpAsForeground(mSongTitle + " (loading)");
+            setUpAsForeground(mSongTitle + " loading");
 
             // starts preparing the media player in the background. When it's done, it will call
             // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
@@ -294,7 +328,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     public void onPrepared(MediaPlayer player) {
         // The media player is done preparing. That means we can start playing!
         mState = State.Playing;
-        updateNotification(mSongTitle + " (playing)");
+        updateNotification(mSongTitle + " playing");
         configAndStartMediaPlayer();
     }
 
@@ -316,21 +350,25 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
 
     void setUpAsForeground(String text) {
+
         //Intent for Play
-//        Intent playIntent = new Intent(this, MusicService.class);
-//        playIntent.setAction("com.bb.radio105.action.PLAY");
-//        PendingIntent mPlayIntent = PendingIntent.getService(this, 100, playIntent, 0);
+        Intent playIntent = new Intent();
+        playIntent.setAction(Constants.ACTION_PLAY_NOTIFICATION);
+        PendingIntent mPlayIntent = PendingIntent.getService(this, 100, playIntent, 0);
 
         //Intent for Pause
         Intent pauseIntent = new Intent();
-        pauseIntent.setAction(Constants.ACTION_PAUSE);
+        pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION);
         PendingIntent mPauseIntent = PendingIntent.getService(this, 101, pauseIntent, 0);
 
-        //Intent for Close
+        //Intent for Stop
         Intent stopIntent = new Intent();
-        stopIntent.setAction(Constants.ACTION_STOP);
+        stopIntent.setAction(Constants.ACTION_STOP_NOTIFICATION);
         PendingIntent mStopIntent = PendingIntent.getService(this, 102, stopIntent, 0);
 
+
+        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.notification_key), false);
         // Creating notification channel
         createNotificationChannel();
         Intent intent = new Intent(this, MainActivity.class);
@@ -344,12 +382,14 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mNotificationBuilder.setContentText(text);
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-//        mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mPlayIntent);
+        if (pref) {
+            mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mPlayIntent);
+        }
         mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mPauseIntent);
         mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mStopIntent);
         // Launch notification
         startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
-}
+    }
 
     /**
      * Called when there's an error playing media. When this happens, the media player goes to

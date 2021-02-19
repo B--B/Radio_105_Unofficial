@@ -39,4 +39,10 @@
     <string name="play">Riproduci</string>
     <string name="pause">Pausa</string>
     <string name="stop">Ferma</string>
+    <string name="notification_key_summary_off">Notification icon will disappear when streaming is paused</string>
+    <string name="notification_key_summary_on">Notification will persist even when the radio stream is paused</string>
+    <string name="notification_key_title">Persistent Notification</string>
+    <string name="loading">In Caricamento</string>
+    <string name="playing">In Riproduzione</string>
+    <string name="in_pause">In Pausa</string>
 </resources>

@@ -11,5 +11,8 @@ public class Constants {
     public static final String ACTION_PLAY = "com.bb.radio105.action.PLAY";
     public static final String ACTION_PAUSE = "com.bb.radio105.action.PAUSE";
     public static final String ACTION_STOP = "com.bb.radio105.action.STOP";
+    public static final String ACTION_PLAY_NOTIFICATION = "com.bb.radio105.action.PLAY_NOTIFICATION";
+    public static final String ACTION_PAUSE_NOTIFICATION = "com.bb.radio105.action.PAUSE_NOTIFICATION";
+    public static final String ACTION_STOP_NOTIFICATION = "com.bb.radio105.action.STOP_NOTIFICATION";
 
 }

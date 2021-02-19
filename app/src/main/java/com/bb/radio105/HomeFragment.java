@@ -11,16 +11,15 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
-public class HomeFragment extends Fragment implements View.OnClickListener, UpdateHeadphoneStatusListener,
- NotificationStatusListener {
+public class HomeFragment extends Fragment implements View.OnClickListener, PlayerStatusListener {
 
     Button button1;
     Button button2;
     Button button3;
 
-    static UpdateHeadphoneStatusListener headphoneDisconnected;
-    static NotificationStatusListener notificationStatusListener;
+    static PlayerStatusListener playerStatusListener;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -35,8 +34,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
 
-        headphoneDisconnected = this;
-        notificationStatusListener = this;
+        playerStatusListener = this;
 
         boolean service = Utils.isRadioStreamingRunning(requireContext());
         boolean serviceInForeground = Utils.isRadioStreamingRunningInForeground(requireContext());
@@ -58,23 +56,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
             button3.setEnabled(false);
         }
 
-//        IntentFilter receiverFilter1 = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-//        HeadsetIntentReceiver receiver1 = new HeadsetIntentReceiver();
-//        requireContext().registerReceiver(receiver1, receiverFilter1);
-
-        IntentFilter receiverFilter2 = new IntentFilter(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-        HeadsetIntentReceiver receiver2 = new HeadsetIntentReceiver();
-        requireContext().registerReceiver(receiver2, receiverFilter2);
-
-        IntentFilter receiverFilter3 = new IntentFilter();
-        receiverFilter3.addAction(Constants.ACTION_PLAY);
-        receiverFilter3.addAction(Constants.ACTION_PAUSE);
-        receiverFilter3.addAction(Constants.ACTION_STOP);
-        receiverFilter3.addAction(Constants.ACTION_PLAY_NOTIFICATION);
-        receiverFilter3.addAction(Constants.ACTION_PAUSE_NOTIFICATION);
-        receiverFilter3.addAction(Constants.ACTION_STOP_NOTIFICATION);
-        NotificationIntentReceiver notificationIntentReceiver = new NotificationIntentReceiver();
-        requireContext().registerReceiver(notificationIntentReceiver, receiverFilter3);
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Constants.ACTION_PLAY);
+        mIntentFilter.addAction(Constants.ACTION_PAUSE);
+        mIntentFilter.addAction(Constants.ACTION_STOP);
+        mIntentFilter.addAction(Constants.ACTION_PLAY_NOTIFICATION);
+        mIntentFilter.addAction(Constants.ACTION_PAUSE_NOTIFICATION);
+        mIntentFilter.addAction(Constants.ACTION_STOP_NOTIFICATION);
+        mIntentFilter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
+        requireContext().registerReceiver(playerIntentReceiver, mIntentFilter);
 
         return root;
     }
@@ -89,15 +80,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
         }
         else if (target == button3) {
             radioStop(requireActivity());
-        }
-    }
-
-    @Override
-    public void onUpdate (boolean disconnected) {
-        if (disconnected){
-            button1.setEnabled(true);
-            button2.setEnabled(false);
-            button3.setEnabled(false);
         }
     }
 
@@ -123,11 +105,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     public void onButtonStatusChange(String status) {
         switch (status) {
             case "Play":
@@ -147,6 +124,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Upda
                 button1.setEnabled(true);
                 button2.setEnabled(false);
                 button3.setEnabled(false);
+                break;
+            case "Audio_Device_Disconnected":
+                boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                        .getBoolean(requireContext().getString(R.string.noisy_key), true);
+                if (pref) {
+                    Intent mIntent = new Intent();
+                    mIntent.setAction(Constants.ACTION_PAUSE);
+                    mIntent.setPackage(requireContext().getPackageName());
+                    requireContext().startService(mIntent);
+                    button1.setEnabled(true);
+                    button2.setEnabled(false);
+                    button3.setEnabled(true);
+                }
                 break;
         }
     }

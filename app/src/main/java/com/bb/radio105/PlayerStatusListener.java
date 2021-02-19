@@ -1,5 +1,5 @@
 package com.bb.radio105;
 
-interface NotificationStatusListener {
+interface PlayerStatusListener {
     void onButtonStatusChange(String status);
 }

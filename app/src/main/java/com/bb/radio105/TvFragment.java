@@ -16,8 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.bb.radio105.R;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -53,6 +51,7 @@ public class TvFragment extends Fragment {
             mIntent.setAction(Constants.ACTION_STOP);
             mIntent.setPackage(requireContext().getPackageName());
             requireContext().startService(mIntent);
+            requireContext().sendBroadcast(mIntent);
          }
 
         // Start video streaming

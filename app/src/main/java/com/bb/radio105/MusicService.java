@@ -70,15 +70,8 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     State mState = State.Stopped;
 
-    enum PauseReason {
-        UserRequest,  // paused by user request
-    }
-
-    // why did we pause? (only relevant if mState == State.Paused)
-    PauseReason mPauseReason = PauseReason.UserRequest;
-
     // title of the song we are currently playing
-    String mSongTitle = "Radio 105 Streaming";
+    final String mSongTitle = "Radio 105 Streaming";
 
     // Wifi lock that we hold when streaming files from the internet, in order to prevent the
     // device from shutting off the Wifi radio
@@ -190,14 +183,14 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         else if (mState == State.Paused) {
             // If we're paused, just continue playback and restore the 'foreground service' state.
             mState = State.Playing;
-            setUpAsForeground(mSongTitle + " playing");
+            setUpAsForeground(mSongTitle + getString(R.string.playing));
             configAndStartMediaPlayer();
         }
     }
 
     void processPlayRequestNotification() {
         mState = State.Playing;
-        updateNotification(mSongTitle + " playing");
+        updateNotification(mSongTitle + getString(R.string.playing));
         configAndStartMediaPlayer();
     }
 
@@ -211,7 +204,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             if (!pref) {
                 relaxResources(false); // while paused, we always retain the MediaPlayer
             } else {
-                updateNotification(mSongTitle + " pause");
+                updateNotification(mSongTitle + getString(R.string.in_pause));
                 relaxResources();
             }
             // do not give up audio focus
@@ -296,7 +289,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             mPlayer.setDataSource(manualUrl);
 
             mState = State.Preparing;
-            setUpAsForeground(mSongTitle + " loading");
+            setUpAsForeground(mSongTitle + getString(R.string.loading));
 
             // starts preparing the media player in the background. When it's done, it will call
             // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
@@ -328,7 +321,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     public void onPrepared(MediaPlayer player) {
         // The media player is done preparing. That means we can start playing!
         mState = State.Playing;
-        updateNotification(mSongTitle + " playing");
+        updateNotification(mSongTitle + getString(R.string.playing));
         configAndStartMediaPlayer();
     }
 
@@ -378,7 +371,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
         mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
         mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
-        mNotificationBuilder.setContentTitle("Radio 105 Streaming");
+        mNotificationBuilder.setContentTitle(getString(R.string.radio));
         mNotificationBuilder.setContentText(text);
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);

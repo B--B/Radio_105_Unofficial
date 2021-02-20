@@ -56,7 +56,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     public static final String CHANNEL_ID = "Radio105ServiceChannel";
 
     // our media player
-    MediaPlayer mPlayer = null;
+    static MediaPlayer mPlayer = null;
 
     // indicates the state our service:
     enum State {
@@ -68,7 +68,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         Paused      // playback paused (media player ready!)
     }
 
-    State mState = State.Stopped;
+    static State mState = State.Stopped;
 
     // title of the song we are currently playing
     final String mSongTitle = "Radio 105 Streaming";

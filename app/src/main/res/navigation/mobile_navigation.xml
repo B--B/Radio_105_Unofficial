@@ -23,6 +23,12 @@
         tools:layout="@layout/fragment_podcast" />
 
     <fragment
+        android:id="@+id/nav_zoo"
+        android:name="com.bb.radio105.ZooFragment"
+        android:label="@string/menu_zoo"
+        tools:layout="@layout/fragment_zoo" />
+
+    <fragment
         android:id="@+id/nav_settings"
         android:name="com.bb.radio105.Settings2Fragment"
         android:label="@string/title_activity_settings"

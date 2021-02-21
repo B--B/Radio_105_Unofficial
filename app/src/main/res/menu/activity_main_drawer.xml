@@ -17,6 +17,10 @@
             android:icon="@drawable/ic_menu_podcast"
             android:title="@string/menu_podcast" />
         <item
+            android:id="@+id/nav_zoo"
+            android:icon="@drawable/ic_menu_zoo"
+            android:title="@string/menu_zoo" />
+        <item
             android:id="@+id/nav_settings"
             android:icon="@android:drawable/ic_menu_preferences"
             android:title="@string/title_activity_settings" />

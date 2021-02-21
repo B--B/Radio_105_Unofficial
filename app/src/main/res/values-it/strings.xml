@@ -46,4 +46,5 @@
     <string name="playing">"  (In Riproduzione)"</string>
     <string name="in_pause">"  (In Pausa)"</string>
     <string name="radio">105 FM Radio Streaming</string>
+    <string name="menu_zoo">The 105 Zoo</string>
 </resources>

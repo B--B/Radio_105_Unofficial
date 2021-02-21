@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment;
 import org.jetbrains.annotations.NotNull;
 
 public class PodcastFragment extends Fragment {
-
     WebView mWebView = null;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -32,7 +31,6 @@ public class PodcastFragment extends Fragment {
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
-        setRetainInstance(true);
         mWebView = root.findViewById(R.id.webView);
         String url = "https://www.105.net/sezioni/995/podcast";
         final String javaScript = "javascript:(function() { " +

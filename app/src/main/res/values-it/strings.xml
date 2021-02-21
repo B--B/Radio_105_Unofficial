@@ -6,11 +6,13 @@
     <string name="menu_home">Radio 105</string>
     <string name="menu_podcast">Podcast e Repliche</string>
     <string name="menu_tv">105 TV</string>
+    <string name="menu_zoo">The 105 Zoo</string>
     <string name="streaming">Avvia lo Streaming</string>
     <string name="pause_streaming">Metti in pausa</string>
     <string name="stop_streaming">Ferma lo Streaming</string>
     <string name="logo">105 Logo</string>
     <string name="title_activity_settings">Impostazioni</string>
+    <string name="radio">105 FM Radio Streaming</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Seleziona Tema</string>
@@ -39,12 +41,15 @@
     <string name="play">Riproduci</string>
     <string name="pause">Pausa</string>
     <string name="stop">Ferma</string>
-    <string name="notification_key_summary_off">Notification icon will disappear when streaming is paused</string>
-    <string name="notification_key_summary_on">Notification will persist even when the radio stream is paused</string>
-    <string name="notification_key_title">Persistent Notification</string>
+    <string name="notification_key_summary_off">L\' icona di notifica durante lo streaming radio sparirà quando lo streaming viene messo in pausa</string>
+    <string name="notification_key_summary_on">L\' icona di notifica durante lo streaming radio non sparirà quando lo streaming viene messo in pausa</string>
+    <string name="notification_key_title">Notifica Persistente</string>
     <string name="loading">"  (In Caricamento)"</string>
     <string name="playing">"  (In Riproduzione)"</string>
     <string name="in_pause">"  (In Pausa)"</string>
-    <string name="radio">105 FM Radio Streaming</string>
-    <string name="menu_zoo">The 105 Zoo</string>
+
+    <!-- Screen always on -->
+    <string name="screen_on_title">Schermo Sempre Acceso</string>
+    <string name="screen_on_summary_on">Lo schermo rimarrà sempre acceso nelle sezioni Podcast e The 105 zoo</string>
+    <string name="screen_on_summary_off">Lo schermo si spegnerà regolarmente nelle sezioni Podcast e The 105 zoo</string>
 </resources>

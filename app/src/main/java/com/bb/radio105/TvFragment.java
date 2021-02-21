@@ -47,11 +47,13 @@ public class TvFragment extends Fragment {
         // Stop radio streaming if running
         boolean service = Utils.isRadioStreamingRunningInForeground(requireContext());
         if (service) {
-            Intent mIntent = new Intent();
-            mIntent.setAction(Constants.ACTION_STOP);
-            mIntent.setPackage(requireContext().getPackageName());
-            requireContext().startService(mIntent);
-            requireContext().sendBroadcast(mIntent);
+             if (MusicService.mState == MusicService.State.Playing) {
+                 Intent mIntent = new Intent();
+                 mIntent.setAction(Constants.ACTION_STOP);
+                 mIntent.setPackage(requireContext().getPackageName());
+                 requireContext().startService(mIntent);
+                 requireContext().sendBroadcast(mIntent);
+             }
          }
 
         // Start video streaming

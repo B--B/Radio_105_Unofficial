@@ -92,31 +92,27 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
 
     @Override
     public void onStart() {
-
-        boolean service = Utils.isRadioStreamingRunning(requireContext());
-        boolean serviceInForeground = Utils.isRadioStreamingRunningInForeground(requireContext());
-        if (service) {
-            if (!serviceInForeground) {
-                // Pause state
+        switch (MusicService.mState) {
+            case Playing:
+                button1.setEnabled(false);
+                button2.setEnabled(true);
+                button3.setEnabled(true);
+                break;
+            case Paused:
                 button1.setEnabled(true);
                 button2.setEnabled(false);
-            } else {
-                if (MusicService.mState == MusicService.State.Paused) {
-                    // Pause with persistent notification option enabled
-                    button1.setEnabled(true);
-                    button2.setEnabled(false);
-                } else {
-                    // Playing state
-                    button1.setEnabled(false);
-                    button2.setEnabled(true);
-                }
-            }
-            button3.setEnabled(true);
-        } else {
-            // Stop state
-            button1.setEnabled(true);
-            button2.setEnabled(false);
-            button3.setEnabled(false);
+                button3.setEnabled(true);
+                break;
+            case Stopped:
+                button1.setEnabled(true);
+                button2.setEnabled(false);
+                button3.setEnabled(false);
+                break;
+            case Preparing:
+                button1.setEnabled(false);
+                button2.setEnabled(false);
+                button3.setEnabled(false);
+                break;
         }
         super.onStart();
     }

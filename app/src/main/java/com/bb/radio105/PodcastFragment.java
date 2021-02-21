@@ -10,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -20,6 +22,8 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class PodcastFragment extends Fragment {
     WebView mWebView = null;
@@ -34,6 +38,8 @@ public class PodcastFragment extends Fragment {
             public void handleOnBackPressed() {
                 if (mWebView.canGoBack()) {
                     mWebView.goBack();
+                } else {
+                    requireActivity().moveTaskToBack(true);
                 }
             }
         };
@@ -78,7 +84,8 @@ public class PodcastFragment extends Fragment {
 
         mWebView.setWebViewClient(new WebViewClient() {
 
-            public boolean shouldOverrideUrlLoading (WebView view, WebResourceRequest request) {
+            @Override
+            public boolean shouldOverrideUrlLoading (WebView webView, WebResourceRequest request) {
                 if (Uri.parse(request.getUrl().toString()).getHost().contains("www.105.net")) {
                     return false;
                 }
@@ -93,18 +100,25 @@ public class PodcastFragment extends Fragment {
             }
 
             @Override
-            public void onPageStarted(WebView mWebView, String url, Bitmap mBitmap) {
-                mWebView.setVisibility(View.GONE);
+            public void onPageStarted(WebView webView, String url, Bitmap mBitmap) {
+                webView.setVisibility(View.GONE);
                 root.findViewById(R.id.loading).setVisibility(View.VISIBLE);
-                super.onPageStarted(mWebView, url, mBitmap);
+                super.onPageStarted(webView, url, mBitmap);
             }
 
             @Override
-            public void onPageFinished (WebView mWebView, String url) {
-                mWebView.loadUrl(javaScript);
+            public void onPageFinished (WebView webView, String url) {
+                webView.loadUrl(javaScript);
                 root.findViewById(R.id.loading).setVisibility(View.GONE);
-                mWebView.setVisibility(View.VISIBLE);
-                super.onPageFinished(mWebView, url);
+                webView.setVisibility(View.VISIBLE);
+                super.onPageFinished(webView, url);
+            }
+
+            @Override
+            public void onReceivedHttpError(WebView webView, WebResourceRequest request, WebResourceResponse errorResponse) {
+
+                String ErrorPagePath = "file:///android_asset/index.html";
+                webView.loadUrl(ErrorPagePath);
             }
         });
         return root;

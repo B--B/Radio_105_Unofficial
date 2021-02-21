@@ -2,6 +2,7 @@ package com.bb.radio105;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -66,6 +67,13 @@ public class ZooFragment extends Fragment {
         }
 
         mWebView.setWebViewClient(new WebViewClient() {
+
+            // I must reintroduce this deprecated code because
+            // some links on https://zoo.105.net redirects on https://www.105.net
+            // and actually i haven't a better idea
+            public boolean shouldOverrideUrlLoading (WebView view, String url) {
+                return Uri.parse(url).getHost().contains("www.105.net");
+            }
 
             @Override
             public void onPageStarted(WebView mWebView, String url, Bitmap mBitmap) {

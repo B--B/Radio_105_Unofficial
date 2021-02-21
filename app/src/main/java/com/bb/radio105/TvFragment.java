@@ -32,6 +32,7 @@ public class TvFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_tv, container, false);
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
             requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
         }

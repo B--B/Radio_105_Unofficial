@@ -1,5 +1,6 @@
 package com.bb.radio105;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public class PodcastFragment extends Fragment {
     WebView mWebView = null;
 
+    @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_podcast, container, false);
@@ -69,12 +71,6 @@ public class PodcastFragment extends Fragment {
         }
 
         mWebView.setWebViewClient(new WebViewClient() {
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
-            }
 
             @Override
             public void onPageStarted(WebView mWebView, String url, Bitmap mBitmap) {

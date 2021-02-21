@@ -121,7 +121,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
         // Create the Wifi lock (this does not acquire the lock, this just creates it)
         mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
-                .createWifiLock(WifiManager.WIFI_MODE_FULL, "radio105lock");
+                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "radio105lock");
 
         mNotificationManager = NotificationManagerCompat.from(this);
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -279,13 +279,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
         try {
             createMediaPlayerIfNeeded();
-            if (android.os.Build.VERSION.SDK_INT >= 21) {
-                AudioAttributes.Builder b = new AudioAttributes.Builder();
-                b.setUsage(AudioAttributes.USAGE_MEDIA);
-                mPlayer.setAudioAttributes(b.build());
-            } else {
-                mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            }
+            AudioAttributes.Builder b = new AudioAttributes.Builder();
+            b.setUsage(AudioAttributes.USAGE_MEDIA);
+            mPlayer.setAudioAttributes(b.build());
             mPlayer.setDataSource(manualUrl);
 
             mState = State.Preparing;

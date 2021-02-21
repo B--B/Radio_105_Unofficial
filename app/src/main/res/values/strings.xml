@@ -60,4 +60,10 @@
     <string name="screen_on_title">Screen Always On</string>
     <string name="screen_on_summary_on">Screen will stay always on in Podcast/The 105 Zoo section</string>
     <string name="screen_on_summary_off">Screen will regularly turns off in Podcast and The 105 Zoo sections</string>
+
+    <!-- Browser alertdialog -->
+    <string name="unsupported_title">Link not supported</string>
+    <string name="unsupported_description">The link you clicked is not supported in this app but you can open it with your default browser app</string>
+    <string name="cancel">Cancel</string>
+    <string name="open_browser">Open in Browser</string>
 </resources>

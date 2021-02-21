@@ -1,6 +1,8 @@
 package com.bb.radio105;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -77,7 +79,17 @@ public class PodcastFragment extends Fragment {
         mWebView.setWebViewClient(new WebViewClient() {
 
             public boolean shouldOverrideUrlLoading (WebView view, WebResourceRequest request) {
-                return !Uri.parse(request.getUrl().toString()).getHost().contains("www.105.net");
+                if (Uri.parse(request.getUrl().toString()).getHost().contains("www.105.net")) {
+                    return false;
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(R.string.unsupported_title);
+                builder.setMessage(R.string.unsupported_description);
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.setPositiveButton(R.string.open_browser, (dialog, id) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.valueOf(Uri.parse(request.getUrl().toString()))))));
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                return true;
             }
 
             @Override

@@ -52,4 +52,10 @@
     <string name="screen_on_title">Schermo Sempre Acceso</string>
     <string name="screen_on_summary_on">Lo schermo rimarrà sempre acceso nelle sezioni Podcast e The 105 zoo</string>
     <string name="screen_on_summary_off">Lo schermo si spegnerà regolarmente nelle sezioni Podcast e The 105 zoo</string>
+
+    <!-- Browser alertdialog -->
+    <string name="unsupported_title">Link non supportato</string>
+    <string name="unsupported_description">Il link che hai cliccato non è supportato da questa applicazione, però puoi aprirlo nel tuo Browser di default.</string>
+    <string name="cancel">Cancella</string>
+    <string name="open_browser">Apri nel Browser</string>
 </resources>

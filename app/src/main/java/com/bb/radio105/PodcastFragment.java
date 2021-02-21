@@ -2,11 +2,13 @@ package com.bb.radio105;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -57,6 +59,8 @@ public class PodcastFragment extends Fragment {
                 "var element = document.getElementsByClassName('anteprima_articolo article_cont vc_preview_medium_bt_podcast vc_txt_m variant vc_theme_light vc_br_60 null Zoo di 105 vc_section_lo-zoo-di-105-home vc_macro_section_canale-lo-zoo-di-105 homezoo scheda cms_article ');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('social social_buttons');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('vc_cont_article');" +
                 " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
         mWebView.getSettings().setLoadsImagesAutomatically(true);
@@ -71,6 +75,10 @@ public class PodcastFragment extends Fragment {
         }
 
         mWebView.setWebViewClient(new WebViewClient() {
+
+            public boolean shouldOverrideUrlLoading (WebView view, WebResourceRequest request) {
+                return !Uri.parse(request.getUrl().toString()).getHost().contains("www.105.net");
+            }
 
             @Override
             public void onPageStarted(WebView mWebView, String url, Bitmap mBitmap) {

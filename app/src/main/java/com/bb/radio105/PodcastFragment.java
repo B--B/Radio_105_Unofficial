@@ -67,7 +67,19 @@ public class PodcastFragment extends Fragment {
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('social social_buttons');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementById('div-gpt-320x50');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementById('div-gpt-skin');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementById('adv-gpt-outofpage');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('vc_cont_article');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('bannervcms banner_728x90_leaderboard ');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('bannervcms banner_masthead ');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('iubenda-cs-container');" +
                 " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
         mWebView.getSettings().setLoadsImagesAutomatically(true);

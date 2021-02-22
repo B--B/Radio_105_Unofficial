@@ -62,6 +62,18 @@ public class ZooFragment extends Fragment {
                 "var element = document.getElementsByClassName('text_edit vc_textedit_box_previews vc_column vc_theme_zoo');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('vc_container_social_button vc_theme_zoo');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('bannervcms banner_rectangle_mobile_320x50_3 ');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('iubenda-cs-container');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementById('adv-gpt-masthead-leaderboard-container1');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementById('google_ads_iframe_/4758/altri_radiomediaset_radio105/altre_1__container__');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementById('div-gpt-320x50');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementById('google_ads_iframe_/4758/altri_radiomediaset_radio105/altre_2__container__');" +
                 " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
         mWebView.getSettings().setLoadsImagesAutomatically(true);

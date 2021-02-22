@@ -16,6 +16,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -128,9 +129,15 @@ public class PodcastFragment extends Fragment {
             @TargetApi(android.os.Build.VERSION_CODES.M)
             @Override
             public void onReceivedError(WebView webView, WebResourceRequest request, WebResourceError error) {
-                // Ignore connection refused error
-                if (error.getErrorCode() != -6) {
+                // Ignore some connection errors
+                // ERR_FAILED = -1
+                // ERR_CONNECTION_REFUSED = -6
+                if (error.getErrorCode() != -6 || error.getErrorCode() != -1) {
                     webView.loadUrl(Constants.ErrorPagePath);
+                    Toast toast = Toast.makeText(getContext(),
+                            "Something went wrong, the error code is  " + error.getErrorCode()
+                                    + "  Description:  " + error.getDescription().toString(), Toast.LENGTH_LONG);
+                    toast.show();
                 }
             }
 

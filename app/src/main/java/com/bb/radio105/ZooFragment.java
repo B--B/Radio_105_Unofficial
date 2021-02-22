@@ -1,7 +1,6 @@
 package com.bb.radio105;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,14 +13,15 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class ZooFragment extends Fragment {
                 if (mWebView.canGoBack()) {
                     mWebView.goBack();
                 } else {
-                    requireActivity().moveTaskToBack(true);
+                    Navigation.findNavController(root).navigate(R.id.nav_home);
                 }
             }
         };
@@ -67,6 +67,10 @@ public class ZooFragment extends Fragment {
                 "var element = document.getElementsByClassName('bannervcms banner_rectangle_mobile_320x50_3 ');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('iubenda-cs-container');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('share vc_share_buttons null');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('bannervcms banner_masthead ');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementById('adv-gpt-masthead-leaderboard-container1');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
@@ -120,30 +124,30 @@ public class ZooFragment extends Fragment {
                 super.onPageFinished(webView, url);
             }
 
-            @TargetApi(Build.VERSION_CODES.M)
+            @RequiresApi(Build.VERSION_CODES.M)
             @Override
             public void onReceivedError(WebView webView, WebResourceRequest request, WebResourceError error) {
                 // Ignore some connection errors
                 // ERR_FAILED = -1
-                // ERR_CONNECTION_REFUSED = -6
-                if (error.getErrorCode() != -6 || error.getErrorCode() != -1) {
-                    webView.loadUrl(Constants.ErrorPagePath);
-                    Toast toast = Toast.makeText(getContext(),
-                            "Something went wrong, the error code is  " + error.getErrorCode()
-                                    + "  Description:  " + error.getDescription().toString(), Toast.LENGTH_LONG);
-                    toast.show();
+                // ERR_CONNECTION_REFUSED = -6 --> needed for people with AD Blocker
+                switch (error.getErrorCode()) {
+                    case -1:
+                    case -6:
+                        break;
+                    default:
+                        webView.loadUrl(Constants.ErrorPagePath);
+                        Toast toast = Toast.makeText(getContext(),
+                                "Something went wrong, the error code is  " + error.getErrorCode()
+                                        + "  Description:  " + error.getDescription().toString(), Toast.LENGTH_LONG);
+                        toast.show();
+                        break;
                 }
             }
 
+            @Deprecated
             @Override
             public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
                 webView.loadUrl(Constants.ErrorPagePath);
-            }
-
-            @Override
-            public void onReceivedHttpError(WebView webView, WebResourceRequest request, WebResourceResponse errorResponse) {
-                webView.loadUrl(Constants.ErrorPagePath);
-                super.onReceivedHttpError(webView, request, errorResponse);
             }
         });
         return root;

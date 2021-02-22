@@ -1,6 +1,7 @@
 package com.bb.radio105;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,8 +23,6 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class PodcastFragment extends Fragment {
     WebView mWebView = null;
@@ -114,11 +113,24 @@ public class PodcastFragment extends Fragment {
                 super.onPageFinished(webView, url);
             }
 
+            @TargetApi(android.os.Build.VERSION_CODES.M)
+            @Override
+            public void onReceivedError(WebView webView, WebResourceRequest request, WebResourceError error) {
+                // Ignore connection refused error
+                if (error.getErrorCode() != -6) {
+                    webView.loadUrl(Constants.ErrorPagePath);
+                }
+            }
+
+            @Override
+            public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
+                webView.loadUrl(Constants.ErrorPagePath);
+            }
+
             @Override
             public void onReceivedHttpError(WebView webView, WebResourceRequest request, WebResourceResponse errorResponse) {
-
-                String ErrorPagePath = "file:///android_asset/index.html";
-                webView.loadUrl(ErrorPagePath);
+                webView.loadUrl(Constants.ErrorPagePath);
+                super.onReceivedHttpError(webView, request, errorResponse);
             }
         });
         return root;

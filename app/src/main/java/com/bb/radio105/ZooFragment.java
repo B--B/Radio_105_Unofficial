@@ -91,17 +91,17 @@ public class ZooFragment extends Fragment {
 
             @Override
             public boolean shouldOverrideUrlLoading (WebView webView, WebResourceRequest request) {
-                if (Uri.parse(request.getUrl().toString()).getHost().contains("www.105.net")) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setTitle(R.string.unsupported_title);
-                    builder.setMessage(R.string.unsupported_description);
-                    builder.setNegativeButton(R.string.cancel, null);
-                    builder.setPositiveButton(R.string.open_browser, (dialog, id) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.valueOf(Uri.parse(request.getUrl().toString()))))));
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-                    return true;
+                if (Uri.parse(request.getUrl().toString()).getHost().contains("zoo.105.net")) {
+                    return false;
                 }
-                return false;
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(R.string.unsupported_title);
+                builder.setMessage(R.string.unsupported_description);
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.setPositiveButton(R.string.open_browser, (dialog, id) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.valueOf(Uri.parse(request.getUrl().toString()))))));
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                return true;
             }
 
             @Override

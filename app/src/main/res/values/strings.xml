@@ -4,6 +4,7 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc" translatable="false">Navigation header</string>
 
+    <!-- Misc -->
     <string name="menu_home">Radio 105</string>
     <string name="menu_podcast">Podcast</string>
     <string name="menu_tv">105 TV</string>
@@ -25,10 +26,6 @@
     <string name="service_kill_summary_on">Radio streaming will be stopped when app is cleared from recent apps</string>
     <string name="service_kill_summary_off">Radio streaming must be stopped manually clicking on "Stop Streaming" button</string>
 
-    <!-- Service Kill Preferences -->
-    <string name="thanks" translatable="false">thanks</string>
-    <string name="special_thanks">Special Thanks</string>
-
     <!-- Headset Preferences -->
     <string name="noisy_key" translatable="false">noisy_key</string>
     <string name="noisy_key_summary_off">Streaming will not stop when an audio device is disconnected</string>
@@ -36,11 +33,15 @@
     <string name="noisy_key_title">Audio Device Settings</string>
 
     <!-- Special Thanks -->
-    <string name="pngio"><a href="https://pngio.com/png">PngIO</a> for icons</string>
+    <string name="thanks" translatable="false">thanks</string>
+    <string name="special_thanks">Special Thanks</string>
+    <string name="icons"><a href="https://pngio.com/png">PngIO</a>, <a href="https://iconape.com/">Icon Ape</a> and <a href="https://www.iconninja.com/">Icon Ninja</a> for icons</string>
     <string name="mediaset"><a href="https://www.mediasetplay.mediaset.it/">Mediaset Play</a> for video streaming</string>
     <string name="unitedradio"><a href="https://www.unitedmusic.com/">Unitedradio</a> for radio streaming</string>
     <string name="google"><a href="https://www.google.com/">Google</a> for the example in their really old SDK</string>
     <string name="stackoverflow"><a href="https://stackoverflow.com/">StackOverflow</a> (as ever) for all hints and suggestions</string>
+    <string name="jhey"><a href="https://codepen.io/jh3y">Jhey</a> for the custom 404 error page</string>
+    <string name="adblockplus"><a href="https://github.com/adblockplus/libadblockplus-android">Adblockplus</a> for their WebView version with ad blocker</string>
 
     <!-- Notification commands -->
     <string name="notification_key" translatable="false">persistent_notification</string>

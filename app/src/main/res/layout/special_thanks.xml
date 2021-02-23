@@ -50,9 +50,25 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/pngio"
+                android:text="@string/icons"
                 android:textSize="20sp"
                 android:id="@+id/pngIO"
+                android:padding="20dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/jhey"
+                android:textSize="20sp"
+                android:id="@+id/jhey"
+                android:padding="20dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/adblockplus"
+                android:textSize="20sp"
+                android:id="@+id/adblockplus"
                 android:padding="20dp" />
 
             <ImageView

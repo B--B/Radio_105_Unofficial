@@ -139,8 +139,8 @@ public class ZooFragment extends Fragment {
                     default:
                         webView.loadUrl(Constants.ErrorPagePath);
                         Toast toast = Toast.makeText(getContext(),
-                                "Something went wrong, the error code is  " + error.getErrorCode()
-                                        + "  Description:  " + error.getDescription().toString(), Toast.LENGTH_LONG);
+                                getString(R.string.something_wrong) + error.getErrorCode()
+                                        + getString(R.string.description) + error.getDescription().toString(), Toast.LENGTH_LONG);
                         toast.show();
                         break;
                 }

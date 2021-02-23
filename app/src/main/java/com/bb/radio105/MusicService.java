@@ -386,7 +386,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
      * the Error state. We warn the user about the error and reset the media player.
      */
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        Toast.makeText(getApplicationContext(), "Media player error! Resetting.",
+        Toast.makeText(getApplicationContext(), getString(R.string.error),
                 Toast.LENGTH_SHORT).show();
         Timber.tag(TAG).e("Error: what=" + what + ", extra=" + extra);
 

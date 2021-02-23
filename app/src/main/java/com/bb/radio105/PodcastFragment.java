@@ -24,10 +24,11 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 
+import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 import org.jetbrains.annotations.NotNull;
 
 public class PodcastFragment extends Fragment {
-    WebView mWebView = null;
+    AdblockWebView mWebView = null;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -48,6 +49,7 @@ public class PodcastFragment extends Fragment {
 
         mWebView = root.findViewById(R.id.webView);
         String url = "https://www.105.net/sezioni/995/podcast";
+        // TODO: Even if it's working this mess must be absolutely cleaned now that ads are gone
         final String javaScript = "javascript:(function() { " +
                 "var element = document.getElementsByClassName('navbar-fixed-top hidden-print');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +

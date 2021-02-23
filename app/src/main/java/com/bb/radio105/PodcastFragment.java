@@ -49,37 +49,30 @@ public class PodcastFragment extends Fragment {
 
         mWebView = root.findViewById(R.id.webView);
         String url = "https://www.105.net/sezioni/995/podcast";
-        // TODO: Even if it's working this mess must be absolutely cleaned now that ads are gone
         final String javaScript = "javascript:(function() { " +
                 "var element = document.getElementsByClassName('navbar-fixed-top hidden-print');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('container vc_bg_white');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('iubenda-cs-container');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('container-fluid vc_bg_darkgray vc_bt7_yellow vc_z2 vc_hidden_print');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('share vc_share_buttons_horizontal null');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('anteprima_slider vc_preview_slider_dj ghost_container vc_txt_m variant vc_theme_light vc_br_100  null ');" +
+                "var element = document.getElementsByClassName('vc_share_buttons_horizontal');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('spacer t_40');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('social social_buttons');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('vc_cont_article');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('bannervcms banner_masthead ');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('container-fluid vc_bg_yellow');" +
+                "var element = document.getElementsByClassName('col-xs-12');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('text_edit vc_textedit_title_refine_results null');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('vc_search_refine_results_standard');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementById('div-gpt-320x50');" +
+                "var element = document.getElementsByClassName('social social_buttons');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementById('google_ads_iframe_/4758/altri_radiomediaset_radio105/altre_2__container__');" +
+                "var element = document.getElementsByClassName('vc_cont_article');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('bannervcms banner_masthead_2_970x250 ');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('anteprima_slider vc_preview_slider_dj ghost_container vc_txt_m variant vc_theme_light vc_br_100  null ');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('container-fluid vc_bg_darkgray vc_bt7_yellow vc_z2 vc_hidden_print');" +
                 " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
         mWebView.getSettings().setLoadsImagesAutomatically(true);

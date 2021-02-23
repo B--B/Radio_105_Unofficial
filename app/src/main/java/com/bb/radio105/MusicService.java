@@ -35,7 +35,6 @@ import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
@@ -43,6 +42,8 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
 
 import java.io.IOException;
+
+import timber.log.Timber;
 
 /**
  * Service that handles media playback.
@@ -117,7 +118,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     @Override
     public void onCreate() {
-        Log.i(TAG, "debug: Creating service");
+        Timber.tag(TAG).i("debug: Creating service");
 
         // Create the Wifi lock (this does not acquire the lock, this just creates it)
         mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
@@ -301,7 +302,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             if (mWifiLock.isHeld()) mWifiLock.release();
         }
         catch (IOException ex) {
-            Log.e("MusicService", "IOException playing next song: " + ex.getMessage());
+            Timber.tag("MusicService").e("IOException playing next song: %s", ex.getMessage());
             ex.printStackTrace();
         }
 
@@ -387,7 +388,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     public boolean onError(MediaPlayer mp, int what, int extra) {
         Toast.makeText(getApplicationContext(), "Media player error! Resetting.",
                 Toast.LENGTH_SHORT).show();
-        Log.e(TAG, "Error: what=" + what + ", extra=" + extra);
+        Timber.tag(TAG).e("Error: what=" + what + ", extra=" + extra);
 
         mState = State.Stopped;
         relaxResources(true);

@@ -90,3 +90,4 @@ lint/tmp/
 
 # More generated files
 app/release/*
+app/debug/*

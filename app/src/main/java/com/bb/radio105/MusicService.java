@@ -54,7 +54,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     // The tag we put on debug messages
     final static String TAG = "Radio105Player";
-    public static final String CHANNEL_ID = "Radio105ServiceChannel";
+    private static final String CHANNEL_ID = "Radio105ServiceChannel";
 
     // our media player
     static MediaPlayer mPlayer = null;

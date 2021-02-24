@@ -64,4 +64,10 @@
     <string name="unsupported_description">Il link che hai cliccato non è supportato da questa applicazione, però puoi aprirlo nel tuo Browser di default.</string>
     <string name="cancel">Cancella</string>
     <string name="open_browser">Apri nel Browser</string>
+
+    <!-- Storage permission -->
+    <string name="storage_access_required">Per poter scaricare i podcast è necessario il permesso di scrivere nella memoria interna.</string>
+    <string name="ok">OK</string>
+    <string name="storage_permission_granted">Applicazione autorizzata a scrivere nella memoria interna. Inizia il download.</string>
+    <string name="storage_permission_denied">Il permesso di scrittura nella memoria interna è stato negato.</string>
 </resources>

@@ -157,13 +157,11 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
         });
 
         mWebView.setDownloadListener((url1, userAgent, contentDisposition, mimetype, contentLength) -> {
-
             String fileName = URLUtil.guessFileName(url1, contentDisposition, mimetype);
-
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-
                 Intent mIntent = new Intent(getActivity(),DownloadService.class);
+                mIntent.setAction(Constants.ACTION_START_DOWNLOAD);
                 mIntent.putExtra("Url",url1);
                 mIntent.putExtra("FileName",fileName);
                 requireActivity().startService(mIntent);
@@ -171,8 +169,8 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
                 requestStoragePermission();
                 if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
-
                     Intent mIntent = new Intent(getActivity(),DownloadService.class);
+                    mIntent.setAction(Constants.ACTION_START_DOWNLOAD);
                     mIntent.putExtra("Url",url1);
                     mIntent.putExtra("FileName",fileName);
                     requireActivity().startService(mIntent);

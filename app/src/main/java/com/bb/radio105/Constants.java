@@ -14,6 +14,7 @@ public class Constants {
     public static final String ACTION_PLAY_NOTIFICATION = "com.bb.radio105.action.PLAY_NOTIFICATION";
     public static final String ACTION_PAUSE_NOTIFICATION = "com.bb.radio105.action.PAUSE_NOTIFICATION";
     public static final String ACTION_STOP_NOTIFICATION = "com.bb.radio105.action.STOP_NOTIFICATION";
+    public static final String ACTION_START_DOWNLOAD = "com.bb.radio105.action.START_DOWNLOAD";
     static final String ErrorPagePath = "file:///android_asset/index.html";
     static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 

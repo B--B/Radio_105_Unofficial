@@ -24,7 +24,6 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -160,10 +159,10 @@ public class ZooFragment extends Fragment {
                         break;
                     default:
                         webView.loadUrl(Constants.ErrorPagePath);
-                        Toast toast = Toast.makeText(getContext(),
+                        Snackbar.make(root,
                                 getString(R.string.something_wrong) + error.getErrorCode()
-                                        + getString(R.string.description) + error.getDescription().toString(), Toast.LENGTH_LONG);
-                        toast.show();
+                                        + getString(R.string.description) + error.getDescription().toString(), Snackbar.LENGTH_LONG)
+                                .show();
                         break;
                 }
             }

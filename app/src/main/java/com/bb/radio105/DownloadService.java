@@ -6,8 +6,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 
 import androidx.core.app.NotificationCompat;
@@ -22,11 +22,8 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import timber.log.Timber;
-
 public class DownloadService extends IntentService {
 
-    static final int UPDATE_PROGRESS = 8344;
     private int lastUpdate=0;
     NotificationManagerCompat mNotificationManager;
     NotificationCompat.Builder mNotificationBuilder = null;
@@ -34,33 +31,26 @@ public class DownloadService extends IntentService {
     private final int NOTIFICATION_ID = 2;
 
     public DownloadService() {
-
         super("com.bb.radio105.DownloadService");
-
-
     }
 
     @Override
     public void onCreate() {
         mNotificationManager = NotificationManagerCompat.from(this);
+        super.onCreate();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Timber.d("onStartCommand");
-        Timber.d("Start building notification");
+        super.onStartCommand(intent, flags, startId);
         // Creating notification channel
         createNotificationChannel();
-        Intent intent1 = new Intent(this, MainActivity.class);
-        // Use System.currentTimeMillis() to have a unique ID for the pending intent
-        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent1, PendingIntent.FLAG_UPDATE_CURRENT);
         // Building notification here
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID_DOWNLOAD);
         mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
         mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
         mNotificationBuilder.setContentTitle("Radio 105");
-        mNotificationBuilder.setContentText("Downloading");
-        mNotificationBuilder.setContentIntent(pIntent);
+        mNotificationBuilder.setContentText("Starting Download");
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         // Launch notification
         startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
@@ -71,23 +61,17 @@ public class DownloadService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         File root = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/"
                 + Environment.DIRECTORY_DOWNLOADS + "/");
-        Bundle b = new Bundle();
-        b = intent.getExtras();
-        Object urlToDownload = b.getString("Url");
-        Object fileName = b.getString("FileName");
-        Timber.d(urlToDownload.toString());
-        Timber.d(fileName.toString());
-        // ResultReceiver receiver = (ResultReceiver) intent.getParcelableExtra("receiver");
+        String urlToDownload = intent.getStringExtra("Url");
+        String fileName = intent.getStringExtra("FileName");
         try {
-            URL url = new URL(urlToDownload.toString());
+            URL url = new URL(urlToDownload);
             URLConnection connection = url.openConnection();
             connection.connect();
-            // this will be useful so that you can show a typical 0-100% progress bar
             int fileLength = connection.getContentLength();
 
-            // download the file
+            // Download the file
             InputStream input = new BufferedInputStream(url.openStream());
-            OutputStream output = new FileOutputStream(new File(root.getPath(), fileName.toString()));
+            OutputStream output = new FileOutputStream(new File(root.getPath(), fileName));
 
             byte[] data = new byte[1024];
             long total = 0;
@@ -96,54 +80,39 @@ public class DownloadService extends IntentService {
                 total += count;
 
                 progressChange((int)(total * 100) / fileLength);
-                // publishing the progress....
-                //   Bundle resultData = new Bundle();
-                //   resultData.putInt("progress" ,(int) (total * 100 / fileLength));
-                //   receiver.send(UPDATE_PROGRESS, resultData);
                 output.write(data, 0, count);
             }
-
             output.flush();
             output.close();
             input.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        // Bundle resultData = new Bundle();
-        //  resultData.putInt("progress" ,100);
-        //  receiver.send(UPDATE_PROGRESS, resultData);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     void progressChange(int progress){
         if (lastUpdate != progress) {
             lastUpdate = progress;
-            // not.contentView.setProgressBar(R.id.status_progress,
-            // 100,Integer.valueOf(progress[0]), false);
-            // inform the progress bar of updates in progress
-            // nm.notify(42, not);
             if (progress < 100) {
+                mNotificationBuilder.setContentText("Downloading");
                 mNotificationBuilder.setProgress(100, progress,
                         false).setContentInfo(progress+"%");
-                mNotificationManager.notify(12, mNotificationBuilder.build());
-                Intent i = new Intent("com.bb.radio105.MainActivity").putExtra("Downloading",progress+"%");
-                this.sendBroadcast(i);
+                mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
             } else {
-                mNotificationBuilder.setContentText("Download complete")
-                        // Removes the progress bar
-                        .setProgress(0, 0, false).setOngoing(false).setContentInfo("");
-
-                mNotificationManager.notify(12, mNotificationBuilder.build());
-
+                // This is completely unuseful, as DownloadService is destroyed
+                // when onHandleIntent finish
+                Uri download = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/"
+                        + Environment.DIRECTORY_DOWNLOADS + "/");
+                Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                intent1.setData(download);
+                // Use System.currentTimeMillis() to have a unique ID for the pending intent
+                PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+                mNotificationBuilder.setContentText("Download complete");
+                mNotificationBuilder.setContentIntent(pIntent);
+                mNotificationBuilder.setProgress(0, 0, false).setOngoing(false).setContentInfo("");
+                mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
             }
-
         }
-
     }
 
     private void createNotificationChannel() {

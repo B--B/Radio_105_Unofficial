@@ -3,18 +3,12 @@ package com.bb.radio105;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +23,6 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
@@ -40,17 +32,10 @@ import com.google.android.material.snackbar.Snackbar;
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.net.URL;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class ZooFragment extends Fragment {
 
     AdblockWebView mWebView = null;
     private View root;
-    private static final String CHANNEL_ID = "Radio105ZooChannel";
-    private final int NOTIFICATION_ID = 3;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -180,71 +165,20 @@ public class ZooFragment extends Fragment {
 
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                Handler handler = new Handler(Looper.getMainLooper());
 
-                executor.execute(() -> {
-                    try {
-                        String address = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"
-                                + Environment.DIRECTORY_DOWNLOADS + "/" +
-                                fileName;
-                        File file = new File(address);
-                        boolean a = file.createNewFile();
-
-                        URL link = new URL(url1);
-                        Utils.downloadFile(link, address);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    handler.post(() -> {
-                        createNotificationChannel();
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
-                                .setSmallIcon(R.drawable.ic_radio105_notification)
-                                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground))
-                                .setContentTitle("The 105 Zoo")
-                                .setContentText("Download Complete")
-                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                .setAutoCancel(true);
-                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(requireContext());
-                        notificationManager.notify(NOTIFICATION_ID, builder.build());
-                    });
-                });
-
+                Intent mIntent = new Intent(getActivity(),DownloadService.class);
+                mIntent.putExtra("Url",url1);
+                mIntent.putExtra("FileName",fileName);
+                requireActivity().startService(mIntent);
             } else {
                 requestStoragePermission();
                 if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
-                    ExecutorService executor = Executors.newSingleThreadExecutor();
-                    Handler handler = new Handler(Looper.getMainLooper());
 
-                    executor.execute(() -> {
-                        try {
-                            String address = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"
-                                    + Environment.DIRECTORY_DOWNLOADS + "/" +
-                                    fileName;
-                            File file = new File(address);
-                            boolean a = file.createNewFile();
-
-                            URL link = new URL(url1);
-                            Utils.downloadFile(link, address);
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        handler.post(() -> {
-                            createNotificationChannel();
-                            NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
-                                    .setSmallIcon(R.drawable.ic_radio105_notification)
-                                    .setContentTitle("Radio 105 Podcast")
-                                    .setContentText("Download Complete")
-                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                    .setAutoCancel(true);
-                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(requireContext());
-                            notificationManager.notify(NOTIFICATION_ID, builder.build());
-                        });
-                    });
-
+                    Intent mIntent = new Intent(getActivity(),DownloadService.class);
+                    mIntent.putExtra("Url",url1);
+                    mIntent.putExtra("FileName",fileName);
+                    requireActivity().startService(mIntent);
                 }
             }
         });
@@ -319,18 +253,6 @@ public class ZooFragment extends Fragment {
             // Request the permission. The result will be received in onRequestPermissionResult().
             ActivityCompat.requestPermissions(requireActivity(),
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
-        }
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Foreground Service Channel",
-                    NotificationManager.IMPORTANCE_LOW
-            );
-            NotificationManager manager = requireActivity().getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(serviceChannel);
         }
     }
 }

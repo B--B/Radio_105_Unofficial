@@ -3,18 +3,12 @@ package com.bb.radio105;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +23,6 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
@@ -40,17 +32,10 @@ import com.google.android.material.snackbar.Snackbar;
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.URL;
-import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class PodcastFragment extends Fragment implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     AdblockWebView mWebView = null;
     private View root;
-    private static final String CHANNEL_ID = "Radio105PodcastChannel";
-    private final int NOTIFICATION_ID = 2;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -178,7 +163,7 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
 
-                Intent mIntent = new Intent(getContext(),DownloadService.class);
+                Intent mIntent = new Intent(getActivity(),DownloadService.class);
                 mIntent.putExtra("Url",url1);
                 mIntent.putExtra("FileName",fileName);
                 requireActivity().startService(mIntent);
@@ -187,7 +172,7 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
                 if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
 
-                    Intent mIntent = new Intent(getContext(),DownloadService.class);
+                    Intent mIntent = new Intent(getActivity(),DownloadService.class);
                     mIntent.putExtra("Url",url1);
                     mIntent.putExtra("FileName",fileName);
                     requireActivity().startService(mIntent);
@@ -265,18 +250,6 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
             // Request the permission. The result will be received in onRequestPermissionResult().
             ActivityCompat.requestPermissions(requireActivity(),
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
-        }
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Foreground Service Channel",
-                    NotificationManager.IMPORTANCE_LOW
-            );
-            NotificationManager manager = requireActivity().getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(serviceChannel);
         }
     }
 }

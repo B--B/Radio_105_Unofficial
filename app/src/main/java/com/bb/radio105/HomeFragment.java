@@ -140,24 +140,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
         }
     }
 
-    private void radioPlay(Activity context) {
+    private void radioPlay(Activity mActivity) {
         Intent mIntent = new Intent();
         mIntent.setAction(Constants.ACTION_PLAY);
-        mIntent.setPackage(context.getPackageName());
-        context.startService(mIntent);
+        mIntent.setPackage(mActivity.getPackageName());
+        mActivity.startService(mIntent);
     }
 
-    private void radioPause(Activity context) {
+    private void radioPause(Activity mActivity) {
         Intent mIntent = new Intent();
         mIntent.setAction(Constants.ACTION_PAUSE);
-        mIntent.setPackage(context.getPackageName());
-        context.startService(mIntent);
+        mIntent.setPackage(mActivity.getPackageName());
+        mActivity.startService(mIntent);
     }
 
-    private void radioStop(Activity activity) {
+    private void radioStop(Activity mActivity) {
         Intent mIntent = new Intent();
         mIntent.setAction(Constants.ACTION_STOP);
-        mIntent.setPackage(activity.getPackageName());
-        activity.startService(mIntent);
+        mIntent.setPackage(mActivity.getPackageName());
+        mActivity.startService(mIntent);
     }
 }

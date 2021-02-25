@@ -3,6 +3,7 @@ package com.bb.radio105;
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -20,12 +22,14 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+import timber.log.Timber;
+
 public class DownloadService extends IntentService {
 
     static final int UPDATE_PROGRESS = 8344;
     private int lastUpdate=0;
-    private NotificationManager mNotificationManager;
-    private NotificationCompat.Builder mBuilder;
+    NotificationManagerCompat mNotificationManager;
+    NotificationCompat.Builder mNotificationBuilder = null;
     private static final String CHANNEL_ID_DOWNLOAD = "Radio105PodcastChannel";
     private final int NOTIFICATION_ID = 2;
 
@@ -37,18 +41,30 @@ public class DownloadService extends IntentService {
     }
 
     @Override
+    public void onCreate() {
+        mNotificationManager = NotificationManagerCompat.from(this);
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Timber.d("onStartCommand");
+        Timber.d("Start building notification");
+        // Creating notification channel
         createNotificationChannel();
-        mNotificationManager = (NotificationManager)  getSystemService(NOTIFICATION_SERVICE);
-        mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID_DOWNLOAD);
-        mBuilder.setSmallIcon(R.drawable.ic_radio105_notification)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground))
-                .setContentTitle("Radio 105 Podcast")
-                .setContentText("Downloading")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setOngoing(true);
-        startForeground(NOTIFICATION_ID, mBuilder.build());
-        return START_STICKY;
+        Intent intent1 = new Intent(this, MainActivity.class);
+        // Use System.currentTimeMillis() to have a unique ID for the pending intent
+        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+        // Building notification here
+        mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID_DOWNLOAD);
+        mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
+        mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
+        mNotificationBuilder.setContentTitle("Radio 105");
+        mNotificationBuilder.setContentText("Downloading");
+        mNotificationBuilder.setContentIntent(pIntent);
+        mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        // Launch notification
+        startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -59,6 +75,8 @@ public class DownloadService extends IntentService {
         b = intent.getExtras();
         Object urlToDownload = b.getString("Url");
         Object fileName = b.getString("FileName");
+        Timber.d(urlToDownload.toString());
+        Timber.d(fileName.toString());
         // ResultReceiver receiver = (ResultReceiver) intent.getParcelableExtra("receiver");
         try {
             URL url = new URL(urlToDownload.toString());
@@ -101,9 +119,8 @@ public class DownloadService extends IntentService {
     public void onDestroy() {
         super.onDestroy();
     }
+
     void progressChange(int progress){
-
-
         if (lastUpdate != progress) {
             lastUpdate = progress;
             // not.contentView.setProgressBar(R.id.status_progress,
@@ -111,17 +128,17 @@ public class DownloadService extends IntentService {
             // inform the progress bar of updates in progress
             // nm.notify(42, not);
             if (progress < 100) {
-                mBuilder.setProgress(100, progress,
+                mNotificationBuilder.setProgress(100, progress,
                         false).setContentInfo(progress+"%");
-                mNotificationManager.notify(12, mBuilder.build());
+                mNotificationManager.notify(12, mNotificationBuilder.build());
                 Intent i = new Intent("com.bb.radio105.MainActivity").putExtra("Downloading",progress+"%");
                 this.sendBroadcast(i);
             } else {
-                mBuilder.setContentText("Download complete")
+                mNotificationBuilder.setContentText("Download complete")
                         // Removes the progress bar
                         .setProgress(0, 0, false).setOngoing(false).setContentInfo("");
 
-                mNotificationManager.notify(12, mBuilder.build());
+                mNotificationManager.notify(12, mNotificationBuilder.build());
 
             }
 

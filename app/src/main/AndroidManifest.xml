@@ -45,6 +45,11 @@
             </intent-filter>
         </service>
 
+        <service
+            android:name="com.bb.radio105.DownloadService"
+            android:exported="false">
+        </service>
+
     </application>
 
 </manifest>

@@ -41,6 +41,7 @@ import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -176,65 +177,20 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
 
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                Handler handler = new Handler(Looper.getMainLooper());
 
-                executor.execute(() -> {
-                    try {
-                        String address = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"
-                                + Environment.DIRECTORY_DOWNLOADS + "/" +
-                                fileName;
-                        URL link = new URL(url1);
-                        Utils.downloadFile(link, address);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    handler.post(() -> {
-                        createNotificationChannel();
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
-                                .setSmallIcon(R.drawable.ic_radio105_notification)
-                                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground))
-                                .setContentTitle("Radio 105 Podcast")
-                                .setContentText("Download Complete")
-                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                .setAutoCancel(true);
-                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(requireContext());
-                        notificationManager.notify(NOTIFICATION_ID, builder.build());
-                    });
-                });
-
+                Intent mIntent = new Intent(getContext(),DownloadService.class);
+                mIntent.putExtra("Url",url1);
+                mIntent.putExtra("FileName",fileName);
+                requireActivity().startService(mIntent);
             } else {
                 requestStoragePermission();
                 if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
-                    ExecutorService executor = Executors.newSingleThreadExecutor();
-                    Handler handler = new Handler(Looper.getMainLooper());
 
-                    executor.execute(() -> {
-                        try {
-                            String address = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"
-                                    + Environment.DIRECTORY_DOWNLOADS + "/" +
-                                    fileName;
-                            URL link = new URL(url1);
-                            Utils.downloadFile(link, address);
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        handler.post(() -> {
-                            createNotificationChannel();
-                            NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
-                                    .setSmallIcon(R.drawable.ic_radio105_notification)
-                                    .setContentTitle("Radio 105 Podcast")
-                                    .setContentText("Download Complete")
-                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                    .setAutoCancel(true);
-                            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(requireContext());
-                            notificationManager.notify(NOTIFICATION_ID, builder.build());
-                        });
-                    });
-
+                    Intent mIntent = new Intent(getContext(),DownloadService.class);
+                    mIntent.putExtra("Url",url1);
+                    mIntent.putExtra("FileName",fileName);
+                    requireActivity().startService(mIntent);
                 }
             }
         });

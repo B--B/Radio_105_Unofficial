@@ -50,6 +50,7 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="com.bb.radio105.action.START_DOWNLOAD" />
+                <action android:name="com.bb.radio105.action.STOP_DOWNLOAD" />
             </intent-filter>
         </service>
 

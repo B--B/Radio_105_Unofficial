@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -25,7 +26,6 @@ import java.net.URLConnection;
 
 public class DownloadService extends Service {
 
-    private int lastUpdate=0;
     NotificationManagerCompat mNotificationManager;
     NotificationCompat.Builder mNotificationBuilder = null;
     private static final String CHANNEL_ID_DOWNLOAD = "Radio105PodcastChannel";
@@ -44,7 +44,7 @@ public class DownloadService extends Service {
             case Constants.ACTION_START_DOWNLOAD:
                 //Intent for Stop
                 Intent stopIntent = new Intent();
-                stopIntent.setAction(Constants.ACTION_STOP_FOREGROUND_SERVICE);
+                stopIntent.setAction(Constants.ACTION_STOP_DOWNLOAD);
                 PendingIntent mStopIntent = PendingIntent.getService(this, 110, stopIntent, 0);
                 // Creating notification channel
                 createNotificationChannel();
@@ -62,7 +62,7 @@ public class DownloadService extends Service {
                         + Environment.DIRECTORY_DOWNLOADS + "/");
                 String urlToDownload = intent.getStringExtra("Url");
                 String fileName = intent.getStringExtra("FileName");
-                Thread thread = new Thread(() -> {
+                @SuppressLint("RestrictedApi") Thread thread = new Thread(() -> {
                     try  {
                         URL url = new URL(urlToDownload);
                         URLConnection connection = url.openConnection();
@@ -74,13 +74,19 @@ public class DownloadService extends Service {
                         OutputStream output = new FileOutputStream(new File(root.getPath(), fileName));
 
                         byte[] data = new byte[1024];
+
                         long total = 0;
-                        int count;
+                        int count, tmpPercentage = 0;
                         while ((count = input.read(data)) != -1) {
                             total += count;
-
-                            progressChange((int) (total * 100) / fileLength);
                             output.write(data, 0, count);
+                            int percentage = (int) ((total * 100) / fileLength);
+                            if (percentage > tmpPercentage) {
+                                mNotificationBuilder.setContentText(percentage + "%");
+                                mNotificationBuilder.setProgress(100, percentage, false);
+                                mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
+                                tmpPercentage = percentage;
+                            }
                         }
                         output.flush();
                         output.close();
@@ -88,11 +94,15 @@ public class DownloadService extends Service {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    mNotificationBuilder.setContentText(getString(R.string.download_complete));
+                    mNotificationBuilder.setProgress(0, 0, false).setOngoing(false).setContentInfo("");
+                    mNotificationBuilder.mActions.clear();
+                    mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
+                    stopForeground(false);
                 });
-
                 thread.start();
                 break;
-            case Constants.ACTION_STOP_FOREGROUND_SERVICE:
+            case Constants.ACTION_STOP_DOWNLOAD:
                 stopForegroundService();
                 break;
         }
@@ -103,25 +113,6 @@ public class DownloadService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    @SuppressLint("RestrictedApi")
-    void progressChange(int progress){
-        if (lastUpdate != progress) {
-            lastUpdate = progress;
-            if (progress < 100) {
-                mNotificationBuilder.setContentText(getString(R.string.download));
-                mNotificationBuilder.setProgress(100, progress,
-                        false).setContentInfo(progress+"%");
-                mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
-            } else {
-                mNotificationBuilder.setContentText(getString(R.string.download_complete));
-                mNotificationBuilder.setProgress(0, 0, false).setOngoing(false).setContentInfo("");
-                mNotificationBuilder.mActions.clear();
-                mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
-                stopForeground(false);
-            }
-        }
     }
 
     private void createNotificationChannel() {

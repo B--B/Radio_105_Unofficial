@@ -16,6 +16,7 @@
 
 package com.bb.radio105;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -324,12 +325,40 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     }
 
     /** Updates the notification. */
+    @SuppressLint("RestrictedApi")
     void updateNotification(String text) {
+        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.notification_key), false);
         Intent intent = new Intent(this, MainActivity.class);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mNotificationBuilder.setContentText(text);
         mNotificationBuilder.setContentIntent(pIntent);
+        if (pref) {
+            //Intent for Play
+            Intent playIntent = new Intent();
+            playIntent.setAction(Constants.ACTION_PLAY_NOTIFICATION);
+            PendingIntent mPlayIntent = PendingIntent.getService(this, 100, playIntent, 0);
+
+            //Intent for Pause
+            Intent pauseIntent = new Intent();
+            pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION);
+            PendingIntent mPauseIntent = PendingIntent.getService(this, 101, pauseIntent, 0);
+
+            //Intent for Stop
+            Intent stopIntent = new Intent();
+            stopIntent.setAction(Constants.ACTION_STOP_NOTIFICATION);
+            PendingIntent mStopIntent = PendingIntent.getService(this, 102, stopIntent, 0);
+
+            mNotificationBuilder.mActions.clear();
+            if (mState == State.Playing) {
+                mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mPauseIntent);
+                mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mStopIntent);
+            } else if (mState == State.Paused) {
+                mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mPlayIntent);
+                mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mStopIntent);
+            }
+        }
         mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
     }
 
@@ -341,12 +370,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
 
     void setUpAsForeground(String text) {
-
-        //Intent for Play
-        Intent playIntent = new Intent();
-        playIntent.setAction(Constants.ACTION_PLAY_NOTIFICATION);
-        PendingIntent mPlayIntent = PendingIntent.getService(this, 100, playIntent, 0);
-
         //Intent for Pause
         Intent pauseIntent = new Intent();
         pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION);
@@ -357,9 +380,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         stopIntent.setAction(Constants.ACTION_STOP_NOTIFICATION);
         PendingIntent mStopIntent = PendingIntent.getService(this, 102, stopIntent, 0);
 
-
-        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.notification_key), false);
         // Creating notification channel
         createNotificationChannel();
         Intent intent = new Intent(this, MainActivity.class);
@@ -373,9 +393,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mNotificationBuilder.setContentText(text);
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        if (pref) {
-            mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mPlayIntent);
-        }
         mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mPauseIntent);
         mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mStopIntent);
         // Launch notification

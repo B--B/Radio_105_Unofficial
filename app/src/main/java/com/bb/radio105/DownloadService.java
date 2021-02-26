@@ -1,5 +1,6 @@
 package com.bb.radio105;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -95,7 +96,7 @@ public class DownloadService extends Service {
                 stopForegroundService();
                 break;
         }
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Nullable
@@ -104,6 +105,7 @@ public class DownloadService extends Service {
         return null;
     }
 
+    @SuppressLint("RestrictedApi")
     void progressChange(int progress){
         if (lastUpdate != progress) {
             lastUpdate = progress;
@@ -115,6 +117,7 @@ public class DownloadService extends Service {
             } else {
                 mNotificationBuilder.setContentText(getString(R.string.download_complete));
                 mNotificationBuilder.setProgress(0, 0, false).setOngoing(false).setContentInfo("");
+                mNotificationBuilder.mActions.clear();
                 mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
                 stopForeground(false);
             }

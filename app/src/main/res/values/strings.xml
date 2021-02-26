@@ -76,4 +76,9 @@
     <string name="ok">OK</string>
     <string name="storage_permission_granted">Storage permission was granted. Starting download.</string>
     <string name="storage_permission_denied">Storage permission request was denied.</string>
+
+    <!-- Download Service -->
+    <string name="start_download">Starting Download</string>
+    <string name="download">Downloading</string>
+    <string name="download_complete">Download Complete</string>
 </resources>

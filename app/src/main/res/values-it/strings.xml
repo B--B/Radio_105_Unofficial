@@ -70,4 +70,9 @@
     <string name="ok">OK</string>
     <string name="storage_permission_granted">Applicazione autorizzata a scrivere nella memoria interna. Inizia il download.</string>
     <string name="storage_permission_denied">Il permesso di scrittura nella memoria interna è stato negato.</string>
+
+    <!-- Download Service -->
+    <string name="start_download">Inizio lo scaricamento</string>
+    <string name="download">In fase di scaricamento</string>
+    <string name="download_complete">Scaricamento completato</string>
 </resources>

@@ -45,8 +45,8 @@ public class DownloadService extends Service {
             mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID_DOWNLOAD);
             mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
             mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
-            mNotificationBuilder.setContentTitle("Radio 105");
-            mNotificationBuilder.setContentText("Starting Download");
+            mNotificationBuilder.setContentTitle(getString(R.string.menu_home));
+            mNotificationBuilder.setContentText(getString(R.string.start_download));
             mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
             startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
             // Set up and start the download
@@ -97,12 +97,12 @@ public class DownloadService extends Service {
         if (lastUpdate != progress) {
             lastUpdate = progress;
             if (progress < 100) {
-                mNotificationBuilder.setContentText("Downloading");
+                mNotificationBuilder.setContentText(getString(R.string.download));
                 mNotificationBuilder.setProgress(100, progress,
                         false).setContentInfo(progress+"%");
                 mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
             } else {
-                mNotificationBuilder.setContentText("Download complete");
+                mNotificationBuilder.setContentText(getString(R.string.download_complete));
                 mNotificationBuilder.setProgress(0, 0, false).setOngoing(false).setContentInfo("");
                 mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
                 stopForeground(false);

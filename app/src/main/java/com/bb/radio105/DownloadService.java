@@ -1,6 +1,7 @@
 package com.bb.radio105;
 
 import android.annotation.SuppressLint;
+import android.app.DownloadManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,7 +11,6 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -19,6 +19,7 @@ import androidx.core.app.NotificationManagerCompat;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -63,7 +64,7 @@ public class DownloadService extends Service {
                 String urlToDownload = intent.getStringExtra("Url");
                 String fileName = intent.getStringExtra("FileName");
                 @SuppressLint("RestrictedApi") Thread thread = new Thread(() -> {
-                    try  {
+                    try {
                         URL url = new URL(urlToDownload);
                         URLConnection connection = url.openConnection();
                         connection.connect();
@@ -78,6 +79,9 @@ public class DownloadService extends Service {
                         long total = 0;
                         int count, tmpPercentage = 0;
                         while ((count = input.read(data)) != -1) {
+                            if (mCancelDownload) {
+                                throw new InterruptedException();
+                            }
                             total += count;
                             output.write(data, 0, count);
                             int percentage = (int) ((total * 100) / fileLength);
@@ -91,10 +95,24 @@ public class DownloadService extends Service {
                         output.flush();
                         output.close();
                         input.close();
-                    } catch (Exception e) {
+                    } catch (InterruptedException | IOException e) {
                         e.printStackTrace();
+                        // Remove the broken file
+                        File broken = new File(root.getPath(), fileName);
+                        if (broken.exists()) {
+                            broken.delete();
+                        }
                     }
-                    mNotificationBuilder.setContentText(getString(R.string.download_complete));
+                    File complete = new File(root.getPath(), fileName);
+                    Intent open = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(this, 120, open, 0);
+                    if (complete.exists()) {
+                        mNotificationBuilder.setContentText(getString(R.string.download_complete));
+                        mNotificationBuilder.setContentIntent(pendingIntent);
+                        mNotificationBuilder.setAutoCancel(true);
+                    } else {
+                        mNotificationBuilder.setContentText(getString(R.string.download_stopped));
+                    }
                     mNotificationBuilder.setProgress(0, 0, false).setOngoing(false).setContentInfo("");
                     mNotificationBuilder.mActions.clear();
                     mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
@@ -103,7 +121,7 @@ public class DownloadService extends Service {
                 thread.start();
                 break;
             case Constants.ACTION_STOP_DOWNLOAD:
-                stopForegroundService();
+                cancelDownload(true);
                 break;
         }
         return START_NOT_STICKY;
@@ -127,9 +145,8 @@ public class DownloadService extends Service {
         }
     }
 
-    private void stopForegroundService()
-    {
-        stopForeground(true);
-        stopSelf();
+    boolean mCancelDownload = false;
+    public void cancelDownload(boolean mCancelDownload){
+        this.mCancelDownload = mCancelDownload;
     }
 }

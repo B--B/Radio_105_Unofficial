@@ -73,6 +73,6 @@
 
     <!-- Download Service -->
     <string name="start_download">Inizio lo scaricamento</string>
-    <string name="download">In fase di scaricamento</string>
     <string name="download_complete">Scaricamento completato</string>
+    <string name="download_stopped">Scaricamento fermato dall\' utente</string>
 </resources>

@@ -2,6 +2,7 @@ package com.bb.radio105;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -38,51 +39,61 @@ public class DownloadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String download = intent.getAction();
-        if (download.equals(Constants.ACTION_START_DOWNLOAD)) {
-            // Creating notification channel
-            createNotificationChannel();
-            // Building the notification
-            mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID_DOWNLOAD);
-            mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
-            mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
-            mNotificationBuilder.setContentTitle(getString(R.string.menu_home));
-            mNotificationBuilder.setContentText(getString(R.string.start_download));
-            mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-            startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
-            // Set up and start the download
-            File root = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/"
-                    + Environment.DIRECTORY_DOWNLOADS + "/");
-            String urlToDownload = intent.getStringExtra("Url");
-            String fileName = intent.getStringExtra("FileName");
-            Thread thread = new Thread(() -> {
-                try  {
-                    URL url = new URL(urlToDownload);
-                    URLConnection connection = url.openConnection();
-                    connection.connect();
-                    int fileLength = connection.getContentLength();
+        switch (download) {
+            case Constants.ACTION_START_DOWNLOAD:
+                //Intent for Stop
+                Intent stopIntent = new Intent();
+                stopIntent.setAction(Constants.ACTION_STOP_FOREGROUND_SERVICE);
+                PendingIntent mStopIntent = PendingIntent.getService(this, 110, stopIntent, 0);
+                // Creating notification channel
+                createNotificationChannel();
+                // Building the notification
+                mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID_DOWNLOAD);
+                mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
+                mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
+                mNotificationBuilder.setContentTitle(getString(R.string.menu_home));
+                mNotificationBuilder.setContentText(getString(R.string.start_download));
+                mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mStopIntent);
+                startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
+                // Set up and start the download
+                File root = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/"
+                        + Environment.DIRECTORY_DOWNLOADS + "/");
+                String urlToDownload = intent.getStringExtra("Url");
+                String fileName = intent.getStringExtra("FileName");
+                Thread thread = new Thread(() -> {
+                    try  {
+                        URL url = new URL(urlToDownload);
+                        URLConnection connection = url.openConnection();
+                        connection.connect();
+                        int fileLength = connection.getContentLength();
 
-                    // Download the file
-                    InputStream input = new BufferedInputStream(url.openStream());
-                    OutputStream output = new FileOutputStream(new File(root.getPath(), fileName));
+                        // Download the file
+                        InputStream input = new BufferedInputStream(url.openStream());
+                        OutputStream output = new FileOutputStream(new File(root.getPath(), fileName));
 
-                    byte[] data = new byte[1024];
-                    long total = 0;
-                    int count;
-                    while ((count = input.read(data)) != -1) {
-                        total += count;
+                        byte[] data = new byte[1024];
+                        long total = 0;
+                        int count;
+                        while ((count = input.read(data)) != -1) {
+                            total += count;
 
-                        progressChange((int) (total * 100) / fileLength);
-                        output.write(data, 0, count);
+                            progressChange((int) (total * 100) / fileLength);
+                            output.write(data, 0, count);
+                        }
+                        output.flush();
+                        output.close();
+                        input.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    output.flush();
-                    output.close();
-                    input.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+                });
 
-            thread.start();
+                thread.start();
+                break;
+            case Constants.ACTION_STOP_FOREGROUND_SERVICE:
+                stopForegroundService();
+                break;
         }
         return START_STICKY;
     }
@@ -120,5 +131,11 @@ public class DownloadService extends Service {
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
         }
+    }
+
+    private void stopForegroundService()
+    {
+        stopForeground(true);
+        stopSelf();
     }
 }

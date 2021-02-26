@@ -15,6 +15,7 @@ public class Constants {
     public static final String ACTION_PAUSE_NOTIFICATION = "com.bb.radio105.action.PAUSE_NOTIFICATION";
     public static final String ACTION_STOP_NOTIFICATION = "com.bb.radio105.action.STOP_NOTIFICATION";
     public static final String ACTION_START_DOWNLOAD = "com.bb.radio105.action.START_DOWNLOAD";
+    public static final String ACTION_STOP_FOREGROUND_SERVICE = "com.bb.radio105.action.ACTION_STOP_FOREGROUND_SERVICE";
     static final String ErrorPagePath = "file:///android_asset/index.html";
     static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 

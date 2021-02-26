@@ -278,34 +278,35 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         relaxResources(false); // release everything except MediaPlayer
         String manualUrl = "http://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
 
-        try {
-            createMediaPlayerIfNeeded();
-            AudioAttributes.Builder b = new AudioAttributes.Builder();
-            b.setUsage(AudioAttributes.USAGE_MEDIA);
-            mPlayer.setAudioAttributes(b.build());
-            mPlayer.setDataSource(manualUrl);
+        Thread thread = new Thread(() -> {
+            try {
+                createMediaPlayerIfNeeded();
+                AudioAttributes.Builder b = new AudioAttributes.Builder();
+                b.setUsage(AudioAttributes.USAGE_MEDIA);
+                mPlayer.setAudioAttributes(b.build());
+                mPlayer.setDataSource(manualUrl);
 
-            mState = State.Preparing;
-            setUpAsForeground(mSongTitle + getString(R.string.loading));
+                mState = State.Preparing;
+                setUpAsForeground(mSongTitle + getString(R.string.loading));
 
-            // starts preparing the media player in the background. When it's done, it will call
-            // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
-            // the listener to 'this').
-            //
-            // Until the media player is prepared, we *cannot* call start() on it!
-            mPlayer.prepareAsync();
+                // starts preparing the media player in the background. When it's done, it will call
+                // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
+                // the listener to 'this').
+                //
+                // Until the media player is prepared, we *cannot* call start() on it!
+                mPlayer.prepareAsync();
 
-            // If we are streaming from the internet, we want to hold a Wifi lock, which prevents
-            // the Wifi radio from going to sleep while the song is playing. If, on the other hand,
-            // we are *not* streaming, we want to release the lock if we were holding it before.
-            mWifiLock.acquire();
-            if (mWifiLock.isHeld()) mWifiLock.release();
-        }
-        catch (IOException ex) {
-            Timber.tag("MusicService").e("IOException playing next song: %s", ex.getMessage());
-            ex.printStackTrace();
-        }
-
+                // If we are streaming from the internet, we want to hold a Wifi lock, which prevents
+                // the Wifi radio from going to sleep while the song is playing. If, on the other hand,
+                // we are *not* streaming, we want to release the lock if we were holding it before.
+                mWifiLock.acquire();
+                if (mWifiLock.isHeld()) mWifiLock.release();
+            } catch (IOException ex) {
+                Timber.tag("MusicService").e("IOException playing next song: %s", ex.getMessage());
+                ex.printStackTrace();
+            }
+        });
+        thread.start();
     }
 
     /** Called when media player is done playing current song. */

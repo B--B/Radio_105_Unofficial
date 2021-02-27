@@ -295,7 +295,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                 // the listener to 'this').
                 //
                 // Until the media player is prepared, we *cannot* call start() on it!
-                mPlayer.prepareAsync();
+                mPlayer.prepare();
 
                 // If we are streaming from the internet, we want to hold a Wifi lock, which prevents
                 // the Wifi radio from going to sleep while the song is playing. If, on the other hand,

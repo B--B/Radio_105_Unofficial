@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.URLUtil;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -159,6 +160,39 @@ public class ZooFragment extends Fragment {
             }
         });
 
+        mWebView.setWebChromeClient(new WebChromeClient() {
+
+            private View fullScreenView;
+            private ViewGroup mViewGroup;
+            private WebChromeClient.CustomViewCallback mViewCallback;
+
+            @Override
+            public void onShowCustomView(View view, WebChromeClient.CustomViewCallback mCustomViewCallback) {
+                if (fullScreenView != null) {
+                    mCustomViewCallback.onCustomViewHidden();
+                    return;
+                }
+
+                ViewGroup.LayoutParams layoutParams =
+                        new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT);
+                mViewGroup = (ViewGroup) root.getRootView();
+                fullScreenView = view;
+
+                mViewCallback = mCustomViewCallback;
+                mViewGroup.addView(fullScreenView, layoutParams);
+            }
+
+            @Override
+            public void onHideCustomView() {
+                if (fullScreenView != null) {
+                    mViewGroup.removeView(fullScreenView);
+                    fullScreenView = null;
+                    mViewCallback.onCustomViewHidden();
+                }
+            }
+        });
+
         mWebView.setDownloadListener((url1, userAgent, contentDisposition, mimetype, contentLength) -> {
             String fileName = URLUtil.guessFileName(url1, contentDisposition, mimetype);
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -180,6 +214,7 @@ public class ZooFragment extends Fragment {
                 }
             }
         });
+
         return root;
     }
 

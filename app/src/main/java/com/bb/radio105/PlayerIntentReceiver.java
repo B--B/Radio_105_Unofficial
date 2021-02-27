@@ -26,6 +26,9 @@ public class PlayerIntentReceiver extends BroadcastReceiver {
             case Constants.ACTION_STOP_NOTIFICATION:
                 HomeFragment.playerStatusListener.onButtonStatusChange("Stop_Notification");
                 break;
+            case Constants.ACTION_ERROR:
+                HomeFragment.playerStatusListener.onButtonStatusChange("Error");
+                break;
             case android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY:
                 HomeFragment.playerStatusListener.onButtonStatusChange("Audio_Device_Disconnected");
                 break;

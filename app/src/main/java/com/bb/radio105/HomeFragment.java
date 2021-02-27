@@ -55,6 +55,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
         mIntentFilter.addAction(Constants.ACTION_PLAY_NOTIFICATION);
         mIntentFilter.addAction(Constants.ACTION_PAUSE_NOTIFICATION);
         mIntentFilter.addAction(Constants.ACTION_STOP_NOTIFICATION);
+        mIntentFilter.addAction(Constants.ACTION_ERROR);
         mIntentFilter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
         requireContext().registerReceiver(playerIntentReceiver, mIntentFilter);
@@ -77,6 +78,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
                 button2.setEnabled(false);
                 button3.setEnabled(true);
                 break;
+            case "Error":
             case "Stop":
             case "Stop_Notification":
                 button1.setEnabled(true);

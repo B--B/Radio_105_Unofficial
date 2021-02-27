@@ -42,6 +42,7 @@
                 <action android:name="com.bb.radio105.action.PLAY_NOTIFICATION" />
                 <action android:name="com.bb.radio105.action.PAUSE_NOTIFICATION" />
                 <action android:name="com.bb.radio105.action.STOP_NOTIFICATION" />
+                <action android:name="com.bb.radio105.action.ERROR" />
             </intent-filter>
         </service>
 

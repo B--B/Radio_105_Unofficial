@@ -410,6 +410,12 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
         mState = State.Stopped;
         relaxResources(true);
+
+        Intent mIntent = new Intent();
+        mIntent.setAction(Constants.ACTION_ERROR);
+        mIntent.setPackage(getPackageName());
+        sendBroadcast(mIntent);
+
         return true; // true indicates we handled the error
     }
 

@@ -132,7 +132,17 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
             @RequiresApi(Build.VERSION_CODES.M)
             @Override
             public void onReceivedError(WebView webView, WebResourceRequest request, WebResourceError error) {
-                webView.loadUrl(Constants.ErrorPagePath);
+                // Ignore some connection errors
+                // ERR_FAILED = -1
+                // ERR_CONNECTION_REFUSED = -6  --> needed for people with AD Blocker
+                switch (error.getErrorCode()) {
+                    case -1:
+                    case -6:
+                        break;
+                    default:
+                        webView.loadUrl(Constants.ErrorPagePath);
+                        break;
+                }
             }
 
             @Deprecated

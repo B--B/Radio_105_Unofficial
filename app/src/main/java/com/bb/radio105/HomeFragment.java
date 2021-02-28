@@ -24,6 +24,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
     Button button3;
 
     static PlayerStatusListener playerStatusListener;
+    private final PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -47,18 +48,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
         button3.setOnClickListener(this);
 
         playerStatusListener = this;
-
-        IntentFilter mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Constants.ACTION_PLAY);
-        mIntentFilter.addAction(Constants.ACTION_PAUSE);
-        mIntentFilter.addAction(Constants.ACTION_STOP);
-        mIntentFilter.addAction(Constants.ACTION_PLAY_NOTIFICATION);
-        mIntentFilter.addAction(Constants.ACTION_PAUSE_NOTIFICATION);
-        mIntentFilter.addAction(Constants.ACTION_STOP_NOTIFICATION);
-        mIntentFilter.addAction(Constants.ACTION_ERROR);
-        mIntentFilter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-        PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
-        requireContext().registerReceiver(playerIntentReceiver, mIntentFilter);
 
         return root;
     }
@@ -103,6 +92,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
 
     @Override
     public void onStart() {
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Constants.ACTION_PLAY);
+        mIntentFilter.addAction(Constants.ACTION_PAUSE);
+        mIntentFilter.addAction(Constants.ACTION_STOP);
+        mIntentFilter.addAction(Constants.ACTION_PLAY_NOTIFICATION);
+        mIntentFilter.addAction(Constants.ACTION_PAUSE_NOTIFICATION);
+        mIntentFilter.addAction(Constants.ACTION_STOP_NOTIFICATION);
+        mIntentFilter.addAction(Constants.ACTION_ERROR);
+        mIntentFilter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        requireContext().registerReceiver(playerIntentReceiver, mIntentFilter);
+
         switch (MusicService.mState) {
             case Playing:
                 button1.setEnabled(false);
@@ -136,6 +136,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
                 .attach(this)
                 .commit();
         super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onStop() {
+        requireContext().unregisterReceiver(playerIntentReceiver);
+        super.onStop();
     }
 
     public void onClick(View target) {

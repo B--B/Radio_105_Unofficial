@@ -8,8 +8,9 @@
 
     <Button
         android:id="@+id/button1"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="400dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="50dp"
         android:text="@string/streaming"
@@ -18,8 +19,9 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="400dp"
         android:layout_marginEnd="50dp"
         android:text="@string/pause_streaming"
         app:layout_constraintTop_toTopOf="parent"
@@ -28,8 +30,9 @@
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="400dp"
         android:layout_marginBottom="50dp"
         android:layout_marginEnd="50dp"
         android:text="@string/stop_streaming"

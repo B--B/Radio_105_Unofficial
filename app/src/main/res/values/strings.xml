@@ -78,7 +78,4 @@
     <string name="storage_permission_denied">Storage permission request was denied.</string>
 
     <!-- Download Service -->
-    <string name="start_download">Starting Download</string>
-    <string name="download_complete">Download Complete</string>
-    <string name="download_stopped">Download stopped by the user</string>
 </resources>

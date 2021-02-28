@@ -46,15 +46,6 @@
             </intent-filter>
         </service>
 
-        <service
-            android:name="com.bb.radio105.DownloadService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.bb.radio105.action.START_DOWNLOAD" />
-                <action android:name="com.bb.radio105.action.STOP_DOWNLOAD" />
-            </intent-filter>
-        </service>
-
     </application>
 
 </manifest>

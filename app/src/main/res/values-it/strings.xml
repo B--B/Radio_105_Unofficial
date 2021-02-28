@@ -72,7 +72,4 @@
     <string name="storage_permission_denied">Il permesso di scrittura nella memoria interna è stato negato.</string>
 
     <!-- Download Service -->
-    <string name="start_download">Inizio lo scaricamento</string>
-    <string name="download_complete">Scaricamento completato</string>
-    <string name="download_stopped">Scaricamento fermato dall\' utente</string>
 </resources>

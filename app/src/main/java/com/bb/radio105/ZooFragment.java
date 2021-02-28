@@ -3,12 +3,15 @@ package com.bb.radio105;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -197,20 +200,28 @@ public class ZooFragment extends Fragment {
             String fileName = URLUtil.guessFileName(url1, contentDisposition, mimetype);
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                Intent mIntent = new Intent(getActivity(),DownloadService.class);
-                mIntent.setAction(Constants.ACTION_START_DOWNLOAD);
-                mIntent.putExtra("Url",url1);
-                mIntent.putExtra("FileName",fileName);
-                requireActivity().startService(mIntent);
+
+                DownloadManager downloadManager = (DownloadManager) requireActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+                Uri uri = Uri.parse(url1);
+                DownloadManager.Request request = new DownloadManager.Request(uri);
+                request.setTitle(getString(R.string.menu_home));
+                request.setVisibleInDownloadsUi(true);
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.getLastPathSegment());
+                downloadManager.enqueue(request);
             } else {
                 requestStoragePermission();
                 if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
-                    Intent mIntent = new Intent(getActivity(),DownloadService.class);
-                    mIntent.setAction(Constants.ACTION_START_DOWNLOAD);
-                    mIntent.putExtra("Url",url1);
-                    mIntent.putExtra("FileName",fileName);
-                    requireActivity().startService(mIntent);
+
+                    DownloadManager downloadManager = (DownloadManager) requireActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+                    Uri uri = Uri.parse(url1);
+                    DownloadManager.Request request = new DownloadManager.Request(uri);
+                    request.setTitle(getString(R.string.menu_home));
+                    request.setVisibleInDownloadsUi(true);
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.getLastPathSegment());
+                    downloadManager.enqueue(request);
                 }
             }
         });

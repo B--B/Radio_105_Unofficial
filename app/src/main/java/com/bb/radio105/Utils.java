@@ -2,7 +2,6 @@ package com.bb.radio105;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
@@ -22,26 +21,6 @@ import java.util.Objects;
 import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
 
 public class Utils {
-//    static boolean isRadioStreamingRunning(Context context) {
-//        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-//        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-//            if (MusicService.class.getName().equals(service.service.getClassName())) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-    static boolean isRadioStreamingRunningInForeground(Context context) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (MusicService.class.getName().equals(service.service.getClassName())) {
-                return service.foreground;
-            }
-        }
-        return false;
-    }
-
     /**
      * Requests the {@link android.Manifest.permission#WRITE_EXTERNAL_STORAGE} permission.
      * If an additional rationale should be displayed, the user has to launch the request from

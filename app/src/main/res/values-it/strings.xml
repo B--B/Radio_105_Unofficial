@@ -14,8 +14,6 @@
     <string name="logo">105 Logo</string>
     <string name="title_activity_settings">Impostazioni</string>
     <string name="radio">105 FM Radio Streaming</string>
-    <string name="something_wrong">"Qualcosa è andato storto, il codice di errore è  "</string>
-    <string name="description">"  Descrizione:  "</string>
     <string name="error">Errore del media player! Inizio il reset.</string>
 
     <!-- Theme Preferences -->
@@ -70,6 +68,4 @@
     <string name="ok">OK</string>
     <string name="storage_permission_granted">Applicazione autorizzata a scrivere nella memoria interna. Inizia il download.</string>
     <string name="storage_permission_denied">Il permesso di scrittura nella memoria interna è stato negato.</string>
-
-    <!-- Download Service -->
 </resources>

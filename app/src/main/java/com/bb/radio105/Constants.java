@@ -1,8 +1,6 @@
 package com.bb.radio105;
 
 public class Constants {
-    // Intents for Radio Player
-    public static final String ACTION_TOGGLE_PLAYBACK = "com.bb.radio105.action.TOGGLE_PLAYBACK";
     public static final String ACTION_PLAY = "com.bb.radio105.action.PLAY";
     public static final String ACTION_PAUSE = "com.bb.radio105.action.PAUSE";
     public static final String ACTION_STOP = "com.bb.radio105.action.STOP";

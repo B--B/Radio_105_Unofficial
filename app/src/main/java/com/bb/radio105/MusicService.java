@@ -23,10 +23,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
@@ -84,10 +82,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     // notification area).
     final int NOTIFICATION_ID = 1;
 
-    // Dummy album art we will pass to the remote control (if the APIs are available).
-    Bitmap mDummyAlbumArt;
-
-    AudioManager mAudioManager;
     NotificationManagerCompat mNotificationManager;
 
     NotificationCompat.Builder mNotificationBuilder = null;
@@ -126,9 +120,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                 .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "radio105lock");
 
         mNotificationManager = NotificationManagerCompat.from(this);
-        mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-
-        mDummyAlbumArt = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
     }
 
     /**
@@ -140,9 +131,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
         switch (action) {
-            case Constants.ACTION_TOGGLE_PLAYBACK:
-                processTogglePlaybackRequest();
-                break;
             case Constants.ACTION_PLAY:
                 processPlayRequest();
                 sendBroadcast(intent);
@@ -165,14 +153,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
         return START_NOT_STICKY; // Means we started the service, but don't want it to
         // restart in case it's killed.
-    }
-
-    void processTogglePlaybackRequest() {
-        if (mState == State.Paused || mState == State.Stopped) {
-            processPlayRequest();
-        } else {
-            processPauseRequest();
-        }
     }
 
     void processPlayRequest() {

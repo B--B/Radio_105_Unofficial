@@ -4,25 +4,17 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
-
-import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
 
 public class TvFragment extends Fragment {
 
@@ -36,25 +28,9 @@ public class TvFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_tv, container, false);
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                final WindowInsetsController controller = requireActivity().getWindow().getInsetsController();
-
-                if (controller != null)
-                    controller.hide(WindowInsets.Type.statusBars());
-            } else {
-                requireActivity().getWindow().addFlags(FLAG_FULLSCREEN);
-            }
-            Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
+            Utils.setUpFullScreen(requireActivity());
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            final WindowInsetsController controller = requireActivity().getWindow().getInsetsController();
-
-            if (controller != null)
-                controller.show(WindowInsets.Type.statusBars());
-        } else {
-                requireActivity().getWindow().clearFlags(FLAG_FULLSCREEN);
-            }
-            Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
+            Utils.restoreScreen(requireActivity());
         }
 
         videoView = root.findViewById(R.id.videoView);
@@ -104,25 +80,9 @@ public class TvFragment extends Fragment {
     public void onConfigurationChanged(@NotNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                final WindowInsetsController controller = requireActivity().getWindow().getInsetsController();
-
-                if (controller != null)
-                    controller.hide(WindowInsets.Type.statusBars());
+            Utils.setUpFullScreen(requireActivity());
             } else {
-                requireActivity().getWindow().addFlags(FLAG_FULLSCREEN);
-            }
-            Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                final WindowInsetsController controller = requireActivity().getWindow().getInsetsController();
-
-                if (controller != null)
-                    controller.show(WindowInsets.Type.statusBars());
-            } else {
-                requireActivity().getWindow().clearFlags(FLAG_FULLSCREEN);
-            }
-            Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
+            Utils.restoreScreen(requireActivity());
         }
     }
 
@@ -130,15 +90,7 @@ public class TvFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                final WindowInsetsController controller = requireActivity().getWindow().getInsetsController();
-
-                if (controller != null)
-                    controller.show(WindowInsets.Type.statusBars());
-            } else {
-                requireActivity().getWindow().clearFlags(FLAG_FULLSCREEN);
-            }
-            Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
+            Utils.restoreScreen(requireActivity());
         }
     }
 }

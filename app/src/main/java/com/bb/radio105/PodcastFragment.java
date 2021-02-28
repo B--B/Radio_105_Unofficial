@@ -244,30 +244,4 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
         }
         // END_INCLUDE(onRequestPermissionsResult)
     }
-
-    /**
-     * Requests the {@link android.Manifest.permission#WRITE_EXTERNAL_STORAGE} permission.
-     * If an additional rationale should be displayed, the user has to launch the request from
-     * a SnackBar that includes additional information.
-     */
-    private void requestStoragePermission() {
-        // Permission has not been granted and must be requested.
-        if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            // Provide an additional rationale to the user if the permission was not granted
-            // and the user would benefit from additional context for the use of the permission.
-            // Display a SnackBar with cda button to request the missing permission.
-            Snackbar.make(root, R.string.storage_access_required,
-                    Snackbar.LENGTH_INDEFINITE).setAction(R.string.ok, view -> {
-                // Request the permission
-                ActivityCompat.requestPermissions(requireActivity(),
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
-            }).show();
-        } else {
-            // Request the permission. The result will be received in onRequestPermissionResult().
-            ActivityCompat.requestPermissions(requireActivity(),
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
-        }
-    }
 }

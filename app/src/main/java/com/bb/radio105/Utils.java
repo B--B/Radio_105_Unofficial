@@ -6,12 +6,20 @@ import android.app.ActivityManager;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.snackbar.Snackbar;
+
+import java.util.Objects;
+
+import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
 
 public class Utils {
 //    static boolean isRadioStreamingRunning(Context context) {
@@ -68,5 +76,29 @@ public class Utils {
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.getLastPathSegment());
         downloadManager.enqueue(request);
+    }
+
+    static void setUpFullScreen(Activity mActivity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            final WindowInsetsController controller = mActivity.getWindow().getInsetsController();
+
+            if (controller != null)
+                controller.hide(WindowInsets.Type.statusBars());
+        } else {
+            mActivity.getWindow().addFlags(FLAG_FULLSCREEN);
+        }
+        Objects.requireNonNull(((AppCompatActivity) mActivity).getSupportActionBar()).hide();
+    }
+
+    static void restoreScreen(Activity mActivity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            final WindowInsetsController controller = mActivity.getWindow().getInsetsController();
+
+            if (controller != null)
+                controller.show(WindowInsets.Type.statusBars());
+        } else {
+            mActivity.getWindow().clearFlags(FLAG_FULLSCREEN);
+        }
+        Objects.requireNonNull(((AppCompatActivity) mActivity).getSupportActionBar()).show();
     }
 }

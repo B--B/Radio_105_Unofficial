@@ -135,21 +135,7 @@ public class ZooFragment extends Fragment {
             @RequiresApi(Build.VERSION_CODES.M)
             @Override
             public void onReceivedError(WebView webView, WebResourceRequest request, WebResourceError error) {
-                // Ignore some connection errors
-                // ERR_FAILED = -1
-                // ERR_CONNECTION_REFUSED = -6 --> needed for people with AD Blocker
-                switch (error.getErrorCode()) {
-                    case -1:
-                    case -6:
-                        break;
-                    default:
-                        webView.loadUrl(Constants.ErrorPagePath);
-                        Snackbar.make(root,
-                                getString(R.string.something_wrong) + error.getErrorCode()
-                                        + getString(R.string.description) + error.getDescription().toString(), Snackbar.LENGTH_LONG)
-                                .show();
-                        break;
-                }
+                webView.loadUrl(Constants.ErrorPagePath);
             }
 
             @Deprecated

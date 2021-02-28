@@ -3,20 +3,16 @@ package com.bb.radio105;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.DownloadManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -194,30 +190,11 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
         });
 
         mWebView.setDownloadListener((url1, userAgent, contentDisposition, mimetype, contentLength) -> {
-            String fileName = URLUtil.guessFileName(url1, contentDisposition, mimetype);
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                DownloadManager downloadManager = (DownloadManager) requireActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-                Uri uri = Uri.parse(url1);
-                DownloadManager.Request request = new DownloadManager.Request(uri);
-                request.setTitle(getString(R.string.menu_home));
-                request.setVisibleInDownloadsUi(true);
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.getLastPathSegment());
-                downloadManager.enqueue(request);
+                Utils.startDownload(requireActivity(), url1);
             } else {
-                requestStoragePermission();
-                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    DownloadManager downloadManager = (DownloadManager) requireActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-                    Uri uri = Uri.parse(url1);
-                    DownloadManager.Request request = new DownloadManager.Request(uri);
-                    request.setTitle(getString(R.string.menu_home));
-                    request.setVisibleInDownloadsUi(true);
-                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.getLastPathSegment());
-                    downloadManager.enqueue(request);
-                }
+                Utils.requestStoragePermission(requireActivity(), root);
             }
         });
         return root;

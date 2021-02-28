@@ -51,8 +51,8 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                 LayoutInflater inflater = requireActivity().getLayoutInflater();
                 View dialogView = inflater.inflate(R.layout.special_thanks, null);
                 builder.setView(dialogView).
-                        setPositiveButton("Ok", (dialog, which) -> {
-//                                Ok
+                        setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+                            // Do nothing
                         });
                 AlertDialog dialog = builder.create();
                 dialog.show();

@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class TvFragment extends Fragment {
 
+    private View root;
     private ProgressBar progressBar;
     VideoView videoView;
     String videoUrl;
@@ -25,17 +26,13 @@ public class TvFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_tv, container, false);
+        root = inflater.inflate(R.layout.fragment_tv, container, false);
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Utils.setUpFullScreen(requireActivity());
         } else {
             Utils.restoreScreen(requireActivity());
         }
-
-        videoView = root.findViewById(R.id.videoView);
-        progressBar = root.findViewById(R.id.progressBar);
-        videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
 
         // Stop radio streaming if running
         if (MusicService.mState == MusicService.State.Playing) {
@@ -45,13 +42,6 @@ public class TvFragment extends Fragment {
                  requireContext().startService(mIntent);
                  requireContext().sendBroadcast(mIntent);
         }
-
-        // Start video streaming
-        progressBar.setVisibility(View.VISIBLE);
-        videoView.requestFocus();
-        videoView.setOnInfoListener(onInfoToPlayStateListener);
-        videoView.setVideoURI(Uri.parse(videoUrl));
-        videoView.start();
 
         return root;
     }
@@ -74,11 +64,25 @@ public class TvFragment extends Fragment {
     };
 
     @Override
+    public void onStart() {
+        videoView = root.findViewById(R.id.videoView);
+        progressBar = root.findViewById(R.id.progressBar);
+        videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
+        // Start video streaming
+        progressBar.setVisibility(View.VISIBLE);
+        videoView.requestFocus();
+        videoView.setOnInfoListener(onInfoToPlayStateListener);
+        videoView.setVideoURI(Uri.parse(videoUrl));
+        videoView.start();
+        super.onStart();
+    }
+
+    @Override
     public void onConfigurationChanged(@NotNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Utils.setUpFullScreen(requireActivity());
-            } else {
+        } else {
             Utils.restoreScreen(requireActivity());
         }
     }

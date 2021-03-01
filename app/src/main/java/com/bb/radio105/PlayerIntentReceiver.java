@@ -30,7 +30,10 @@ public class PlayerIntentReceiver extends BroadcastReceiver {
                 HomeFragment.playerStatusListener.onButtonStatusChange("Error");
                 break;
             case android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY:
-                HomeFragment.playerStatusListener.onButtonStatusChange("Audio_Device_Disconnected");
+                Intent mIntent = new Intent();
+                mIntent.setAction(Constants.ACTION_PAUSE);
+                mIntent.setPackage(context.getPackageName());
+                context.startService(mIntent);
                 break;
         }
     }

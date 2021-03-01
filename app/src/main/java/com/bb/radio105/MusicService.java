@@ -23,6 +23,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
@@ -54,6 +55,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     // The tag we put on debug messages
     final static String TAG = "Radio105Player";
     private static final String CHANNEL_ID = "Radio105ServiceChannel";
+
+    // Intent receiver for ACTION_AUDIO_BECOMING_NOISY
+    private final PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
 
     // our media player
     static MediaPlayer mPlayer = null;
@@ -120,6 +124,10 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                 .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "radio105lock");
 
         mNotificationManager = NotificationManagerCompat.from(this);
+
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        registerReceiver(playerIntentReceiver, mIntentFilter);
     }
 
     /**
@@ -404,6 +412,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         // Service is being killed, so make sure we release our resources
         mState = State.Stopped;
         relaxResources(true);
+        unregisterReceiver(playerIntentReceiver);
     }
 
     @Override

@@ -100,7 +100,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
         mIntentFilter.addAction(Constants.ACTION_PAUSE_NOTIFICATION);
         mIntentFilter.addAction(Constants.ACTION_STOP_NOTIFICATION);
         mIntentFilter.addAction(Constants.ACTION_ERROR);
-        mIntentFilter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         requireContext().registerReceiver(playerIntentReceiver, mIntentFilter);
 
         switch (MusicService.mState) {

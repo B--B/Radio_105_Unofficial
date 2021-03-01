@@ -40,6 +40,9 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
+
+        AlertDialog dialog = null;
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
@@ -51,12 +54,9 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                 LayoutInflater inflater = requireActivity().getLayoutInflater();
                 View dialogView = inflater.inflate(R.layout.special_thanks, null);
                 builder.setView(dialogView).
-                        setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-                            // Do nothing
-                        });
-                AlertDialog dialog = builder.create();
+                        setPositiveButton(getString(R.string.ok), (dialog, which) -> dialog.cancel());
+                dialog = builder.create();
                 dialog.show();
-
                 ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.stack))).setMovementMethod(LinkMovementMethod.getInstance());
                 ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.google))).setMovementMethod(LinkMovementMethod.getInstance());
                 ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.unitedradio))).setMovementMethod(LinkMovementMethod.getInstance());
@@ -66,6 +66,15 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                 ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.adblockplus))).setMovementMethod(LinkMovementMethod.getInstance());
             }
             return false;
+        }
+
+        @Override
+        public void onDestroy() {
+            if (dialog != null) {
+                dialog.cancel();
+                dialog = null;
+            }
+            super.onDestroy();
         }
     }
 
@@ -99,8 +108,8 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .unregisterOnSharedPreferenceChangeListener(this);
+        super.onDestroy();
     }
 }

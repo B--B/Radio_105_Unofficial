@@ -140,6 +140,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
     @Override
     public void onStop() {
         requireContext().unregisterReceiver(playerIntentReceiver);
+        playerStatusListener = null;
+        button1 = null;
+        button2 = null;
+        button3 = null;
         super.onStop();
     }
 

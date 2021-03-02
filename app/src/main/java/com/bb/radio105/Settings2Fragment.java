@@ -22,9 +22,11 @@ import java.util.Objects;
 public class Settings2Fragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener,
         Preference.SummaryProvider<androidx.preference.ListPreference> {
 
+    View root;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_settings, container, false);
+        root = inflater.inflate(R.layout.fragment_settings, container, false);
 
         if (savedInstanceState == null) {
             requireActivity().getSupportFragmentManager()
@@ -69,12 +71,12 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
         }
 
         @Override
-        public void onDestroy() {
+        public void onDestroyView() {
             if (dialog != null) {
                 dialog.cancel();
                 dialog = null;
             }
-            super.onDestroy();
+            super.onDestroyView();
         }
     }
 
@@ -107,9 +109,11 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroyView() {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .unregisterOnSharedPreferenceChangeListener(this);
-        super.onDestroy();
+
+        root = null;
+        super.onDestroyView();
     }
 }

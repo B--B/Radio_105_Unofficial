@@ -38,7 +38,6 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -99,7 +98,7 @@ public class ZooFragment extends Fragment {
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
-        mWebView = root.findViewById(R.id.webView);
+        mWebView = root.findViewById(R.id.webView_zoo);
         String url = "https://zoo.105.net";
         // TODO: Even if it's working this mess must be absolutely cleaned now that ads are gone
         final String javaScript = "javascript:(function() { " +
@@ -139,13 +138,7 @@ public class ZooFragment extends Fragment {
         mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-
-        if (savedInstanceState != null) {
-            // Restore last state for checked position.
-            mWebView.restoreState(savedInstanceState);
-        } else  {
-            mWebView.loadUrl(url);
-        }
+        mWebView.loadUrl(url);
 
         mWebView.setWebViewClient(new WebViewClient() {
 
@@ -167,14 +160,14 @@ public class ZooFragment extends Fragment {
             @Override
             public void onPageStarted(WebView webView, String url, Bitmap mBitmap) {
                 webView.setVisibility(View.GONE);
-                root.findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                root.findViewById(R.id.loading_zoo).setVisibility(View.VISIBLE);
                 super.onPageStarted(webView, url, mBitmap);
             }
 
             @Override
             public void onPageFinished (WebView webView, String url) {
                 webView.loadUrl(javaScript);
-                root.findViewById(R.id.loading).setVisibility(View.GONE);
+                root.findViewById(R.id.loading_zoo).setVisibility(View.GONE);
                 webView.setVisibility(View.VISIBLE);
                 super.onPageFinished(webView, url);
             }
@@ -245,12 +238,6 @@ public class ZooFragment extends Fragment {
         });
 
         return root;
-    }
-
-    @Override
-    public void onSaveInstanceState(@NotNull Bundle savedInstanceState) {
-        mWebView.saveState(savedInstanceState);
-        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override

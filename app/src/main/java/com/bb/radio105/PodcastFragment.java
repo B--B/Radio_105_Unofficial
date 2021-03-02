@@ -31,7 +31,6 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
-import org.jetbrains.annotations.NotNull;
 
 public class PodcastFragment extends Fragment implements ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -55,7 +54,7 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
-        mWebView = root.findViewById(R.id.webView);
+        mWebView = root.findViewById(R.id.webView_podcast);
         String url = "https://www.105.net/sezioni/995/podcast";
         final String javaScript = "javascript:(function() { " +
                 "var element = document.getElementsByClassName('navbar-fixed-top hidden-print');" +
@@ -88,13 +87,7 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
         mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-
-        if (savedInstanceState != null) {
-            // Restore last state for checked position.
-            mWebView.restoreState(savedInstanceState);
-        } else  {
-            mWebView.loadUrl(url);
-        }
+        mWebView.loadUrl(url);
 
         mWebView.setWebViewClient(new WebViewClient() {
 
@@ -120,14 +113,14 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
             @Override
             public void onPageStarted(WebView webView, String url, Bitmap mBitmap) {
                 webView.setVisibility(View.GONE);
-                root.findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                root.findViewById(R.id.loading_podcast).setVisibility(View.VISIBLE);
                 super.onPageStarted(webView, url, mBitmap);
             }
 
             @Override
             public void onPageFinished (WebView webView, String url) {
                 webView.loadUrl(javaScript);
-                root.findViewById(R.id.loading).setVisibility(View.GONE);
+                root.findViewById(R.id.loading_podcast).setVisibility(View.GONE);
                 webView.setVisibility(View.VISIBLE);
                 super.onPageFinished(webView, url);
             }
@@ -209,12 +202,6 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
         super.onStart();
-    }
-
-    @Override
-    public void onSaveInstanceState(@NotNull Bundle savedInstanceState) {
-        mWebView.saveState(savedInstanceState);
-        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override

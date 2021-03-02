@@ -6,12 +6,12 @@
     tools:context=".PodcastFragment">
 
     <org.adblockplus.libadblockplus.android.webview.AdblockWebView
-        android:id="@+id/webView"
+        android:id="@+id/webView_podcast"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
     <RelativeLayout
-        android:id="@+id/loading"
+        android:id="@+id/loading_podcast"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center" >

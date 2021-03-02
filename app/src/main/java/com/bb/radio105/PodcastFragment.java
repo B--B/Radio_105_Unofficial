@@ -218,9 +218,9 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroyView() {
         mWebView.destroy();
-        super.onDestroy();
+        super.onDestroyView();
     }
 
     @Override

@@ -52,6 +52,41 @@ public class ZooFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_zoo, container, false);
 
+        boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean(getString(R.string.screen_on_key), false);
+        if (pref) {
+            requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+
+        // Custom Colors
+        final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
+        // The apps theme is decided depending upon the saved preferences on app startup
+        String themePref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getString(getString(R.string.theme_key), getString(R.string.theme_default_value));
+        // Comparing to see which preference is selected and applying those theme settings
+        if (themePref.equals(darkModeValues[0])) {
+            // Check system status and apply colors
+            int nightModeOn = requireContext().getResources().getConfiguration().uiMode &
+                    Configuration.UI_MODE_NIGHT_MASK;
+            switch (nightModeOn) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    setZooDarkColors();
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                    setZooLightColors();
+                    break;
+            }
+        }
+        if (themePref.equals(darkModeValues[1])) {
+            setZooLightColors();
+        }
+        if (themePref.equals(darkModeValues[2])) {
+            setZooDarkColors();
+        }
+
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
@@ -213,52 +248,13 @@ public class ZooFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getBoolean(getString(R.string.screen_on_key), false);
-        if (pref) {
-            requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        } else {
-            requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
-
-        // Custom Colors
-        final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
-        // The apps theme is decided depending upon the saved preferences on app startup
-        String themePref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getString(getString(R.string.theme_key), getString(R.string.theme_default_value));
-        // Comparing to see which preference is selected and applying those theme settings
-        if (themePref.equals(darkModeValues[0])) {
-            // Check system status and apply colors
-            int nightModeOn = requireContext().getResources().getConfiguration().uiMode &
-                    Configuration.UI_MODE_NIGHT_MASK;
-            switch (nightModeOn) {
-                case Configuration.UI_MODE_NIGHT_YES:
-                    setZooDarkColors();
-                    break;
-                case Configuration.UI_MODE_NIGHT_NO:
-                case Configuration.UI_MODE_NIGHT_UNDEFINED:
-                    setZooLightColors();
-                    break;
-            }
-        }
-        if (themePref.equals(darkModeValues[1])) {
-            setZooLightColors();
-        }
-        if (themePref.equals(darkModeValues[2])) {
-            setZooDarkColors();
-        }
-        super.onStart();
-    }
-
-    @Override
     public void onSaveInstanceState(@NotNull Bundle savedInstanceState) {
         mWebView.saveState(savedInstanceState);
         super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
-    public void onStop() {
+    public void onDestroyView() {
         final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
         // The apps theme is decided depending upon the saved preferences on app startup
         String pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -267,7 +263,7 @@ public class ZooFragment extends Fragment {
         if (pref.equals(darkModeValues[0])) {
             // Check system status and restore colors
             int nightModeOn = requireContext().getResources().getConfiguration().uiMode &
-                            Configuration.UI_MODE_NIGHT_MASK;
+                    Configuration.UI_MODE_NIGHT_MASK;
             switch (nightModeOn) {
                 case Configuration.UI_MODE_NIGHT_YES:
                     setStockDarkColors();
@@ -284,13 +280,9 @@ public class ZooFragment extends Fragment {
         if (pref.equals(darkModeValues[2])) {
             setStockDarkColors();
         }
-        super.onStop();
-    }
 
-    @Override
-    public void onDestroy() {
         mWebView.destroy();
-        super.onDestroy();
+        super.onDestroyView();
     }
 
     @Override

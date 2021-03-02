@@ -282,6 +282,7 @@ public class ZooFragment extends Fragment {
         }
 
         mWebView.destroy();
+        root = null;
         super.onDestroyView();
     }
 

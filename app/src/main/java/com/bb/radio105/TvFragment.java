@@ -88,10 +88,14 @@ public class TvFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onDestroyView() {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Utils.restoreScreen(requireActivity());
         }
+        videoView = null;
+        progressBar = null;
+        videoUrl = null;
+        root = null;
+        super.onDestroyView();
     }
 }

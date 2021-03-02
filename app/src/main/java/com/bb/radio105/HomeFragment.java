@@ -22,6 +22,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
     Button button1;
     Button button2;
     Button button3;
+    View root;
 
     static PlayerStatusListener playerStatusListener;
     private final PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
@@ -29,7 +30,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+        root = inflater.inflate(R.layout.fragment_home, container, false);
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -141,10 +142,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
     public void onStop() {
         requireContext().unregisterReceiver(playerIntentReceiver);
         playerStatusListener = null;
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
         button1 = null;
         button2 = null;
         button3 = null;
-        super.onStop();
+        root = null;
+        super.onDestroyView();
     }
 
     public void onClick(View target) {

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Radio 105 Streaming</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
@@ -36,6 +36,7 @@
     <!-- Special Thanks -->
     <string name="thanks" translatable="false">thanks</string>
     <string name="special_thanks">Special Thanks</string>
+    <string name="special_thanks_title">Special Thanks To:</string>
     <string name="icons"><a href="https://pngio.com/png">PngIO</a>, <a href="https://iconape.com/">Icon Ape</a> and <a href="https://www.iconninja.com/">Icon Ninja</a> for icons</string>
     <string name="mediaset"><a href="https://www.mediasetplay.mediaset.it/">Mediaset Play</a> for video streaming</string>
     <string name="unitedradio"><a href="https://www.unitedmusic.com/">Unitedradio</a> for radio streaming</string>
@@ -43,6 +44,8 @@
     <string name="stackoverflow"><a href="https://stackoverflow.com/">StackOverflow</a> (as ever) for all hints and suggestions</string>
     <string name="jhey"><a href="https://codepen.io/jh3y">Jhey</a> for the custom 404 error page</string>
     <string name="adblockplus"><a href="https://github.com/adblockplus/libadblockplus-android">Adblockplus</a> for their WebView version with ad blocker</string>
+    <string name="tinyPng"><a href="https://tinypng.com/">TinyPng</a> for shrinking my PNG drawables</string>
+    <string name="bb" tools:ignore="TypographyDashes">Written and produced by \n B--B</string>
 
     <!-- Notification commands -->
     <string name="notification_key" translatable="false">persistent_notification</string>
@@ -74,4 +77,5 @@
     <string name="ok">OK</string>
     <string name="storage_permission_granted">Storage permission was granted. Starting download.</string>
     <string name="storage_permission_denied">Storage permission request was denied.</string>
+    <string name="rabbit" translatable="false">A rabbit life</string>
 </resources>

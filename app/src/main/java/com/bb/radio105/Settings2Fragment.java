@@ -6,6 +6,7 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
+import java.util.Calendar;
 import java.util.Objects;
 
 public class Settings2Fragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener,
@@ -28,12 +30,10 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        if (savedInstanceState == null) {
-            requireActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.settings, new Settings2Fragment.SettingsFragment())
-                    .commit();
-        }
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.settings, new Settings2Fragment.SettingsFragment())
+                .commit();
 
         PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .registerOnSharedPreferenceChangeListener(this);
@@ -43,7 +43,8 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
-        AlertDialog dialog = null;
+        private AlertDialog dialog;
+        private ImageView mImageView;
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -54,10 +55,30 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             if (p.getKey().equals("thanks")) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
                 LayoutInflater inflater = requireActivity().getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.special_thanks, null);
+                View dialogView = inflater.inflate(R.layout.special_thanks, null, false);
                 builder.setView(dialogView).
                         setPositiveButton(getString(R.string.ok), (dialog, which) -> dialog.cancel());
                 dialog = builder.create();
+                dialog.setIcon(R.drawable.ic_radio_105_logo);
+                dialog.setTitle(R.string.special_thanks_title);
+                mImageView = dialogView.findViewById(R.id.ee);
+                Calendar mCalendar = Calendar.getInstance();
+                int timeOfDay = mCalendar.get(Calendar.HOUR_OF_DAY);
+                if (timeOfDay >=7 && timeOfDay <11) {
+                    mImageView.setImageResource(R.drawable.easter_egg_1);
+                } else if (timeOfDay >= 11 && timeOfDay < 14) {
+                    mImageView.setImageResource(R.drawable.easter_egg_2);
+                } else if (timeOfDay >= 14 && timeOfDay < 19) {
+                    mImageView.setImageResource(R.drawable.easter_egg_3);
+                } else if (timeOfDay >= 19 && timeOfDay < 23) {
+                    mImageView.setImageResource(R.drawable.easter_egg_4);
+                } else if (timeOfDay == 23) {
+                    mImageView.setImageResource(R.drawable.easter_egg_5);
+                } else if (timeOfDay < 3) {
+                    mImageView.setImageResource(R.drawable.easter_egg_5);
+                } else {
+                    mImageView.setImageResource(R.drawable.easter_egg_6);
+                }
                 dialog.show();
                 ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.stack))).setMovementMethod(LinkMovementMethod.getInstance());
                 ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.google))).setMovementMethod(LinkMovementMethod.getInstance());
@@ -66,14 +87,28 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                 ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.icons))).setMovementMethod(LinkMovementMethod.getInstance());
                 ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.jhey))).setMovementMethod(LinkMovementMethod.getInstance());
                 ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.adblockplus))).setMovementMethod(LinkMovementMethod.getInstance());
+                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.tinyPng))).setMovementMethod(LinkMovementMethod.getInstance());
             }
             return false;
         }
 
         @Override
+        public void onPause() {
+            // Avoid a case where app is in background with alertDialog open
+            // and image change causing a memory leak
+            if (dialog != null) {
+                mImageView.setImageDrawable(null);
+                dialog.dismiss();
+                dialog = null;
+            }
+            super.onPause();
+        }
+
+        @Override
         public void onDestroyView() {
             if (dialog != null) {
-                dialog.cancel();
+                mImageView.setImageDrawable(null);
+                dialog.dismiss();
                 dialog = null;
             }
             super.onDestroyView();
@@ -112,7 +147,6 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
     public void onDestroyView() {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .unregisterOnSharedPreferenceChangeListener(this);
-
         root = null;
         super.onDestroyView();
     }

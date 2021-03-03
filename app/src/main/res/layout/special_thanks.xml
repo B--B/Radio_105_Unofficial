@@ -71,14 +71,36 @@
                 android:id="@+id/adblockplus"
                 android:padding="20dp" />
 
-            <ImageView
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_radio_105_logo"
+                android:text="@string/tinyPng"
+                android:textSize="20sp"
+                android:id="@+id/tinyPng"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="75dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/bb"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:fontFamily="casual"
+                android:id="@+id/bb"
+                android:padding="20dp" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ee"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:layout_gravity="center_horizontal"
-                android:contentDescription="@string/logo"
-                android:paddingStart="40dp"
-                android:paddingEnd="40dp" />
+                android:contentDescription="@string/rabbit"
+                app:shapeAppearanceOverlay="@style/imageViewRounded"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/orange_900" />
 
         </LinearLayout>
 

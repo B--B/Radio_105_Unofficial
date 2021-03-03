@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Radio 105 Streaming</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
@@ -33,6 +33,7 @@
     <string name="noisy_key_title">Impostazioni Dispositivi Audio</string>
 
     <!-- Special Thanks -->
+    <string name="special_thanks_title">Un ringraziamento speciale a:</string>
     <string name="icons"><a href="https://pngio.com/png">PngIO</a>, <a href="https://iconape.com/">Icon Ape</a> e <a href="https://www.iconninja.com/">Icon Ninja</a> per le icone</string>
     <string name="mediaset"><a href="https://www.mediasetplay.mediaset.it/">Mediaset Play</a> per lo streaming video</string>
     <string name="unitedradio"><a href="https://www.unitedmusic.com/">Unitedradio</a> per lo streaming radio</string>
@@ -40,6 +41,8 @@
     <string name="stackoverflow"><a href="https://stackoverflow.com/">StackOverflow</a> (come sempre) per l\' aiuto e i suggerimenti</string>
     <string name="jhey"><a href="https://codepen.io/jh3y">Jhey</a> per la pagina di errore 404 customizzata</string>
     <string name="adblockplus"><a href="https://github.com/adblockplus/libadblockplus-android">Adblockplus</a> per la loro versione di WebView con ad blocker</string>
+    <string name="tinyPng"><a href="https://tinypng.com/">TinyPng</a> per la riduzione della dimensione delle immagini</string>
+    <string name="bb" tools:ignore="TypographyDashes">Scritto e prodotto da \n B--B</string>
 
     <!-- Notification commands -->
     <string name="play">Riproduci</string>

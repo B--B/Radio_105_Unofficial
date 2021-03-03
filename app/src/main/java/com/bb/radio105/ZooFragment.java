@@ -298,9 +298,9 @@ public class ZooFragment extends Fragment {
         requireActivity().getWindow().setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.zoo_300));
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar())
                 .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.zoo_500)));
-        NavigationView mNavigationView = (NavigationView) requireActivity().findViewById(R.id.nav_view);
+        NavigationView mNavigationView = requireActivity().findViewById(R.id.nav_view);
         View header = mNavigationView.getHeaderView(0);
-        LinearLayout mLinearLayout = (LinearLayout)header.findViewById(R.id.nav_header);
+        LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
         mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar_zoo);
         ColorStateList mColorStateList = new ColorStateList(
                 new int[][] {
@@ -320,9 +320,9 @@ public class ZooFragment extends Fragment {
         requireActivity().getWindow().setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.zoo_200));
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar())
                 .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.zoo_500)));
-        NavigationView mNavigationView = (NavigationView) requireActivity().findViewById(R.id.nav_view);
+        NavigationView mNavigationView = requireActivity().findViewById(R.id.nav_view);
         View header = mNavigationView.getHeaderView(0);
-        LinearLayout mLinearLayout = (LinearLayout)header.findViewById(R.id.nav_header);
+        LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
         mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar_zoo);
         ColorStateList mColorStateList = new ColorStateList(
                 new int[][] {
@@ -342,9 +342,9 @@ public class ZooFragment extends Fragment {
         requireActivity().getWindow().setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.orange_900));
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar())
                 .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.yellow_700)));
-        NavigationView mNavigationView = (NavigationView) requireActivity().findViewById(R.id.nav_view);
+        NavigationView mNavigationView = requireActivity().findViewById(R.id.nav_view);
         View header = mNavigationView.getHeaderView(0);
-        LinearLayout mLinearLayout = (LinearLayout)header.findViewById(R.id.nav_header);
+        LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
         mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar);
         ColorStateList mColorStateList = new ColorStateList(
                 new int[][] {
@@ -364,9 +364,9 @@ public class ZooFragment extends Fragment {
         requireActivity().getWindow().setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.yellow_700));
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar())
                 .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.yellow_200)));
-        NavigationView mNavigationView = (NavigationView) requireActivity().findViewById(R.id.nav_view);
+        NavigationView mNavigationView = requireActivity().findViewById(R.id.nav_view);
         View header = mNavigationView.getHeaderView(0);
-        LinearLayout mLinearLayout = (LinearLayout)header.findViewById(R.id.nav_header);
+        LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
         mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar);
         ColorStateList mColorStateList = new ColorStateList(
                 new int[][] {

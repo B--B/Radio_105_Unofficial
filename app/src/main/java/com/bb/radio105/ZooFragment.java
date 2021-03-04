@@ -55,8 +55,6 @@ public class ZooFragment extends Fragment {
                 .getBoolean(getString(R.string.screen_on_key), false);
         if (pref) {
             requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        } else {
-            requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
         // Custom Colors
@@ -268,6 +266,12 @@ public class ZooFragment extends Fragment {
         }
         if (pref.equals(darkModeValues[2])) {
             setStockDarkColors();
+        }
+
+        boolean pref1 = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean(getString(R.string.screen_on_key), false);
+        if (pref1) {
+            requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
         mWebView.destroy();

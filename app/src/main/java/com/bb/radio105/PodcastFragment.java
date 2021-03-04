@@ -80,6 +80,8 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
                 "var element = document.getElementsByClassName('anteprima_slider vc_preview_slider_dj ghost_container vc_txt_m variant vc_theme_light vc_br_100  null ');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('container-fluid vc_bg_darkgray vc_bt7_yellow vc_z2 vc_hidden_print');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('iubenda-cs-container');" +
                 " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
         mWebView.getSettings().setLoadsImagesAutomatically(true);

@@ -131,6 +131,8 @@ public class ZooFragment extends Fragment {
                 "var element = document.getElementById('div-gpt-320x50');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementById('google_ads_iframe_/4758/altri_radiomediaset_radio105/altre_2__container__');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('iubenda-cs-container');" +
                 " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
         mWebView.getSettings().setLoadsImagesAutomatically(true);

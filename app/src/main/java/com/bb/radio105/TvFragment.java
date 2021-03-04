@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
 
@@ -65,6 +66,7 @@ public class TvFragment extends Fragment {
 
     @Override
     public void onStart() {
+        requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         videoView = root.findViewById(R.id.videoView);
         progressBar = root.findViewById(R.id.progressBar);
         videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
@@ -92,6 +94,7 @@ public class TvFragment extends Fragment {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Utils.restoreScreen(requireActivity());
         }
+        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         videoView = null;
         progressBar = null;
         videoUrl = null;

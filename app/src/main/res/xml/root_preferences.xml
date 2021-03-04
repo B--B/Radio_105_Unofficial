@@ -37,6 +37,13 @@
         app:title="@string/screen_on_title"
         app:defaultValue="false"/>
 
+    <SwitchPreferenceCompat
+        app:key="@string/reconnect_key"
+        app:summaryOff="@string/reconnect_summary_off"
+        app:summaryOn="@string/reconnect_summary_on"
+        app:title="@string/reconnect_title"
+        app:defaultValue="false"/>
+
     <Preference
         app:key="@string/thanks"
         app:title="@string/special_thanks" />

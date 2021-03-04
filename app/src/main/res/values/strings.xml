@@ -78,4 +78,12 @@
     <string name="storage_permission_granted">Storage permission was granted. Starting download.</string>
     <string name="storage_permission_denied">Storage permission request was denied.</string>
     <string name="rabbit" translatable="false">A rabbit life</string>
+
+    <!-- Reconnect Stream -->
+    <string name="reconnect_key" translatable="false">reconnect_stream</string>
+    <string name="no_reconnect">Internet not available, reconnection failed</string>
+    <string name="reconnect">Internet available, trying to restart the stream</string>
+    <string name="reconnect_summary_off">App will not try to reconnect Radio stream automatically after a media error</string>
+    <string name="reconnect_summary_on">App will try to automatically restart the stream if a media player audio occur and an internet connection is available</string>
+    <string name="reconnect_title">Restart Radio stream</string>
 </resources>

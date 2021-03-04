@@ -71,4 +71,11 @@
     <string name="ok">OK</string>
     <string name="storage_permission_granted">Applicazione autorizzata a scrivere nella memoria interna. Inizia il download.</string>
     <string name="storage_permission_denied">Il permesso di scrittura nella memoria interna è stato negato.</string>
+
+    <!-- Reconnect Stream -->
+    <string name="no_reconnect">Internet non disponibile, riconnessione fallita</string>
+    <string name="reconnect">Internet disponibile, tento di reinizializzare lo streaming</string>
+    <string name="reconnect_summary_off">L\' applicazione non tenterà di riconnettere lo streaming Radio automaticamente dopo un errore di riproduzione</string>
+    <string name="reconnect_summary_on">L\' applicazione tenterà di riconnettere lo streaming Radio automaticamente dopo un errore di riproduzione se internet è disponibile</string>
+    <string name="reconnect_title">Riconnessione Radio Streaming</string>
 </resources>

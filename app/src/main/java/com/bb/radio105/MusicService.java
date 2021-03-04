@@ -42,6 +42,10 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import timber.log.Timber;
 
@@ -404,6 +408,26 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mIntent.setPackage(getPackageName());
         sendBroadcast(mIntent);
 
+        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.reconnect_key), false);
+        if (pref) {
+            // Try to restart the service immediately if we have a working internet connection
+            if (isDeviceOnline()) {
+                Toast.makeText(getApplicationContext(), getString(R.string.reconnect),
+                        Toast.LENGTH_SHORT).show();
+                // Send the intent for buttons change
+                Intent reconnect = new Intent();
+                reconnect.setAction(Constants.ACTION_PLAY);
+                reconnect.setPackage(getPackageName());
+                sendBroadcast(reconnect);
+                // Start the streaming
+                processPlayRequest();
+            } else {
+                // Tell the user that streaming service cannot be recovered
+                Toast.makeText(getApplicationContext(), getString(R.string.no_reconnect),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
         return true; // true indicates we handled the error
     }
 
@@ -443,5 +467,29 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             stopSelf();
         }
         super.onTaskRemoved(rootIntent);
+    }
+
+    public boolean isDeviceOnline() {
+        // Try to connect to CloudFlare DNS socket, return true if success
+        final AtomicBoolean deviceOnline = new AtomicBoolean(false);
+        Thread thread = new Thread(() -> {
+            try {
+                int timeout = 1500;
+                Socket sock = new Socket();
+                SocketAddress mSocketAddress = new InetSocketAddress("1.1.1.1", 53);
+                sock.connect(mSocketAddress, timeout);
+                sock.close();
+                deviceOnline.set(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return deviceOnline.get();
     }
 }

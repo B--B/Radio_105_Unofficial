@@ -5,10 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,24 +19,18 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.LinearLayout;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
-
-import java.util.Objects;
 
 public class ZooFragment extends Fragment {
 
@@ -58,31 +49,7 @@ public class ZooFragment extends Fragment {
         }
 
         // Custom Colors
-        final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
-        // The apps theme is decided depending upon the saved preferences on app startup
-        String themePref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getString(getString(R.string.theme_key), getString(R.string.theme_default_value));
-        // Comparing to see which preference is selected and applying those theme settings
-        if (themePref.equals(darkModeValues[0])) {
-            // Check system status and apply colors
-            int nightModeOn = requireContext().getResources().getConfiguration().uiMode &
-                    Configuration.UI_MODE_NIGHT_MASK;
-            switch (nightModeOn) {
-                case Configuration.UI_MODE_NIGHT_YES:
-                    setZooDarkColors();
-                    break;
-                case Configuration.UI_MODE_NIGHT_NO:
-                case Configuration.UI_MODE_NIGHT_UNDEFINED:
-                    setZooLightColors();
-                    break;
-            }
-        }
-        if (themePref.equals(darkModeValues[1])) {
-            setZooLightColors();
-        }
-        if (themePref.equals(darkModeValues[2])) {
-            setZooDarkColors();
-        }
+        Utils.setZooColors(requireActivity());
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -242,40 +209,14 @@ public class ZooFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
-        // The apps theme is decided depending upon the saved preferences on app startup
-        String pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getString(getString(R.string.theme_key), getString(R.string.theme_default_value));
-        // Comparing to see which preference is selected and applying those theme settings
-        if (pref.equals(darkModeValues[0])) {
-            // Check system status and restore colors
-            int nightModeOn = requireContext().getResources().getConfiguration().uiMode &
-                    Configuration.UI_MODE_NIGHT_MASK;
-            switch (nightModeOn) {
-                case Configuration.UI_MODE_NIGHT_YES:
-                    setStockDarkColors();
-                    break;
-                case Configuration.UI_MODE_NIGHT_NO:
-                case Configuration.UI_MODE_NIGHT_UNDEFINED:
-                    setStockLightColors();
-                    break;
-            }
-        }
-        if (pref.equals(darkModeValues[1])) {
-            setStockLightColors();
-        }
-        if (pref.equals(darkModeValues[2])) {
-            setStockDarkColors();
-        }
-
-        boolean pref1 = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.screen_on_key), false);
-        if (pref1) {
+        if (pref) {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-
         mWebView.destroy();
         root = null;
+        Utils.setStockColors(requireActivity());
         super.onDestroyView();
     }
 
@@ -298,93 +239,5 @@ public class ZooFragment extends Fragment {
             }
         }
         // END_INCLUDE(onRequestPermissionsResult)
-    }
-
-    private void setZooLightColors() {
-        requireActivity().getWindow().setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.zoo_300));
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar())
-                .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.zoo_500)));
-        NavigationView mNavigationView = requireActivity().findViewById(R.id.nav_view);
-        View header = mNavigationView.getHeaderView(0);
-        LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
-        mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar_zoo);
-        ColorStateList mColorStateList = new ColorStateList(
-                new int[][] {
-                        new int[] {-android.R.attr.state_checked},
-                        new int[] { android.R.attr.state_checked}
-                },
-                new int[] {
-                        ContextCompat.getColor(requireContext(), R.color.black),
-                        ContextCompat.getColor(requireContext(), R.color.zoo_500),
-                }
-        );
-        mNavigationView.setItemIconTintList(mColorStateList);
-        mNavigationView.setItemTextColor(mColorStateList);
-    }
-
-    private void setZooDarkColors() {
-        requireActivity().getWindow().setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.zoo_200));
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar())
-                .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.zoo_500)));
-        NavigationView mNavigationView = requireActivity().findViewById(R.id.nav_view);
-        View header = mNavigationView.getHeaderView(0);
-        LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
-        mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar_zoo);
-        ColorStateList mColorStateList = new ColorStateList(
-                new int[][] {
-                        new int[] {-android.R.attr.state_checked},
-                        new int[] { android.R.attr.state_checked}
-                },
-                new int[] {
-                        ContextCompat.getColor(requireContext(), R.color.white),
-                        ContextCompat.getColor(requireContext(), R.color.zoo_500),
-                }
-        );
-        mNavigationView.setItemIconTintList(mColorStateList);
-        mNavigationView.setItemTextColor(mColorStateList);
-    }
-
-    private void setStockLightColors() {
-        requireActivity().getWindow().setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.orange_900));
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar())
-                .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.yellow_700)));
-        NavigationView mNavigationView = requireActivity().findViewById(R.id.nav_view);
-        View header = mNavigationView.getHeaderView(0);
-        LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
-        mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar);
-        ColorStateList mColorStateList = new ColorStateList(
-                new int[][] {
-                        new int[] {-android.R.attr.state_checked},
-                        new int[] { android.R.attr.state_checked}
-                },
-                new int[] {
-                        ContextCompat.getColor(requireContext(), R.color.black),
-                        ContextCompat.getColor(requireContext(), R.color.yellow_700),
-                }
-        );
-        mNavigationView.setItemIconTintList(mColorStateList);
-        mNavigationView.setItemTextColor(mColorStateList);
-    }
-
-    private void setStockDarkColors() {
-        requireActivity().getWindow().setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.yellow_700));
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar())
-                .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.yellow_200)));
-        NavigationView mNavigationView = requireActivity().findViewById(R.id.nav_view);
-        View header = mNavigationView.getHeaderView(0);
-        LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
-        mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar);
-        ColorStateList mColorStateList = new ColorStateList(
-                new int[][] {
-                        new int[] {-android.R.attr.state_checked},
-                        new int[] { android.R.attr.state_checked}
-                },
-                new int[] {
-                        ContextCompat.getColor(requireContext(), R.color.white),
-                        ContextCompat.getColor(requireContext(), R.color.yellow_200)
-                }
-        );
-        mNavigationView.setItemIconTintList(mColorStateList);
-        mNavigationView.setItemTextColor(mColorStateList);
     }
 }

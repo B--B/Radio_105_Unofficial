@@ -25,14 +25,16 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
         Preference.SummaryProvider<androidx.preference.ListPreference> {
 
     View root;
+    SettingsFragment mSettingsFragment;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_settings, container, false);
 
+        mSettingsFragment = new SettingsFragment();
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.settings, new Settings2Fragment.SettingsFragment())
+                .replace(R.id.settings, mSettingsFragment)
                 .commit();
 
         PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -98,6 +100,7 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             // and image change causing a memory leak
             if (dialog != null) {
                 mImageView.setImageDrawable(null);
+                mImageView = null;
                 dialog.dismiss();
                 dialog = null;
             }
@@ -108,6 +111,7 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
         public void onDestroyView() {
             if (dialog != null) {
                 mImageView.setImageDrawable(null);
+                mImageView = null;
                 dialog.dismiss();
                 dialog = null;
             }
@@ -147,6 +151,10 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
     public void onDestroyView() {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .unregisterOnSharedPreferenceChangeListener(this);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .remove(mSettingsFragment)
+                .commitAllowingStateLoss();
         root = null;
         super.onDestroyView();
     }

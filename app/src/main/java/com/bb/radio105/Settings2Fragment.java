@@ -47,6 +47,7 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
 
         private AlertDialog dialog;
         private ImageView mImageView;
+        private Boolean isAlertDialogShowing = false;
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -55,41 +56,8 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
         @Override
         public boolean onPreferenceTreeClick(Preference p) {
             if (p.getKey().equals("thanks")) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
-                LayoutInflater inflater = requireActivity().getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.special_thanks, null, false);
-                builder.setView(dialogView).
-                        setPositiveButton(getString(R.string.ok), (dialog, which) -> dialog.cancel());
-                dialog = builder.create();
-                dialog.setIcon(R.drawable.ic_radio_105_logo);
-                dialog.setTitle(R.string.special_thanks_title);
-                mImageView = dialogView.findViewById(R.id.ee);
-                Calendar mCalendar = Calendar.getInstance();
-                int timeOfDay = mCalendar.get(Calendar.HOUR_OF_DAY);
-                if (timeOfDay >=7 && timeOfDay <11) {
-                    mImageView.setImageResource(R.drawable.easter_egg_1);
-                } else if (timeOfDay >= 11 && timeOfDay < 14) {
-                    mImageView.setImageResource(R.drawable.easter_egg_2);
-                } else if (timeOfDay >= 14 && timeOfDay < 19) {
-                    mImageView.setImageResource(R.drawable.easter_egg_3);
-                } else if (timeOfDay >= 19 && timeOfDay < 23) {
-                    mImageView.setImageResource(R.drawable.easter_egg_4);
-                } else if (timeOfDay == 23) {
-                    mImageView.setImageResource(R.drawable.easter_egg_5);
-                } else if (timeOfDay < 3) {
-                    mImageView.setImageResource(R.drawable.easter_egg_5);
-                } else {
-                    mImageView.setImageResource(R.drawable.easter_egg_6);
-                }
-                dialog.show();
-                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.stack))).setMovementMethod(LinkMovementMethod.getInstance());
-                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.google))).setMovementMethod(LinkMovementMethod.getInstance());
-                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.unitedradio))).setMovementMethod(LinkMovementMethod.getInstance());
-                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.mediasetplay))).setMovementMethod(LinkMovementMethod.getInstance());
-                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.icons))).setMovementMethod(LinkMovementMethod.getInstance());
-                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.jhey))).setMovementMethod(LinkMovementMethod.getInstance());
-                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.adblockplus))).setMovementMethod(LinkMovementMethod.getInstance());
-                ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.tinyPng))).setMovementMethod(LinkMovementMethod.getInstance());
+                showDialog();
+                isAlertDialogShowing = true;
             }
             return false;
         }
@@ -108,6 +76,16 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
         }
 
         @Override
+        public void onResume() {
+            // Avoid a case where app is in background with alertDialog open
+            // and image change causing a memory leak
+            if (isAlertDialogShowing) {
+                showDialog();
+            }
+            super.onResume();
+        }
+
+        @Override
         public void onDestroyView() {
             if (dialog != null) {
                 mImageView.setImageDrawable(null);
@@ -116,6 +94,47 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                 dialog = null;
             }
             super.onDestroyView();
+        }
+
+        void showDialog() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+            LayoutInflater inflater = requireActivity().getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.special_thanks, null, false);
+            builder.setView(dialogView).
+                    setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+                        dialog.cancel();
+                        isAlertDialogShowing = false;
+                    });
+            dialog = builder.create();
+            dialog.setIcon(R.drawable.ic_radio_105_logo);
+            dialog.setTitle(R.string.special_thanks_title);
+            mImageView = dialogView.findViewById(R.id.ee);
+            Calendar mCalendar = Calendar.getInstance();
+            int timeOfDay = mCalendar.get(Calendar.HOUR_OF_DAY);
+            if (timeOfDay >=7 && timeOfDay <11) {
+                mImageView.setImageResource(R.drawable.easter_egg_1);
+            } else if (timeOfDay >= 11 && timeOfDay < 14) {
+                mImageView.setImageResource(R.drawable.easter_egg_2);
+            } else if (timeOfDay >= 14 && timeOfDay < 19) {
+                mImageView.setImageResource(R.drawable.easter_egg_3);
+            } else if (timeOfDay >= 19 && timeOfDay < 23) {
+                mImageView.setImageResource(R.drawable.easter_egg_4);
+            } else if (timeOfDay == 23) {
+                mImageView.setImageResource(R.drawable.easter_egg_5);
+            } else if (timeOfDay < 3) {
+                mImageView.setImageResource(R.drawable.easter_egg_5);
+            } else {
+                mImageView.setImageResource(R.drawable.easter_egg_6);
+            }
+            dialog.show();
+            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.stack))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.google))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.unitedradio))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.mediasetplay))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.icons))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.jhey))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.adblockplus))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.tinyPng))).setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
 

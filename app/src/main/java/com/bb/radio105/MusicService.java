@@ -409,7 +409,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         sendBroadcast(mIntent);
 
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.reconnect_key), false);
+                .getBoolean(getString(R.string.reconnect_key), true);
         if (pref) {
             // Try to restart the service immediately if we have a working internet connection
             if (isDeviceOnline()) {

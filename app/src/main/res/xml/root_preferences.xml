@@ -42,7 +42,7 @@
         app:summaryOff="@string/reconnect_summary_off"
         app:summaryOn="@string/reconnect_summary_on"
         app:title="@string/reconnect_title"
-        app:defaultValue="false"/>
+        app:defaultValue="true"/>
 
     <Preference
         app:key="@string/thanks"

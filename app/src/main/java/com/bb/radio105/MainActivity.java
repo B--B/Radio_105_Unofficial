@@ -17,9 +17,10 @@ import androidx.preference.PreferenceManager;
 
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements  UpdateColorsInterface {
 
     private AppBarConfiguration mAppBarConfiguration;
+    static UpdateColorsInterface updateColorsInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Objects.requireNonNull(navHostFragment).getNavController();
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        updateColorsInterface = this;
     }
 
     @Override
@@ -61,5 +63,14 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onUpdate(boolean zooColors) {
+        if (zooColors) {
+            Utils.setZooColors(this);
+        } else {
+            Utils.setStockColors(this);
+        }
     }
 }

@@ -32,6 +32,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
 
         root = inflater.inflate(R.layout.fragment_home, container, false);
 
+        // Stock Colors
+        MainActivity.updateColorsInterface.onUpdate(false);
+
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {

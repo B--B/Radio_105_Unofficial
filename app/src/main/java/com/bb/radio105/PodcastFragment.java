@@ -42,6 +42,9 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_podcast, container, false);
 
+        // Stock Colors
+        MainActivity.updateColorsInterface.onUpdate(false);
+
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {

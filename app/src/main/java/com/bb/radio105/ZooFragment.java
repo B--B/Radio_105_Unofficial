@@ -49,7 +49,7 @@ public class ZooFragment extends Fragment {
         }
 
         // Custom Colors
-        Utils.setZooColors(requireActivity());
+        MainActivity.updateColorsInterface.onUpdate(true);
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -216,7 +216,6 @@ public class ZooFragment extends Fragment {
         }
         mWebView.destroy();
         root = null;
-        Utils.setStockColors(requireActivity());
         super.onDestroyView();
     }
 

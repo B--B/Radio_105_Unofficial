@@ -29,6 +29,9 @@ public class TvFragment extends Fragment {
 
         root = inflater.inflate(R.layout.fragment_tv, container, false);
 
+        // Stock Colors
+        MainActivity.updateColorsInterface.onUpdate(false);
+
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Utils.setUpFullScreen(requireActivity());
         } else {

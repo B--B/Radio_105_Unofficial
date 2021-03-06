@@ -84,6 +84,7 @@
     <string name="feedback">Feedback</string>
     <string name="follow">Seguici</string>
     <string name="follow_on_twitter">Seguici su Twitter</string>
+    <string name="follow_on_instagram">Seguici su Instagram</string>
     <string name="fork_on_github">Fork on Github</string>
     <string name="fork_on_gitlab">Fork on Gitlab</string>
     <string name="get_the_app_template">Scarica %1$s app per Android</string>

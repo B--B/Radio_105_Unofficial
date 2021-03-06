@@ -19,7 +19,6 @@ package com.bb.radio105;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +44,8 @@ public class SocialFragment extends Fragment {
     public static final String ARG_CONTACT_EMAIL_ADDRESS = "diretta@105.net";
     public static final String ARG_FACEBOOK_PAGE = "Radio105";
     public static final String ARG_TWITTER_PROFILE = "Radio105";
+    public static final String ARG_INSTAGRAM_PROFILE = "radio105";
+    public static final String ARG_TIKTOK_PROFILE = "@Radio105";
     public static final String ARG_PHONE_NUMBER = "393424115105";
 
     View root;
@@ -53,6 +54,7 @@ public class SocialFragment extends Fragment {
     private TextView followTitle;
     private TextView followTwitter;
     private TextView openFacebookGroup;
+    private TextView followInstagram;
     // Recommendation links
     private TextView rateOnPlayStore;
     private TextView recommendToFriend;
@@ -68,6 +70,7 @@ public class SocialFragment extends Fragment {
         followTitle = root.findViewById(R.id.follow_title);
         followTwitter = root.findViewById(R.id.follow_twitter);
         openFacebookGroup = root.findViewById(R.id.open_facebook_group);
+        followInstagram = root.findViewById(R.id.follow_instagram);
 
         rateOnPlayStore = root.findViewById(R.id.rate_play_store);
         recommendToFriend = root.findViewById(R.id.recommend_to_friend);
@@ -100,21 +103,19 @@ public class SocialFragment extends Fragment {
         followTwitter.setOnClickListener(view12 -> {
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=" + ARG_TWITTER_PROFILE)));
-            } catch (ActivityNotFoundException e) {
+            } catch (Exception e) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/#!/" + ARG_TWITTER_PROFILE)));
             }
         });
+
+        followInstagram.setVisibility(View.VISIBLE);
+        followInstagram.setOnClickListener(view16 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/_u/" + ARG_INSTAGRAM_PROFILE))));
 
         rateOnPlayStore.setOnClickListener(view13 -> {
             // To count with Play market back stack, After pressing back button,
             // to taken back to our application, we need to add following flags to intent.
             int flags = Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
-            if (Build.VERSION.SDK_INT >= 21) {
-                flags |= Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
-            } else {
-                //noinspection deprecation
-                flags |= Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET;
-            }
+            flags |= Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
             Intent goToMarket = new Intent(Intent.ACTION_VIEW,
                     Uri.parse("market://details?id=" + ARG_APPLICATION_ID))
                     .addFlags(flags);

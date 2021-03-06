@@ -45,7 +45,7 @@ public class SocialFragment extends Fragment {
     public static final String ARG_CONTACT_EMAIL_ADDRESS = "diretta@105.net";
     public static final String ARG_FACEBOOK_PAGE = "Radio105";
     public static final String ARG_TWITTER_PROFILE = "Radio105";
-    public static final String ARG_WHATSAPP_NUMBER = "Radio105";
+    public static final String ARG_PHONE_NUMBER = "393424115105";
 
     View root;
 
@@ -59,6 +59,8 @@ public class SocialFragment extends Fragment {
     // Feedback links
     private TextView contactTitle;
     private TextView provideFeedback;
+    private TextView whatsappMessage;
+    private TextView smsMessage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -72,6 +74,8 @@ public class SocialFragment extends Fragment {
 
         contactTitle = root.findViewById(R.id.contact_title);
         provideFeedback = root.findViewById(R.id.provide_feedback);
+        whatsappMessage = root.findViewById(R.id.whatsapp_message);
+        smsMessage = root.findViewById(R.id.sms_message);
 
         return root;
     }
@@ -151,6 +155,19 @@ public class SocialFragment extends Fragment {
                     .putExtra(Intent.EXTRA_EMAIL, ARG_CONTACT_EMAIL_ADDRESS);
             startActivity(Intent.createChooser(emailIntent, view14.getContext().getString(R.string.send_email)));
         });
+
+        whatsappMessage.setVisibility(View.VISIBLE);
+        whatsappMessage.setOnClickListener(view15 -> {
+            try {
+                requireContext().getPackageManager().getPackageInfo("com.whatsapp", 0);
+                startActivity(new Intent(Intent.ACTION_SEND, Uri.parse("https://wa.me/" + ARG_PHONE_NUMBER)));
+            } catch (Exception e) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/" + ARG_PHONE_NUMBER)));
+            }
+        });
+
+        smsMessage.setVisibility(View.VISIBLE);
+        smsMessage.setOnClickListener(view16 -> startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + ARG_PHONE_NUMBER))));
     }
 
     public void onDestroyView() {

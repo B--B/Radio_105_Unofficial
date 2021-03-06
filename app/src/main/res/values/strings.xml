@@ -105,4 +105,6 @@
     <string name="i_love_your_app">I love your app!</string>
     <string name="support_us">Support us</string>
     <string name="menu_socials">Social</string>
+    <string name="whatsapp_message">Send a whatsapp message</string>
+    <string name="sms_message">Send an SMS</string>
 </resources>

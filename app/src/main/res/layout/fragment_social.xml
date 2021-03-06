@@ -166,17 +166,59 @@
             app:drawableStartCompat="@drawable/ic_email" />
 
         <TextView
+            android:id="@+id/whatsapp_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:drawablePadding="8dp"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:padding="8dp"
+            android:text="@string/whatsapp_message"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/provide_feedback"
+            tools:visibility="visible"
+            app:drawableStartCompat="@drawable/ic_whatsapp" />
+
+        <TextView
+            android:id="@+id/sms_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:drawablePadding="8dp"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:padding="8dp"
+            android:text="@string/sms_message"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/whatsapp_message"
+            tools:visibility="visible"
+            app:drawableStartCompat="@drawable/ic_message" />
+
+        <TextView
             android:id="@+id/open_source_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginRight="16dp"
-            android:text="@string/open_source"
+            android:text="@string/whatsapp_message"
             android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/provide_feedback"
+            app:layout_constraintTop_toBottomOf="@+id/sms_message"
             tools:visibility="visible" />
 
         <TextView
@@ -196,7 +238,7 @@
             android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/open_source_title"
+            app:layout_constraintTop_toBottomOf="@+id/whatsapp_message"
             tools:visibility="visible"
             app:drawableStartCompat="@drawable/ic_github_circle" />
 

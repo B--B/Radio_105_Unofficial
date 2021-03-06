@@ -22,7 +22,7 @@
             android:title="@string/menu_zoo" />
         <item
             android:id="@+id/nav_socials"
-            android:icon="@drawable/ic_menu_zoo"
+            android:icon="@drawable/ic_menu_social"
             android:title="@string/menu_socials" />
         <item
             android:id="@+id/nav_settings"

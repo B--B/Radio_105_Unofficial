@@ -55,6 +55,7 @@ public class SocialFragment extends Fragment {
     private TextView followTwitter;
     private TextView openFacebookGroup;
     private TextView followInstagram;
+    private TextView followTikTok;
     // Recommendation links
     private TextView rateOnPlayStore;
     private TextView recommendToFriend;
@@ -71,6 +72,7 @@ public class SocialFragment extends Fragment {
         followTwitter = root.findViewById(R.id.follow_twitter);
         openFacebookGroup = root.findViewById(R.id.open_facebook_group);
         followInstagram = root.findViewById(R.id.follow_instagram);
+        followTikTok = root.findViewById(R.id.follow_tiktok);
 
         rateOnPlayStore = root.findViewById(R.id.rate_play_store);
         recommendToFriend = root.findViewById(R.id.recommend_to_friend);
@@ -110,6 +112,17 @@ public class SocialFragment extends Fragment {
 
         followInstagram.setVisibility(View.VISIBLE);
         followInstagram.setOnClickListener(view16 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/_u/" + ARG_INSTAGRAM_PROFILE))));
+
+        followTikTok.setVisibility(View.VISIBLE);
+        followTikTok.setOnClickListener(view17 -> {
+            try {
+                Intent tiktokIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://vm.tiktok.com/" + ARG_TIKTOK_PROFILE));
+                tiktokIntent.setPackage("com.zhiliaoapp.musically");
+                startActivity(tiktokIntent);
+            } catch (Exception e) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://vm.tiktok.com/" + ARG_TIKTOK_PROFILE)));
+            }
+        });
 
         rateOnPlayStore.setOnClickListener(view13 -> {
             // To count with Play market back stack, After pressing back button,

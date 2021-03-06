@@ -93,6 +93,7 @@
     <string name="follow">Follow</string>
     <string name="follow_on_twitter">Follow us on Twitter</string>
     <string name="follow_on_instagram">Follow us on Instagram</string>
+    <string name="follow_on_tiktok">Follow us on TikTok</string>
     <string name="fork_on_github">Fork on Github</string>
     <string name="fork_on_gitlab">Fork on Gitlab</string>
     <string name="get_the_app_template">Get the %1$s app for Android</string>

@@ -83,13 +83,13 @@
                 android:paddingBottom="75dp" />
 
             <TextView
+                android:id="@+id/bb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/bb"
                 android:textSize="15sp"
                 android:gravity="center"
                 android:fontFamily="casual"
-                android:id="@+id/bb"
                 android:padding="20dp" />
 
             <com.google.android.material.imageview.ShapeableImageView

@@ -38,11 +38,16 @@ import androidx.fragment.app.Fragment;
  * for Facebook, Google+ and Twitter. Provides links into the Play Store for
  * recommendation and sharing with friends.
  */
+
 public class SocialFragment extends Fragment {
     public static final String ARG_APPLICATION_ID = BuildConfig.APPLICATION_ID;
+    public static final String ARG_APPLICATION_NAME = "Radio105";
     public static final String ARG_CONTACT_EMAIL_ADDRESS = "diretta@105.net";
     public static final String ARG_FACEBOOK_PAGE = "Radio105";
     public static final String ARG_TWITTER_PROFILE = "Radio105";
+    public static final String ARG_WHATSAPP_NUMBER = "Radio105";
+
+    View root;
 
     // Social networks links
     private TextView followTitle;
@@ -50,23 +55,25 @@ public class SocialFragment extends Fragment {
     private TextView openFacebookGroup;
     // Recommendation links
     private TextView rateOnPlayStore;
+    private TextView recommendToFriend;
     // Feedback links
     private TextView contactTitle;
     private TextView provideFeedback;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_social, container, false);
-        followTitle = view.findViewById(R.id.follow_title);
-        followTwitter = view.findViewById(R.id.follow_twitter);
-        openFacebookGroup = view.findViewById(R.id.open_facebook_group);
+        root = inflater.inflate(R.layout.fragment_social, container, false);
+        followTitle = root.findViewById(R.id.follow_title);
+        followTwitter = root.findViewById(R.id.follow_twitter);
+        openFacebookGroup = root.findViewById(R.id.open_facebook_group);
 
-        rateOnPlayStore = view.findViewById(R.id.rate_play_store);
+        rateOnPlayStore = root.findViewById(R.id.rate_play_store);
+        recommendToFriend = root.findViewById(R.id.recommend_to_friend);
 
-        contactTitle = view.findViewById(R.id.contact_title);
-        provideFeedback = view.findViewById(R.id.provide_feedback);
+        contactTitle = root.findViewById(R.id.contact_title);
+        provideFeedback = root.findViewById(R.id.provide_feedback);
 
-        return view;
+        return root;
     }
 
     @Override
@@ -115,6 +122,19 @@ public class SocialFragment extends Fragment {
             }
         });
 
+        final String recommendSubject;
+            recommendSubject = getString(R.string.get_the_app_template, ARG_APPLICATION_NAME);
+
+        recommendToFriend.setOnClickListener((View.OnClickListener) view15 -> {
+            String text = Uri.parse("http://play.google.com/store/apps/details?id=" + (ARG_APPLICATION_ID)).toString();
+
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND)
+                    .setType("text/plain")
+                    .putExtra(Intent.EXTRA_SUBJECT, recommendSubject)
+                    .putExtra(Intent.EXTRA_TEXT, text);
+            startActivity(Intent.createChooser(sharingIntent, view15.getContext().getString(R.string.share_via)));
+        });
+
         contactTitle.setVisibility(View.VISIBLE);
 
         final String emailSubject;
@@ -131,5 +151,10 @@ public class SocialFragment extends Fragment {
                     .putExtra(Intent.EXTRA_EMAIL, ARG_CONTACT_EMAIL_ADDRESS);
             startActivity(Intent.createChooser(emailIntent, view14.getContext().getString(R.string.send_email)));
         });
+    }
+
+    public void onDestroyView() {
+        root = null;
+        super.onDestroyView();
     }
 }

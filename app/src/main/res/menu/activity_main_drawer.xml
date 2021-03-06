@@ -21,6 +21,10 @@
             android:icon="@drawable/ic_menu_zoo"
             android:title="@string/menu_zoo" />
         <item
+            android:id="@+id/nav_socials"
+            android:icon="@drawable/ic_menu_zoo"
+            android:title="@string/menu_socials" />
+        <item
             android:id="@+id/nav_settings"
             android:icon="@android:drawable/ic_menu_preferences"
             android:title="@string/title_activity_settings" />

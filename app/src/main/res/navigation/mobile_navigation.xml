@@ -29,6 +29,12 @@
         tools:layout="@layout/fragment_zoo" />
 
     <fragment
+        android:id="@+id/nav_socials"
+        android:name="com.bb.radio105.SocialFragment"
+        android:label="@string/menu_socials"
+        tools:layout="@layout/fragment_social" />
+
+    <fragment
         android:id="@+id/nav_settings"
         android:name="com.bb.radio105.Settings2Fragment"
         android:label="@string/title_activity_settings"

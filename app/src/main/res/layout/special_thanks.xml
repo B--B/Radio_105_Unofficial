@@ -102,11 +102,12 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ee"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="154dp"
+                android:layout_height="154dp"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/rabbit"
                 app:shapeAppearanceOverlay="@style/imageViewRounded"
+                android:padding="2dp"
                 app:strokeWidth="2dp"
                 app:strokeColor="@color/orange_900" />
 

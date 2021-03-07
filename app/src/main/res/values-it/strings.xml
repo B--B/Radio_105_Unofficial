@@ -81,15 +81,12 @@
 
     <!-- Social Fragment -->
     <string name="contact">Scrivi alla diretta</string>
-    <string name="feedback">Feedback</string>
     <string name="follow">Seguici</string>
     <string name="follow_on_twitter">Seguici su Twitter</string>
     <string name="follow_on_instagram">Seguici su Instagram</string>
     <string name="follow_on_tiktok">Seguici su TikTok</string>
     <string name="join_facebook_group">Metti like alla pagina Facebook</string>
-    <string name="provide_feedback">Invia una mail</string>
-    <string name="send_email">Invia e-mail…</string>
-    <string name="i_love_your_app">Amo la tua app!</string>
+    <string name="send_email">Invia una e-mail</string>
     <string name="menu_socials">Social</string>
     <string name="whatsapp_message">Invia un messaggio Whatsapp</string>
     <string name="telegram_message">Invia un messaggio Telegram</string>

@@ -241,7 +241,7 @@
             android:focusable="true"
             android:gravity="center_vertical"
             android:padding="8dp"
-            android:text="@string/provide_feedback"
+            android:text="@string/send_email"
             android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

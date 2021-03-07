@@ -183,17 +183,10 @@ public class SocialFragment extends Fragment {
 
         contactTitle.setVisibility(View.VISIBLE);
 
-        final String emailSubject;
-        emailSubject = getString(R.string.feedback);
-        final String emailText;
-        emailText = getString(R.string.i_love_your_app);
-
         sendEmail.setVisibility(View.VISIBLE);
         sendEmail.setOnClickListener(view9 -> {
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                     "mailto", ARG_CONTACT_EMAIL_ADDRESS, null))
-                    .putExtra(Intent.EXTRA_SUBJECT, emailSubject)
-                    .putExtra(Intent.EXTRA_TEXT, emailText)
                     .putExtra(Intent.EXTRA_EMAIL, ARG_CONTACT_EMAIL_ADDRESS);
             startActivity(Intent.createChooser(emailIntent, view9.getContext().getString(R.string.send_email)));
         });

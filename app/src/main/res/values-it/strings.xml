@@ -92,6 +92,7 @@
     <string name="i_love_your_app">Amo la tua app!</string>
     <string name="menu_socials">Social</string>
     <string name="whatsapp_message">Invia un messaggio Whatsapp</string>
+    <string name="telegram_message">Invia un messaggio Telegram</string>
     <string name="sms_message">Invia un SMS</string>
     <string name="youtube_channel">Il nostro canale YouTube</string>
     <string name="twitch_account">Il nostro account Twitch</string>

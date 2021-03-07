@@ -100,6 +100,7 @@
     <string name="i_love_your_app">I love your app!</string>
     <string name="menu_socials">Social</string>
     <string name="whatsapp_message">Send a whatsapp message</string>
+    <string name="telegram_message">Send a telegram message</string>
     <string name="sms_message">Send an SMS</string>
     <string name="youtube_channel">Our YouTube channel</string>
     <string name="twitch_account">Our Twitch account</string>

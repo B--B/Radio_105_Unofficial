@@ -48,6 +48,7 @@ public class SocialFragment extends Fragment {
     public static final String ARG_TIKTOK_PROFILE = "@Radio105";
     public static final String ARG_YOUTUBE_PROFILE = "UCcm6KpwkAsyZ5U4LtCGjBcA";
     public static final String ARG_PHONE_NUMBER = "393424115105";
+    public static final String ARG_TELEGRAM_GROUP = "radio105";
 
     View root;
 
@@ -66,6 +67,7 @@ public class SocialFragment extends Fragment {
     private TextView contactTitle;
     private TextView sendEmail;
     private TextView whatsappMessage;
+    private TextView telegramMessage;
     private TextView smsMessage;
 
     @Override
@@ -85,6 +87,7 @@ public class SocialFragment extends Fragment {
         contactTitle = root.findViewById(R.id.contact_title);
         sendEmail = root.findViewById(R.id.send_mail);
         whatsappMessage = root.findViewById(R.id.whatsapp_message);
+        telegramMessage = root.findViewById(R.id.telegram_message);
         smsMessage = root.findViewById(R.id.sms_message);
 
         return root;
@@ -204,6 +207,15 @@ public class SocialFragment extends Fragment {
                 startActivity(new Intent(Intent.ACTION_SEND, Uri.parse("https://wa.me/" + ARG_PHONE_NUMBER)));
             } catch (Exception e) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/" + ARG_PHONE_NUMBER)));
+            }
+        });
+
+        telegramMessage.setVisibility(View.VISIBLE);
+        telegramMessage.setOnClickListener(view20 -> {
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("tg://resolve?domain=" + ARG_TELEGRAM_GROUP)));
+            } catch (Exception e) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.telegram.me/" + ARG_TELEGRAM_GROUP)));
             }
         });
 

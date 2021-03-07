@@ -38,19 +38,17 @@ import androidx.fragment.app.Fragment;
  */
 
 public class SocialFragment extends Fragment {
-//    public static final String ARG_APPLICATION_ID = BuildConfig.APPLICATION_ID;
-//    public static final String ARG_APPLICATION_NAME = "Radio105";
-    public static final String ARG_CONTACT_EMAIL_ADDRESS = "diretta@105.net";
-    public static final String ARG_FACEBOOK_PAGE = "Radio105";
-    public static final String ARG_TWITTER_PROFILE = "Radio105";
-    public static final String ARG_INSTAGRAM_PROFILE = "radio105";
-    public static final String ARG_TWITCH_CHANNEL = "radio_105";
-    public static final String ARG_TIKTOK_PROFILE = "@Radio105";
-    public static final String ARG_YOUTUBE_PROFILE = "UCcm6KpwkAsyZ5U4LtCGjBcA";
-    public static final String ARG_PHONE_NUMBER = "393424115105";
-    public static final String ARG_TELEGRAM_GROUP = "radio105";
-
-    View root;
+//    private static final String ARG_APPLICATION_ID = BuildConfig.APPLICATION_ID;
+//    private static final String ARG_APPLICATION_NAME = "Radio105";
+    private static final String ARG_CONTACT_EMAIL_ADDRESS = "diretta@105.net";
+    private static final String ARG_FACEBOOK_PAGE = "Radio105";
+    private static final String ARG_TWITTER_PROFILE = "Radio105";
+    private static final String ARG_INSTAGRAM_PROFILE = "radio105";
+    private static final String ARG_TWITCH_CHANNEL = "radio_105";
+    private static final String ARG_TIKTOK_PROFILE = "@Radio105";
+    private static final String ARG_YOUTUBE_PROFILE = "UCcm6KpwkAsyZ5U4LtCGjBcA";
+    private static final String ARG_PHONE_NUMBER = "393424115105";
+    private static final String ARG_TELEGRAM_GROUP = "radio105";
 
     // Social networks links
     private TextView followTitle;
@@ -70,9 +68,16 @@ public class SocialFragment extends Fragment {
     private TextView telegramMessage;
     private TextView smsMessage;
 
+    private View root;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_social, container, false);
+
+        // Stock Colors
+        MainActivity.updateColorsInterface.onUpdate(false);
+
         followTitle = root.findViewById(R.id.follow_title);
         followTwitter = root.findViewById(R.id.follow_twitter);
         openFacebookGroup = root.findViewById(R.id.open_facebook_group);

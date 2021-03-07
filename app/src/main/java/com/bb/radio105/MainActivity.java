@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
 
     void setZooLightColors() {
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.zoo_300));
-        Objects.requireNonNull(((AppCompatActivity) this).getSupportActionBar())
+        Objects.requireNonNull(this.getSupportActionBar())
                 .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.zoo_500)));
         NavigationView mNavigationView = findViewById(R.id.nav_view);
         View header = mNavigationView.getHeaderView(0);
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
 
     void setZooDarkColors() {
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.zoo_200));
-        Objects.requireNonNull(((AppCompatActivity) this).getSupportActionBar())
+        Objects.requireNonNull(this.getSupportActionBar())
                 .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.zoo_500)));
         NavigationView mNavigationView = findViewById(R.id.nav_view);
         View header = mNavigationView.getHeaderView(0);
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
 
     void setStockLightColors() {
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.orange_900));
-        Objects.requireNonNull(((AppCompatActivity) this).getSupportActionBar())
+        Objects.requireNonNull(this.getSupportActionBar())
                 .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.yellow_700)));
         NavigationView mNavigationView = findViewById(R.id.nav_view);
         View header = mNavigationView.getHeaderView(0);
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
 
     void setStockDarkColors() {
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.yellow_700));
-        Objects.requireNonNull(((AppCompatActivity) this).getSupportActionBar())
+        Objects.requireNonNull(this.getSupportActionBar())
                 .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.yellow_200)));
         NavigationView mNavigationView = findViewById(R.id.nav_view);
         View header = mNavigationView.getHeaderView(0);

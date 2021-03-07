@@ -16,7 +16,6 @@
 
 package com.bb.radio105;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,8 +38,8 @@ import androidx.fragment.app.Fragment;
  */
 
 public class SocialFragment extends Fragment {
-    public static final String ARG_APPLICATION_ID = BuildConfig.APPLICATION_ID;
-    public static final String ARG_APPLICATION_NAME = "Radio105";
+//    public static final String ARG_APPLICATION_ID = BuildConfig.APPLICATION_ID;
+//    public static final String ARG_APPLICATION_NAME = "Radio105";
     public static final String ARG_CONTACT_EMAIL_ADDRESS = "diretta@105.net";
     public static final String ARG_FACEBOOK_PAGE = "Radio105";
     public static final String ARG_TWITTER_PROFILE = "Radio105";
@@ -61,11 +60,11 @@ public class SocialFragment extends Fragment {
     private TextView followTikTok;
     private TextView youtubeChannel;
     // Recommendation links
-    private TextView rateOnPlayStore;
-    private TextView recommendToFriend;
+//    private TextView rateOnPlayStore;
+//    private TextView recommendToFriend;
     // Feedback links
     private TextView contactTitle;
-    private TextView provideFeedback;
+    private TextView sendEmail;
     private TextView whatsappMessage;
     private TextView smsMessage;
 
@@ -80,11 +79,11 @@ public class SocialFragment extends Fragment {
         followTikTok = root.findViewById(R.id.follow_tiktok);
         youtubeChannel = root.findViewById(R.id.youtube_channel);
 
-        rateOnPlayStore = root.findViewById(R.id.rate_play_store);
-        recommendToFriend = root.findViewById(R.id.recommend_to_friend);
+//        rateOnPlayStore = root.findViewById(R.id.rate_play_store);
+//        recommendToFriend = root.findViewById(R.id.recommend_to_friend);
 
         contactTitle = root.findViewById(R.id.contact_title);
-        provideFeedback = root.findViewById(R.id.provide_feedback);
+        sendEmail = root.findViewById(R.id.send_mail);
         whatsappMessage = root.findViewById(R.id.whatsapp_message);
         smsMessage = root.findViewById(R.id.sms_message);
 
@@ -150,6 +149,7 @@ public class SocialFragment extends Fragment {
             }
         });
 
+/*
         rateOnPlayStore.setOnClickListener(view13 -> {
             // To count with Play market back stack, After pressing back button,
             // to taken back to our application, we need to add following flags to intent.
@@ -178,6 +178,7 @@ public class SocialFragment extends Fragment {
                     .putExtra(Intent.EXTRA_TEXT, text);
             startActivity(Intent.createChooser(sharingIntent, view15.getContext().getString(R.string.share_via)));
         });
+ */
 
         contactTitle.setVisibility(View.VISIBLE);
 
@@ -186,8 +187,8 @@ public class SocialFragment extends Fragment {
         final String emailText;
         emailText = getString(R.string.i_love_your_app);
 
-        provideFeedback.setVisibility(View.VISIBLE);
-        provideFeedback.setOnClickListener(view14 -> {
+        sendEmail.setVisibility(View.VISIBLE);
+        sendEmail.setOnClickListener(view14 -> {
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                     "mailto", ARG_CONTACT_EMAIL_ADDRESS, null))
                     .putExtra(Intent.EXTRA_SUBJECT, emailSubject)

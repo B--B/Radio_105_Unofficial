@@ -138,6 +138,7 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.jhey))).setMovementMethod(LinkMovementMethod.getInstance());
             ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.adblockplus))).setMovementMethod(LinkMovementMethod.getInstance());
             ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.tinyPng))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.social))).setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
 

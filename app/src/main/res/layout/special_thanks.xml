@@ -77,6 +77,14 @@
                 android:text="@string/tinyPng"
                 android:textSize="20sp"
                 android:id="@+id/tinyPng"
+                android:padding="20dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/social"
+                android:textSize="20sp"
+                android:id="@+id/social"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 android:paddingTop="20dp"

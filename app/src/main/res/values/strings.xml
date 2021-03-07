@@ -45,6 +45,7 @@
     <string name="jhey"><a href="https://codepen.io/jh3y">Jhey</a> for the custom 404 error page</string>
     <string name="adblockplus"><a href="https://github.com/adblockplus/libadblockplus-android">Adblockplus</a> for their WebView version with ad blocker</string>
     <string name="tinyPng"><a href="https://tinypng.com/">TinyPng</a> for shrinking my PNG drawables</string>
+    <string name="social"><a href="https://github.com/saschpe/android-social-fragment">Sascha Peilicke</a> for his Android Social Fragment that inspired me</string>
     <string name="bb" tools:ignore="TypographyDashes">Written and produced by \n B--B</string>
 
     <!-- Notification commands -->

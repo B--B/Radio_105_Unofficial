@@ -110,7 +110,7 @@ public class SocialFragment extends Fragment {
         });
 
         followTwitter.setVisibility(View.VISIBLE);
-        followTwitter.setOnClickListener(view12 -> {
+        followTwitter.setOnClickListener(view2 -> {
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=" + ARG_TWITTER_PROFILE)));
             } catch (Exception e) {
@@ -119,21 +119,21 @@ public class SocialFragment extends Fragment {
         });
 
         followInstagram.setVisibility(View.VISIBLE);
-        followInstagram.setOnClickListener(view16 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/_u/" + ARG_INSTAGRAM_PROFILE))));
+        followInstagram.setOnClickListener(view3 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/_u/" + ARG_INSTAGRAM_PROFILE))));
 
         twitchChannel.setVisibility(View.VISIBLE);
-        twitchChannel.setOnClickListener(view18 -> {
+        twitchChannel.setOnClickListener(view4 -> {
             try {
-                Intent tiktokIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.twitch.com/_u/" + ARG_TWITCH_CHANNEL));
-                tiktokIntent.setPackage("tv.twitch.android.viewer");
-                startActivity(tiktokIntent);
+                Intent twitchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.twitch.com/_u/" + ARG_TWITCH_CHANNEL));
+                twitchIntent.setPackage("tv.twitch.android.viewer");
+                startActivity(twitchIntent);
             } catch (Exception e) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.twitch.com/" + ARG_TWITCH_CHANNEL)));
             }
         });
 
         followTikTok.setVisibility(View.VISIBLE);
-        followTikTok.setOnClickListener(view17 -> {
+        followTikTok.setOnClickListener(view5 -> {
             try {
                 Intent tiktokIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://vm.tiktok.com/" + ARG_TIKTOK_PROFILE));
                 tiktokIntent.setPackage("com.zhiliaoapp.musically");
@@ -144,7 +144,7 @@ public class SocialFragment extends Fragment {
         });
 
         youtubeChannel.setVisibility(View.VISIBLE);
-        youtubeChannel.setOnClickListener(view18 -> {
+        youtubeChannel.setOnClickListener(view6 -> {
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube.com/channel/" + ARG_YOUTUBE_PROFILE)));
             } catch (Exception e) {
@@ -191,17 +191,17 @@ public class SocialFragment extends Fragment {
         emailText = getString(R.string.i_love_your_app);
 
         sendEmail.setVisibility(View.VISIBLE);
-        sendEmail.setOnClickListener(view14 -> {
+        sendEmail.setOnClickListener(view9 -> {
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                     "mailto", ARG_CONTACT_EMAIL_ADDRESS, null))
                     .putExtra(Intent.EXTRA_SUBJECT, emailSubject)
                     .putExtra(Intent.EXTRA_TEXT, emailText)
                     .putExtra(Intent.EXTRA_EMAIL, ARG_CONTACT_EMAIL_ADDRESS);
-            startActivity(Intent.createChooser(emailIntent, view14.getContext().getString(R.string.send_email)));
+            startActivity(Intent.createChooser(emailIntent, view9.getContext().getString(R.string.send_email)));
         });
 
         whatsappMessage.setVisibility(View.VISIBLE);
-        whatsappMessage.setOnClickListener(view15 -> {
+        whatsappMessage.setOnClickListener(view10 -> {
             try {
                 requireContext().getPackageManager().getPackageInfo("com.whatsapp", 0);
                 startActivity(new Intent(Intent.ACTION_SEND, Uri.parse("https://wa.me/" + ARG_PHONE_NUMBER)));
@@ -211,7 +211,7 @@ public class SocialFragment extends Fragment {
         });
 
         telegramMessage.setVisibility(View.VISIBLE);
-        telegramMessage.setOnClickListener(view20 -> {
+        telegramMessage.setOnClickListener(view11 -> {
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("tg://resolve?domain=" + ARG_TELEGRAM_GROUP)));
             } catch (Exception e) {
@@ -220,7 +220,7 @@ public class SocialFragment extends Fragment {
         });
 
         smsMessage.setVisibility(View.VISIBLE);
-        smsMessage.setOnClickListener(view16 -> startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + ARG_PHONE_NUMBER))));
+        smsMessage.setOnClickListener(view12 -> startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + ARG_PHONE_NUMBER))));
     }
 
     public void onDestroyView() {

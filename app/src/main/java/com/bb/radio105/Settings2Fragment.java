@@ -104,10 +104,9 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             LayoutInflater inflater = requireActivity().getLayoutInflater();
             View dialogView = inflater.inflate(R.layout.special_thanks, null, false);
             builder.setView(dialogView).
-                    setPositiveButton(getString(R.string.ok), (dialog, which) -> {
-                        dialog.cancel();
-                        isAlertDialogShowing = false;
-                    });
+                    setOnCancelListener(dialog -> isAlertDialogShowing = false);
+            builder.setView(dialogView).
+                    setPositiveButton(getString(R.string.ok), (dialog, which) -> dialog.cancel());
             dialog = builder.create();
             dialog.setIcon(R.drawable.ic_radio_105_logo);
             dialog.setTitle(R.string.special_thanks_title);

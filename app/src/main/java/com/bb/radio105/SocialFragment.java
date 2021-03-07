@@ -46,6 +46,7 @@ public class SocialFragment extends Fragment {
     public static final String ARG_TWITTER_PROFILE = "Radio105";
     public static final String ARG_INSTAGRAM_PROFILE = "radio105";
     public static final String ARG_TIKTOK_PROFILE = "@Radio105";
+    public static final String ARG_YOUTUBE_PROFILE = "UCcm6KpwkAsyZ5U4LtCGjBcA";
     public static final String ARG_PHONE_NUMBER = "393424115105";
 
     View root;
@@ -56,6 +57,7 @@ public class SocialFragment extends Fragment {
     private TextView openFacebookGroup;
     private TextView followInstagram;
     private TextView followTikTok;
+    private TextView youtubeChannel;
     // Recommendation links
     private TextView rateOnPlayStore;
     private TextView recommendToFriend;
@@ -73,6 +75,7 @@ public class SocialFragment extends Fragment {
         openFacebookGroup = root.findViewById(R.id.open_facebook_group);
         followInstagram = root.findViewById(R.id.follow_instagram);
         followTikTok = root.findViewById(R.id.follow_tiktok);
+        youtubeChannel = root.findViewById(R.id.youtube_channel);
 
         rateOnPlayStore = root.findViewById(R.id.rate_play_store);
         recommendToFriend = root.findViewById(R.id.recommend_to_friend);
@@ -121,6 +124,15 @@ public class SocialFragment extends Fragment {
                 startActivity(tiktokIntent);
             } catch (Exception e) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://vm.tiktok.com/" + ARG_TIKTOK_PROFILE)));
+            }
+        });
+
+        youtubeChannel.setVisibility(View.VISIBLE);
+        youtubeChannel.setOnClickListener(view18 -> {
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube.com/channel/" + ARG_YOUTUBE_PROFILE)));
+            } catch (Exception e) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/channel/" + ARG_YOUTUBE_PROFILE)));
             }
         });
 

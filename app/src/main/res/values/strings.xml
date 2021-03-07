@@ -109,4 +109,5 @@
     <string name="menu_socials">Social</string>
     <string name="whatsapp_message">Send a whatsapp message</string>
     <string name="sms_message">Send an SMS</string>
+    <string name="youtube_channel">Our YouTube channel</string>
 </resources>

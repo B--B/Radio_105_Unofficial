@@ -29,12 +29,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 /**
- * Fragment to display links to the Play Store and social networks.
+ * Fragment to display links to social networks and direct messages to program on air.
  * <p>
  * Tries to open links in respective app or falls back to web links or other
  * means if the user doesn't have the apps installed. Currently provides support
- * for Facebook, Google+ and Twitter. Provides links into the Play Store for
- * recommendation and sharing with friends.
+ * for Facebook, Instagram. Twitch, TikTok, YouTube and Twitter. Links
+ * into the Play Store for recommendation and sharing with friends are commented for now.
+ *
  */
 
 public class SocialFragment extends Fragment {

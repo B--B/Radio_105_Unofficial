@@ -45,6 +45,7 @@ public class SocialFragment extends Fragment {
     public static final String ARG_FACEBOOK_PAGE = "Radio105";
     public static final String ARG_TWITTER_PROFILE = "Radio105";
     public static final String ARG_INSTAGRAM_PROFILE = "radio105";
+    public static final String ARG_TWITCH_CHANNEL = "radio_105";
     public static final String ARG_TIKTOK_PROFILE = "@Radio105";
     public static final String ARG_YOUTUBE_PROFILE = "UCcm6KpwkAsyZ5U4LtCGjBcA";
     public static final String ARG_PHONE_NUMBER = "393424115105";
@@ -56,6 +57,7 @@ public class SocialFragment extends Fragment {
     private TextView followTwitter;
     private TextView openFacebookGroup;
     private TextView followInstagram;
+    private TextView twitchChannel;
     private TextView followTikTok;
     private TextView youtubeChannel;
     // Recommendation links
@@ -74,6 +76,7 @@ public class SocialFragment extends Fragment {
         followTwitter = root.findViewById(R.id.follow_twitter);
         openFacebookGroup = root.findViewById(R.id.open_facebook_group);
         followInstagram = root.findViewById(R.id.follow_instagram);
+        twitchChannel = root.findViewById(R.id.twitch_account);
         followTikTok = root.findViewById(R.id.follow_tiktok);
         youtubeChannel = root.findViewById(R.id.youtube_channel);
 
@@ -116,6 +119,17 @@ public class SocialFragment extends Fragment {
         followInstagram.setVisibility(View.VISIBLE);
         followInstagram.setOnClickListener(view16 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/_u/" + ARG_INSTAGRAM_PROFILE))));
 
+        twitchChannel.setVisibility(View.VISIBLE);
+        twitchChannel.setOnClickListener(view18 -> {
+            try {
+                Intent tiktokIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.twitch.com/_u/" + ARG_TWITCH_CHANNEL));
+                tiktokIntent.setPackage("tv.twitch.android.viewer");
+                startActivity(tiktokIntent);
+            } catch (Exception e) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.twitch.com/" + ARG_TWITCH_CHANNEL)));
+            }
+        });
+
         followTikTok.setVisibility(View.VISIBLE);
         followTikTok.setOnClickListener(view17 -> {
             try {
@@ -155,7 +169,7 @@ public class SocialFragment extends Fragment {
         final String recommendSubject;
             recommendSubject = getString(R.string.get_the_app_template, ARG_APPLICATION_NAME);
 
-        recommendToFriend.setOnClickListener((View.OnClickListener) view15 -> {
+        recommendToFriend.setOnClickListener(view15 -> {
             String text = Uri.parse("http://play.google.com/store/apps/details?id=" + (ARG_APPLICATION_ID)).toString();
 
             Intent sharingIntent = new Intent(Intent.ACTION_SEND)

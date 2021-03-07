@@ -124,9 +124,8 @@ public class SocialFragment extends Fragment {
         twitchChannel.setVisibility(View.VISIBLE);
         twitchChannel.setOnClickListener(view4 -> {
             try {
-                Intent twitchIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.twitch.com/_u/" + ARG_TWITCH_CHANNEL));
-                twitchIntent.setPackage("tv.twitch.android.viewer");
-                startActivity(twitchIntent);
+                requireContext().getPackageManager().getPackageInfo("com.zhiliaoapp.musically", 0);
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.twitch.com/_u/" + ARG_TWITCH_CHANNEL)));
             } catch (Exception e) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.twitch.com/" + ARG_TWITCH_CHANNEL)));
             }
@@ -135,9 +134,8 @@ public class SocialFragment extends Fragment {
         followTikTok.setVisibility(View.VISIBLE);
         followTikTok.setOnClickListener(view5 -> {
             try {
-                Intent tiktokIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://vm.tiktok.com/" + ARG_TIKTOK_PROFILE));
-                tiktokIntent.setPackage("com.zhiliaoapp.musically");
-                startActivity(tiktokIntent);
+                requireContext().getPackageManager().getPackageInfo("com.zhiliaoapp.musically", 0);
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://vm.tiktok.com/" + ARG_TIKTOK_PROFILE)));
             } catch (Exception e) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://vm.tiktok.com/" + ARG_TIKTOK_PROFILE)));
             }

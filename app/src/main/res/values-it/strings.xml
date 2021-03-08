@@ -94,4 +94,9 @@
     <string name="sms_message">Invia un SMS</string>
     <string name="youtube_channel">Il nostro canale YouTube</string>
     <string name="twitch_account">Il nostro account Twitch</string>
+
+    <!-- Network Change -->
+    <string name="network_change_off">L\' app non proverà a riconnettere lo stream quando il telefono passa dall rete Mobile alla rete Wireless e viceversa</string>
+    <string name="network_change_on">L\' app proverà a riconnettere lo stream quando il telefono passa dall rete Mobile alla rete Wireless e viceversa</string>
+    <string name="network_change_title">Cambio di Rete</string>
 </resources>

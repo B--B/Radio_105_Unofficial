@@ -44,6 +44,13 @@
         app:title="@string/reconnect_title"
         app:defaultValue="true"/>
 
+    <SwitchPreferenceCompat
+        app:key="@string/network_change_key"
+        app:summaryOff="@string/network_change_off"
+        app:summaryOn="@string/network_change_on"
+        app:title="@string/network_change_title"
+        app:defaultValue="true"/>
+
     <Preference
         app:key="@string/thanks"
         app:title="@string/special_thanks" />

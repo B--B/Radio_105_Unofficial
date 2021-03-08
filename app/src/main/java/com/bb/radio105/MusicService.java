@@ -132,6 +132,19 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(playerIntentReceiver, mIntentFilter);
+
+        NetworkUtil.checkNetworkInfo(this, type -> {
+            if (type) {
+                boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
+                        .getBoolean(getString(R.string.network_change_key), true);
+                if (MusicService.mState == MusicService.State.Playing) {
+                    if (pref1) {
+                        // Restart the stream
+                        recoverStream();
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -302,6 +315,41 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         thread.start();
     }
 
+    void recoverStream() {
+        mState = State.Stopped;
+        String manualUrl = "http://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
+
+        Thread thread = new Thread(() -> {
+            try {
+                createMediaPlayerIfNeeded();
+                AudioAttributes.Builder b = new AudioAttributes.Builder();
+                b.setUsage(AudioAttributes.USAGE_MEDIA);
+                mPlayer.setAudioAttributes(b.build());
+                mPlayer.setDataSource(manualUrl);
+
+                mState = State.Preparing;
+                setUpAsForeground(mSongTitle + getString(R.string.loading));
+
+                // starts preparing the media player in the background. When it's done, it will call
+                // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
+                // the listener to 'this').
+                //
+                // Until the media player is prepared, we *cannot* call start() on it!
+                mPlayer.prepare();
+
+                // If we are streaming from the internet, we want to hold a Wifi lock, which prevents
+                // the Wifi radio from going to sleep while the song is playing. If, on the other hand,
+                // we are *not* streaming, we want to release the lock if we were holding it before.
+                mWifiLock.acquire();
+                if (mWifiLock.isHeld()) mWifiLock.release();
+            } catch (IOException ex) {
+                Timber.tag("MusicService").e("IOException playing next song: %s", ex.getMessage());
+                ex.printStackTrace();
+            }
+        });
+        thread.start();
+    }
+
     /** Called when media player is done playing current song. */
     public void onCompletion(MediaPlayer player) {
         // The media player finished playing the current song, so we go ahead and start the next.
@@ -437,6 +485,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mState = State.Stopped;
         relaxResources(true);
         unregisterReceiver(playerIntentReceiver);
+        NetworkUtil.unregisterNetworkCallback();
     }
 
     @Override

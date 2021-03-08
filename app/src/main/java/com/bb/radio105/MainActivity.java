@@ -1,5 +1,6 @@
 package com.bb.radio105;
 
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
@@ -8,8 +9,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -23,7 +27,7 @@ import androidx.preference.PreferenceManager;
 
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements  UpdateColorsInterface {
+public class MainActivity extends AppCompatActivity implements  UpdateColorsInterface, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private AppBarConfiguration mAppBarConfiguration;
     static UpdateColorsInterface updateColorsInterface;
@@ -78,6 +82,27 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
         } else {
             setStockColors();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        // BEGIN_INCLUDE(onRequestPermissionsResult)
+        if (requestCode == Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE) {
+            // Request for storage permission.
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission has been granted.
+                Snackbar.make(findViewById(R.id.drawer_layout), R.string.storage_permission_granted,
+                        Snackbar.LENGTH_SHORT)
+                        .show();
+            } else {
+                // Permission request was denied.
+                Snackbar.make(findViewById(R.id.drawer_layout), R.string.storage_permission_denied,
+                        Snackbar.LENGTH_SHORT)
+                        .show();
+            }
+        }
+        // END_INCLUDE(onRequestPermissionsResult)
     }
 
     void setZooLightColors() {

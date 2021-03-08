@@ -28,11 +28,9 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 
-public class PodcastFragment extends Fragment implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class PodcastFragment extends Fragment {
 
     AdblockWebView mWebView = null;
     private View root;
@@ -214,26 +212,5 @@ public class PodcastFragment extends Fragment implements ActivityCompat.OnReques
         mWebView.destroy();
         root = null;
         super.onDestroyView();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        // BEGIN_INCLUDE(onRequestPermissionsResult)
-        if (requestCode == Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE) {
-            // Request for storage permission.
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission has been granted.
-                Snackbar.make(root, R.string.storage_permission_granted,
-                        Snackbar.LENGTH_SHORT)
-                        .show();
-            } else {
-                // Permission request was denied.
-                Snackbar.make(root, R.string.storage_permission_denied,
-                        Snackbar.LENGTH_SHORT)
-                        .show();
-            }
-        }
-        // END_INCLUDE(onRequestPermissionsResult)
     }
 }

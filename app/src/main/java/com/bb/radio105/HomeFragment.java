@@ -122,11 +122,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
                 button2.setEnabled(false);
                 button3.setEnabled(false);
                 break;
-            case Preparing:
-                button1.setEnabled(false);
-                button2.setEnabled(false);
-                button3.setEnabled(false);
-                break;
+//            case Preparing:
+//                button1.setEnabled(false);
+//                button2.setEnabled(false);
+//                button3.setEnabled(false);
+//                break;
         }
         super.onStart();
     }

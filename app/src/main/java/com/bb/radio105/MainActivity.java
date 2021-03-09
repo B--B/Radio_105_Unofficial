@@ -85,6 +85,12 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     }
 
     @Override
+    public void onDestroy() {
+        updateColorsInterface = null;
+        super.onDestroy();
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         // BEGIN_INCLUDE(onRequestPermissionsResult)

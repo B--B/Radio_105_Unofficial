@@ -133,12 +133,12 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mIntentFilter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(playerIntentReceiver, mIntentFilter);
 
-        NetworkUtil.checkNetworkInfo(this, type -> {
-            if (type) {
-                boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
-                        .getBoolean(getString(R.string.network_change_key), true);
+        NetworkUtil.checkNetworkInfo(this, type -> {{
+            boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean(getString(R.string.network_change_key), true);
+            if (pref1) {
                 if (MusicService.mState == MusicService.State.Playing) {
-                    if (pref1) {
+                    if (type)
                         // Restart the stream
                         recoverStream();
                     }

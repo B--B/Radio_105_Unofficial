@@ -194,12 +194,10 @@ public class ZooFragment extends Fragment {
         });
 
         mWebView.setDownloadListener((url1, userAgent, contentDisposition, mimetype, contentLength) -> {
-            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Utils.startDownload(requireActivity(), url1);
-            } else {
+            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 Utils.requestStoragePermission(requireActivity(), root);
             }
+            Utils.startDownload(requireActivity(), url1);
         });
 
         return root;

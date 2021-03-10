@@ -8,22 +8,22 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
+
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Objects;
 
@@ -66,6 +66,22 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         updateColorsInterface = this;
+
+        // Start the service worker controller here, actually only an instance is allowed, but
+        // we have two fragments that runs webView. In addition the service worker controller must be
+        // started BEFORE the webView instance, and in this way webView cannot start before the service.
+        /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            ServiceWorkerController mServiceWorkerController = ServiceWorkerController.getInstance();
+            mServiceWorkerController.setServiceWorkerClient(new ServiceWorkerClient() {
+                @Override
+                public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
+                    Log.e(Constants.LOG_TAG, "in service worker. isMainFrame:"+request.isForMainFrame() +": " + request.getUrl());
+                    return null;
+                }
+            });
+            mServiceWorkerController.getServiceWorkerWebSettings().setAllowContentAccess(true);
+            mServiceWorkerController.getServiceWorkerWebSettings().setAllowFileAccess(true);
+        } */
     }
 
     @Override

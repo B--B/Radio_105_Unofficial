@@ -14,13 +14,13 @@ public class NetworkUtil {
     static ConnectivityManager mConnectivityManager;
     static ConnectivityManager.NetworkCallback mNetworkCallback;
 
-    public static void checkNetworkInfo(Context context, final OnConnectionStatusChange onConnectionStatusChange){
+    public static void checkNetworkInfo(Context context, final OnConnectionStatusChange onConnectionStatusChange) {
 
         mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
             NetworkCapabilities capabilities = mConnectivityManager.getNetworkCapabilities(mConnectivityManager.getActiveNetwork());
-            if (capabilities == null){
+            if (capabilities == null) {
                 onConnectionStatusChange.onChange(false);
             }
             mNetworkCallback = (new ConnectivityManager.NetworkCallback() {
@@ -34,9 +34,8 @@ public class NetworkUtil {
                 }
             });
             mConnectivityManager.registerDefaultNetworkCallback(mNetworkCallback);
-        }
-        //for android version below Nougat api 24
-        else {
+        } else {
+            // For android version below Nougat api 24
             NetworkInfo networkInfo = mConnectivityManager.getActiveNetworkInfo();
             onConnectionStatusChange.onChange(networkInfo!= null && networkInfo.isConnectedOrConnecting());
         }
@@ -44,8 +43,10 @@ public class NetworkUtil {
 
     public static void unregisterNetworkCallback() {
         if (mConnectivityManager != null) {
-            mConnectivityManager.unregisterNetworkCallback((ConnectivityManager.NetworkCallback) mNetworkCallback);
-            mNetworkCallback = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                mConnectivityManager.unregisterNetworkCallback((ConnectivityManager.NetworkCallback) mNetworkCallback);
+                mNetworkCallback = null;
+            }
             mConnectivityManager = null;
         }
     }

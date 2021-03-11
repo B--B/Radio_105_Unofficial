@@ -44,7 +44,7 @@ public class NetworkUtil {
     public static void unregisterNetworkCallback() {
         if (mConnectivityManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                mConnectivityManager.unregisterNetworkCallback((ConnectivityManager.NetworkCallback) mNetworkCallback);
+                mConnectivityManager.unregisterNetworkCallback(mNetworkCallback);
                 mNetworkCallback = null;
             }
             mConnectivityManager = null;

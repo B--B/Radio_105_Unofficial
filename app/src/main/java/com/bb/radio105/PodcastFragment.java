@@ -39,6 +39,12 @@ public class PodcastFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_podcast, container, false);
 
+        boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean(getString(R.string.screen_on_key), false);
+        if (pref) {
+            requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+
         // Stock Colors
         MainActivity.updateColorsInterface.onUpdate(false);
 
@@ -200,19 +206,12 @@ public class PodcastFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
+    public void onDestroyView() {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.screen_on_key), false);
         if (pref) {
-            requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        } else {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-        super.onStart();
-    }
-
-    @Override
-    public void onDestroyView() {
         mWebView.destroy();
         root = null;
         super.onDestroyView();

@@ -46,7 +46,7 @@
     <string name="adblockplus"><a href="https://github.com/adblockplus/libadblockplus-android">Adblockplus</a> for their WebView version with ad blocker</string>
     <string name="tinyPng"><a href="https://tinypng.com/">TinyPng</a> for shrinking my PNG drawables</string>
     <string name="social"><a href="https://github.com/saschpe/android-social-fragment">Sascha Peilicke</a> for his Android Social Fragment that inspired me</string>
-    <string name="bb" tools:ignore="TypographyDashes">Written and produced by \n B--B</string>
+    <string name="bb" tools:ignore="TypographyDashes">Created and Produced by \nB--B</string>
 
     <!-- Notification commands -->
     <string name="notification_key" translatable="false">persistent_notification</string>

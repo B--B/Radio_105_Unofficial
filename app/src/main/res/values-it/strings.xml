@@ -30,7 +30,7 @@
     <!-- Headset Preferences -->
     <string name="noisy_key_summary_off">Lo streaming non si fermerà quando un dispositivo audio viene disconnesso</string>
     <string name="noisy_key_summary_on">Lo streaming si fermerà quando un dispositivo audio viene disconnesso</string>
-    <string name="noisy_key_title">Impostazioni Dispositivi Audio</string>
+    <string name="noisy_key_title">Dispositivi Audio</string>
 
     <!-- Special Thanks -->
     <string name="special_thanks_title">Un ringraziamento a:</string>
@@ -43,7 +43,7 @@
     <string name="adblockplus"><a href="https://github.com/adblockplus/libadblockplus-android">Adblockplus</a> per la loro versione di WebView con ad blocker</string>
     <string name="tinyPng"><a href="https://tinypng.com/">TinyPng</a> per la riduzione della dimensione delle immagini</string>
     <string name="social"><a href="https://github.com/saschpe/android-social-fragment">Sascha Peilicke</a> per il suo Android Social Fragment dal quale ho preso spunto</string>
-    <string name="bb" tools:ignore="TypographyDashes">Scritto e prodotto da \n B--B</string>
+    <string name="bb" tools:ignore="TypographyDashes">Creato e Prodotto da \nB--B</string>
 
     <!-- Notification commands -->
     <string name="play">Riproduci</string>
@@ -76,9 +76,9 @@
     <!-- Reconnect Stream -->
     <string name="no_reconnect">Internet non disponibile, riconnessione fallita</string>
     <string name="reconnect">Internet disponibile, tento di reinizializzare lo streaming</string>
-    <string name="reconnect_summary_off">L\' applicazione non tenterà di riconnettere lo streaming Radio automaticamente dopo un errore di riproduzione</string>
-    <string name="reconnect_summary_on">L\' applicazione tenterà di riconnettere lo streaming Radio automaticamente dopo un errore di riproduzione se internet è disponibile</string>
-    <string name="reconnect_title">Riconnessione Radio Streaming</string>
+    <string name="reconnect_summary_off">L\' applicazione non tenterà di riconnettere lo streaming radio automaticamente dopo un errore di riproduzione</string>
+    <string name="reconnect_summary_on">L\' applicazione tenterà di riconnettere lo streaming radio automaticamente dopo un errore di riproduzione se internet è disponibile</string>
+    <string name="reconnect_title">Riconnessione Streaming</string>
 
     <!-- Social Fragment -->
     <string name="contact">Scrivi alla diretta</string>
@@ -96,7 +96,7 @@
     <string name="twitch_account">Il nostro account Twitch</string>
 
     <!-- Network Change -->
-    <string name="network_change_off">L\' app non proverà a riconnettere lo stream quando il telefono passa dall rete Mobile alla rete Wireless e viceversa</string>
-    <string name="network_change_on">L\' app proverà a riconnettere lo stream quando il telefono passa dall rete Mobile alla rete Wireless e viceversa</string>
+    <string name="network_change_off">L\' applicazione non proverà a riconnettere lo streaming radio quando il telefono passa dalla rete mobile alla rete wireless e viceversa</string>
+    <string name="network_change_on">L\' applicazione proverà a riconnettere lo streaming radio quando il telefono passa dalla rete mobile alla rete wireless e viceversa</string>
     <string name="network_change_title">Cambio di Rete</string>
 </resources>

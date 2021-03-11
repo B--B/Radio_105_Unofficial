@@ -49,7 +49,7 @@ public class SocialFragment extends Fragment {
     private static final String ARG_TIKTOK_PROFILE = "@Radio105";
     private static final String ARG_YOUTUBE_PROFILE = "UCcm6KpwkAsyZ5U4LtCGjBcA";
     private static final String ARG_PHONE_NUMBER = "393424115105";
-    private static final String ARG_TELEGRAM_GROUP = "radio105";
+    private static final String ARG_TELEGRAM_ID = "1416935972";
 
     // Social networks links
     private TextView followTitle;
@@ -209,11 +209,14 @@ public class SocialFragment extends Fragment {
 
         telegramMessage.setVisibility(View.VISIBLE);
         telegramMessage.setOnClickListener(view11 -> {
+            /* Open Telegram chat in browser as there' s no way to open a Telegram chat without a username,
+            and Radio 105 Telegram account does not have a username.
             try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("tg://resolve?domain=" + ARG_TELEGRAM_GROUP)));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("tg://resolve?domain=" + ARG_TELEGRAM_ID)));
             } catch (Exception e) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.telegram.me/" + ARG_TELEGRAM_GROUP)));
-            }
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://web.telegram.org/#/im?p=u" + ARG_TELEGRAM_ID)));
+            } */
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://web.telegram.org/#/im?p=u" + ARG_TELEGRAM_ID)));
         });
 
         smsMessage.setVisibility(View.VISIBLE);

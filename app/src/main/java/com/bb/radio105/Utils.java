@@ -52,6 +52,9 @@ public class Utils {
         Uri uri = Uri.parse(mString);
         DownloadManager.Request request = new DownloadManager.Request(uri);
         request.setTitle(mActivity.getString(R.string.menu_home));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            request.allowScanningByMediaScanner();
+        }
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.getLastPathSegment());
         downloadManager.enqueue(request);

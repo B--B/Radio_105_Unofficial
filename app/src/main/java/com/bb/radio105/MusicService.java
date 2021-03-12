@@ -21,7 +21,6 @@ import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -33,13 +32,19 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.media.browse.MediaBrowser;
+import android.media.session.MediaSession;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.service.media.MediaBrowserService;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
@@ -48,6 +53,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import timber.log.Timber;
@@ -59,7 +65,7 @@ import static com.bb.radio105.Constants.VOLUME_NORMAL;
  * Service that handles media playback.
  */
 
-public class MusicService extends Service implements OnCompletionListener, OnPreparedListener,
+public class MusicService extends MediaBrowserService implements OnCompletionListener, OnPreparedListener,
         OnErrorListener, AudioManager.OnAudioFocusChangeListener {
 
     // The tag we put on debug messages
@@ -112,6 +118,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     NotificationCompat.Builder mNotificationBuilder = null;
 
+    // Media Session
+    private MediaSession mSession;
+
     /**
      * Makes sure the media player exists and has been reset. This will create the media player
      * if needed, or reset the existing media player if one already exists.
@@ -152,6 +161,13 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         registerReceiver(playerIntentReceiver, mIntentFilter);
 
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        
+        // Start a new MediaSession
+        mSession = new MediaSession(this, "MusicService");
+        mSession.setCallback(mCallback);
+        setSessionToken(mSession.getSessionToken());
+        mSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS |
+                MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
         NetworkUtil.checkNetworkInfo(this, type -> {
             boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
@@ -177,7 +193,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         String action = intent.getAction();
         switch (action) {
             case Constants.ACTION_PLAY:
-                processPlayRequest();
+                mCallback.onPlay();
                 sendBroadcast(intent);
                 break;
             case Constants.ACTION_PLAY_NOTIFICATION:
@@ -186,12 +202,12 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                 break;
             case Constants.ACTION_PAUSE:
             case Constants.ACTION_PAUSE_NOTIFICATION:
-                processPauseRequest();
+                mCallback.onPause();
                 sendBroadcast(intent);
                 break;
             case Constants.ACTION_STOP:
             case Constants.ACTION_STOP_NOTIFICATION:
-                processStopRequest();
+                mCallback.onStop();
                 sendBroadcast(intent);
                 break;
         }
@@ -214,6 +230,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             mState = State.Playing;
             setUpAsForeground(mSongTitle + getString(R.string.playing));
             configAndStartMediaPlayer();
+        }
+        if (!mSession.isActive()) {
+            mSession.setActive(true);
         }
     }
 
@@ -536,11 +555,24 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         giveUpAudioFocus();
         unregisterReceiver(playerIntentReceiver);
         NetworkUtil.unregisterNetworkCallback();
+        // Always release the MediaSession to clean up resources
+        // and notify associated MediaController(s).
+        mSession.release();
     }
 
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
+    }
+
+    @Nullable
+    @Override
+    public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid, @Nullable Bundle rootHints) {
+        return null;
+    }
+
+    @Override
+    public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowser.MediaItem>> result) {
     }
 
     private void createNotificationChannel() {
@@ -659,4 +691,20 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             }
         }
     }
+    
+    // *********  MediaSession.Callback implementation:
+    private final MediaSession.Callback mCallback = new MediaSession.Callback() {
+        @Override
+        public void onPlay() {
+            processPlayRequest();
+        }
+        @Override
+        public void onPause() {
+            processPauseRequest();
+        }
+        @Override
+        public void onStop() {
+            processStopRequest();
+        }
+    };
 }

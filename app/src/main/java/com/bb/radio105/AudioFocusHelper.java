@@ -17,7 +17,10 @@
 package com.bb.radio105;
 
 import android.content.Context;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
+import android.os.Build;
 
 /**
  * Convenience class to deal with audio focus. This class deals with everything related to audio
@@ -27,6 +30,7 @@ import android.media.AudioManager;
 public class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
     final AudioManager mAM;
     final MusicFocusable mFocusable;
+    AudioFocusRequest mFocusRequest;
 
     public AudioFocusHelper(Context ctx, MusicFocusable focusable) {
         mAM = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
@@ -34,14 +38,34 @@ public class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener
     }
 
     /** Requests audio focus. Returns whether request was successful or not. */
+    @SuppressWarnings("deprecation")
     public boolean requestFocus() {
-        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
-                mAM.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mFocusRequest = (new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                    .setAudioAttributes(
+                            new AudioAttributes.Builder()
+                                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                    .build()
+                    )
+                    .build()
+            );
+            return AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
+                    mAM.requestAudioFocus(mFocusRequest);
+        } else {
+            return AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
+                    mAM.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        }
     }
 
     /** Abandons audio focus. Returns whether request was successful or not. */
+    @SuppressWarnings("deprecation")
     public boolean abandonFocus() {
-        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAM.abandonAudioFocus(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAM.abandonAudioFocusRequest(mFocusRequest);
+        } else {
+            return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAM.abandonAudioFocus(this);
+        }
     }
 
     /**

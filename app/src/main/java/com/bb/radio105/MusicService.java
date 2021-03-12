@@ -54,7 +54,7 @@ import timber.log.Timber;
  */
 
 public class MusicService extends Service implements OnCompletionListener, OnPreparedListener,
-        OnErrorListener {
+        OnErrorListener, MusicFocusable {
 
     // The tag we put on debug messages
     final static String TAG = "Radio105Player";
@@ -65,6 +65,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     // our media player
     static MediaPlayer mPlayer = null;
+
+    // Our AudioFocusHelper object
+    AudioFocusHelper mAudioFocusHelper = null;
 
     // indicates the state our service:
     enum State {
@@ -77,6 +80,14 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     }
 
     static State mState = State.Stopped;
+
+    // do we have audio focus?
+    enum AudioFocus {
+        NoFocusNoDuck,    // we don't have audio focus, and can't duck
+        NoFocusCanDuck,   // we don't have focus, but can play at a low volume ("ducking")
+        Focused           // we have full audio focus
+    }
+    AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
 
     // title of the song we are currently playing
     final String mSongTitle = "Radio 105 Streaming";
@@ -128,6 +139,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
                 .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "radio105lock");
 
         mNotificationManager = NotificationManagerCompat.from(this);
+
+        // create the Audio Focus Helper
+        mAudioFocusHelper = new AudioFocusHelper(getApplicationContext(), this);
 
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
@@ -181,8 +195,9 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     }
 
     void processPlayRequest() {
-        // actually play the song
+        tryToGetAudioFocus();
 
+        // actually play the song
         if (mState == State.Stopped) {
             // If we're stopped, just go ahead to the next song and start playing
             playNextSong();
@@ -196,6 +211,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     }
 
     void processPlayRequestNotification() {
+        tryToGetAudioFocus();
         mState = State.Playing;
         updateNotification(mSongTitle + getString(R.string.playing));
         configAndStartMediaPlayer();
@@ -228,6 +244,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
             // let go of all resources...
             relaxResources(true);
+            giveUpAudioFocus();
 
             // service is no longer necessary. Will be started again if needed.
             stopSelf();
@@ -269,9 +286,32 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
      * you have to do so from a context where you are sure this is the case.
      */
     void configAndStartMediaPlayer() {
+        if (mAudioFocus == AudioFocus.NoFocusNoDuck) {
+            // If we don't have audio focus and can't duck, we have to pause, even if mState
+            // is State.Playing. But we stay in the Playing state so that we know we have to resume
+            // playback once we get the focus back.
+            if (mPlayer.isPlaying()) mPlayer.pause();
+            return;
+        }
+        else if (mAudioFocus == AudioFocus.NoFocusCanDuck)
+            mPlayer.setVolume(Constants.DUCK_VOLUME, Constants.DUCK_VOLUME);  // we'll be relatively quiet
+        else
+            mPlayer.setVolume(1.0f, 1.0f); // we can be loud
+
         if (!mPlayer.isPlaying()) mPlayer.start();
     }
 
+    void tryToGetAudioFocus() {
+        if (mAudioFocus != AudioFocus.Focused && mAudioFocusHelper != null
+                && mAudioFocusHelper.requestFocus())
+            mAudioFocus = AudioFocus.Focused;
+    }
+
+    void giveUpAudioFocus() {
+        if (mAudioFocus == AudioFocus.Focused && mAudioFocusHelper != null
+                && mAudioFocusHelper.abandonFocus())
+            mAudioFocus = AudioFocus.NoFocusNoDuck;
+    }
 
     /**
      * Starts playing the next song. If manualUrl is null, the next song will be randomly selected
@@ -451,6 +491,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
         mState = State.Stopped;
         relaxResources(true);
+        giveUpAudioFocus();
 
         Intent mIntent = new Intent();
         mIntent.setAction(Constants.ACTION_ERROR);
@@ -485,6 +526,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         // Service is being killed, so make sure we release our resources
         mState = State.Stopped;
         relaxResources(true);
+        giveUpAudioFocus();
         unregisterReceiver(playerIntentReceiver);
         NetworkUtil.unregisterNetworkCallback();
     }
@@ -492,6 +534,24 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
+    }
+
+    @Override
+    public void onGainedAudioFocus() {
+        mAudioFocus = AudioFocus.Focused;
+
+        // restart media player with new focus settings
+        if (mState == State.Playing)
+            configAndStartMediaPlayer();
+    }
+
+    @Override
+    public void onLostAudioFocus(boolean canDuck) {
+        mAudioFocus = canDuck ? AudioFocus.NoFocusCanDuck : AudioFocus.NoFocusNoDuck;
+
+        // start/restart/pause media player with new focus settings
+        if (mPlayer != null && mPlayer.isPlaying())
+            configAndStartMediaPlayer();
     }
 
     private void createNotificationChannel() {

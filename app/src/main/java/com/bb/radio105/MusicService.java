@@ -433,6 +433,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         mNotificationBuilder.setContentText(text);
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        mNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mPauseIntent);
         mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mStopIntent);
         // Launch notification

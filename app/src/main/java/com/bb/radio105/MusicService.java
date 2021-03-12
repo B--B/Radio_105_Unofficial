@@ -90,7 +90,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
 
     // title of the song we are currently playing
-    final String mSongTitle = "Radio 105 Streaming";
+    final String mSongTitle = "Radio 105";
 
     // Wifi lock that we hold when streaming files from the internet, in order to prevent the
     // device from shutting off the Wifi radio
@@ -467,6 +467,8 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         // Building notification here
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
+        mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                .setShowActionsInCompactView(0, 1));
         mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
         mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
         mNotificationBuilder.setContentTitle(getString(R.string.radio));

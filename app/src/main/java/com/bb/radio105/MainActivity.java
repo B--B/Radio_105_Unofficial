@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
             }
         }
         // END_INCLUDE(onRequestPermissionsResult)
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     void setZooLightColors() {

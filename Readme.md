@@ -3,7 +3,7 @@
 <br />
 <br />
 
-<img src="images/Screenshot_1.png" width="200"> <img src="images/Screenshot_8.png" width="200">
+<p align="center"><img src="images/Screenshot_1.png" width="200"> <img src="images/Screenshot_8.png" width="200"> <img src="images/Screenshot_9.png" width="200"></p>
 
 <br />
 <br />
@@ -56,11 +56,11 @@ I've decided to start the development of this app tired of the bugs in the offic
     * No cookies
     * If for some reason a link can't be opened, the app will prompt the user to open it in an external browser
 
-5. Social <a href="images/Screenshot_6.png"><img src="images/Screenshot_6.png" align="right" height="75" ></a>
+5. Social <img src="images/Screenshot_6.png" align="right" height="75" >
     * Provide links for all Radio 105 social accounts
     * Provide links for send a message to the program on air
 
-6. Settings: <a href="images/Screenshot_7.png"><img src="images/Screenshot_7.png" align="right" height="75" ></a>
+6. Settings: <img src="images/Screenshot_7.png" align="right" height="75" >
     * Theme: choose between light, dark or system theme *Default: system*
     * Stop streaming setting: allow system to stop streaming when app is removed from recent tasks *Default: disabled*
     * Audio devices: pause streaming when an audio device (headset, BT, etc.) is disconnected *Default: enabled*

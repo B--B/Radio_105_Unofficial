@@ -68,7 +68,45 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
 
         playerStatusListener = this;
 
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Constants.ACTION_PLAY);
+        mIntentFilter.addAction(Constants.ACTION_PAUSE);
+        mIntentFilter.addAction(Constants.ACTION_STOP);
+        mIntentFilter.addAction(Constants.ACTION_PLAY_NOTIFICATION);
+        mIntentFilter.addAction(Constants.ACTION_PAUSE_NOTIFICATION);
+        mIntentFilter.addAction(Constants.ACTION_STOP_NOTIFICATION);
+        mIntentFilter.addAction(Constants.ACTION_ERROR);
+        requireContext().registerReceiver(playerIntentReceiver, mIntentFilter);
+
         return root;
+    }
+
+    @Override
+    public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
+
+        switch (MusicService.mState) {
+            case Playing:
+                button1.setEnabled(false);
+                button2.setEnabled(true);
+                button3.setEnabled(true);
+                break;
+            case Paused:
+                button1.setEnabled(true);
+                button2.setEnabled(false);
+                button3.setEnabled(true);
+                break;
+            case Stopped:
+                button1.setEnabled(true);
+                button2.setEnabled(false);
+                button3.setEnabled(false);
+                break;
+//            case Preparing:
+//                button1.setEnabled(false);
+//                button2.setEnabled(false);
+//                button3.setEnabled(false);
+//                break;
+        }
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -94,43 +132,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
                 button3.setEnabled(false);
                 break;
         }
-    }
-
-    @Override
-    public void onStart() {
-        IntentFilter mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Constants.ACTION_PLAY);
-        mIntentFilter.addAction(Constants.ACTION_PAUSE);
-        mIntentFilter.addAction(Constants.ACTION_STOP);
-        mIntentFilter.addAction(Constants.ACTION_PLAY_NOTIFICATION);
-        mIntentFilter.addAction(Constants.ACTION_PAUSE_NOTIFICATION);
-        mIntentFilter.addAction(Constants.ACTION_STOP_NOTIFICATION);
-        mIntentFilter.addAction(Constants.ACTION_ERROR);
-        requireContext().registerReceiver(playerIntentReceiver, mIntentFilter);
-
-        switch (MusicService.mState) {
-            case Playing:
-                button1.setEnabled(false);
-                button2.setEnabled(true);
-                button3.setEnabled(true);
-                break;
-            case Paused:
-                button1.setEnabled(true);
-                button2.setEnabled(false);
-                button3.setEnabled(true);
-                break;
-            case Stopped:
-                button1.setEnabled(true);
-                button2.setEnabled(false);
-                button3.setEnabled(false);
-                break;
-//            case Preparing:
-//                button1.setEnabled(false);
-//                button2.setEnabled(false);
-//                button3.setEnabled(false);
-//                break;
-        }
-        super.onStart();
     }
 
     @Override

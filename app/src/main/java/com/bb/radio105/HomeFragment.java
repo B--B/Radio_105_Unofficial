@@ -94,19 +94,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
                 button2.setEnabled(false);
                 button3.setEnabled(false);
                 break;
-            case "Audio_Device_Disconnected":
-                boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                        .getBoolean(requireContext().getString(R.string.noisy_key), true);
-                if (pref) {
-                    Intent mIntent = new Intent();
-                    mIntent.setAction(Constants.ACTION_PAUSE);
-                    mIntent.setPackage(requireContext().getPackageName());
-                    requireContext().startService(mIntent);
-                    button1.setEnabled(true);
-                    button2.setEnabled(false);
-                    button3.setEnabled(true);
-                }
-                break;
         }
     }
 

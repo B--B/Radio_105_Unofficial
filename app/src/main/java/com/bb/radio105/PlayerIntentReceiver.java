@@ -20,6 +20,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.preference.PreferenceManager;
+
 public class PlayerIntentReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -46,10 +48,14 @@ public class PlayerIntentReceiver extends BroadcastReceiver {
                 HomeFragment.playerStatusListener.onButtonStatusChange("Error");
                 break;
             case android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY:
-                Intent mIntent = new Intent();
-                mIntent.setAction(Constants.ACTION_PAUSE);
-                mIntent.setPackage(context.getPackageName());
-                context.startService(mIntent);
+                boolean pref = PreferenceManager.getDefaultSharedPreferences(context)
+                        .getBoolean(context.getString(R.string.noisy_key), true);
+                if (pref) {
+                    Intent mIntent = new Intent();
+                    mIntent.setAction(Constants.ACTION_PAUSE);
+                    mIntent.setPackage(context.getPackageName());
+                    context.startService(mIntent);
+                }
                 break;
         }
     }

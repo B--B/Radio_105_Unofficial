@@ -18,7 +18,7 @@ I've decided to start the development of this app tired of the bugs in the offic
 * Completely open source
 * Compatible with all devices running android Lollipop and above
 * No Ads
-* No external libraries except [AdBlockPlus](https://github.com/adblockplus/libadblockplus-android) webview for Podcats and The 105 Zoo sections
+* No external libraries except [AdBlockPlus](https://github.com/adblockplus/libadblockplus-android) webView for Podcast and The 105 Zoo sections
 
 <br />
 <br />
@@ -27,7 +27,7 @@ I've decided to start the development of this app tired of the bugs in the offic
 
 * INTERNET
 * ACCESS_NETWORK_STATE and ACCESS_WIFI_STATE: needed by recover stream option and for properly set the partial WiFi wakelock
-* FOREGROUND_SERVICE: needed by the Radio streamig service. Without this Android will kill the streaming service after a few minutes when the screen is off
+* FOREGROUND_SERVICE: needed by the Radio streaming service. Without this Android will kill the streaming service after a few minutes when the screen is off
 * WAKE_LOCK: needed by the radio streaming service when running. Without this there's the possibility that Android turns off the WiFi when the screen is off even if the streaming service is running and using it
 * WRITE_EXTERNAL_STORAGE: this permission is NOT granted by default, will be asked only when the user tries to download a podcast from podcast or the 105 zoo sections
 
@@ -41,7 +41,7 @@ I've decided to start the development of this app tired of the bugs in the offic
     * The stream can be stopped, paused and restarted (if persistent notification option is enabled) even on secure lockscreen
 
 2. 105 TV: a simple fragment that stream 105 Tv channel from [Mediaset Play](https://www.mediasetplay.mediaset.it/) <img src="images/Screenshot_3.png" align="right" height="75" >
-    * Automatically enable fullscreen when in portrat mode
+    * Automatically enable fullscreen when in portrait mode
     * Screen does not turns off when the user is in this section
 
 3. Podcast: the [105.net](https://105.net) podcast section <img src="images/Screenshot_4.png" align="right" height="75" >

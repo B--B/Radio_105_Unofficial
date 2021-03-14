@@ -40,8 +40,8 @@ import java.util.Objects;
 public class Settings2Fragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener,
         Preference.SummaryProvider<androidx.preference.ListPreference> {
 
-    View root;
-    SettingsFragment mSettingsFragment;
+    private View root;
+    private SettingsFragment mSettingsFragment;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

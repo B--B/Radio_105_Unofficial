@@ -47,7 +47,7 @@ import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 
 public class PodcastFragment extends Fragment {
 
-    AdblockWebView mWebView = null;
+    private AdblockWebView mWebView = null;
     private View root;
 
     @SuppressLint("SetJavaScriptEnabled")

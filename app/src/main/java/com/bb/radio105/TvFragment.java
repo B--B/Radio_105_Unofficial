@@ -37,8 +37,8 @@ public class TvFragment extends Fragment {
 
     private View root;
     private ProgressBar progressBar;
-    VideoView videoView;
-    String videoUrl;
+    private VideoView videoView;
+    private String videoUrl;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

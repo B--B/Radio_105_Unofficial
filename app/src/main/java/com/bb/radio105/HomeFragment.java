@@ -35,10 +35,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class HomeFragment extends Fragment implements View.OnClickListener, PlayerStatusListener {
 
-    Button button1;
-    Button button2;
-    Button button3;
-    View root;
+    private Button button1;
+    private Button button2;
+    private Button button3;
+    private View root;
 
     static PlayerStatusListener playerStatusListener;
     private final PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();

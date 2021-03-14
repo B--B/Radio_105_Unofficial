@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    void setZooLightColors() {
+    private void setZooLightColors() {
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.zoo_300));
         Objects.requireNonNull(this.getSupportActionBar())
                 .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.zoo_500)));
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
         mNavigationView.setItemTextColor(mColorStateList);
     }
 
-    void setZooDarkColors() {
+    private void setZooDarkColors() {
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.zoo_200));
         Objects.requireNonNull(this.getSupportActionBar())
                 .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.zoo_500)));
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
         mNavigationView.setItemTextColor(mColorStateList);
     }
 
-    void setStockLightColors() {
+    private void setStockLightColors() {
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.orange_900));
         Objects.requireNonNull(this.getSupportActionBar())
                 .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.yellow_700)));
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
         mNavigationView.setItemTextColor(mColorStateList);
     }
 
-    void setStockDarkColors() {
+    private void setStockDarkColors() {
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.yellow_700));
         Objects.requireNonNull(this.getSupportActionBar())
                 .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.yellow_200)));
@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
         mNavigationView.setItemTextColor(mColorStateList);
     }
 
-    void setZooColors() {
+    private void setZooColors() {
         final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
         // The apps theme is decided depending upon the saved preferences on app startup
         String themePref = PreferenceManager.getDefaultSharedPreferences(this)
@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
         }
     }
 
-    void setStockColors() {
+    private void setStockColors() {
         final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
         // The apps theme is decided depending upon the saved preferences on app startup
         String themePref = PreferenceManager.getDefaultSharedPreferences(this)

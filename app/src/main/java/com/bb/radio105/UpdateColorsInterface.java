@@ -16,6 +16,6 @@
 
 package com.bb.radio105;
 
-public interface UpdateColorsInterface {
+interface UpdateColorsInterface {
     void onUpdate(boolean zooColors);
 }

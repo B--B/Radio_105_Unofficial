@@ -58,7 +58,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         OnErrorListener, MusicFocusable {
 
     // The tag we put on debug messages
-    final static String TAG = "Radio105Player";
+    private final static String TAG = "Radio105Player";
     private static final String CHANNEL_ID = "Radio105ServiceChannel";
 
     // Intent receiver for ACTION_AUDIO_BECOMING_NOISY
@@ -95,7 +95,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     // Wifi lock that we hold when streaming files from the internet, in order to prevent the
     // device from shutting off the Wifi radio
-    WifiLock mWifiLock;
+    private WifiLock mWifiLock;
 
     // The ID we use for the notification (the onscreen alert that appears at the notification
     // area at the top of the screen as an icon -- and as text as well if the user expands the
@@ -110,7 +110,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
      * Makes sure the media player exists and has been reset. This will create the media player
      * if needed, or reset the existing media player if one already exists.
      */
-    void createMediaPlayerIfNeeded() {
+    private void createMediaPlayerIfNeeded() {
         if (mPlayer == null) {
             mPlayer = new MediaPlayer();
 
@@ -195,7 +195,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         // restart in case it's killed.
     }
 
-    void processPlayRequest() {
+    private void processPlayRequest() {
         tryToGetAudioFocus();
 
         // actually play the song
@@ -211,14 +211,14 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         }
     }
 
-    void processPlayRequestNotification() {
+    private void processPlayRequestNotification() {
         tryToGetAudioFocus();
         mState = State.Playing;
         updateNotification(mSongTitle + getString(R.string.playing));
         configAndStartMediaPlayer();
     }
 
-    void processPauseRequest() {
+    private void processPauseRequest() {
         if (mState == State.Playing) {
             boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                     .getBoolean(getString(R.string.notification_key), false);
@@ -235,11 +235,11 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         }
     }
 
-    void processStopRequest() {
+    private void processStopRequest() {
         processStopRequest(false);
     }
 
-    void processStopRequest(boolean force) {
+    private void processStopRequest(boolean force) {
         if (mState == State.Playing || mState == State.Paused || force) {
             mState = State.Stopped;
 
@@ -258,7 +258,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
      *
      * @param releaseMediaPlayer Indicates whether the Media Player should also be released or not
      */
-    void relaxResources(boolean releaseMediaPlayer) {
+    private void relaxResources(boolean releaseMediaPlayer) {
         // stop being a foreground service
         stopForeground(true);
 
@@ -273,7 +273,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         if (mWifiLock.isHeld()) mWifiLock.release();
     }
 
-    void relaxResources() {
+    private void relaxResources() {
         // we can release the Wifi lock, if we're holding it
         if (mWifiLock.isHeld()) mWifiLock.release();
     }
@@ -286,7 +286,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
      * current focus settings. This method assumes mPlayer != null, so if you are calling it,
      * you have to do so from a context where you are sure this is the case.
      */
-    void configAndStartMediaPlayer() {
+    private void configAndStartMediaPlayer() {
         if (mAudioFocus == AudioFocus.NoFocusNoDuck) {
             // If we don't have audio focus and can't duck, we have to pause, even if mState
             // is State.Playing. But we stay in the Playing state so that we know we have to resume
@@ -302,13 +302,13 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         if (!mPlayer.isPlaying()) mPlayer.start();
     }
 
-    void tryToGetAudioFocus() {
+    private void tryToGetAudioFocus() {
         if (mAudioFocus != AudioFocus.Focused && mAudioFocusHelper != null
                 && mAudioFocusHelper.requestFocus())
             mAudioFocus = AudioFocus.Focused;
     }
 
-    void giveUpAudioFocus() {
+    private void giveUpAudioFocus() {
         if (mAudioFocus == AudioFocus.Focused && mAudioFocusHelper != null
                 && mAudioFocusHelper.abandonFocus())
             mAudioFocus = AudioFocus.NoFocusNoDuck;
@@ -320,7 +320,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
      * manualUrl is non-null, then it specifies the URL or path to the song that will be played
      * next.
      */
-    void playNextSong() {
+    private void playNextSong() {
         mState = State.Stopped;
         relaxResources(false); // release everything except MediaPlayer
         String manualUrl = "http://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
@@ -356,7 +356,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         thread.start();
     }
 
-    void recoverStream() {
+    private void recoverStream() {
         mState = State.Stopped;
         String manualUrl = "http://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
 
@@ -407,7 +407,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     /** Updates the notification. */
     @SuppressLint("RestrictedApi")
-    void updateNotification(String text) {
+    private void updateNotification(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.notification_key), false);
         Intent intent = new Intent(this, MainActivity.class);
@@ -450,7 +450,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
      */
 
 
-    void setUpAsForeground(String text) {
+    private void setUpAsForeground(String text) {
         //Intent for Pause
         Intent pauseIntent = new Intent();
         pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION);
@@ -582,7 +582,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         super.onTaskRemoved(rootIntent);
     }
 
-    public boolean isDeviceOnline() {
+    private boolean isDeviceOnline() {
         // Try to connect to CloudFlare DNS socket, return true if success
         final AtomicBoolean deviceOnline = new AtomicBoolean(false);
         Thread thread = new Thread(() -> {

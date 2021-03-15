@@ -27,6 +27,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
@@ -50,12 +52,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import timber.log.Timber;
 
+import static com.bb.radio105.Constants.VOLUME_DUCK;
+import static com.bb.radio105.Constants.VOLUME_NORMAL;
+
 /**
  * Service that handles media playback.
  */
 
 public class MusicService extends Service implements OnCompletionListener, OnPreparedListener,
-        OnErrorListener, MusicFocusable {
+        OnErrorListener, AudioManager.OnAudioFocusChangeListener {
 
     // The tag we put on debug messages
     private final static String TAG = "Radio105Player";
@@ -66,9 +71,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     // our media player
     static MediaPlayer mPlayer = null;
-
-    // Our AudioFocusHelper object
-    AudioFocusHelper mAudioFocusHelper = null;
 
     // indicates the state our service:
     enum State {
@@ -88,7 +90,11 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         NoFocusCanDuck,   // we don't have focus, but can play at a low volume ("ducking")
         Focused           // we have full audio focus
     }
-    AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
+    // Type of audio focus we have:
+    private AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
+    private AudioManager mAudioManager;
+    private boolean mPlayOnFocusGain;
+    private AudioFocusRequest mFocusRequest;
 
     // title of the song we are currently playing
     final String mSongTitle = "Radio 105";
@@ -141,12 +147,11 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
         mNotificationManager = NotificationManagerCompat.from(this);
 
-        // create the Audio Focus Helper
-        mAudioFocusHelper = new AudioFocusHelper(getApplicationContext(), this);
-
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(playerIntentReceiver, mIntentFilter);
+
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         NetworkUtil.checkNetworkInfo(this, type -> {
             boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
@@ -196,6 +201,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     }
 
     private void processPlayRequest() {
+        mPlayOnFocusGain = true;
         tryToGetAudioFocus();
 
         // actually play the song
@@ -212,6 +218,7 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
     }
 
     private void processPlayRequestNotification() {
+        mPlayOnFocusGain = true;
         tryToGetAudioFocus();
         mState = State.Playing;
         updateNotification(mSongTitle + getString(R.string.playing));
@@ -294,24 +301,19 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             if (mPlayer.isPlaying()) mPlayer.pause();
             return;
         }
-        else if (mAudioFocus == AudioFocus.NoFocusCanDuck)
-            mPlayer.setVolume(Constants.DUCK_VOLUME, Constants.DUCK_VOLUME);  // we'll be relatively quiet
-        else
-            mPlayer.setVolume(1.0f, 1.0f); // we can be loud
-
-        if (!mPlayer.isPlaying()) mPlayer.start();
-    }
-
-    private void tryToGetAudioFocus() {
-        if (mAudioFocus != AudioFocus.Focused && mAudioFocusHelper != null
-                && mAudioFocusHelper.requestFocus())
-            mAudioFocus = AudioFocus.Focused;
-    }
-
-    private void giveUpAudioFocus() {
-        if (mAudioFocus == AudioFocus.Focused && mAudioFocusHelper != null
-                && mAudioFocusHelper.abandonFocus())
-            mAudioFocus = AudioFocus.NoFocusNoDuck;
+        else if (mAudioFocus == AudioFocus.NoFocusCanDuck) {
+            mPlayer.setVolume(VOLUME_DUCK, VOLUME_DUCK); // we'll be relatively quiet
+        } else {
+            mPlayer.setVolume(VOLUME_NORMAL, VOLUME_NORMAL); // we can be loud again
+        }
+        // If we were playing when we lost focus, we need to resume playing.
+        if (mPlayOnFocusGain) {
+            if (!mPlayer.isPlaying()) {
+                mPlayer.start();
+            }
+            mPlayOnFocusGain = false;
+            mState = State.Playing;
+        }
     }
 
     /**
@@ -358,6 +360,8 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
 
     private void recoverStream() {
         mState = State.Stopped;
+        mPlayOnFocusGain = true;
+        tryToGetAudioFocus();
         String manualUrl = "http://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
 
         Thread thread = new Thread(() -> {
@@ -539,24 +543,6 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         return null;
     }
 
-    @Override
-    public void onGainedAudioFocus() {
-        mAudioFocus = AudioFocus.Focused;
-
-        // restart media player with new focus settings
-        if (mState == State.Playing)
-            configAndStartMediaPlayer();
-    }
-
-    @Override
-    public void onLostAudioFocus(boolean canDuck) {
-        mAudioFocus = canDuck ? AudioFocus.NoFocusCanDuck : AudioFocus.NoFocusNoDuck;
-
-        // start/restart/pause media player with new focus settings
-        if (mPlayer != null && mPlayer.isPlaying())
-            configAndStartMediaPlayer();
-    }
-
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
@@ -582,6 +568,29 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
         super.onTaskRemoved(rootIntent);
     }
 
+    @Override
+    public void onAudioFocusChange(int focusChange) {
+        if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+            // We have gained focus:
+            mAudioFocus = AudioFocus.Focused;
+        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS ||
+                focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
+                focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+            // We have lost focus. If we can duck (low playback volume), we can keep playing.
+            // Otherwise, we need to pause the playback.
+            boolean canDuck = focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK;
+            mAudioFocus = canDuck ? AudioFocus.NoFocusCanDuck : AudioFocus.NoFocusNoDuck;
+            // If we are playing, we need to reset media player by calling configMediaPlayerState
+            // with mAudioFocus properly set.
+            if (mState == State.Playing && !canDuck) {
+                // If we don't have audio focus and can't duck, we save the information that
+                // we were playing, so that we can resume playback once we get the focus back.
+                mPlayOnFocusGain = true;
+            }
+        }
+        configAndStartMediaPlayer();
+    }
+
     private boolean isDeviceOnline() {
         // Try to connect to CloudFlare DNS socket, return true if success
         final AtomicBoolean deviceOnline = new AtomicBoolean(false);
@@ -604,5 +613,50 @@ public class MusicService extends Service implements OnCompletionListener, OnPre
             e.printStackTrace();
         }
         return deviceOnline.get();
+    }
+
+    /**
+     * Try to get the system audio focus.
+     */
+    void tryToGetAudioFocus() {
+        if (mAudioFocus != AudioFocus.Focused) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mFocusRequest = (new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                        .setAudioAttributes(
+                                new AudioAttributes.Builder()
+                                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                        .build()
+                        )
+                        .build()
+                );
+                if (AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAudioManager.requestAudioFocus(mFocusRequest)) {
+                    mAudioFocus = AudioFocus.Focused;
+                }
+            } else {
+                int result = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
+                        AudioManager.AUDIOFOCUS_GAIN);
+                if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    mAudioFocus = AudioFocus.Focused;
+                }
+            }
+        }
+    }
+
+    /**
+     * Give up the audio focus.
+     */
+    void giveUpAudioFocus() {
+        if (mAudioFocus == AudioFocus.Focused) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAudioManager.abandonAudioFocusRequest(mFocusRequest)) {
+                    mAudioFocus = AudioFocus.NoFocusNoDuck;
+                }
+            } else {
+                if (mAudioManager.abandonAudioFocus(this) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    mAudioFocus = AudioFocus.NoFocusNoDuck;
+                }
+            }
+        }
     }
 }

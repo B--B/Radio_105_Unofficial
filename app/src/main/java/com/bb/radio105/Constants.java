@@ -30,7 +30,9 @@ public class Constants {
     static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
     // Log TAGS
     /* final static String LOG_TAG = MainActivity.class.getSimpleName(); */
-    // The volume we set the media player to when we lose audio focus, but are allowed to reduce
-    // the volume instead of stopping playback.
-    static final float DUCK_VOLUME = 0.1f;
+    // The volume we set the media player to when we lose audio focus, but are
+    // allowed to reduce the volume instead of stopping playback.
+    static final float VOLUME_DUCK = 0.2f;
+    // The volume we set the media player when we have audio focus.
+    static final float VOLUME_NORMAL = 1.0f;
 }

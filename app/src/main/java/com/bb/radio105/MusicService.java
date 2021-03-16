@@ -24,8 +24,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
@@ -70,6 +75,9 @@ import static com.bb.radio105.Constants.VOLUME_NORMAL;
 
 public class MusicService extends MediaBrowserService implements OnCompletionListener, OnPreparedListener,
         OnErrorListener, AudioManager.OnAudioFocusChangeListener {
+
+    // The notification color
+    private int mNotificationColor;
 
     // The tag we put on debug messages
     private final static String TAG = "Radio105Player";
@@ -157,6 +165,7 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
         mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "radio105lock");
 
+        mNotificationColor = getNotificationColor();
         mNotificationManager = NotificationManagerCompat.from(this);
 
         IntentFilter mIntentFilter = new IntentFilter();
@@ -502,6 +511,7 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
         mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                 .setShowActionsInCompactView(0, 1)
                 .setMediaSession(MediaSessionCompat.Token.fromToken(mSession.getSessionToken())));
+        mNotificationBuilder.setColor(mNotificationColor);
         mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
         mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
         mNotificationBuilder.setContentTitle(getString(R.string.radio));
@@ -596,7 +606,7 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
                     "Foreground Service Channel",
-                    NotificationManager.IMPORTANCE_LOW
+                    NotificationManager.IMPORTANCE_DEFAULT
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
@@ -707,7 +717,26 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
             }
         }
     }
-    
+
+    protected int getNotificationColor() {
+        int notificationColor = 0;
+        String packageName = getPackageName();
+        try {
+            Context packageContext = createPackageContext(packageName, 0);
+            ApplicationInfo applicationInfo =
+                    getPackageManager().getApplicationInfo(packageName, 0);
+            packageContext.setTheme(applicationInfo.theme);
+            Resources.Theme theme = packageContext.getTheme();
+            TypedArray ta = theme.obtainStyledAttributes(
+                    new int[] {android.R.attr.colorPrimary});
+            notificationColor = ta.getColor(0, Color.DKGRAY);
+            ta.recycle();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return notificationColor;
+    }
+
     // *********  MediaSession.Callback implementation:
     private final MediaSession.Callback mCallback = new MediaSession.Callback() {
         @Override

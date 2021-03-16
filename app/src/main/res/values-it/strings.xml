@@ -99,4 +99,5 @@
     <string name="network_change_off">L\' applicazione non proverà a riconnettere lo streaming radio quando il telefono passa dalla rete mobile alla rete wireless e viceversa</string>
     <string name="network_change_on">L\' applicazione proverà a riconnettere lo streaming radio quando il telefono passa dalla rete mobile alla rete wireless e viceversa</string>
     <string name="network_change_title">Cambio di Rete</string>
+    <string name="radio_105">Radio 105</string>
 </resources>

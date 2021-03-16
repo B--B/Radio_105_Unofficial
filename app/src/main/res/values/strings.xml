@@ -108,4 +108,5 @@
     <string name="network_change_off">The app will not try to recover the stream when phone switches from mobile to wifi and vice versa</string>
     <string name="network_change_on">The app will try to recover the stream when phone switches from mobile to wifi and vice versa</string>
     <string name="network_change_title">Network Changes</string>
+    <string name="radio_105">Radio 105</string>
 </resources>

@@ -24,10 +24,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
+import android.media.MediaMetadata;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
@@ -41,6 +43,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.service.media.MediaBrowserService;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -399,14 +402,13 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
                 // the listener to 'this').
                 //
                 // Until the media player is prepared, we *cannot* call start() on it!
-                mPlayer.prepare();
+                mPlayer.prepareAsync();
 
                 // If we are streaming from the internet, we want to hold a Wifi lock, which prevents
                 // the Wifi radio from going to sleep while the song is playing. If, on the other hand,
                 // we are *not* streaming, we want to release the lock if we were holding it before.
                 mWifiLock.acquire();
-                if (mWifiLock.isHeld()) mWifiLock.release();
-            } catch (IOException ex) {
+                if (mWifiLock.isHeld()) mWifiLock.release();} catch (IOException ex) {
                 Timber.tag("MusicService").e("IOException playing next song: %s", ex.getMessage());
                 ex.printStackTrace();
             }
@@ -438,6 +440,11 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mNotificationBuilder.setContentText(text);
         mNotificationBuilder.setContentIntent(pIntent);
+        mSession.setMetadata
+                (new MediaMetadata.Builder()
+                        .putString(MediaMetadata.METADATA_KEY_ARTIST, text)
+                        .build()
+                );
         if (pref) {
             //Intent for Play
             Intent playIntent = new Intent();
@@ -474,6 +481,7 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
 
 
     private void setUpAsForeground(String text) {
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.ic_radio_105_logo);
         //Intent for Pause
         Intent pauseIntent = new Intent();
         pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION);
@@ -492,7 +500,8 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
         // Building notification here
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
         mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                .setShowActionsInCompactView(0, 1));
+                .setShowActionsInCompactView(0, 1)
+                .setMediaSession(MediaSessionCompat.Token.fromToken(mSession.getSessionToken())));
         mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
         mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
         mNotificationBuilder.setContentTitle(getString(R.string.radio));
@@ -502,6 +511,13 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
         mNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mPauseIntent);
         mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mStopIntent);
+        mSession.setMetadata
+                (new MediaMetadata.Builder()
+                        .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART,icon)
+                        .putString(MediaMetadata.METADATA_KEY_TITLE, getString(R.string.radio_105))
+                        .putString(MediaMetadata.METADATA_KEY_ARTIST, text)
+                        .build()
+                );
         // Launch notification
         startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
     }

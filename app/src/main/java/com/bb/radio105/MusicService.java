@@ -49,6 +49,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.service.media.MediaBrowserService;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.util.SparseArray;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -66,6 +67,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import timber.log.Timber;
 
+import static com.bb.radio105.Constants.ACTION_PAUSE_NOTIFICATION;
+import static com.bb.radio105.Constants.ACTION_PLAY_NOTIFICATION;
+import static com.bb.radio105.Constants.ACTION_STOP_NOTIFICATION;
 import static com.bb.radio105.Constants.VOLUME_DUCK;
 import static com.bb.radio105.Constants.VOLUME_NORMAL;
 
@@ -78,6 +82,9 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
 
     // The notification color
     private int mNotificationColor;
+
+    // SparseArray for notification actions
+    private final SparseArray<PendingIntent> mIntents = new SparseArray<>();
 
     // The tag we put on debug messages
     private final static String TAG = "Radio105Player";
@@ -109,6 +116,7 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
     }
     // Type of audio focus we have:
     private AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
+
     private AudioManager mAudioManager;
     private boolean mPlayOnFocusGain;
     private AudioFocusRequest mFocusRequest;
@@ -168,8 +176,25 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
         mNotificationColor = getNotificationColor();
         mNotificationManager = NotificationManagerCompat.from(this);
 
+        String pkg = getPackageName();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mIntents.put(R.drawable.ic_pause, PendingIntent.getForegroundService(this, 100,
+                    new Intent(ACTION_PAUSE_NOTIFICATION).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+            mIntents.put(R.drawable.ic_play, PendingIntent.getForegroundService(this, 100,
+                    new Intent(ACTION_PLAY_NOTIFICATION).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+            mIntents.put(R.drawable.ic_stop, PendingIntent.getForegroundService(this, 100,
+                    new Intent(ACTION_STOP_NOTIFICATION).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+        } else {
+            mIntents.put(R.drawable.ic_pause, PendingIntent.getService(this, 100,
+                    new Intent(ACTION_PAUSE_NOTIFICATION).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+            mIntents.put(R.drawable.ic_play, PendingIntent.getService(this, 100,
+                    new Intent(ACTION_PLAY_NOTIFICATION).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+            mIntents.put(R.drawable.ic_stop, PendingIntent.getService(this, 100,
+                    new Intent(ACTION_STOP_NOTIFICATION).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+        }
+
         IntentFilter mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        mIntentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(playerIntentReceiver, mIntentFilter);
 
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -185,9 +210,10 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
             boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
                     .getBoolean(getString(R.string.network_change_key), true);
             if (pref1) {
-                if (MusicService.mState == MusicService.State.Playing) {
+                if (MusicService.mState == State.Playing) {
                     if (type) {
-                        // Restart the stream
+                        // Restart the stream. Don't use MediaSession callback as we are
+                        // already onPlay and the stream will restart in a few moments
                         recoverStream();
                     }
                 }
@@ -205,11 +231,8 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
         String action = intent.getAction();
         switch (action) {
             case Constants.ACTION_PLAY:
-                mCallback.onPlay();
-                sendBroadcast(intent);
-                break;
             case Constants.ACTION_PLAY_NOTIFICATION:
-                processPlayRequestNotification();
+                mCallback.onPlay();
                 sendBroadcast(intent);
                 break;
             case Constants.ACTION_PAUSE:
@@ -236,8 +259,7 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
         if (mState == State.Stopped) {
             // If we're stopped, just go ahead to the next song and start playing
             playNextSong();
-        }
-        else if (mState == State.Paused) {
+        } else if (mState == State.Paused) {
             // If we're paused, just continue playback and restore the 'foreground service' state.
             mState = State.Playing;
             setUpAsForeground(mSongTitle + getString(R.string.playing));
@@ -246,14 +268,6 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
         if (!mSession.isActive()) {
             mSession.setActive(true);
         }
-    }
-
-    private void processPlayRequestNotification() {
-        mPlayOnFocusGain = true;
-        tryToGetAudioFocus();
-        mState = State.Playing;
-        updateNotification(mSongTitle + getString(R.string.playing));
-        configAndStartMediaPlayer();
     }
 
     private void processPauseRequest() {
@@ -447,7 +461,6 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
         Intent intent = new Intent(this, MainActivity.class);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mNotificationBuilder.setContentText(text);
         mNotificationBuilder.setContentIntent(pIntent);
         mSession.setMetadata
                 (new MediaMetadata.Builder()
@@ -455,28 +468,13 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
                         .build()
                 );
         if (pref) {
-            //Intent for Play
-            Intent playIntent = new Intent();
-            playIntent.setAction(Constants.ACTION_PLAY_NOTIFICATION);
-            PendingIntent mPlayIntent = PendingIntent.getService(this, 100, playIntent, 0);
-
-            //Intent for Pause
-            Intent pauseIntent = new Intent();
-            pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION);
-            PendingIntent mPauseIntent = PendingIntent.getService(this, 101, pauseIntent, 0);
-
-            //Intent for Stop
-            Intent stopIntent = new Intent();
-            stopIntent.setAction(Constants.ACTION_STOP_NOTIFICATION);
-            PendingIntent mStopIntent = PendingIntent.getService(this, 102, stopIntent, 0);
-
             mNotificationBuilder.mActions.clear();
             if (mState == State.Playing) {
-                mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mPauseIntent);
-                mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mStopIntent);
+                mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
+                mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
             } else if (mState == State.Paused) {
-                mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mPlayIntent);
-                mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mStopIntent);
+                mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mIntents.get(R.drawable.ic_play));
+                mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
             }
         }
         mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
@@ -491,16 +489,6 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
 
     private void setUpAsForeground(String text) {
         Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.ic_radio_105_logo);
-        //Intent for Pause
-        Intent pauseIntent = new Intent();
-        pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION);
-        PendingIntent mPauseIntent = PendingIntent.getService(this, 101, pauseIntent, 0);
-
-        //Intent for Stop
-        Intent stopIntent = new Intent();
-        stopIntent.setAction(Constants.ACTION_STOP_NOTIFICATION);
-        PendingIntent mStopIntent = PendingIntent.getService(this, 102, stopIntent, 0);
-
         // Creating notification channel
         createNotificationChannel();
         Intent intent = new Intent(this, MainActivity.class);
@@ -515,12 +503,11 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
         mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
         mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
         mNotificationBuilder.setContentTitle(getString(R.string.radio));
-        mNotificationBuilder.setContentText(text);
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         mNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-        mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mPauseIntent);
-        mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mStopIntent);
+        mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
+        mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
         mSession.setMetadata
                 (new MediaMetadata.Builder()
                         .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART,icon)

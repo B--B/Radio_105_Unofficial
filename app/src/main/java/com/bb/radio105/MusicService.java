@@ -203,8 +203,6 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
         mSession = new MediaSession(this, "MusicService");
         mSession.setCallback(mCallback);
         setSessionToken(mSession.getSessionToken());
-        mSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS |
-                MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
         NetworkUtil.checkNetworkInfo(this, type -> {
             boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)

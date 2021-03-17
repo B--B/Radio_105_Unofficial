@@ -281,11 +281,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
     }
 
     private void processStopRequest() {
-        processStopRequest(false);
-    }
-
-    private void processStopRequest(boolean force) {
-        if (mState == State.Playing || mState == State.Paused || force) {
+        if (mState == State.Playing || mState == State.Paused) {
             mState = State.Stopped;
 
             // let go of all resources...
@@ -526,6 +522,9 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
      * the Error state. We warn the user about the error and reset the media player.
      */
     public boolean onError(MediaPlayer mp, int what, int extra) {
+        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.reconnect_key), true);
+
         Toast.makeText(getApplicationContext(), getString(R.string.error),
                 Toast.LENGTH_SHORT).show();
         Timber.tag(TAG).e("Error: what=" + what + ", extra=" + extra);
@@ -537,10 +536,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         Intent mIntent = new Intent();
         mIntent.setAction(ACTION_ERROR);
         mIntent.setPackage(getPackageName());
-        sendBroadcast(mIntent);
 
-        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.reconnect_key), true);
         if (pref) {
             // Try to restart the service immediately if we have a working internet connection
             if (isDeviceOnline()) {
@@ -552,12 +548,16 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
                 reconnect.setPackage(getPackageName());
                 sendBroadcast(reconnect);
                 // Start the streaming
-                processPlayRequest();
+                mCallback.onPlay();
             } else {
                 // Tell the user that streaming service cannot be recovered
                 Toast.makeText(getApplicationContext(), getString(R.string.no_reconnect),
                         Toast.LENGTH_SHORT).show();
+                // Send the error intent
+                sendBroadcast(mIntent);
             }
+        } else {
+            sendBroadcast(mIntent);
         }
         return true; // true indicates we handled the error
     }
@@ -608,9 +608,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
                 .getBoolean(getString(R.string.service_kill_key), false);
         if (pref) {
             // Stop music service when the user enabled the option
-            mState = State.Stopped;
-            relaxResources(true);
-            stopSelf();
+            mCallback.onStop();
         }
         super.onTaskRemoved(rootIntent);
     }
@@ -728,14 +726,17 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
 
     // *********  MediaSession.Callback implementation:
     private final MediaSession.Callback mCallback = new MediaSession.Callback() {
+
         @Override
         public void onPlay() {
             processPlayRequest();
         }
+
         @Override
         public void onPause() {
             processPauseRequest();
         }
+
         @Override
         public void onStop() {
             processStopRequest();

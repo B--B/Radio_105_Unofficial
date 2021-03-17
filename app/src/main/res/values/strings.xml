@@ -55,6 +55,7 @@
     <string name="notification_key_title">Persistent Notification</string>
     <string name="playing">"  (Playing)"</string>
     <string name="in_pause">"  (Pause)"</string>
+    <string name="recovering">"   (Recovering Stream…)"</string>
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="stop">Stop</string>

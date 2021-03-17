@@ -54,6 +54,7 @@
     <string name="notification_key_title">Notifica Persistente</string>
     <string name="playing">"  (In Riproduzione)"</string>
     <string name="in_pause">"  (In Pausa)"</string>
+    <string name="recovering">"   (Ripristino Streaming…)"</string>
 
     <!-- Screen always on -->
     <string name="screen_on_title">Schermo Sempre Acceso</string>

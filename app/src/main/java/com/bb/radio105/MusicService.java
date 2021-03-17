@@ -397,6 +397,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
 
     private void recoverStream() {
         mState = State.Stopped;
+        updateNotification(mSongTitle + getString(R.string.recovering));
         mPlayOnFocusGain = true;
         tryToGetAudioFocus();
         String manualUrl = "http://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
@@ -455,10 +456,11 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
                 );
         if (pref) {
             mNotificationBuilder.clearActions();
-            if (mState == State.Playing) {
+            // Set buttons also for Stopped state as workaround for action icons during a stream recovery
+            if (mState == State.Playing|| mState == State.Stopped) {
                 mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
                 mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
-            } else if (mState == State.Paused) {
+            } else if (mState == State.Paused)  {
                 mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mIntents.get(R.drawable.ic_play));
                 mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
             }

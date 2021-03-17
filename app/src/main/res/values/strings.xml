@@ -109,4 +109,10 @@
     <string name="network_change_on">The app will try to recover the stream when phone switches from mobile to wifi and vice versa</string>
     <string name="network_change_title">Network Changes</string>
     <string name="radio_105">Radio 105</string>
+
+    <!-- Notification Type -->
+    <string name="notification_type_key" translatable="false">notification_type</string>
+    <string name="notification_type_off">The app will use a standard notification when running the Radio Streaming</string>
+    <string name="notification_type_on">The app will use multimedia notification when running the Radio Streaming</string>
+    <string name="notification_type_title">Notification type</string>
 </resources>

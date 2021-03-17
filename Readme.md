@@ -68,4 +68,4 @@ I've decided to start the development of this app tired of the bugs in the offic
     * Screen on: keep the screen on when in podcast and the 105 zoo sections *Default: disabled*
     * Reconnect stream: restart the radio stream after an error if internet is available  *Default: enabled*
     * Network change: restart the radio stream immediately when the device switch from mobile network to WiFi and vice versa  *Default: enabled*
-
+    * Notification type: allow user to choose between a standard or a multimedia notification during the audio streaming *Default: standard notification*

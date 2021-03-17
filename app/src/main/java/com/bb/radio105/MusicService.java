@@ -446,6 +446,8 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
     private void updateNotification(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.notification_key), false);
+        boolean nPref = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.notification_type_key), false);
         Intent intent = new Intent(this, MainActivity.class);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -458,13 +460,16 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         if (pref) {
             mNotificationBuilder.clearActions();
             // Set buttons also for Stopped state as workaround for action icons during a stream recovery
-            if (mState == State.Playing|| mState == State.Stopped) {
+            if (mState == State.Playing || mState == State.Stopped) {
                 mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
                 mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
             } else if (mState == State.Paused)  {
                 mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mIntents.get(R.drawable.ic_play));
                 mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
             }
+        }
+        if (!nPref) {
+            mNotificationBuilder.setContentText(text);
         }
         mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
     }
@@ -477,6 +482,8 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
 
 
     private void setUpAsForeground(String text) {
+        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.notification_type_key), false);
         Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.ic_radio_105_logo);
         // Creating notification channel
         createNotificationChannel();
@@ -485,10 +492,16 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         // Building notification here
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
-        mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                .setShowActionsInCompactView(0, 1)
-                .setMediaSession(MediaSessionCompat.Token.fromToken(mSession.getSessionToken())));
-        mNotificationBuilder.setColor(mNotificationColor);
+        if (pref) {
+            mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                    .setShowActionsInCompactView(0, 1)
+                    .setMediaSession(MediaSessionCompat.Token.fromToken(mSession.getSessionToken())));
+            mNotificationBuilder.setColor(mNotificationColor);
+        } else {
+            mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                    .setShowActionsInCompactView(0, 1));
+            mNotificationBuilder.setContentText(text);
+        }
         mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
         mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
         mNotificationBuilder.setContentTitle(getString(R.string.radio));
@@ -582,7 +595,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
                     "Foreground Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_LOW
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);

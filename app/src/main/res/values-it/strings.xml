@@ -100,4 +100,9 @@
     <string name="network_change_on">L\' applicazione proverà a riconnettere lo streaming radio quando il telefono passa dalla rete mobile alla rete wireless e viceversa</string>
     <string name="network_change_title">Cambio di Rete</string>
     <string name="radio_105">Radio 105</string>
+
+    <!-- Notification Type -->
+    <string name="notification_type_off">L\' applicazione utilizzerà una notifica standard quando lo streaming radio è in esecuzione</string>
+    <string name="notification_type_on">L\' applicazione utilizzerà una notifica multimediale quando lo streaming radio è in esecuzione</string>
+    <string name="notification_type_title">Tipo di Notifica</string>
 </resources>

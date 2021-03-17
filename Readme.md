@@ -8,7 +8,7 @@
 <br />
 <br />
 
-I've decided to start the development of this app tired of the bugs in the official app, especially with newer android version.
+I've decided to start the development of this app tired of the bugs in the official app, especially with newer android versions.
 
 <br />
 <br />
@@ -29,7 +29,7 @@ I've decided to start the development of this app tired of the bugs in the offic
 * ACCESS_NETWORK_STATE and ACCESS_WIFI_STATE: needed by recover stream option and for properly set the partial WiFi wakelock
 * FOREGROUND_SERVICE: needed by the Radio streaming service. Without this Android will kill the streaming service after a few minutes when the screen is off
 * WAKE_LOCK: needed by the radio streaming service when running. Without this there's the possibility that Android turns off the WiFi when the screen is off even if the streaming service is running and using it
-* WRITE_EXTERNAL_STORAGE: this permission is NOT granted by default, will be asked only when the user tries to download a podcast from podcast or the 105 zoo sections
+* WRITE_EXTERNAL_STORAGE: this permission is NOT granted by default and will be asked only when the user tries to download a podcast from podcast or the 105 zoo sections. On Android versions >= 10 the permission is NOT required, the app will use the new scoped storage model implemented in Android 10. More info [here](https://developer.android.com/about/versions/11/privacy/storage)
 
 <br />
 <br />

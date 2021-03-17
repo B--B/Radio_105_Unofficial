@@ -423,7 +423,8 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
                 // the Wifi radio from going to sleep while the song is playing. If, on the other hand,
                 // we are *not* streaming, we want to release the lock if we were holding it before.
                 mWifiLock.acquire();
-                if (mWifiLock.isHeld()) mWifiLock.release();} catch (IOException ex) {
+                if (mWifiLock.isHeld()) mWifiLock.release();
+            } catch (IOException ex) {
                 Timber.tag("MusicService").e("IOException playing next song: %s", ex.getMessage());
                 ex.printStackTrace();
             }

@@ -379,7 +379,6 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
                 mPlayer.setDataSource(manualUrl);
 
                 mState = State.Preparing;
-                setUpAsForeground(mSongTitle + getString(R.string.loading));
 
                 // starts preparing the media player in the background. When it's done, it will call
                 // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
@@ -416,14 +415,13 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
                 mPlayer.setDataSource(manualUrl);
 
                 mState = State.Preparing;
-                setUpAsForeground(mSongTitle + getString(R.string.loading));
 
                 // starts preparing the media player in the background. When it's done, it will call
                 // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
                 // the listener to 'this').
                 //
                 // Until the media player is prepared, we *cannot* call start() on it!
-                mPlayer.prepareAsync();
+                mPlayer.prepare();
 
                 // If we are streaming from the internet, we want to hold a Wifi lock, which prevents
                 // the Wifi radio from going to sleep while the song is playing. If, on the other hand,
@@ -447,7 +445,9 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
     public void onPrepared(MediaPlayer player) {
         // The media player is done preparing. That means we can start playing!
         mState = State.Playing;
-        updateNotification(mSongTitle + getString(R.string.playing));
+        // Start the foreground service here, notification colors will be wrong when the stream
+        // starts from stopped state
+        setUpAsForeground(mSongTitle + getString(R.string.playing));
         configAndStartMediaPlayer();
     }
 

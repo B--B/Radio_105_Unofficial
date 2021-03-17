@@ -36,7 +36,6 @@ import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaMetadata;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.browse.MediaBrowser;
@@ -77,7 +76,7 @@ import static com.bb.radio105.Constants.VOLUME_NORMAL;
  * Service that handles media playback.
  */
 
-public class MusicService extends MediaBrowserService implements OnCompletionListener, OnPreparedListener,
+public class MusicService extends MediaBrowserService implements OnPreparedListener,
         OnErrorListener, AudioManager.OnAudioFocusChangeListener {
 
     // The notification color
@@ -158,7 +157,6 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
             // we want the media player to notify us when it's ready preparing, and when it's done
             // playing:
             mPlayer.setOnPreparedListener(this);
-            mPlayer.setOnCompletionListener(this);
             mPlayer.setOnErrorListener(this);
         }
         else
@@ -433,12 +431,6 @@ public class MusicService extends MediaBrowserService implements OnCompletionLis
             }
         });
         thread.start();
-    }
-
-    /** Called when media player is done playing current song. */
-    public void onCompletion(MediaPlayer player) {
-        // The media player finished playing the current song, so we go ahead and start the next.
-        playNextSong();
     }
 
     /** Called when media player is done preparing. */

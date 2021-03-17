@@ -22,29 +22,25 @@ import android.content.Intent;
 
 import androidx.preference.PreferenceManager;
 
+import static com.bb.radio105.Constants.ACTION_ERROR;
+import static com.bb.radio105.Constants.ACTION_PAUSE;
+import static com.bb.radio105.Constants.ACTION_PLAY;
+import static com.bb.radio105.Constants.ACTION_STOP;
+
 public class PlayerIntentReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         switch (intent.getAction()) {
-            case Constants.ACTION_PAUSE:
+            case ACTION_PAUSE:
                 HomeFragment.playerStatusListener.onButtonStatusChange("Pause");
                 break;
-            case Constants.ACTION_PLAY:
+            case ACTION_PLAY:
                 HomeFragment.playerStatusListener.onButtonStatusChange("Play");
                 break;
-            case Constants.ACTION_STOP:
+            case ACTION_STOP:
                 HomeFragment.playerStatusListener.onButtonStatusChange("Stop");
                 break;
-            case Constants.ACTION_PAUSE_NOTIFICATION:
-                HomeFragment.playerStatusListener.onButtonStatusChange("Pause_Notification");
-                break;
-            case Constants.ACTION_PLAY_NOTIFICATION:
-                HomeFragment.playerStatusListener.onButtonStatusChange("Play_Notification");
-                break;
-            case Constants.ACTION_STOP_NOTIFICATION:
-                HomeFragment.playerStatusListener.onButtonStatusChange("Stop_Notification");
-                break;
-            case Constants.ACTION_ERROR:
+            case ACTION_ERROR:
                 HomeFragment.playerStatusListener.onButtonStatusChange("Error");
                 break;
             case android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY:
@@ -52,7 +48,7 @@ public class PlayerIntentReceiver extends BroadcastReceiver {
                         .getBoolean(context.getString(R.string.noisy_key), true);
                 if (pref) {
                     Intent mIntent = new Intent();
-                    mIntent.setAction(Constants.ACTION_PAUSE);
+                    mIntent.setAction(ACTION_PAUSE);
                     mIntent.setPackage(context.getPackageName());
                     context.startService(mIntent);
                 }

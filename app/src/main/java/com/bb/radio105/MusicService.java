@@ -65,9 +65,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import timber.log.Timber;
 
-import static com.bb.radio105.Constants.ACTION_PAUSE_NOTIFICATION;
-import static com.bb.radio105.Constants.ACTION_PLAY_NOTIFICATION;
-import static com.bb.radio105.Constants.ACTION_STOP_NOTIFICATION;
+import static com.bb.radio105.Constants.ACTION_ERROR;
+import static com.bb.radio105.Constants.ACTION_PAUSE;
+import static com.bb.radio105.Constants.ACTION_PLAY;
+import static com.bb.radio105.Constants.ACTION_STOP;
 import static com.bb.radio105.Constants.VOLUME_DUCK;
 import static com.bb.radio105.Constants.VOLUME_NORMAL;
 
@@ -176,18 +177,18 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         String pkg = getPackageName();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mIntents.put(R.drawable.ic_pause, PendingIntent.getForegroundService(this, 100,
-                    new Intent(ACTION_PAUSE_NOTIFICATION).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+                    new Intent(ACTION_PAUSE).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
             mIntents.put(R.drawable.ic_play, PendingIntent.getForegroundService(this, 100,
-                    new Intent(ACTION_PLAY_NOTIFICATION).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+                    new Intent(ACTION_PLAY).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
             mIntents.put(R.drawable.ic_stop, PendingIntent.getForegroundService(this, 100,
-                    new Intent(ACTION_STOP_NOTIFICATION).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+                    new Intent(ACTION_STOP).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
         } else {
             mIntents.put(R.drawable.ic_pause, PendingIntent.getService(this, 100,
-                    new Intent(ACTION_PAUSE_NOTIFICATION).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+                    new Intent(ACTION_PAUSE).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
             mIntents.put(R.drawable.ic_play, PendingIntent.getService(this, 100,
-                    new Intent(ACTION_PLAY_NOTIFICATION).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+                    new Intent(ACTION_PLAY).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
             mIntents.put(R.drawable.ic_stop, PendingIntent.getService(this, 100,
-                    new Intent(ACTION_STOP_NOTIFICATION).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+                    new Intent(ACTION_STOP).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
         }
 
         IntentFilter mIntentFilter = new IntentFilter();
@@ -225,18 +226,15 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
         switch (action) {
-            case Constants.ACTION_PLAY:
-            case Constants.ACTION_PLAY_NOTIFICATION:
+            case ACTION_PLAY:
                 mCallback.onPlay();
                 sendBroadcast(intent);
                 break;
-            case Constants.ACTION_PAUSE:
-            case Constants.ACTION_PAUSE_NOTIFICATION:
+            case ACTION_PAUSE:
                 mCallback.onPause();
                 sendBroadcast(intent);
                 break;
-            case Constants.ACTION_STOP:
-            case Constants.ACTION_STOP_NOTIFICATION:
+            case ACTION_STOP:
                 mCallback.onStop();
                 sendBroadcast(intent);
                 break;
@@ -521,7 +519,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         giveUpAudioFocus();
 
         Intent mIntent = new Intent();
-        mIntent.setAction(Constants.ACTION_ERROR);
+        mIntent.setAction(ACTION_ERROR);
         mIntent.setPackage(getPackageName());
         sendBroadcast(mIntent);
 
@@ -534,7 +532,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
                         Toast.LENGTH_SHORT).show();
                 // Send the intent for buttons change
                 Intent reconnect = new Intent();
-                reconnect.setAction(Constants.ACTION_PLAY);
+                reconnect.setAction(ACTION_PLAY);
                 reconnect.setPackage(getPackageName());
                 sendBroadcast(reconnect);
                 // Start the streaming

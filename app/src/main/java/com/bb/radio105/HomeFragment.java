@@ -32,6 +32,11 @@ import androidx.fragment.app.Fragment;
 
 import org.jetbrains.annotations.NotNull;
 
+import static com.bb.radio105.Constants.ACTION_ERROR;
+import static com.bb.radio105.Constants.ACTION_PAUSE;
+import static com.bb.radio105.Constants.ACTION_PLAY;
+import static com.bb.radio105.Constants.ACTION_STOP;
+
 public class HomeFragment extends Fragment implements View.OnClickListener, PlayerStatusListener {
 
     private Button button1;
@@ -69,13 +74,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
         playerStatusListener = this;
 
         IntentFilter mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Constants.ACTION_PLAY);
-        mIntentFilter.addAction(Constants.ACTION_PAUSE);
-        mIntentFilter.addAction(Constants.ACTION_STOP);
-        mIntentFilter.addAction(Constants.ACTION_PLAY_NOTIFICATION);
-        mIntentFilter.addAction(Constants.ACTION_PAUSE_NOTIFICATION);
-        mIntentFilter.addAction(Constants.ACTION_STOP_NOTIFICATION);
-        mIntentFilter.addAction(Constants.ACTION_ERROR);
+        mIntentFilter.addAction(ACTION_PLAY);
+        mIntentFilter.addAction(ACTION_PAUSE);
+        mIntentFilter.addAction(ACTION_STOP);
+        mIntentFilter.addAction(ACTION_ERROR);
         requireContext().registerReceiver(playerIntentReceiver, mIntentFilter);
 
         return root;
@@ -113,20 +115,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
     public void onButtonStatusChange(String status) {
         switch (status) {
             case "Play":
-            case "Play_Notification":
                 button1.setEnabled(false);
                 button2.setEnabled(true);
                 button3.setEnabled(true);
                 break;
             case "Pause":
-            case "Pause_Notification":
                 button1.setEnabled(true);
                 button2.setEnabled(false);
                 button3.setEnabled(true);
                 break;
             case "Error":
             case "Stop":
-            case "Stop_Notification":
                 button1.setEnabled(true);
                 button2.setEnabled(false);
                 button3.setEnabled(false);
@@ -170,21 +169,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
 
     private void radioPlay(Activity mActivity) {
         Intent mIntent = new Intent();
-        mIntent.setAction(Constants.ACTION_PLAY);
+        mIntent.setAction(ACTION_PLAY);
         mIntent.setPackage(mActivity.getPackageName());
         mActivity.startService(mIntent);
     }
 
     private void radioPause(Activity mActivity) {
         Intent mIntent = new Intent();
-        mIntent.setAction(Constants.ACTION_PAUSE);
+        mIntent.setAction(ACTION_PAUSE);
         mIntent.setPackage(mActivity.getPackageName());
         mActivity.startService(mIntent);
     }
 
     private void radioStop(Activity mActivity) {
         Intent mIntent = new Intent();
-        mIntent.setAction(Constants.ACTION_STOP);
+        mIntent.setAction(ACTION_STOP);
         mIntent.setPackage(mActivity.getPackageName());
         mActivity.startService(mIntent);
     }

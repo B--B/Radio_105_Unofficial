@@ -33,6 +33,8 @@ import androidx.fragment.app.Fragment;
 
 import org.jetbrains.annotations.NotNull;
 
+import static com.bb.radio105.Constants.ACTION_STOP;
+
 public class TvFragment extends Fragment {
 
     private View root;
@@ -57,7 +59,7 @@ public class TvFragment extends Fragment {
         // Stop radio streaming if running
         if (MusicService.mState == MusicService.State.Playing) {
                  Intent mIntent = new Intent();
-                 mIntent.setAction(Constants.ACTION_STOP);
+                 mIntent.setAction(ACTION_STOP);
                  mIntent.setPackage(requireContext().getPackageName());
                  requireContext().startService(mIntent);
                  requireContext().sendBroadcast(mIntent);

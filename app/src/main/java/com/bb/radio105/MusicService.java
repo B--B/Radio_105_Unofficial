@@ -43,7 +43,9 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.service.media.MediaBrowserService;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -65,6 +67,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import timber.log.Timber;
 
+import static android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY;
 import static com.bb.radio105.Constants.ACTION_ERROR;
 import static com.bb.radio105.Constants.ACTION_PAUSE;
 import static com.bb.radio105.Constants.ACTION_PLAY;
@@ -79,6 +82,8 @@ import static com.bb.radio105.Constants.VOLUME_NORMAL;
 public class MusicService extends MediaBrowserService implements OnPreparedListener,
         OnErrorListener, AudioManager.OnAudioFocusChangeListener {
 
+    private final PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
+
     // The notification color
     private int mNotificationColor;
 
@@ -88,9 +93,6 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
     // The tag we put on debug messages
     private final static String TAG = "Radio105Player";
     private static final String CHANNEL_ID = "Radio105ServiceChannel";
-
-    // Intent receiver for ACTION_AUDIO_BECOMING_NOISY
-    private final PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
 
     // our media player
     static MediaPlayer mPlayer = null;
@@ -191,16 +193,16 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
                     new Intent(ACTION_STOP).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
         }
 
-        IntentFilter mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-        registerReceiver(playerIntentReceiver, mIntentFilter);
-
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         
         // Start a new MediaSession
         mSession = new MediaSession(this, "MusicService");
         mSession.setCallback(mCallback);
         setSessionToken(mSession.getSessionToken());
+
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
+        registerReceiver(playerIntentReceiver, mIntentFilter);
 
         NetworkUtil.checkNetworkInfo(this, type -> {
             boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
@@ -288,6 +290,8 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
             relaxResources(true);
             giveUpAudioFocus();
 
+            updatePlaybackState();
+
             // service is no longer necessary. Will be started again if needed.
             stopSelf();
         }
@@ -371,6 +375,8 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
 
                 mState = State.Preparing;
 
+                updatePlaybackState();
+
                 // starts preparing the media player in the background. When it's done, it will call
                 // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
                 // the listener to 'this').
@@ -407,6 +413,8 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
                 mPlayer.setDataSource(manualUrl);
 
                 mState = State.Preparing;
+
+                updatePlaybackState();
 
                 // starts preparing the media player in the background. When it's done, it will call
                 // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
@@ -468,6 +476,8 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
             mNotificationBuilder.setContentText(text);
         }
         mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
+
+        updatePlaybackState();
     }
 
     /**
@@ -515,6 +525,8 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
                 );
         // Launch notification
         startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
+
+        updatePlaybackState();
     }
 
     /**
@@ -568,8 +580,8 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         mState = State.Stopped;
         relaxResources(true);
         giveUpAudioFocus();
-        unregisterReceiver(playerIntentReceiver);
         NetworkUtil.unregisterNetworkCallback();
+        unregisterReceiver(playerIntentReceiver);
         // Always release the MediaSession to clean up resources
         // and notify associated MediaController(s).
         mSession.release();
@@ -722,6 +734,14 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
             e.printStackTrace();
         }
         return notificationColor;
+    }
+
+    private void updatePlaybackState() {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (HomeFragment.playerStatusListener != null)
+                // Update playerStatusListener state
+                HomeFragment.playerStatusListener.onStateChange(mState);
+        });
     }
 
     // *********  MediaSession.Callback implementation:

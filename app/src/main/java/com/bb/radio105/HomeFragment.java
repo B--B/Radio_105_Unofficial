@@ -18,7 +18,6 @@ package com.bb.radio105;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -32,7 +31,6 @@ import androidx.fragment.app.Fragment;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.bb.radio105.Constants.ACTION_ERROR;
 import static com.bb.radio105.Constants.ACTION_PAUSE;
 import static com.bb.radio105.Constants.ACTION_PLAY;
 import static com.bb.radio105.Constants.ACTION_STOP;
@@ -45,7 +43,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
     private View root;
 
     static PlayerStatusListener playerStatusListener;
-    private final PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -73,13 +70,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
 
         playerStatusListener = this;
 
-        IntentFilter mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(ACTION_PLAY);
-        mIntentFilter.addAction(ACTION_PAUSE);
-        mIntentFilter.addAction(ACTION_STOP);
-        mIntentFilter.addAction(ACTION_ERROR);
-        requireContext().registerReceiver(playerIntentReceiver, mIntentFilter);
-
         return root;
     }
 
@@ -102,31 +92,30 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
                 button2.setEnabled(false);
                 button3.setEnabled(false);
                 break;
-//            case Preparing:
-//                button1.setEnabled(false);
-//                button2.setEnabled(false);
-//                button3.setEnabled(false);
-//                break;
         }
         super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
-    public void onButtonStatusChange(String status) {
-        switch (status) {
-            case "Play":
+    public void onStateChange(MusicService.State mState) {
+        switch (mState) {
+            case Playing:
                 button1.setEnabled(false);
                 button2.setEnabled(true);
                 button3.setEnabled(true);
                 break;
-            case "Pause":
+            case Paused:
                 button1.setEnabled(true);
                 button2.setEnabled(false);
                 button3.setEnabled(true);
                 break;
-            case "Error":
-            case "Stop":
+            case Stopped:
                 button1.setEnabled(true);
+                button2.setEnabled(false);
+                button3.setEnabled(false);
+                break;
+            case Preparing:
+                button1.setEnabled(false);
                 button2.setEnabled(false);
                 button3.setEnabled(false);
                 break;
@@ -145,7 +134,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Play
 
     @Override
     public void onDestroyView() {
-        requireContext().unregisterReceiver(playerIntentReceiver);
         playerStatusListener = null;
         button1 = null;
         button2 = null;

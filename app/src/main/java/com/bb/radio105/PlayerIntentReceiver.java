@@ -22,37 +22,21 @@ import android.content.Intent;
 
 import androidx.preference.PreferenceManager;
 
-import static com.bb.radio105.Constants.ACTION_ERROR;
+import static android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY;
 import static com.bb.radio105.Constants.ACTION_PAUSE;
-import static com.bb.radio105.Constants.ACTION_PLAY;
-import static com.bb.radio105.Constants.ACTION_STOP;
 
 public class PlayerIntentReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        switch (intent.getAction()) {
-            case ACTION_PAUSE:
-                HomeFragment.playerStatusListener.onButtonStatusChange("Pause");
-                break;
-            case ACTION_PLAY:
-                HomeFragment.playerStatusListener.onButtonStatusChange("Play");
-                break;
-            case ACTION_STOP:
-                HomeFragment.playerStatusListener.onButtonStatusChange("Stop");
-                break;
-            case ACTION_ERROR:
-                HomeFragment.playerStatusListener.onButtonStatusChange("Error");
-                break;
-            case android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY:
-                boolean pref = PreferenceManager.getDefaultSharedPreferences(context)
-                        .getBoolean(context.getString(R.string.noisy_key), true);
-                if (pref) {
-                    Intent mIntent = new Intent();
-                    mIntent.setAction(ACTION_PAUSE);
-                    mIntent.setPackage(context.getPackageName());
-                    context.startService(mIntent);
-                }
-                break;
+        if (ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+            boolean pref = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean(context.getString(R.string.noisy_key), true);
+            if (pref) {
+                Intent mIntent = new Intent();
+                mIntent.setAction(ACTION_PAUSE);
+                mIntent.setPackage(context.getPackageName());
+                context.startService(mIntent);
+            }
         }
     }
 }

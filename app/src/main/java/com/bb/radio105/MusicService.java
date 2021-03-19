@@ -463,13 +463,15 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
                 );
         if (pref) {
             mNotificationBuilder.clearActions();
-            // Set buttons also for Stopped state as workaround for action icons during a stream recovery
-            if (mState == State.Playing || mState == State.Stopped) {
+            if (mState == State.Playing) {
                 mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
                 mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
             } else if (mState == State.Paused)  {
                 mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mIntents.get(R.drawable.ic_play));
                 mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
+            } else if (mState == State.Stopped)  {
+                mNotificationBuilder.addAction(0, null, null);
+                mNotificationBuilder.addAction(0, null, null);
             }
         }
         if (!nPref) {

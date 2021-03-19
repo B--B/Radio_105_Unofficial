@@ -37,18 +37,16 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
-import android.media.browse.MediaBrowser;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Looper;
 import android.os.PowerManager;
-import android.service.media.MediaBrowserService;
+import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
+import android.text.TextUtils;
 import android.util.SparseArray;
 import android.widget.Toast;
 
@@ -56,7 +54,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.media.MediaBrowserServiceCompat;
 import androidx.preference.PreferenceManager;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -79,7 +80,7 @@ import static com.bb.radio105.Constants.VOLUME_NORMAL;
  * Service that handles media playback.
  */
 
-public class MusicService extends MediaBrowserService implements OnPreparedListener,
+public class MusicService extends MediaBrowserServiceCompat implements OnPreparedListener,
         OnErrorListener, AudioManager.OnAudioFocusChangeListener {
 
     private final PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
@@ -141,6 +142,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
 
     // Media Session
     private MediaSessionCompat mSession;
+    private PlaybackStateCompat.Builder stateBuilder;
 
     /**
      * Makes sure the media player exists and has been reset. This will create the media player
@@ -167,6 +169,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
 
     @Override
     public void onCreate() {
+        super.onCreate();
         Timber.tag(TAG).i("debug: Creating service");
 
         // Create the Wifi lock (this does not acquire the lock, this just creates it)
@@ -197,7 +200,14 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
 
         // Start a new MediaSession
         mSession = new MediaSessionCompat(this, "MusicService");
+        stateBuilder = new PlaybackStateCompat.Builder()
+                .setActions(
+                        PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PLAY_PAUSE);
+        mSession.setPlaybackState(stateBuilder.build());
         mSession.setCallback(mCallback);
+        setSessionToken(mSession.getSessionToken());
+
+        mSession.setActive(true);
 
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
@@ -289,8 +299,6 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
             relaxResources(true);
             giveUpAudioFocus();
 
-            updatePlaybackState();
-
             // service is no longer necessary. Will be started again if needed.
             stopSelf();
         }
@@ -373,8 +381,6 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
 
                 mState = State.Preparing;
 
-                updatePlaybackState();
-
                 // starts preparing the media player in the background. When it's done, it will call
                 // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
                 // the listener to 'this').
@@ -411,8 +417,6 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
                 mPlayer.setDataSource(manualUrl);
 
                 mState = State.Preparing;
-
-                updatePlaybackState();
 
                 // starts preparing the media player in the background. When it's done, it will call
                 // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
@@ -481,8 +485,6 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
             mNotificationBuilder.setContentText(text);
         }
         mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
-
-        updatePlaybackState();
     }
 
     /**
@@ -530,8 +532,6 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
                 );
         // Launch notification
         startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
-
-        updatePlaybackState();
     }
 
     /**
@@ -592,20 +592,20 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         mSession.release();
     }
 
-    @Override
-    public IBinder onBind(Intent arg0) {
-        return null;
-    }
-
     @Nullable
     @Override
     public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid, @Nullable Bundle rootHints) {
-        return null;
+        // Clients can connect, but this BrowserRoot is an empty hierarchy
+        // so onLoadChildren returns nothing. This disables the ability to browse for content.
+        return new BrowserRoot(getString(R.string.app_name), null);
     }
 
     @Override
-    public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowser.MediaItem>> result) {
-
+    public void onLoadChildren(@NonNull @NotNull String parentId, @NonNull @NotNull MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>> result) {
+        //  Browsing not allowed
+        if (TextUtils.equals(getString(R.string.app_name), parentId)) {
+            result.sendResult(null);
+        }
     }
 
     private void createNotificationChannel() {
@@ -740,14 +740,6 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
             e.printStackTrace();
         }
         return notificationColor;
-    }
-
-    private void updatePlaybackState() {
-        new Handler(Looper.getMainLooper()).post(() -> {
-            if (HomeFragment.playerStatusListener != null)
-                // Update playerStatusListener state
-                HomeFragment.playerStatusListener.onStateChange(mState);
-        });
     }
 
     // *********  MediaSession.Callback implementation:

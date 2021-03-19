@@ -115,6 +115,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         NoFocusCanDuck,   // we don't have focus, but can play at a low volume ("ducking")
         Focused           // we have full audio focus
     }
+
     // Type of audio focus we have:
     private AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
 
@@ -160,8 +161,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
             // playing:
             mPlayer.setOnPreparedListener(this);
             mPlayer.setOnErrorListener(this);
-        }
-        else
+        } else
             mPlayer.reset();
     }
 
@@ -194,7 +194,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         }
 
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        
+
         // Start a new MediaSession
         mSession = new MediaSessionCompat(this, "MusicService");
         mSession.setCallback(mCallback);
@@ -337,8 +337,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
             // playback once we get the focus back.
             if (mPlayer.isPlaying()) mPlayer.pause();
             return;
-        }
-        else if (mAudioFocus == AudioFocus.NoFocusCanDuck) {
+        } else if (mAudioFocus == AudioFocus.NoFocusCanDuck) {
             mPlayer.setVolume(VOLUME_DUCK, VOLUME_DUCK); // we'll be relatively quiet
         } else {
             mPlayer.setVolume(VOLUME_NORMAL, VOLUME_NORMAL); // we can be loud again
@@ -435,7 +434,9 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         thread.start();
     }
 
-    /** Called when media player is done preparing. */
+    /**
+     * Called when media player is done preparing.
+     */
     public void onPrepared(MediaPlayer player) {
         // The media player is done preparing. That means we can start playing!
         mState = State.Playing;
@@ -468,10 +469,10 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
             if (mState == State.Playing) {
                 mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
                 mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
-            } else if (mState == State.Paused)  {
+            } else if (mState == State.Paused) {
                 mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mIntents.get(R.drawable.ic_play));
                 mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
-            } else if (mState == State.Stopped)  {
+            } else if (mState == State.Stopped) {
                 mNotificationBuilder.addAction(0, null, null);
                 mNotificationBuilder.addAction(0, null, null);
             }
@@ -494,7 +495,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
     private void setUpAsForeground(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.notification_type_key), false);
-        Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.ic_radio_105_logo);
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
         // Creating notification channel
         createNotificationChannel();
         Intent intent = new Intent(this, MainActivity.class);
@@ -522,7 +523,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
         mSession.setMetadata
                 (new MediaMetadataCompat.Builder()
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART,icon)
+                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, icon)
                         .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getString(R.string.radio_105))
                         .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
                         .build()
@@ -732,7 +733,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
             packageContext.setTheme(applicationInfo.theme);
             Resources.Theme theme = packageContext.getTheme();
             TypedArray ta = theme.obtainStyledAttributes(
-                    new int[] {android.R.attr.colorPrimary});
+                    new int[]{android.R.attr.colorPrimary});
             notificationColor = ta.getColor(0, Color.DKGRAY);
             ta.recycle();
         } catch (PackageManager.NameNotFoundException e) {

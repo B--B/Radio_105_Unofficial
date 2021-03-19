@@ -21,6 +21,7 @@ import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -34,27 +35,21 @@ import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
-import android.media.MediaMetadata;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
-import android.media.browse.MediaBrowser;
-import android.media.session.MediaSession;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
-import android.service.media.MediaBrowserService;
+import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.SparseArray;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
@@ -63,7 +58,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import timber.log.Timber;
@@ -80,7 +74,7 @@ import static com.bb.radio105.Constants.VOLUME_NORMAL;
  * Service that handles media playback.
  */
 
-public class MusicService extends MediaBrowserService implements OnPreparedListener,
+public class MusicService extends Service implements OnPreparedListener,
         OnErrorListener, AudioManager.OnAudioFocusChangeListener {
 
     private final PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
@@ -140,7 +134,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
     NotificationCompat.Builder mNotificationBuilder = null;
 
     // Media Session
-    private MediaSession mSession;
+    private MediaSessionCompat mSession;
 
     /**
      * Makes sure the media player exists and has been reset. This will create the media player
@@ -197,9 +191,8 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         
         // Start a new MediaSession
-        mSession = new MediaSession(this, "MusicService");
+        mSession = new MediaSessionCompat(this, "MusicService");
         mSession.setCallback(mCallback);
-        setSessionToken(mSession.getSessionToken());
 
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
@@ -461,8 +454,8 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mNotificationBuilder.setContentIntent(pIntent);
         mSession.setMetadata
-                (new MediaMetadata.Builder()
-                        .putString(MediaMetadata.METADATA_KEY_ARTIST, text)
+                (new MediaMetadataCompat.Builder()
+                        .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
                         .build()
                 );
         if (pref) {
@@ -507,7 +500,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         if (pref) {
             mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0, 1)
-                    .setMediaSession(MediaSessionCompat.Token.fromToken(mSession.getSessionToken())));
+                    .setMediaSession(mSession.getSessionToken()));
             mNotificationBuilder.setColor(mNotificationColor);
         } else {
             mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
@@ -523,10 +516,10 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
         mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
         mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
         mSession.setMetadata
-                (new MediaMetadata.Builder()
-                        .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART,icon)
-                        .putString(MediaMetadata.METADATA_KEY_TITLE, getString(R.string.radio_105))
-                        .putString(MediaMetadata.METADATA_KEY_ARTIST, text)
+                (new MediaMetadataCompat.Builder()
+                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART,icon)
+                        .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getString(R.string.radio_105))
+                        .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
                         .build()
                 );
         // Launch notification
@@ -596,16 +589,6 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
-    }
-
-    @Nullable
-    @Override
-    public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid, @Nullable Bundle rootHints) {
-        return null;
-    }
-
-    @Override
-    public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowser.MediaItem>> result) {
     }
 
     private void createNotificationChannel() {
@@ -751,7 +734,7 @@ public class MusicService extends MediaBrowserService implements OnPreparedListe
     }
 
     // *********  MediaSession.Callback implementation:
-    private final MediaSession.Callback mCallback = new MediaSession.Callback() {
+    private final MediaSessionCompat.Callback mCallback = new MediaSessionCompat.Callback() {
 
         @Override
         public void onPlay() {

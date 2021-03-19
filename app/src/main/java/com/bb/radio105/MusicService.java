@@ -20,7 +20,6 @@ package com.bb.radio105;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -37,18 +36,23 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.media.browse.MediaBrowser;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.service.media.MediaBrowserService;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.SparseArray;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
@@ -57,6 +61,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import timber.log.Timber;
@@ -73,7 +78,7 @@ import static com.bb.radio105.Constants.VOLUME_NORMAL;
  * Service that handles media playback.
  */
 
-public class MusicService extends Service implements OnPreparedListener,
+public class MusicService extends MediaBrowserService implements OnPreparedListener,
         OnErrorListener, AudioManager.OnAudioFocusChangeListener {
 
     private final PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
@@ -585,6 +590,17 @@ public class MusicService extends Service implements OnPreparedListener,
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
+    }
+
+    @Nullable
+    @Override
+    public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid, @Nullable Bundle rootHints) {
+        return null;
+    }
+
+    @Override
+    public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowser.MediaItem>> result) {
+
     }
 
     private void createNotificationChannel() {

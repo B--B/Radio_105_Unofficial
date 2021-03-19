@@ -25,6 +25,7 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,7 @@ public class HomeFragment extends Fragment implements  PlayerStatusListener {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
 
         root = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -62,6 +64,10 @@ public class HomeFragment extends Fragment implements  PlayerStatusListener {
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
+        button1 = root.findViewById(R.id.button1);
+        button2 = root.findViewById(R.id.button2);
+        button3 = root.findViewById(R.id.button3);
+
         playerStatusListener = this;
 
         // Create MediaBrowserServiceCompat
@@ -71,29 +77,6 @@ public class HomeFragment extends Fragment implements  PlayerStatusListener {
                 null); // optional Bundle
 
         return root;
-    }
-
-    @Override
-    public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
-
-        switch (MusicService.mState) {
-            case Playing:
-                button1.setEnabled(false);
-                button2.setEnabled(true);
-                button3.setEnabled(true);
-                break;
-            case Paused:
-                button1.setEnabled(true);
-                button2.setEnabled(false);
-                button3.setEnabled(true);
-                break;
-            case Stopped:
-                button1.setEnabled(true);
-                button2.setEnabled(false);
-                button3.setEnabled(false);
-                break;
-        }
-        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -144,26 +127,40 @@ public class HomeFragment extends Fragment implements  PlayerStatusListener {
 
     void buildTransportControls() {
 
-        button1 = root.findViewById(R.id.button1);
-        button2 = root.findViewById(R.id.button2);
-        button3 = root.findViewById(R.id.button3);
-
         // Attach a listener to the button
         button1.setOnClickListener(v -> MediaControllerCompat.getMediaController(requireActivity()).getTransportControls().play());
-
         button2.setOnClickListener(v -> MediaControllerCompat.getMediaController(requireActivity()).getTransportControls().pause());
-
         button3.setOnClickListener(v -> MediaControllerCompat.getMediaController(requireActivity()).getTransportControls().stop());
 
         MediaControllerCompat mediaController = MediaControllerCompat.getMediaController(requireActivity());
 
-        // Display the initial state
-        MediaMetadataCompat metadata = mediaController.getMetadata();
-        PlaybackStateCompat pbState = mediaController.getPlaybackState();
-
         // Register a Callback to stay in sync
         mediaController.registerCallback(controllerCallback);
 
+    }
+
+    private void  syncButtons() {
+        switch (MusicService.mState) {
+            case Playing:
+                button1.setEnabled(false);
+                button2.setEnabled(true);
+                button3.setEnabled(true);
+                break;
+            case Paused:
+                button1.setEnabled(true);
+                button2.setEnabled(false);
+                button3.setEnabled(true);
+                break;
+            case Stopped:
+                button1.setEnabled(true);
+                button2.setEnabled(false);
+                button3.setEnabled(false);
+                break; case Preparing:
+                button1.setEnabled(false);
+                button2.setEnabled(false);
+                button3.setEnabled(false);
+                break;
+        }
     }
 
     // ********* MediaBrowserCompat.ConnectionCallback implementation:
@@ -201,28 +198,14 @@ public class HomeFragment extends Fragment implements  PlayerStatusListener {
     MediaControllerCompat.Callback controllerCallback =
             new MediaControllerCompat.Callback() {
                 @Override
-                public void onMetadataChanged(MediaMetadataCompat metadata) {}
+                public void onMetadataChanged(MediaMetadataCompat metadata) {
+                    Log.e("HomeFragment","metadata changed: " + metadata.getDescription());
+                }
 
                 @Override
                 public void onPlaybackStateChanged(PlaybackStateCompat state) {
-                    int pbState = state.getState();
-                    if (pbState == PlaybackStateCompat.STATE_PLAYING) {
-                        button1.setEnabled(false);
-                        button2.setEnabled(true);
-                        button3.setEnabled(true);
-                    } else if (pbState == PlaybackStateCompat.STATE_PAUSED) {
-                        button1.setEnabled(true);
-                        button2.setEnabled(false);
-                        button3.setEnabled(true);
-                    } else if (pbState == PlaybackStateCompat.STATE_STOPPED) {
-                        button1.setEnabled(true);
-                        button2.setEnabled(false);
-                        button3.setEnabled(false);
-                    } else if (pbState == PlaybackStateCompat.STATE_BUFFERING) {
-                        button1.setEnabled(false);
-                        button2.setEnabled(false);
-                        button3.setEnabled(false);
-                    }
+                    Log.e("HomeFragment","playBack state changed: " + state.toString());
+                    syncButtons();
                 }
             };
 }

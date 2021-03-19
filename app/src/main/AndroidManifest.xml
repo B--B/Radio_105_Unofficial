@@ -33,13 +33,9 @@
         </activity>
 
         <service
-            android:name="com.bb.radio105.MusicService"
-            android:exported="false">
+            android:name="com.bb.radio105.MusicService">
             <intent-filter>
-                <action android:name="com.bb.radio105.action.PLAY" />
-                <action android:name="com.bb.radio105.action.PAUSE" />
-                <action android:name="com.bb.radio105.action.STOP" />
-                <action android:name="com.bb.radio105.action.ERROR" />
+                <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
 

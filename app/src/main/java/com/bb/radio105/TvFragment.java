@@ -57,7 +57,7 @@ public class TvFragment extends Fragment {
         }
 
         // Stop radio streaming if running
-        if (MusicService.mPlayer.isPlaying()) {
+        if (MusicService.mPlayer != null && MusicService.mPlayer.isPlaying()) {
             Intent mIntent = new Intent();
             mIntent.setAction(ACTION_PAUSE);
             mIntent.setPackage(requireContext().getPackageName());

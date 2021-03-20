@@ -234,7 +234,10 @@ public class ZooFragment extends Fragment {
         if (pref) {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-        mWebView.destroy();
+        if (mWebView != null) {
+            mWebView.destroy();
+            mWebView = null;
+        }
         root = null;
         super.onDestroyView();
     }

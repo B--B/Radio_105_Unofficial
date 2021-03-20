@@ -32,6 +32,7 @@ import android.widget.Button;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import org.jetbrains.annotations.NotNull;
@@ -73,6 +74,13 @@ public class HomeFragment extends Fragment {
                 connectionCallbacks,
                 null); // optional Bundle
 
+        return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull android.view.View view,
+                              @Nullable android.os.Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         // Set buttons state
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
             button1.setEnabled(false);
@@ -91,18 +99,16 @@ public class HomeFragment extends Fragment {
             button2.setEnabled(false);
             button3.setEnabled(false);
         }
-
-        return root;
     }
 
     @Override
     public void onConfigurationChanged(@NotNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
         getParentFragmentManager()
                 .beginTransaction()
                 .detach(this)
                 .attach(this)
                 .commit();
-        super.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -128,11 +134,11 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        super.onDestroyView();
         button1 = null;
         button2 = null;
         button3 = null;
         root = null;
-        super.onDestroyView();
     }
 
     void buildTransportControls() {

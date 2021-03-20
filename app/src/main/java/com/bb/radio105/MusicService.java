@@ -41,6 +41,7 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.support.v4.media.MediaBrowserCompat;
@@ -587,6 +588,11 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         // and notify associated MediaController(s).
         mSession.release();
     }
+
+//    @Override
+//    public IBinder onBind(Intent arg0) {
+//        return null;
+//    }
 
     @Nullable
     @Override

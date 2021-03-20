@@ -40,7 +40,6 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.support.v4.media.MediaBrowserCompat;
@@ -587,11 +586,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         mSession.release();
     }
 
-//    @Override
-//    public IBinder onBind(Intent arg0) {
-//        return null;
-//    }
-
     @Nullable
     @Override
     public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid, @Nullable Bundle rootHints) {
@@ -760,7 +754,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         if (error != null) {
             // Error states are really only supposed to be used for errors that cause playback to
             // stop unexpectedly and persist until the user takes action to fix it.
-            stateBuilder.setErrorMessage(error);
+            stateBuilder.setErrorMessage(PlaybackStateCompat.ERROR_CODE_UNKNOWN_ERROR, error);
             mState = PlaybackStateCompat.STATE_ERROR;
         }
         stateBuilder.setState(mState, position, 1.0f, SystemClock.elapsedRealtime());

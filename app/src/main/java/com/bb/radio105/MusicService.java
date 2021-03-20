@@ -42,6 +42,7 @@ import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.os.SystemClock;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -98,17 +99,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     // our media player
     static MediaPlayer mPlayer = null;
 
-    // indicates the state our service:
-    enum State {
-        Stopped,    // media player is stopped and not prepared to play
-        Preparing,  // media player is preparing...
-        Playing,    // playback active (media player ready!). (but the media player may actually be
-        // paused in this state if we don't have audio focus. But we stay in this state
-        // so that we know we have to resume playback once we get focus back)
-        Paused      // playback paused (media player ready!)
-    }
-
-    static State mState = State.Stopped;
+    // Current local media player state
+    static int mState = PlaybackStateCompat.STATE_STOPPED;
 
     // do we have audio focus?
     enum AudioFocus {
@@ -206,6 +198,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         mSession.setPlaybackState(stateBuilder.build());
         mSession.setCallback(mCallback);
         setSessionToken(mSession.getSessionToken());
+        updatePlaybackState(null);
 
         mSession.setActive(true);
 
@@ -217,7 +210,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
                     .getBoolean(getString(R.string.network_change_key), true);
             if (pref1) {
-                if (MusicService.mState == State.Playing) {
+                if (mState == PlaybackStateCompat.STATE_PLAYING) {
                     if (type) {
                         // Restart the stream. Don't use MediaSession callback as we are
                         // already onPlay and the stream will restart in a few moments
@@ -238,16 +231,13 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         String action = intent.getAction();
         switch (action) {
             case ACTION_PLAY:
-                mCallback.onPlay();
-                sendBroadcast(intent);
+                processPlayRequest();
                 break;
             case ACTION_PAUSE:
-                mCallback.onPause();
-                sendBroadcast(intent);
+                processPauseRequest();
                 break;
             case ACTION_STOP:
-                mCallback.onStop();
-                sendBroadcast(intent);
+                processStopRequest();
                 break;
         }
 
@@ -260,12 +250,13 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         tryToGetAudioFocus();
 
         // actually play the song
-        if (mState == State.Stopped) {
+        if (mState == PlaybackStateCompat.STATE_STOPPED) {
             // If we're stopped, just go ahead to the next song and start playing
             playNextSong();
-        } else if (mState == State.Paused) {
+        } else if (mState == PlaybackStateCompat.STATE_PAUSED) {
             // If we're paused, just continue playback and restore the 'foreground service' state.
-            mState = State.Playing;
+            mState = PlaybackStateCompat.STATE_PLAYING;
+            updatePlaybackState(null);
             setUpAsForeground(mSongTitle + getString(R.string.playing));
             configAndStartMediaPlayer();
         }
@@ -275,11 +266,11 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     }
 
     private void processPauseRequest() {
-        if (mState == State.Playing) {
+        if (mState == PlaybackStateCompat.STATE_PLAYING) {
             boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                     .getBoolean(getString(R.string.notification_key), false);
             // Pause media player and cancel the 'foreground service' state.
-            mState = State.Paused;
+            mState = PlaybackStateCompat.STATE_PAUSED;
             mPlayer.pause();
             if (!pref) {
                 relaxResources(false); // while paused, we always retain the MediaPlayer
@@ -288,16 +279,18 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 relaxResources();
             }
             // do not give up audio focus
+            updatePlaybackState(null);
         }
     }
 
     private void processStopRequest() {
-        if (mState == State.Playing || mState == State.Paused) {
-            mState = State.Stopped;
+        if (mState == PlaybackStateCompat.STATE_PLAYING || mState == PlaybackStateCompat.STATE_PAUSED) {
+            mState = PlaybackStateCompat.STATE_STOPPED;
 
             // let go of all resources...
             relaxResources(true);
             giveUpAudioFocus();
+            updatePlaybackState(null);
 
             // service is no longer necessary. Will be started again if needed.
             stopSelf();
@@ -356,7 +349,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 mPlayer.start();
             }
             mPlayOnFocusGain = false;
-            mState = State.Playing;
+            mState = PlaybackStateCompat.STATE_PLAYING;
         }
     }
 
@@ -367,7 +360,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
      * next.
      */
     private void playNextSong() {
-        mState = State.Stopped;
+        mState = PlaybackStateCompat.STATE_STOPPED;
         relaxResources(false); // release everything except MediaPlayer
         String manualUrl = "http://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
 
@@ -379,7 +372,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 mPlayer.setAudioAttributes(b.build());
                 mPlayer.setDataSource(manualUrl);
 
-                mState = State.Preparing;
+                mState = PlaybackStateCompat.STATE_BUFFERING;
+                updatePlaybackState(null);
 
                 // starts preparing the media player in the background. When it's done, it will call
                 // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
@@ -395,14 +389,14 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 if (mWifiLock.isHeld()) mWifiLock.release();
             } catch (IOException ex) {
                 Timber.tag("MusicService").e("IOException playing next song: %s", ex.getMessage());
-                ex.printStackTrace();
+                updatePlaybackState(ex.getMessage());
             }
         });
         thread.start();
     }
 
     private void recoverStream() {
-        mState = State.Stopped;
+        mState = PlaybackStateCompat.STATE_STOPPED;
         updateNotification(mSongTitle + getString(R.string.recovering));
         mPlayOnFocusGain = true;
         tryToGetAudioFocus();
@@ -416,7 +410,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 mPlayer.setAudioAttributes(b.build());
                 mPlayer.setDataSource(manualUrl);
 
-                mState = State.Preparing;
+                mState = PlaybackStateCompat.STATE_BUFFERING;
+                updatePlaybackState(null);
 
                 // starts preparing the media player in the background. When it's done, it will call
                 // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
@@ -432,7 +427,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 if (mWifiLock.isHeld()) mWifiLock.release();
             } catch (IOException ex) {
                 Timber.tag("MusicService").e("IOException playing next song: %s", ex.getMessage());
-                ex.printStackTrace();
+                updatePlaybackState(ex.getMessage());
             }
         });
         thread.start();
@@ -443,10 +438,11 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
      */
     public void onPrepared(MediaPlayer player) {
         // The media player is done preparing. That means we can start playing!
-        mState = State.Playing;
+        mState = PlaybackStateCompat.STATE_PLAYING;
         // Start the foreground service here, notification colors will be wrong when the stream
         // starts from stopped state
         setUpAsForeground(mSongTitle + getString(R.string.playing));
+        updatePlaybackState(null);
         configAndStartMediaPlayer();
     }
 
@@ -470,13 +466,13 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 );
         if (pref) {
             mNotificationBuilder.mActions.clear();
-            if (mState == State.Playing) {
+            if (mState == PlaybackStateCompat.STATE_PLAYING) {
                 mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
                 mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
-            } else if (mState == State.Paused) {
+            } else if (mState == PlaybackStateCompat.STATE_PAUSED) {
                 mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mIntents.get(R.drawable.ic_play));
                 mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
-            } else if (mState == State.Stopped) {
+            } else if (mState == PlaybackStateCompat.STATE_STOPPED) {
                 mNotificationBuilder.addAction(0, null, null);
                 mNotificationBuilder.addAction(0, null, null);
             }
@@ -546,7 +542,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 Toast.LENGTH_SHORT).show();
         Timber.tag(TAG).e("Error: what=" + what + ", extra=" + extra);
 
-        mState = State.Stopped;
+        mState = PlaybackStateCompat.STATE_STOPPED;
         relaxResources(true);
         giveUpAudioFocus();
 
@@ -582,7 +578,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     @Override
     public void onDestroy() {
         // Service is being killed, so make sure we release our resources
-        mState = State.Stopped;
+        mState = PlaybackStateCompat.STATE_STOPPED;
         relaxResources(true);
         giveUpAudioFocus();
         NetworkUtil.unregisterNetworkCallback();
@@ -645,7 +641,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             mAudioFocus = canDuck ? AudioFocus.NoFocusCanDuck : AudioFocus.NoFocusNoDuck;
             // If we are playing, we need to reset media player by calling configMediaPlayerState
             // with mAudioFocus properly set.
-            if (mState == State.Playing && !canDuck) {
+            if (mState == PlaybackStateCompat.STATE_PLAYING && !canDuck) {
                 // If we don't have audio focus and can't duck, we save the information that
                 // we were playing, so that we can resume playback once we get the focus back.
                 mPlayOnFocusGain = true;
@@ -742,22 +738,56 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         return notificationColor;
     }
 
+    /**
+     * Update the current media player state, optionally showing an error message.
+     *
+     * @param error if not null, error message to present to the user.
+     *
+     */
+    private void updatePlaybackState(String error) {
+        long position = PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN;
+        if (mPlayer != null && mPlayer.isPlaying()) {
+            position = mPlayer.getCurrentPosition();
+        }
+//        PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder()
+//                .setActions(getAvailableActions());
+//        setCustomAction(stateBuilder);
+        // If there is an error message, send it to the playback state:
+        if (error != null) {
+            // Error states are really only supposed to be used for errors that cause playback to
+            // stop unexpectedly and persist until the user takes action to fix it.
+            stateBuilder.setErrorMessage(error);
+            mState = PlaybackStateCompat.STATE_ERROR;
+        }
+        stateBuilder.setState(mState, position, 1.0f, SystemClock.elapsedRealtime());
+        mSession.setPlaybackState(stateBuilder.build());
+    }
+
     // *********  MediaSession.Callback implementation:
     private final MediaSessionCompat.Callback mCallback = new MediaSessionCompat.Callback() {
 
         @Override
         public void onPlay() {
-            processPlayRequest();
+            Intent mIntent = new Intent();
+            mIntent.setAction(ACTION_PLAY);
+            mIntent.setPackage(getPackageName());
+            startService(mIntent);
         }
 
         @Override
         public void onPause() {
-            processPauseRequest();
+            Intent mIntent = new Intent();
+            mIntent.setAction(ACTION_PAUSE);
+            mIntent.setPackage(getPackageName());
+            startService(mIntent);
         }
 
         @Override
         public void onStop() {
-            processStopRequest();
+            Intent mIntent = new Intent();
+            mIntent.setAction(ACTION_STOP);
+            mIntent.setPackage(getPackageName());
+            startService(mIntent);
         }
     };
 }

@@ -37,6 +37,9 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
+                <action android:name="com.bb.radio105.action.PLAY" />
+                <action android:name="com.bb.radio105.action.PAUSE" />
+                <action android:name="com.bb.radio105.action.STOP" />
             </intent-filter>
         </service>
 

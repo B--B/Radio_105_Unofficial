@@ -49,6 +49,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -792,10 +793,10 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
         @Override
         public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
-            if (mediaButtonEvent.getAction().equals("android.intent.action.MEDIA_BUTTON")) {
-                if (mState == PlaybackStateCompat.STATE_PLAYING) {
-                    mCallback.onPause();
-                }
+//            Log.e("Radio105Streaming", "Received intent extras: " + mediaButtonEvent.getParcelableExtra(Intent.EXTRA_KEY_EVENT).toString());
+            KeyEvent mKeyEvent = mediaButtonEvent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+            if (mKeyEvent.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PAUSE) {
+                mCallback.onPause();
             }
             return super.onMediaButtonEvent(mediaButtonEvent);
         }

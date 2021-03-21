@@ -244,8 +244,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     }
 
     private void processPlayRequest() {
-        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.notification_key), false);
         mPlayOnFocusGain = true;
         tryToGetAudioFocus();
 
@@ -257,11 +255,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             // If we're paused, just continue playback and restore the 'foreground service' state.
             mState = PlaybackStateCompat.STATE_PLAYING;
             updatePlaybackState(null);
-            if (!pref) {
-                setUpAsForeground(getString(R.string.playing));
-            } else {
-                updateNotification(getString(R.string.playing));
-            }
+            updateNotification(getString(R.string.playing));
             configAndStartMediaPlayer();
         }
         if (!mSession.isActive()) {
@@ -271,18 +265,12 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
     private void processPauseRequest() {
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
-            boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
-                    .getBoolean(getString(R.string.notification_key), false);
             // Pause media player and cancel the 'foreground service' state.
             mState = PlaybackStateCompat.STATE_PAUSED;
             updatePlaybackState(null);
             mPlayer.pause();
-            if (!pref) {
-                relaxResources(false); // while paused, we always retain the MediaPlayer
-            } else {
-                updateNotification(getString(R.string.in_pause));
-                relaxResources();
-            }
+            relaxResources();
+            updateNotification(getString(R.string.in_pause));
             // do not give up audio focus
         }
     }
@@ -457,8 +445,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     @SuppressLint("RestrictedApi")
     private void updateNotification(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.notification_key), false);
-        boolean nPref = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.notification_type_key), false);
         Intent intent = new Intent(this, MainActivity.class);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
@@ -481,20 +467,18 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                             .build()
                     );
         }
-        if (pref) {
-            mNotificationBuilder.mActions.clear();
-            if (mState == PlaybackStateCompat.STATE_PLAYING) {
-                mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
-                mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
-            } else if (mState == PlaybackStateCompat.STATE_PAUSED) {
-                mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mIntents.get(R.drawable.ic_play));
-                mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
-            } else if (mState == PlaybackStateCompat.STATE_STOPPED) {
-                mNotificationBuilder.addAction(0, null, null);
-                mNotificationBuilder.addAction(0, null, null);
-            }
+        mNotificationBuilder.mActions.clear();
+        if (mState == PlaybackStateCompat.STATE_PLAYING) {
+            mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
+            mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
+        } else if (mState == PlaybackStateCompat.STATE_PAUSED) {
+            mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mIntents.get(R.drawable.ic_play));
+            mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
+        } else if (mState == PlaybackStateCompat.STATE_STOPPED) {
+            mNotificationBuilder.addAction(0, null, null);
+            mNotificationBuilder.addAction(0, null, null);
         }
-        if (!nPref) {
+        if (!pref) {
             mNotificationBuilder.setContentText(text);
         }
         mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());

@@ -24,13 +24,6 @@
         app:defaultValue="true"/>
 
     <SwitchPreferenceCompat
-        app:key="@string/notification_key"
-        app:summaryOff="@string/notification_key_summary_off"
-        app:summaryOn="@string/notification_key_summary_on"
-        app:title="@string/notification_key_title"
-        app:defaultValue="false"/>
-
-    <SwitchPreferenceCompat
         app:key="@string/screen_on_key"
         app:summaryOff="@string/screen_on_summary_off"
         app:summaryOn="@string/screen_on_summary_on"

@@ -64,7 +64,6 @@ I've decided to start the development of this app tired of the bugs in the offic
     * Theme: choose between light, dark or system theme *Default: system*
     * Stop streaming setting: allow system to stop streaming when app is removed from recent tasks *Default: disabled*
     * Audio devices: pause streaming when an audio device (headset, BT, etc.) is disconnected *Default: enabled*
-    * Persistent notification: when pausing the radio streaming, the icon will persist in status bar *Default: disabled*
     * Screen on: keep the screen on when in podcast and the 105 zoo sections *Default: disabled*
     * Reconnect stream: restart the radio stream after an error if internet is available  *Default: enabled*
     * Network change: restart the radio stream immediately when the device switch from mobile network to WiFi and vice versa  *Default: enabled*

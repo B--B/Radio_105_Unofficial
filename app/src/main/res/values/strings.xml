@@ -49,10 +49,6 @@
     <string name="bb" tools:ignore="TypographyDashes">Created and Produced by \nB--B</string>
 
     <!-- Notification commands -->
-    <string name="notification_key" translatable="false">persistent_notification</string>
-    <string name="notification_key_summary_off">Notification icon will disappear when streaming is paused</string>
-    <string name="notification_key_summary_on">Notification will persist even when the radio stream is paused</string>
-    <string name="notification_key_title">Persistent Notification</string>
     <string name="loading">(Loading…)</string>
     <string name="playing">(Playing)</string>
     <string name="in_pause">(Pause)</string>

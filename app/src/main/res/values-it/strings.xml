@@ -49,9 +49,6 @@
     <string name="play">Riproduci</string>
     <string name="pause">Pausa</string>
     <string name="stop">Ferma</string>
-    <string name="notification_key_summary_off">L\' icona di notifica durante lo streaming radio sparirà quando lo streaming viene messo in pausa</string>
-    <string name="notification_key_summary_on">L\' icona di notifica durante lo streaming radio non sparirà quando lo streaming viene messo in pausa</string>
-    <string name="notification_key_title">Notifica Persistente</string>
     <string name="loading">(In Caricamento…)</string>
     <string name="playing">(In Riproduzione)</string>
     <string name="in_pause">(In Pausa)</string>

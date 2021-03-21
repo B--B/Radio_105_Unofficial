@@ -17,6 +17,7 @@
 
 package com.bb.radio105;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -448,6 +449,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     /**
      * Updates the notification.
      */
+    @SuppressLint("RestrictedApi")
     private void updateNotification(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.notification_key), false);
@@ -463,7 +465,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                         .build()
                 );
         if (pref) {
-            mNotificationBuilder.clearActions();
+            mNotificationBuilder.mActions.clear();
             if (mState == PlaybackStateCompat.STATE_PLAYING) {
                 mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
                 mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));

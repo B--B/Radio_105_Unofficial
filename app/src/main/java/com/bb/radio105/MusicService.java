@@ -789,5 +789,15 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             mIntent.setPackage(getPackageName());
             startService(mIntent);
         }
+
+        @Override
+        public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
+            if (mediaButtonEvent.getAction().equals("android.intent.action.MEDIA_BUTTON")) {
+                if (mState == PlaybackStateCompat.STATE_PLAYING) {
+                    mCallback.onPause();
+                }
+            }
+            return super.onMediaButtonEvent(mediaButtonEvent);
+        }
     };
 }

@@ -117,9 +117,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     private boolean mPlayOnFocusGain;
     private AudioFocusRequest mFocusRequest;
 
-    // title of the song we are currently playing
-    final String mSongTitle = "Radio 105";
-
     // Wifi lock that we hold when streaming files from the internet, in order to prevent the
     // device from shutting off the Wifi radio
     private WifiLock mWifiLock;
@@ -247,6 +244,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     }
 
     private void processPlayRequest() {
+        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.notification_key), false);
         mPlayOnFocusGain = true;
         tryToGetAudioFocus();
 
@@ -258,7 +257,11 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             // If we're paused, just continue playback and restore the 'foreground service' state.
             mState = PlaybackStateCompat.STATE_PLAYING;
             updatePlaybackState(null);
-            setUpAsForeground(mSongTitle + getString(R.string.playing));
+            if (!pref) {
+                setUpAsForeground(getString(R.string.playing));
+            } else {
+                updateNotification(getString(R.string.playing));
+            }
             configAndStartMediaPlayer();
         }
         if (!mSession.isActive()) {
@@ -272,15 +275,15 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                     .getBoolean(getString(R.string.notification_key), false);
             // Pause media player and cancel the 'foreground service' state.
             mState = PlaybackStateCompat.STATE_PAUSED;
+            updatePlaybackState(null);
             mPlayer.pause();
             if (!pref) {
                 relaxResources(false); // while paused, we always retain the MediaPlayer
             } else {
-                updateNotification(mSongTitle + getString(R.string.in_pause));
+                updateNotification(getString(R.string.in_pause));
                 relaxResources();
             }
             // do not give up audio focus
-            updatePlaybackState(null);
         }
     }
 
@@ -375,6 +378,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
                 mState = PlaybackStateCompat.STATE_BUFFERING;
                 updatePlaybackState(null);
+                setUpAsForeground(getString(R.string.loading));
 
                 // starts preparing the media player in the background. When it's done, it will call
                 // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
@@ -398,7 +402,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
     private void recoverStream() {
         mState = PlaybackStateCompat.STATE_STOPPED;
-        updateNotification(mSongTitle + getString(R.string.recovering));
+        updateNotification(getString(R.string.recovering));
         mPlayOnFocusGain = true;
         tryToGetAudioFocus();
         String manualUrl = "http://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
@@ -442,8 +446,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         mState = PlaybackStateCompat.STATE_PLAYING;
         // Start the foreground service here, notification colors will be wrong when the stream
         // starts from stopped state
-        setUpAsForeground(mSongTitle + getString(R.string.playing));
         updatePlaybackState(null);
+        updateNotification(getString(R.string.playing));
         configAndStartMediaPlayer();
     }
 
@@ -460,11 +464,23 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mNotificationBuilder.setContentIntent(pIntent);
-        mSession.setMetadata
-                (new MediaMetadataCompat.Builder()
-                        .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
-                        .build()
-                );
+        if (mState == PlaybackStateCompat.STATE_PLAYING) {
+            Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
+            mSession.setMetadata
+                    (new MediaMetadataCompat.Builder()
+                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, icon)
+                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getString(R.string.radio_105))
+                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
+                            .build()
+                    );
+        } else {
+            mSession.setMetadata
+                    (new MediaMetadataCompat.Builder()
+                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getString(R.string.radio_105))
+                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
+                            .build()
+                    );
+        }
         if (pref) {
             mNotificationBuilder.mActions.clear();
             if (mState == PlaybackStateCompat.STATE_PLAYING) {
@@ -494,7 +510,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     private void setUpAsForeground(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.notification_type_key), false);
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
         // Creating notification channel
         createNotificationChannel();
         Intent intent = new Intent(this, MainActivity.class);
@@ -518,11 +533,11 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         mNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-        mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
-        mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
+        mNotificationBuilder.addAction(0, null, null);
+        mNotificationBuilder.addAction(0, null, null);
         mSession.setMetadata
                 (new MediaMetadataCompat.Builder()
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, icon)
+                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, null)
                         .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getString(R.string.radio_105))
                         .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
                         .build()

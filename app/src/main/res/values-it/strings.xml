@@ -52,9 +52,10 @@
     <string name="notification_key_summary_off">L\' icona di notifica durante lo streaming radio sparirà quando lo streaming viene messo in pausa</string>
     <string name="notification_key_summary_on">L\' icona di notifica durante lo streaming radio non sparirà quando lo streaming viene messo in pausa</string>
     <string name="notification_key_title">Notifica Persistente</string>
-    <string name="playing">"  (In Riproduzione)"</string>
-    <string name="in_pause">"  (In Pausa)"</string>
-    <string name="recovering">"   (Ripristino Streaming…)"</string>
+    <string name="loading">(In Caricamento…)</string>
+    <string name="playing">(In Riproduzione)</string>
+    <string name="in_pause">(In Pausa)</string>
+    <string name="recovering">(Ripristino Streaming…)</string>
 
     <!-- Screen always on -->
     <string name="screen_on_title">Schermo Sempre Acceso</string>

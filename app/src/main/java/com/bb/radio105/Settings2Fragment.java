@@ -109,6 +109,12 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                     appNotificationPref.removePreference(mediaNotification);
                 }
             }
+            // MiUi - EMUI
+            if (Utils.isEMUI() || Utils.isMiUi()) {
+                if (streamingPref != null) {
+                    streamingPref.removePreference(serviceKill);
+                }
+            }
         }
         @Override
         public boolean onPreferenceTreeClick(Preference p) {

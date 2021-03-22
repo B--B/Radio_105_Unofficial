@@ -23,6 +23,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
@@ -32,6 +33,9 @@ import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Objects;
 
 import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
@@ -98,5 +102,35 @@ public class Utils {
             mActivity.getWindow().clearFlags(FLAG_FULLSCREEN);
         }
         Objects.requireNonNull(((AppCompatActivity) mActivity).getSupportActionBar()).show();
+    }
+
+    static boolean isMiUi() {
+        return !TextUtils.isEmpty(getSystemProperty("ro.miui.ui.version.name"));
+    }
+
+    static boolean isEMUI() {
+        return !TextUtils.isEmpty(getSystemProperty("ro.build.version.emui"));
+    }
+
+    static String getSystemProperty(String propName) {
+        String line;
+        BufferedReader input = null;
+        try {
+            java.lang.Process p = Runtime.getRuntime().exec("getprop " + propName);
+            input = new BufferedReader(new InputStreamReader(p.getInputStream()), 1024);
+            line = input.readLine();
+            input.close();
+        } catch (IOException ex) {
+            return null;
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return line;
     }
 }

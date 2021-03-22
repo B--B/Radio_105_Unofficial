@@ -24,13 +24,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
@@ -88,7 +83,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     private final PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
 
     // The notification color
-    private int mNotificationColor;
+//    private int mNotificationColor;
 
     // SparseArray for notification actions
     private final SparseArray<PendingIntent> mIntents = new SparseArray<>();
@@ -166,7 +161,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "radio105lock");
 
-        mNotificationColor = getNotificationColor();
+//        mNotificationColor = getNotificationColor();
         mNotificationManager = NotificationManagerCompat.from(this);
 
         String pkg = getPackageName();
@@ -505,7 +500,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0, 1)
                     .setMediaSession(mSession.getSessionToken()));
-            mNotificationBuilder.setColor(mNotificationColor);
+//            mNotificationBuilder.setColor(mNotificationColor);
         } else {
             mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0, 1));
@@ -719,6 +714,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         }
     }
 
+/*
     protected int getNotificationColor() {
         int notificationColor = 0;
         String packageName = getPackageName();
@@ -737,6 +733,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         }
         return notificationColor;
     }
+*/
 
     /**
      * Update the current media player state, optionally showing an error message.

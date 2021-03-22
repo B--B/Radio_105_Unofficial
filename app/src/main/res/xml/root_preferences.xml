@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="@string/preferences_theming">
+    <PreferenceCategory
+        app:title="@string/preferences_theming"
+        app:key="@string/app_pref_key">
         <ListPreference
             app:defaultValue="@string/theme_default_value"
             app:entries="@array/theme_entries"
@@ -16,10 +17,11 @@
             app:summaryOff="@string/notification_type_off"
             app:summaryOn="@string/notification_type_on"
             app:title="@string/notification_type_title"
-            app:defaultValue="false"/>
+            app:defaultValue="true"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/preferences_screen">
+    <PreferenceCategory
+        app:title="@string/preferences_screen">
         <SwitchPreferenceCompat
             app:key="@string/screen_on_key"
             app:summaryOff="@string/screen_on_summary_off"
@@ -28,7 +30,8 @@
             app:defaultValue="false"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/preferences_stop_service">
+    <PreferenceCategory
+        app:title="@string/preferences_stop_service">
         <SwitchPreferenceCompat
             app:key="@string/service_kill_key"
             app:summaryOff="@string/service_kill_summary_off"
@@ -45,7 +48,8 @@
             app:defaultValue="true"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/preferences_reconnect">
+    <PreferenceCategory
+        app:title="@string/preferences_reconnect">
         <SwitchPreferenceCompat
             app:key="@string/reconnect_key"
             app:summaryOff="@string/reconnect_summary_off"
@@ -62,8 +66,8 @@
     </PreferenceCategory>
 
     <PreferenceCategory>
-    <Preference
-        app:key="@string/thanks"
-        app:title="@string/special_thanks" />
+        <Preference
+            app:key="@string/thanks"
+            app:title="@string/special_thanks" />
     </PreferenceCategory>
 </PreferenceScreen>

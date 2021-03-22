@@ -17,6 +17,7 @@
 package com.bb.radio105;
 
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -31,8 +32,10 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreferenceCompat;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -71,6 +74,14 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
+            PreferenceCategory appNotification = (PreferenceCategory) findPreference(getString(R.string.app_pref_key));
+            SwitchPreferenceCompat mediaNotification= (SwitchPreferenceCompat)  findPreference(getString(R.string.notification_type_key));
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                if (appNotification != null) {
+                    appNotification.removePreference(mediaNotification);
+                }
+            }
         }
         @Override
         public boolean onPreferenceTreeClick(Preference p) {

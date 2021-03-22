@@ -116,4 +116,7 @@
     <string name="notification_type_off">The app will use a standard notification when running the Radio Streaming</string>
     <string name="notification_type_on">The app will use multimedia notification when running the Radio Streaming</string>
     <string name="notification_type_title">Notification type</string>
+
+    <!-- Preference  Screen Keys -->
+    <string name="app_pref_key" translatable="false">app_pref</string>
 </resources>

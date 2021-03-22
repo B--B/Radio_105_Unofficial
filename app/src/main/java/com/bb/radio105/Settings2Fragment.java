@@ -16,7 +16,9 @@
 
 package com.bb.radio105;
 
+import android.app.UiModeManager;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -35,10 +37,13 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreferenceCompat;
 
 import java.util.Calendar;
 import java.util.Objects;
+
+import static android.content.Context.UI_MODE_SERVICE;
 
 public class Settings2Fragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener,
         Preference.SummaryProvider<androidx.preference.ListPreference> {
@@ -74,12 +79,34 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
-            PreferenceCategory appNotification = (PreferenceCategory) findPreference(getString(R.string.app_pref_key));
-            SwitchPreferenceCompat mediaNotification= (SwitchPreferenceCompat)  findPreference(getString(R.string.notification_type_key));
 
+            // Preference Screen
+            PreferenceScreen mPreferenceScreen = (PreferenceScreen) findPreference(getString(R.string.preference_key));
+            // Preference Categories
+            PreferenceCategory appNotificationPref = (PreferenceCategory) findPreference(getString(R.string.app_pref_key));
+            PreferenceCategory screenPref = (PreferenceCategory) findPreference(getString(R.string.screen_pref_key));
+            PreferenceCategory streamingPref = (PreferenceCategory) findPreference(getString(R.string.streaming_pref_key));
+            // Preferences
+            SwitchPreferenceCompat mediaNotification = (SwitchPreferenceCompat)  findPreference(getString(R.string.notification_type_key));
+            SwitchPreferenceCompat serviceKill = (SwitchPreferenceCompat)  findPreference(getString(R.string.service_kill_key));
+
+            // Android TV
+            UiModeManager uiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);
+            if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
+                if (mPreferenceScreen != null) {
+                    mPreferenceScreen.removePreference(screenPref);
+                }
+                if (appNotificationPref != null) {
+                    appNotificationPref.removePreference(mediaNotification);
+                }
+                if (streamingPref != null) {
+                    streamingPref.removePreference(serviceKill);
+                }
+            }
+            // Android below 11
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-                if (appNotification != null) {
-                    appNotification.removePreference(mediaNotification);
+                if (appNotificationPref != null) {
+                    appNotificationPref.removePreference(mediaNotification);
                 }
             }
         }

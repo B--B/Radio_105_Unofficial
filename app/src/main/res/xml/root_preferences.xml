@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:key="@string/preference_key">
 
     <PreferenceCategory
         app:title="@string/preferences_theming"
@@ -21,7 +22,8 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        app:title="@string/preferences_screen">
+        app:title="@string/preferences_screen"
+        app:key="@string/screen_pref_key">
         <SwitchPreferenceCompat
             app:key="@string/screen_on_key"
             app:summaryOff="@string/screen_on_summary_off"
@@ -31,14 +33,14 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        app:title="@string/preferences_stop_service">
+        app:title="@string/preferences_stop_service"
+        app:key="@string/streaming_pref_key">
         <SwitchPreferenceCompat
             app:key="@string/service_kill_key"
             app:summaryOff="@string/service_kill_summary_off"
             app:summaryOn="@string/service_kill_summary_on"
             app:title="@string/service_kill_title"
-            app:defaultValue="false"
-            />
+            app:defaultValue="false" />
 
         <SwitchPreferenceCompat
             app:key="@string/noisy_key"

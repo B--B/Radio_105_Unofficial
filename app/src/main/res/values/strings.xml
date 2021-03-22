@@ -119,4 +119,7 @@
 
     <!-- Preference  Screen Keys -->
     <string name="app_pref_key" translatable="false">app_pref</string>
+    <string name="screen_pref_key" translatable="false">screen_pref</string>
+    <string name="preference_key" translatable="false">preference</string>
+    <string name="streaming_pref_key" translatable="false">streaming_pref</string>
 </resources>

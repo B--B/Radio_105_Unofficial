@@ -19,6 +19,8 @@ I've decided to start the development of this app tired of the bugs in the offic
 * Compatible with all devices running android Lollipop and above
 * No Ads
 * No external libraries except [AdBlockPlus](https://github.com/adblockplus/libadblockplus-android) webView for Podcast and The 105 Zoo sections
+* The radio streaming can be controlled with wearable devices or Android Auto
+* Compatible with android TV --> WORK IN PROGRESS
 
 <br />
 <br />

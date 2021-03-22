@@ -39,7 +39,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
     implementation 'androidx.preference:preference:1.1.1'
     implementation "androidx.media:media:1.2.1"
-    implementation 'org.adblockplus:adblock-android-webview:4.3.0'
+    implementation 'org.adblockplus:adblock-android-webview:4.4.0'
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

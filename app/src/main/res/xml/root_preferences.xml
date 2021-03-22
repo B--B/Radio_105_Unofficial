@@ -1,57 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <ListPreference
-        app:defaultValue="@string/theme_default_value"
-        app:entries="@array/theme_entries"
-        app:entryValues="@array/theme_values"
-        app:key="@string/theme_key"
-        app:title="@string/theme_title"
-        app:useSimpleSummaryProvider="true" />
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <SwitchPreferenceCompat
-        app:key="@string/service_kill_key"
-        app:summaryOff="@string/service_kill_summary_off"
-        app:summaryOn="@string/service_kill_summary_on"
-        app:title="@string/service_kill_title"
-        app:defaultValue="false"
-        />
+    <PreferenceCategory android:title="@string/preferences_theming">
+        <ListPreference
+            app:defaultValue="@string/theme_default_value"
+            app:entries="@array/theme_entries"
+            app:entryValues="@array/theme_values"
+            app:key="@string/theme_key"
+            app:title="@string/theme_title"
+            app:useSimpleSummaryProvider="true" />
 
-    <SwitchPreferenceCompat
-        app:key="@string/noisy_key"
-        app:summaryOff="@string/noisy_key_summary_off"
-        app:summaryOn="@string/noisy_key_summary_on"
-        app:title="@string/noisy_key_title"
-        app:defaultValue="true"/>
+        <SwitchPreferenceCompat
+            app:key="@string/notification_type_key"
+            app:summaryOff="@string/notification_type_off"
+            app:summaryOn="@string/notification_type_on"
+            app:title="@string/notification_type_title"
+            app:defaultValue="false"/>
+    </PreferenceCategory>
 
-    <SwitchPreferenceCompat
-        app:key="@string/screen_on_key"
-        app:summaryOff="@string/screen_on_summary_off"
-        app:summaryOn="@string/screen_on_summary_on"
-        app:title="@string/screen_on_title"
-        app:defaultValue="false"/>
+    <PreferenceCategory android:title="@string/preferences_screen">
+        <SwitchPreferenceCompat
+            app:key="@string/screen_on_key"
+            app:summaryOff="@string/screen_on_summary_off"
+            app:summaryOn="@string/screen_on_summary_on"
+            app:title="@string/screen_on_title"
+            app:defaultValue="false"/>
+    </PreferenceCategory>
 
-    <SwitchPreferenceCompat
-        app:key="@string/reconnect_key"
-        app:summaryOff="@string/reconnect_summary_off"
-        app:summaryOn="@string/reconnect_summary_on"
-        app:title="@string/reconnect_title"
-        app:defaultValue="true"/>
+    <PreferenceCategory android:title="@string/preferences_stop_service">
+        <SwitchPreferenceCompat
+            app:key="@string/service_kill_key"
+            app:summaryOff="@string/service_kill_summary_off"
+            app:summaryOn="@string/service_kill_summary_on"
+            app:title="@string/service_kill_title"
+            app:defaultValue="false"
+            />
 
-    <SwitchPreferenceCompat
-        app:key="@string/network_change_key"
-        app:summaryOff="@string/network_change_off"
-        app:summaryOn="@string/network_change_on"
-        app:title="@string/network_change_title"
-        app:defaultValue="true"/>
+        <SwitchPreferenceCompat
+            app:key="@string/noisy_key"
+            app:summaryOff="@string/noisy_key_summary_off"
+            app:summaryOn="@string/noisy_key_summary_on"
+            app:title="@string/noisy_key_title"
+            app:defaultValue="true"/>
+    </PreferenceCategory>
 
-    <SwitchPreferenceCompat
-        app:key="@string/notification_type_key"
-        app:summaryOff="@string/notification_type_off"
-        app:summaryOn="@string/notification_type_on"
-        app:title="@string/notification_type_title"
-        app:defaultValue="false"/>
+    <PreferenceCategory android:title="@string/preferences_reconnect">
+        <SwitchPreferenceCompat
+            app:key="@string/reconnect_key"
+            app:summaryOff="@string/reconnect_summary_off"
+            app:summaryOn="@string/reconnect_summary_on"
+            app:title="@string/reconnect_title"
+            app:defaultValue="true"/>
 
+        <SwitchPreferenceCompat
+            app:key="@string/network_change_key"
+            app:summaryOff="@string/network_change_off"
+            app:summaryOn="@string/network_change_on"
+            app:title="@string/network_change_title"
+            app:defaultValue="true"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory>
     <Preference
         app:key="@string/thanks"
         app:title="@string/special_thanks" />
+    </PreferenceCategory>
 </PreferenceScreen>

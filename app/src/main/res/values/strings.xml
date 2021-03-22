@@ -15,6 +15,10 @@
     <string name="title_activity_settings">Settings</string>
     <string name="radio">105 FM Radio Streaming</string>
     <string name="error">Media player error! Resetting.</string>
+    <string name="preferences_reconnect">Streaming Recovery</string>
+    <string name="preferences_stop_service">Stop/Pause Streaming Service</string>
+    <string name="preferences_theming">App and Notification Theme</string>
+    <string name="preferences_screen">Screen</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Select Theme</string>

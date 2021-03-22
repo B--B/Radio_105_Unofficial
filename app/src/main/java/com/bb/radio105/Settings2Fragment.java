@@ -72,9 +72,11 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
-        private AlertDialog dialog;
+        private AlertDialog thanksDialog;
+        private AlertDialog miUiEMUIDialog;
         private ImageView mImageView;
-        private Boolean isAlertDialogShowing = false;
+        private Boolean isThanksDialogShowing = false;
+        private Boolean isMiUiEMUIDialogShowing = false;
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -86,6 +88,7 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             PreferenceCategory appNotificationPref = (PreferenceCategory) findPreference(getString(R.string.app_pref_key));
             PreferenceCategory screenPref = (PreferenceCategory) findPreference(getString(R.string.screen_pref_key));
             PreferenceCategory streamingPref = (PreferenceCategory) findPreference(getString(R.string.streaming_pref_key));
+            PreferenceCategory miUiEMUIPref = (PreferenceCategory) findPreference(getString(R.string.miui_emui_pref_key));
             // Preferences
             SwitchPreferenceCompat mediaNotification = (SwitchPreferenceCompat)  findPreference(getString(R.string.notification_type_key));
             SwitchPreferenceCompat serviceKill = (SwitchPreferenceCompat)  findPreference(getString(R.string.service_kill_key));
@@ -114,13 +117,21 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                 if (streamingPref != null) {
                     streamingPref.removePreference(serviceKill);
                 }
+            } else {
+                // Remove dialog for non MiUi/EMUI devices
+                if (mPreferenceScreen != null) {
+                    mPreferenceScreen.removePreference(miUiEMUIPref);
+                }
             }
         }
         @Override
         public boolean onPreferenceTreeClick(Preference p) {
-            if (p.getKey().equals("thanks")) {
-                showDialog();
-                isAlertDialogShowing = true;
+            if (p.getKey().equals(getString(R.string.thanks_key))) {
+                showThanksDialog();
+                isThanksDialogShowing = true;
+            } else if (p.getKey().equals(getString(R.string.miui_emui_dialog_key))) {
+                showMiUiEMUIDialog();
+                isMiUiEMUIDialogShowing = true;
             }
             return false;
         }
@@ -129,11 +140,14 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
         public void onPause() {
             // Avoid a case where app is in background with alertDialog open
             // and image change causing a memory leak
-            if (dialog != null) {
+            if (thanksDialog != null) {
                 mImageView.setImageDrawable(null);
                 mImageView = null;
-                dialog.dismiss();
-                dialog = null;
+                thanksDialog.dismiss();
+                thanksDialog = null;
+            } else if (miUiEMUIDialog != null) {
+                miUiEMUIDialog.dismiss();
+                miUiEMUIDialog = null;
             }
             super.onPause();
         }
@@ -142,34 +156,39 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
         public void onResume() {
             // Avoid a case where app is in background with alertDialog open
             // and image change causing a memory leak
-            if (isAlertDialogShowing) {
-                showDialog();
+            if (isThanksDialogShowing) {
+                showThanksDialog();
+            } else if (isMiUiEMUIDialogShowing) {
+                showMiUiEMUIDialog();
             }
             super.onResume();
         }
 
         @Override
         public void onDestroyView() {
-            if (dialog != null) {
+            if (thanksDialog != null) {
                 mImageView.setImageDrawable(null);
                 mImageView = null;
-                dialog.dismiss();
-                dialog = null;
+                thanksDialog.dismiss();
+                thanksDialog = null;
+            } else if (miUiEMUIDialog != null) {
+                miUiEMUIDialog.dismiss();
+                miUiEMUIDialog = null;
             }
             super.onDestroyView();
         }
 
-        void showDialog() {
+        private void showThanksDialog() {
             AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
             LayoutInflater inflater = requireActivity().getLayoutInflater();
             View dialogView = inflater.inflate(R.layout.special_thanks, null, false);
             builder.setView(dialogView).
-                    setOnCancelListener(dialog -> isAlertDialogShowing = false);
+                    setOnCancelListener(dialog -> isThanksDialogShowing = false);
             builder.setView(dialogView).
                     setPositiveButton(getString(R.string.ok), (dialog, which) -> dialog.cancel());
-            dialog = builder.create();
-            dialog.setIcon(R.drawable.ic_radio_105_logo);
-            dialog.setTitle(R.string.special_thanks_title);
+            thanksDialog = builder.create();
+            thanksDialog.setIcon(R.drawable.ic_radio_105_logo);
+            thanksDialog.setTitle(R.string.special_thanks_title);
             mImageView = dialogView.findViewById(R.id.ee);
             Calendar mCalendar = Calendar.getInstance();
             int timeOfDay = mCalendar.get(Calendar.HOUR_OF_DAY);
@@ -188,16 +207,30 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             } else {
                 mImageView.setImageResource(R.drawable.easter_egg_6);
             }
-            dialog.show();
-            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.stack))).setMovementMethod(LinkMovementMethod.getInstance());
-            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.google))).setMovementMethod(LinkMovementMethod.getInstance());
-            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.unitedradio))).setMovementMethod(LinkMovementMethod.getInstance());
-            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.mediasetplay))).setMovementMethod(LinkMovementMethod.getInstance());
-            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.icons))).setMovementMethod(LinkMovementMethod.getInstance());
-            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.jhey))).setMovementMethod(LinkMovementMethod.getInstance());
-            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.adblockplus))).setMovementMethod(LinkMovementMethod.getInstance());
-            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.tinyPng))).setMovementMethod(LinkMovementMethod.getInstance());
-            ((TextView) Objects.requireNonNull(dialog.findViewById(R.id.social))).setMovementMethod(LinkMovementMethod.getInstance());
+            thanksDialog.show();
+            ((TextView) Objects.requireNonNull(thanksDialog.findViewById(R.id.stack))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(thanksDialog.findViewById(R.id.google))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(thanksDialog.findViewById(R.id.unitedradio))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(thanksDialog.findViewById(R.id.mediasetplay))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(thanksDialog.findViewById(R.id.icons))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(thanksDialog.findViewById(R.id.jhey))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(thanksDialog.findViewById(R.id.adblockplus))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(thanksDialog.findViewById(R.id.tinyPng))).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) Objects.requireNonNull(thanksDialog.findViewById(R.id.social))).setMovementMethod(LinkMovementMethod.getInstance());
+        }
+
+        private void showMiUiEMUIDialog() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+            LayoutInflater inflater = requireActivity().getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.miui_emui_devices, null, false);
+            builder.setView(dialogView).
+                    setOnCancelListener(dialog -> isMiUiEMUIDialogShowing = false);
+            builder.setView(dialogView).
+                    setPositiveButton(getString(R.string.ok), (dialog, which) -> dialog.cancel());
+            miUiEMUIDialog = builder.create();
+            miUiEMUIDialog.setIcon(R.drawable.ic_radio_105_logo);
+            miUiEMUIDialog.setTitle(R.string.miui_emui_dialog);
+            miUiEMUIDialog.show();
         }
     }
 

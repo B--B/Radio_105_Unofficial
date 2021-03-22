@@ -38,7 +38,7 @@
     <string name="noisy_key_title">Audio Device Settings</string>
 
     <!-- Special Thanks -->
-    <string name="thanks" translatable="false">thanks</string>
+    <string name="thanks_key" translatable="false">thanks</string>
     <string name="special_thanks">Special Thanks</string>
     <string name="special_thanks_title">Special Thanks To:</string>
     <string name="icons"><a href="https://pngio.com/png">PngIO</a>, <a href="https://iconape.com/">Icon Ape</a> and <a href="https://www.iconninja.com/">Icon Ninja</a> for icons</string>
@@ -122,4 +122,14 @@
     <string name="screen_pref_key" translatable="false">screen_pref</string>
     <string name="preference_key" translatable="false">preference</string>
     <string name="streaming_pref_key" translatable="false">streaming_pref</string>
+    <string name="miui_emui_pref_key" translatable="false">miui_emui_pref</string>
+
+    <!-- MiUi and EMUI dialog -->
+    <string name="miui_emui_dialog_key" translatable="false">miui_emui_dialog</string>
+    <string name="miui_emui_dialog">MiUi and EMUI Devices</string>
+    <string name="miui_logo" translatable="false">MiUi Logo</string>
+    <string name="emui_logo" translatable="false">EMUI Logo</string>
+    <string name="miui_emui_dialog_text_part_1">If the radio streaming service stops when in background or clearing recent apps please read this before report a bug:</string>
+    <string name="miui_emui_dialog_text_part_2">In MiUi and EMUI roms the streaming service can be killed from system (often from their custom battery service) or from user simply removing the app from recent (in stock AOSP the app gets closed, but the service is NOT killed). There\'s no way to work around this behaviour from the app side, if the app gets killed when in background <b><u>the user must manually disable the battery optimisation for the app.</u></b> Also, for keeping the service alive when a recent tasks cleaning is performed, <b><u>the app must be manually pinned in recent app list.</u></b></string>
+    <string name="miui_emui_instructions">MiUi/EMUI Instructions</string>
 </resources>

@@ -3,6 +3,14 @@
     app:key="@string/preference_key">
 
     <PreferenceCategory
+        app:title="@string/miui_emui_instructions"
+        app:key="@string/miui_emui_pref_key">
+        <Preference
+            app:key="@string/miui_emui_dialog_key"
+            app:title="@string/miui_emui_dialog" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
         app:title="@string/preferences_theming"
         app:key="@string/app_pref_key">
         <ListPreference
@@ -69,7 +77,7 @@
 
     <PreferenceCategory>
         <Preference
-            app:key="@string/thanks"
+            app:key="@string/thanks_key"
             app:title="@string/special_thanks" />
     </PreferenceCategory>
 </PreferenceScreen>

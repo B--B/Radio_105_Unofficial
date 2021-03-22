@@ -32,7 +32,6 @@ import android.widget.Button;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import org.jetbrains.annotations.NotNull;
@@ -78,9 +77,19 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull android.view.View view,
-                              @Nullable android.os.Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onConfigurationChanged(@NotNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        getParentFragmentManager()
+                .beginTransaction()
+                .detach(this)
+                .attach(this)
+                .commit();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mediaBrowser.connect();
         // Set buttons state
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
             button1.setEnabled(false);
@@ -99,22 +108,6 @@ public class HomeFragment extends Fragment {
             button2.setEnabled(false);
             button3.setEnabled(false);
         }
-    }
-
-    @Override
-    public void onConfigurationChanged(@NotNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        getParentFragmentManager()
-                .beginTransaction()
-                .detach(this)
-                .attach(this)
-                .commit();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mediaBrowser.connect();
     }
 
     @Override

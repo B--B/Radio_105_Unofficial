@@ -83,15 +83,15 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
             // Preference Screen
-            PreferenceScreen mPreferenceScreen = (PreferenceScreen) findPreference(getString(R.string.preference_key));
+            PreferenceScreen mPreferenceScreen = findPreference(getString(R.string.preference_key));
             // Preference Categories
-            PreferenceCategory appNotificationPref = (PreferenceCategory) findPreference(getString(R.string.app_pref_key));
-            PreferenceCategory screenPref = (PreferenceCategory) findPreference(getString(R.string.screen_pref_key));
-            PreferenceCategory streamingPref = (PreferenceCategory) findPreference(getString(R.string.streaming_pref_key));
-            PreferenceCategory miUiEMUIPref = (PreferenceCategory) findPreference(getString(R.string.miui_emui_pref_key));
+            PreferenceCategory appNotificationPref = findPreference(getString(R.string.app_pref_key));
+            PreferenceCategory screenPref = findPreference(getString(R.string.screen_pref_key));
+            PreferenceCategory streamingPref = findPreference(getString(R.string.streaming_pref_key));
+            PreferenceCategory miUiEMUIPref = findPreference(getString(R.string.miui_emui_pref_key));
             // Preferences
-            SwitchPreferenceCompat mediaNotification = (SwitchPreferenceCompat)  findPreference(getString(R.string.notification_type_key));
-            SwitchPreferenceCompat serviceKill = (SwitchPreferenceCompat)  findPreference(getString(R.string.service_kill_key));
+            SwitchPreferenceCompat mediaNotification = findPreference(getString(R.string.notification_type_key));
+            SwitchPreferenceCompat serviceKill = findPreference(getString(R.string.service_kill_key));
 
             // Android TV
             UiModeManager uiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);

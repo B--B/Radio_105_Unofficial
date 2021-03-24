@@ -22,6 +22,7 @@ I've decided to start the development of this app tired of the bugs in the offic
 * The radio streaming can be controlled with wearable devices or Android Auto
 * Can be installed on android TV --> Tested with Android TV emulator
 * Compatible with wearable devices --> Tested with Wear OS emulator and with Xiaomi Band 4 and 5
+* Fully compatible with Android 12
 
 <br />
 <br />

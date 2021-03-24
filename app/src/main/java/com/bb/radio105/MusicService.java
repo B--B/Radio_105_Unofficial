@@ -152,6 +152,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             mPlayer.reset();
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     @Override
     public void onCreate() {
         super.onCreate();
@@ -167,11 +168,11 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         String pkg = getPackageName();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mIntents.put(R.drawable.ic_pause, PendingIntent.getForegroundService(this, 100,
-                    new Intent(ACTION_PAUSE).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+                    new Intent(ACTION_PAUSE).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE));
             mIntents.put(R.drawable.ic_play, PendingIntent.getForegroundService(this, 100,
-                    new Intent(ACTION_PLAY).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+                    new Intent(ACTION_PLAY).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE));
             mIntents.put(R.drawable.ic_stop, PendingIntent.getForegroundService(this, 100,
-                    new Intent(ACTION_STOP).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
+                    new Intent(ACTION_STOP).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE));
         } else {
             mIntents.put(R.drawable.ic_pause, PendingIntent.getService(this, 100,
                     new Intent(ACTION_PAUSE).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
@@ -437,13 +438,18 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     /**
      * Updates the notification.
      */
-    @SuppressLint("RestrictedApi")
+    @SuppressLint({"RestrictedApi", "UnspecifiedImmutableFlag"})
     private void updateNotification(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.notification_type_key), false);
+                .getBoolean(getString(R.string.notification_type_key), true);
         Intent intent = new Intent(this, MainActivity.class);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
-        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pIntent;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
         mNotificationBuilder.setContentIntent(pIntent);
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
             Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
@@ -486,14 +492,20 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
      */
 
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     private void setUpAsForeground(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.notification_type_key), false);
+                .getBoolean(getString(R.string.notification_type_key), true);
         // Creating notification channel
         createNotificationChannel();
         Intent intent = new Intent(this, MainActivity.class);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
-        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pIntent;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
         // Building notification here
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
         if (pref) {

@@ -106,6 +106,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     private LruCache<String, Bitmap> mAlbumArtCache;
     private static final int MAX_ALBUM_ART_CACHE_SIZE = 1024*1024;
     Bitmap art;
+    Bitmap placeHolder;
 
     // SparseArray for notification actions
     private final SparseArray<PendingIntent> mIntents = new SparseArray<>();
@@ -233,6 +234,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
         // Get streaming metadata when service starts
         getStreamingMetadata();
+        placeHolder = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
 
         NetworkUtil.checkNetworkInfo(this, type -> {
             boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
@@ -480,7 +482,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         art = mAlbumArtCache.get(artUrl);
         if (art == null) {
             // use a placeholder art while the remote art is being downloaded
-            art = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
+            art = placeHolder;
         }
 
         Intent intent = new Intent(this, MainActivity.class);
@@ -503,6 +505,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         } else {
             mSession.setMetadata
                     (new MediaMetadataCompat.Builder()
+                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, placeHolder)
                             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getString(R.string.radio_105))
                             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
                             .build()
@@ -545,8 +548,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             fetchBitmapFromURLThread(artUrl);
         }
 
-        art = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
-
         // Creating notification channel
         createNotificationChannel();
         Intent intent = new Intent(this, MainActivity.class);
@@ -570,7 +571,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                     .setShowActionsInCompactView(0, 1));
             mNotificationBuilder.setContentText(text);
         }
-        mNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_foreground));
         mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
         mNotificationBuilder.setContentTitle(getString(R.string.radio));
         mNotificationBuilder.setContentIntent(pIntent);
@@ -580,7 +580,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         mNotificationBuilder.addAction(0, null, null);
         mSession.setMetadata
                 (new MediaMetadataCompat.Builder()
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, null)
+                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, placeHolder)
                         .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getString(R.string.radio_105))
                         .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
                         .build()
@@ -646,6 +646,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         djString = null;
         artUrl = null;
         art = null;
+        placeHolder = null;
         // Always release the MediaSession to clean up resources
         // and notify associated MediaController(s).
         mSession.release();

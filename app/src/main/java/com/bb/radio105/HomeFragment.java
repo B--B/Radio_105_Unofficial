@@ -33,6 +33,7 @@ import android.widget.Button;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -78,12 +79,16 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onConfigurationChanged(@NotNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        getParentFragmentManager()
-                .beginTransaction()
+        FragmentManager fragmentManager = getParentFragmentManager();
+        fragmentManager.
+                beginTransaction()
                 .detach(this)
-                .attach(this)
-                .commit();
+                .commitAllowingStateLoss();
+        super.onConfigurationChanged(newConfig);
+        fragmentManager.
+                beginTransaction().
+                attach(this).
+                commitAllowingStateLoss();
     }
 
     @Override

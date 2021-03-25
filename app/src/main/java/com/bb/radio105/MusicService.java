@@ -34,6 +34,7 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -43,6 +44,8 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
+import android.util.Log;
+import android.util.LruCache;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.widget.Toast;
@@ -55,6 +58,9 @@ import androidx.media.MediaBrowserServiceCompat;
 import androidx.preference.PreferenceManager;
 
 import org.jetbrains.annotations.NotNull;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -73,6 +79,15 @@ import static com.bb.radio105.Constants.ACTION_STOP;
 import static com.bb.radio105.Constants.VOLUME_DUCK;
 import static com.bb.radio105.Constants.VOLUME_NORMAL;
 
+import com.android.volley.Cache;
+import com.android.volley.Network;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.StringRequest;
+
 /**
  * Service that handles media playback.
  */
@@ -84,6 +99,14 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
     // The notification color
 //    private int mNotificationColor;
+
+    // Notification metadata
+    String titleString = null;
+    String djString = null;
+    String artUrl = null;
+    private LruCache<String, Bitmap> mAlbumArtCache;
+    private static final int MAX_ALBUM_ART_CACHE_SIZE = 1024*1024;
+    Bitmap art;
 
     // SparseArray for notification actions
     private final SparseArray<PendingIntent> mIntents = new SparseArray<>();
@@ -199,6 +222,18 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(playerIntentReceiver, mIntentFilter);
+
+        // simple album art cache that holds no more than
+        // MAX_ALBUM_ART_CACHE_SIZE bytes:
+        mAlbumArtCache = new LruCache<String, Bitmap>(MAX_ALBUM_ART_CACHE_SIZE) {
+            @Override
+            protected int sizeOf(String key, Bitmap value) {
+                return value.getByteCount();
+            }
+        };
+
+        // Get streaming metadata when service starts
+        getStreamingMetadata();
 
         NetworkUtil.checkNetworkInfo(this, type -> {
             boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
@@ -442,6 +477,13 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     private void updateNotification(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.notification_type_key), true);
+
+        art = mAlbumArtCache.get(artUrl);
+        if (art == null) {
+            // use a placeholder art while the remote art is being downloaded
+            art = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
+        }
+
         Intent intent = new Intent(this, MainActivity.class);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent;
@@ -452,12 +494,11 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         }
         mNotificationBuilder.setContentIntent(pIntent);
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
-            Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
             mSession.setMetadata
                     (new MediaMetadataCompat.Builder()
-                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, icon)
-                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getString(R.string.radio_105))
-                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
+                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
+                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, titleString)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, djString)
                             .build()
                     );
         } else {
@@ -496,9 +537,21 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     private void setUpAsForeground(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.notification_type_key), true);
+
+        // Get streaming metadata
+        getStreamingMetadata();
+
+        // Fetch the album art
+        if (artUrl != null) {
+            fetchBitmapFromURLAsync(artUrl);
+        }
+
+        art = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
+
         // Creating notification channel
         createNotificationChannel();
         Intent intent = new Intent(this, MainActivity.class);
+
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -590,6 +643,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         giveUpAudioFocus();
         NetworkUtil.unregisterNetworkCallback();
         unregisterReceiver(playerIntentReceiver);
+        titleString = null;
+        djString = null;
         // Always release the MediaSession to clean up resources
         // and notify associated MediaController(s).
         mSession.release();
@@ -679,6 +734,64 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             e.printStackTrace();
         }
         return deviceOnline.get();
+    }
+
+    private void getStreamingMetadata() {
+        RequestQueue requestQueue;
+        // Instantiate the cache
+        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+        // Set up the network to use HttpURLConnection as the HTTP client.
+        Network network = new BasicNetwork(new HurlStack());
+        // Instantiate the RequestQueue with the cache and network.
+        requestQueue = new RequestQueue(cache, network);
+        // Start the queue
+        requestQueue.start();
+
+        String url ="https://www.105.net/custom_widget/finelco/onair_105.jsp?ajax=true";
+        // Formulate the request and handle the response.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    Log.e("Radio105Metadata","Received metadata: " + response);
+                    Document document = Jsoup.parse(response);
+                    Element titleElement = document.selectFirst(".nome");
+                    Element djElement = document.selectFirst(".dj_in_onda");
+                    Element artElement = document.selectFirst("img");
+                    titleString = titleElement.text();
+                    djString = djElement.text();
+                    artUrl = artElement.absUrl("src");
+                    Log.e("Radio105Metadata","Received title: " + titleString);
+                    Log.e("Radio105Metadata","Received dj name: " + djString);
+                    Log.e("Radio105Metadata","Received bitmap url: " + artUrl);
+                },
+                error -> {
+                    // Handle error
+                });
+        // Add the request to the RequestQueue.
+        requestQueue.add(stringRequest);
+    }
+
+    public void fetchBitmapFromURLAsync(final String source) {
+        new AsyncTask<Void, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(Void[] objects) {
+                Bitmap bitmap = null;
+                try {
+                    bitmap = BitmapHelper.fetchAndRescaleBitmap(source,
+                            BitmapHelper.MEDIA_ART_WIDTH, BitmapHelper.MEDIA_ART_HEIGHT);
+                    mAlbumArtCache.put(source, bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return bitmap;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                // If the media is still the same, update the notification:
+                mNotificationBuilder.setLargeIcon(bitmap);
+                mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
+            }
+        }.execute();
     }
 
     /**

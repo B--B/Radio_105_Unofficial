@@ -34,7 +34,6 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -543,7 +542,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
         // Fetch the album art
         if (artUrl != null) {
-            fetchBitmapFromURLAsync(artUrl);
+            fetchBitmapFromURLThread(artUrl);
         }
 
         art = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
@@ -645,6 +644,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         unregisterReceiver(playerIntentReceiver);
         titleString = null;
         djString = null;
+        artUrl = null;
+        art = null;
         // Always release the MediaSession to clean up resources
         // and notify associated MediaController(s).
         mSession.release();
@@ -770,28 +771,17 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         requestQueue.add(stringRequest);
     }
 
-    public void fetchBitmapFromURLAsync(final String source) {
-        new AsyncTask<Void, Void, Bitmap>() {
-            @Override
-            protected Bitmap doInBackground(Void[] objects) {
-                Bitmap bitmap = null;
-                try {
-                    bitmap = BitmapHelper.fetchAndRescaleBitmap(source,
-                            BitmapHelper.MEDIA_ART_WIDTH, BitmapHelper.MEDIA_ART_HEIGHT);
-                    mAlbumArtCache.put(source, bitmap);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return bitmap;
+    void fetchBitmapFromURLThread(final String source) {
+        new Thread(() -> {
+            Bitmap bitmap;
+            try {
+                bitmap = BitmapHelper.fetchAndRescaleBitmap(source,
+                        BitmapHelper.MEDIA_ART_WIDTH, BitmapHelper.MEDIA_ART_HEIGHT);
+                mAlbumArtCache.put(source, bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                // If the media is still the same, update the notification:
-                mNotificationBuilder.setLargeIcon(bitmap);
-                mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
-            }
-        }.execute();
+        }).start();
     }
 
     /**

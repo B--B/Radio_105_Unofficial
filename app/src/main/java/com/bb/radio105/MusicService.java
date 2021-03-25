@@ -472,7 +472,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     /**
      * Updates the notification.
      */
-    @SuppressLint({"RestrictedApi", "UnspecifiedImmutableFlag"})
+    @SuppressLint({"UnspecifiedImmutableFlag"})
     private void updateNotification(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.notification_type_key), true);
@@ -508,7 +508,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                             .build()
                     );
         }
-        mNotificationBuilder.mActions.clear();
+        mNotificationBuilder.clearActions();
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
             mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
             mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));

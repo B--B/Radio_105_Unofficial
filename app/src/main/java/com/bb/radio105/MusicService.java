@@ -828,9 +828,9 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         int minutesToNextHour = 60 - minutes;
         int secondsToNextHour = 60 - seconds;
         int millisToNextHour = 1000 - millis;
-        // Return the the milliseconds to the next hour plus a minute, to be sure that 105.net
+        // Return the the milliseconds to the next hour plus 2 minutes, to be sure that 105.net
         // updated their on air data
-        return minutesToNextHour*60*1000 + secondsToNextHour*1000 + millisToNextHour;
+        return minutesToNextHour*60*1000 + secondsToNextHour*1000 + millisToNextHour + 60*1000;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -839,9 +839,9 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         ZonedDateTime now = ZonedDateTime.now(z) ;
         ZonedDateTime hourLater = now.plusHours(1) ;
         ZonedDateTime firstMomentOfNextHour = hourLater.truncatedTo( ChronoUnit.HOURS );
-        // Return the the milliseconds to the next hour plus 5 seconds, to be sure that 105.net
+        // Return the the milliseconds to the next hour plus 2 minutes, to be sure that 105.net
         // updated their on air data
-        return now.until(firstMomentOfNextHour, ChronoUnit.MILLIS) + 5000;
+        return now.until(firstMomentOfNextHour, ChronoUnit.MILLIS) + 120*1000;
     }
 
     /**

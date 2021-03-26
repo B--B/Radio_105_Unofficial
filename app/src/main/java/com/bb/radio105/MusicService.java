@@ -241,8 +241,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             }
         };
 
-        // Get streaming metadata when service starts
-        getStreamingMetadata();
+        // Set the PlaceHolder when service starts
         placeHolder = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
 
         // Set the task for retrieving the metadata every hour
@@ -561,11 +560,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         // Get streaming metadata
         getStreamingMetadata();
 
-        // Fetch the album art
-        if (artUrl != null) {
-            fetchBitmapFromURLAsync(artUrl);
-        }
-
         // Creating notification channel
         createNotificationChannel();
         Intent intent = new Intent(this, MainActivity.class);
@@ -782,6 +776,10 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                     Log.e("Radio105Metadata","Received title: " + titleString);
                     Log.e("Radio105Metadata","Received dj name: " + djString);
                     Log.e("Radio105Metadata","Received bitmap url: " + artUrl);
+                    // Fetch the album art here
+                    if (artUrl != null) {
+                        fetchBitmapFromURLAsync(artUrl);
+                    }
                 },
                 error -> {
                     // Handle error
@@ -807,14 +805,18 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
             @Override
             protected void onPostExecute(Bitmap bitmap) {
-                mSession.setMetadata
-                        (new MediaMetadataCompat.Builder()
-                                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
-                                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, titleString)
-                                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, djString)
-                                .build()
-                        );
-                mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
+                // Update metadata only if the stream is playing, the placeHolder is used on PAUSE state
+                // and the new metadata will be used when we move on PLAY state
+                if (mState == PlaybackStateCompat.STATE_PLAYING) {
+                    mSession.setMetadata
+                            (new MediaMetadataCompat.Builder()
+                                    .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
+                                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, titleString)
+                                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, djString)
+                                    .build()
+                            );
+                    mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
+                }
             }
         }.execute();
     }

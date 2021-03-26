@@ -44,7 +44,6 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.LruCache;
 import android.util.SparseArray;
 import android.view.KeyEvent;
@@ -491,7 +490,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     /**
      * Updates the notification.
      */
-    @SuppressLint({"UnspecifiedImmutableFlag"})
+    @SuppressLint("UnspecifiedImmutableFlag")
     private void updateNotification(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.notification_type_key), true);
@@ -765,7 +764,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
-                    Log.e("Radio105Metadata","Received metadata: " + response);
+                    Timber.e("Received metadata: %s", response);
                     Document document = Jsoup.parse(response);
                     Element titleElement = document.selectFirst(".nome");
                     Element djElement = document.selectFirst(".dj_in_onda");
@@ -773,9 +772,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                     titleString = titleElement.text();
                     djString = djElement.text();
                     artUrl = artElement.absUrl("src");
-                    Log.e("Radio105Metadata","Received title: " + titleString);
-                    Log.e("Radio105Metadata","Received dj name: " + djString);
-                    Log.e("Radio105Metadata","Received bitmap url: " + artUrl);
                     // Fetch the album art here
                     if (artUrl != null) {
                         fetchBitmapFromURLAsync(artUrl);

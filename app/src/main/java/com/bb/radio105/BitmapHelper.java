@@ -61,7 +61,6 @@ public class BitmapHelper {
         httpConnection.setDoInput(true);
         httpConnection.connect();
         inputStream = httpConnection.getInputStream();
-        Bitmap bitmap = scaleBitmap(scaleFactor, inputStream);
-        return bitmap;
+        return scaleBitmap(scaleFactor, inputStream);
     }
 }

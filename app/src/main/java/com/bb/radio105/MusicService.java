@@ -51,6 +51,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.media.MediaBrowserServiceCompat;
@@ -65,7 +66,14 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import timber.log.Timber;
@@ -235,6 +243,15 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         // Get streaming metadata when service starts
         getStreamingMetadata();
         placeHolder = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
+
+        // Set the task for retrieving the metadata every hour
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            scheduler.scheduleAtFixedRate(this::getStreamingMetadata, millisToNextHourO(), 60*60*1000, TimeUnit.MILLISECONDS);
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            scheduler.scheduleAtFixedRate(this::getStreamingMetadata, millisToNextHour(calendar), 60*60*1000, TimeUnit.MILLISECONDS);
+        }
 
         NetworkUtil.checkNetworkInfo(this, type -> {
             boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
@@ -783,6 +800,29 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    private static long millisToNextHour(Calendar calendar) {
+        int minutes = calendar.get(Calendar.MINUTE);
+        int seconds = calendar.get(Calendar.SECOND);
+        int millis = calendar.get(Calendar.MILLISECOND);
+        int minutesToNextHour = 60 - minutes;
+        int secondsToNextHour = 60 - seconds;
+        int millisToNextHour = 1000 - millis;
+        // Return the the milliseconds to the next hour plus a minute, to be sure that 105.net
+        // updated their on air data
+        return minutesToNextHour*60*1000 + secondsToNextHour*1000 + millisToNextHour;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private static long millisToNextHourO() {
+        ZoneId z = ZoneId.of("Europe/Rome");
+        ZonedDateTime now = ZonedDateTime.now(z) ;
+        ZonedDateTime hourLater = now.plusHours(1) ;
+        ZonedDateTime firstMomentOfNextHour = hourLater.truncatedTo( ChronoUnit.HOURS );
+        // Return the the milliseconds to the next hour plus 5 seconds, to be sure that 105.net
+        // updated their on air data
+        return now.until(firstMomentOfNextHour, ChronoUnit.MILLIS) + 5000;
     }
 
     /**

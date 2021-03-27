@@ -492,13 +492,16 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
      */
     @SuppressLint("UnspecifiedImmutableFlag")
     private void updateNotification(String text) {
-        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.notification_type_key), true);
-
         art = mAlbumArtCache.get(artUrl);
         if (art == null) {
             // use a placeholder art while the remote art is being downloaded
             art = placeHolder;
+        }
+        if (titleString == null) {
+            titleString = getString(R.string.radio_105);
+        }
+        if (djString == null) {
+            djString = text;
         }
 
         Intent intent = new Intent(this, MainActivity.class);
@@ -510,10 +513,14 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         }
         mNotificationBuilder.setContentIntent(pIntent);
+        mNotificationBuilder.clearActions();
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
             mNotificationBuilder.setLargeIcon(art);
             mNotificationBuilder.setContentTitle(titleString);
-            mNotificationBuilder.setContentText(djString + text);
+            mNotificationBuilder.setContentText(djString);
+            mNotificationBuilder.setSubText(text);
+            mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
+            mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
             mSession.setMetadata
                     (new MediaMetadataCompat.Builder()
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
@@ -521,10 +528,13 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, djString)
                             .build()
                     );
-        } else {
+        } else if (mState == PlaybackStateCompat.STATE_PAUSED) {
             mNotificationBuilder.setLargeIcon(placeHolder);
             mNotificationBuilder.setContentTitle(getString(R.string.radio));
             mNotificationBuilder.setContentText(text);
+            mNotificationBuilder.setSubText(null);
+            mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mIntents.get(R.drawable.ic_play));
+            mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
             mSession.setMetadata
                     (new MediaMetadataCompat.Builder()
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, placeHolder)
@@ -532,17 +542,20 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
                             .build()
                     );
-        }
-        mNotificationBuilder.clearActions();
-        if (mState == PlaybackStateCompat.STATE_PLAYING) {
-            mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
-            mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
-        } else if (mState == PlaybackStateCompat.STATE_PAUSED) {
-            mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mIntents.get(R.drawable.ic_play));
-            mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
-        } else if (mState == PlaybackStateCompat.STATE_STOPPED) {
+        } else {
+            mNotificationBuilder.setLargeIcon(placeHolder);
+            mNotificationBuilder.setContentTitle(getString(R.string.radio));
+            mNotificationBuilder.setContentText(text);
+            mNotificationBuilder.setSubText(null);
             mNotificationBuilder.addAction(0, null, null);
             mNotificationBuilder.addAction(0, null, null);
+            mSession.setMetadata
+                    (new MediaMetadataCompat.Builder()
+                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, placeHolder)
+                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getString(R.string.radio_105))
+                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
+                            .build()
+                    );
         }
         mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
     }
@@ -552,8 +565,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
      * something the user is actively aware of (such as playing music), and must appear to the
      * user as a notification. That's why we create the notification here.
      */
-
-
     @SuppressLint("UnspecifiedImmutableFlag")
     private void setUpAsForeground(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
@@ -586,6 +597,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         }
         mNotificationBuilder.setContentText(text);
         mNotificationBuilder.setLargeIcon(placeHolder);
+        mNotificationBuilder.setShowWhen(false);
         mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
         mNotificationBuilder.setContentTitle(getString(R.string.radio));
         mNotificationBuilder.setContentIntent(pIntent);

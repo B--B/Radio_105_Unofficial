@@ -106,12 +106,6 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                     streamingPref.removePreference(serviceKill);
                 }
             }
-            // Android below 11
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-                if (appNotificationPref != null) {
-                    appNotificationPref.removePreference(mediaNotification);
-                }
-            }
             // MiUi - EMUI
             if (Utils.isEMUI() || Utils.isMiUi()) {
                 if (streamingPref != null) {

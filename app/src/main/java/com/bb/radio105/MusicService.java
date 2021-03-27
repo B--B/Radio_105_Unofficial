@@ -511,6 +511,9 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         }
         mNotificationBuilder.setContentIntent(pIntent);
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
+            mNotificationBuilder.setLargeIcon(art);
+            mNotificationBuilder.setContentTitle(titleString);
+            mNotificationBuilder.setContentText(djString + text);
             mSession.setMetadata
                     (new MediaMetadataCompat.Builder()
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
@@ -519,6 +522,9 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                             .build()
                     );
         } else {
+            mNotificationBuilder.setLargeIcon(placeHolder);
+            mNotificationBuilder.setContentTitle(getString(R.string.radio));
+            mNotificationBuilder.setContentText(text);
             mSession.setMetadata
                     (new MediaMetadataCompat.Builder()
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, placeHolder)
@@ -537,9 +543,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         } else if (mState == PlaybackStateCompat.STATE_STOPPED) {
             mNotificationBuilder.addAction(0, null, null);
             mNotificationBuilder.addAction(0, null, null);
-        }
-        if (!pref) {
-            mNotificationBuilder.setContentText(text);
         }
         mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
     }
@@ -580,8 +583,9 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         } else {
             mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0, 1));
-            mNotificationBuilder.setContentText(text);
         }
+        mNotificationBuilder.setContentText(text);
+        mNotificationBuilder.setLargeIcon(placeHolder);
         mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
         mNotificationBuilder.setContentTitle(getString(R.string.radio));
         mNotificationBuilder.setContentIntent(pIntent);
@@ -804,6 +808,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 // Update metadata only if the stream is playing, the placeHolder is used on PAUSE state
                 // and the new metadata will be used when we move on PLAY state
                 if (mState == PlaybackStateCompat.STATE_PLAYING) {
+                    mNotificationBuilder.setLargeIcon(bitmap);
                     mSession.setMetadata
                             (new MediaMetadataCompat.Builder()
                                     .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)

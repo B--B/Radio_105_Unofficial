@@ -34,9 +34,10 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.support.v4.media.MediaBrowserCompat;
@@ -790,7 +791,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                     artUrl = artElement.absUrl("src");
                     // Fetch the album art here
                     if (artUrl != null) {
-                        fetchBitmapFromURLAsync(artUrl);
+                        fetchBitmapFromURLThread(artUrl);
                     }
                 },
                 error -> {
@@ -800,38 +801,25 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         requestQueue.add(stringRequest);
     }
 
-    public void fetchBitmapFromURLAsync(final String source) {
-        new AsyncTask<Void, Void, Bitmap>() {
-            @Override
-            protected Bitmap doInBackground(Void[] objects) {
-                Bitmap bitmap = null;
-                try {
-                    bitmap = BitmapHelper.fetchAndRescaleBitmap(source,
-                            BitmapHelper.MEDIA_ART_WIDTH, BitmapHelper.MEDIA_ART_HEIGHT);
-                    mAlbumArtCache.put(source, bitmap);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return bitmap;
+    void fetchBitmapFromURLThread(final String source) {
+        Thread thread = new Thread(() -> {
+            try {
+                Bitmap bitmap;
+                bitmap = BitmapHelper.fetchAndRescaleBitmap(source,
+                        BitmapHelper.MEDIA_ART_WIDTH, BitmapHelper.MEDIA_ART_HEIGHT);
+                mAlbumArtCache.put(source, bitmap);
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    // Update metadata only if the stream is playing, the placeHolder is used on PAUSE state
+                    // and the new metadata will be used when we move on PLAY state
+                    if (mState == PlaybackStateCompat.STATE_PLAYING) {
+                        updateNotification(getString(R.string.playing));
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                // Update metadata only if the stream is playing, the placeHolder is used on PAUSE state
-                // and the new metadata will be used when we move on PLAY state
-                if (mState == PlaybackStateCompat.STATE_PLAYING) {
-                    mNotificationBuilder.setLargeIcon(bitmap);
-                    mSession.setMetadata
-                            (new MediaMetadataCompat.Builder()
-                                    .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
-                                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, titleString)
-                                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, djString)
-                                    .build()
-                            );
-                    mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
-                }
-            }
-        }.execute();
+        });
+        thread.start();
     }
 
     private static long millisToNextHour(Calendar calendar) {

@@ -54,7 +54,7 @@
     <string name="pause">Pausa</string>
     <string name="stop">Ferma</string>
     <string name="loading">(In Caricamento…)</string>
-    <string name="playing">(In Riproduzione)</string>
+    <string name="playing">"   (In Riproduzione)"</string>
     <string name="in_pause">(In Pausa)</string>
     <string name="recovering">(Ripristino Streaming…)</string>
 

@@ -54,7 +54,7 @@
 
     <!-- Notification commands -->
     <string name="loading">(Loading…)</string>
-    <string name="playing">(Playing)</string>
+    <string name="playing">"   (Playing)"</string>
     <string name="in_pause">(Pause)</string>
     <string name="recovering">(Recovering Stream…)</string>
     <string name="play">Play</string>

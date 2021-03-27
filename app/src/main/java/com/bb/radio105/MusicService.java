@@ -117,6 +117,9 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
     Bitmap art;
     Bitmap placeHolder;
 
+    // Metadata scheduler
+    ScheduledExecutorService scheduler;
+
     // SparseArray for notification actions
     private final SparseArray<PendingIntent> mIntents = new SparseArray<>();
 
@@ -244,15 +247,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         // Set the PlaceHolder when service starts
         placeHolder = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
 
-        // Set the task for retrieving the metadata every hour
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            scheduler.scheduleAtFixedRate(this::getStreamingMetadata, millisToNextHourO(), 60*60*1000, TimeUnit.MILLISECONDS);
-        } else {
-            Calendar calendar = Calendar.getInstance();
-            scheduler.scheduleAtFixedRate(this::getStreamingMetadata, millisToNextHour(calendar), 60*60*1000, TimeUnit.MILLISECONDS);
-        }
-
         NetworkUtil.checkNetworkInfo(this, type -> {
             boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
                     .getBoolean(getString(R.string.network_change_key), true);
@@ -285,6 +279,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 break;
             case ACTION_STOP:
                 processStopRequest();
+                scheduler.shutdown();
                 break;
         }
 
@@ -571,6 +566,15 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.notification_type_key), true);
 
+        // Set the task for retrieving the metadata every hour
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            scheduler.scheduleAtFixedRate(this::getStreamingMetadata, millisToNextHourO(), 60*60*1000, TimeUnit.MILLISECONDS);
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            scheduler.scheduleAtFixedRate(this::getStreamingMetadata, millisToNextHour(calendar), 60*60*1000, TimeUnit.MILLISECONDS);
+        }
+
         // Get streaming metadata
         getStreamingMetadata();
 
@@ -675,6 +679,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         artUrl = null;
         art = null;
         placeHolder = null;
+        scheduler = null;
         // Always release the MediaSession to clean up resources
         // and notify associated MediaController(s).
         mSession.release();

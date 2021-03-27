@@ -67,8 +67,8 @@ I've decided to start the development of this app tired of the bugs in the offic
 6. Settings: the app options, some of them are available only for certain devices <img src="images/Screenshot_7.png" align="right" height="75" >
     * Instructions for properly run the radio streaming service on devices with MiUi/EMUI roms | **Only in MiUi and EMUI devices**
     * Theme: choose between light, dark or system theme *Default: system*
-    * Notification type: allow user to choose between a standard or a multimedia notification during the audio streaming *Default: media notification* | **Only for Android 11 Devices**
-    * Screen on: keep the screen on when in podcast and the 105 zoo sections *Default: disabled* | **Removed in Android TV**
+    * Notification type: allow user to choose between a standard or a multimedia notification during the audio streaming *Default: media notification* | **Removed in Android TV devices**
+    * Screen on: keep the screen on when in podcast and the 105 zoo sections *Default: disabled* | **Removed in Android TV devices**
     * Stop streaming setting: allow system to stop streaming when app is removed from recent tasks *Default: disabled* **Removed in Android TV and in MiUi/EMUI devices**
     * Audio devices: pause streaming when an audio device (headset, BT, etc.) is disconnected *Default: enabled*
     * Reconnect stream: restart the radio stream after an error if internet is available  *Default: enabled*

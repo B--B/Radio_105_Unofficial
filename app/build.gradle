@@ -3,14 +3,14 @@ plugins {
 }
 
 android {
-    compileSdkVersion("android-S")
+    compileSdkVersion 30
     ndkVersion "22.0.7026061"
     buildToolsVersion '31.0.0 rc2'
 
     defaultConfig {
         applicationId "com.bb.radio105"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 30
         versionCode 22
         versionName "1.3.1"
 

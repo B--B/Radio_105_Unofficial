@@ -8,9 +8,9 @@
     <string name="menu_podcast">Podcast e Repliche</string>
     <string name="menu_tv">105 TV</string>
     <string name="menu_zoo">The 105 Zoo</string>
-    <string name="streaming">Avvia lo Streaming</string>
-    <string name="pause_streaming">Metti in pausa</string>
-    <string name="stop_streaming">Ferma lo Streaming</string>
+    <string name="streaming">Avvia Streaming</string>
+    <string name="pause_streaming">Pausa</string>
+    <string name="stop_streaming">Ferma Streaming</string>
     <string name="logo">105 Logo</string>
     <string name="title_activity_settings">Impostazioni</string>
     <string name="radio">105 FM Radio Streaming</string>

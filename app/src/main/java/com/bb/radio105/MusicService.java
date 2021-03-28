@@ -106,12 +106,12 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 //    private int mNotificationColor;
 
     // Notification metadata
-    String titleString = null;
-    String djString = null;
+    static String titleString = null;
+    static String djString = null;
     String artUrl = null;
     private LruCache<String, Bitmap> mAlbumArtCache;
     private static final int MAX_ALBUM_ART_CACHE_SIZE = 1024*1024;
-    Bitmap art;
+    static Bitmap art;
     Bitmap placeHolder;
 
     // Metadata scheduler
@@ -277,6 +277,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             case ACTION_STOP:
                 processStopRequest();
                 scheduler.shutdown();
+                djString = null;
+                artUrl = null;
                 break;
         }
 
@@ -668,8 +670,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         NetworkUtil.unregisterNetworkCallback();
         unregisterReceiver(playerIntentReceiver);
         titleString = null;
-        djString = null;
-        artUrl = null;
         art = null;
         placeHolder = null;
         scheduler = null;
@@ -784,9 +784,17 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                     Element titleElement = document.selectFirst(".nome");
                     Element djElement = document.selectFirst(".dj_in_onda");
                     Element artElement = document.selectFirst("img");
-                    titleString = titleElement.text();
-                    djString = djElement.text();
-                    artUrl = artElement.absUrl("src");
+                    if (titleElement != null) {
+                        titleString = titleElement.text();
+                    }
+                    if (djElement != null) {
+                        djString = djElement.text();
+                    } else {
+                        djString = getString(R.string.blank_line);
+                    }
+                    if (artElement != null) {
+                        artUrl = artElement.absUrl("src");
+                    }
                     // Fetch the album art here
                     if (artUrl != null) {
                         fetchBitmapFromURLThread(artUrl);
@@ -820,7 +828,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         thread.start();
     }
 
-    private static long millisToNextHour(Calendar calendar) {
+    static long millisToNextHour(Calendar calendar) {
         int minutes = calendar.get(Calendar.MINUTE);
         int seconds = calendar.get(Calendar.SECOND);
         int millis = calendar.get(Calendar.MILLISECOND);

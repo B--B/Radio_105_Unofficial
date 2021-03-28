@@ -19,6 +19,7 @@
     <string name="preferences_stop_service">Stop/Pause Streaming Service</string>
     <string name="preferences_theming">App and Notification Theme</string>
     <string name="preferences_screen">Screen</string>
+    <string name="blank_line" translatable="false">" "</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Select Theme</string>

@@ -18,6 +18,8 @@ package com.bb.radio105;
 
 import android.content.ComponentName;
 import android.content.res.Configuration;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
@@ -29,6 +31,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -46,6 +50,10 @@ public class HomeFragment extends Fragment {
     private Button button3;
     private View root;
     private MediaBrowserCompat mediaBrowser;
+    private ImageView imageLogo;
+    private ImageView imageArt;
+    private TextView titleText;
+    private TextView djNameText;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -64,6 +72,10 @@ public class HomeFragment extends Fragment {
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
+        imageLogo = root.findViewById(R.id.imageLogo);
+        imageArt = root.findViewById(R.id.imageArt);
+        titleText = root.findViewById(R.id.titleText);
+        djNameText = root.findViewById(R.id.djNameText);
         button1 = root.findViewById(R.id.button1);
         button2 = root.findViewById(R.id.button2);
         button3 = root.findViewById(R.id.button3);
@@ -97,18 +109,38 @@ public class HomeFragment extends Fragment {
         mediaBrowser.connect();
         // Set buttons state
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
+            imageLogo.setVisibility(View.GONE);
+            Drawable imageResource = new BitmapDrawable(getResources(), MusicService.art);
+            imageArt.setImageDrawable(imageResource);
+            imageArt.setVisibility(View.VISIBLE);
+            titleText.setText(MusicService.titleString);
+            titleText.setVisibility(View.VISIBLE);
+            djNameText.setText(MusicService.djString);
+            djNameText.setVisibility(View.VISIBLE);
             button1.setEnabled(false);
             button2.setEnabled(true);
             button3.setEnabled(true);
         } else if (mState == PlaybackStateCompat.STATE_PAUSED) {
+            imageLogo.setVisibility(View.VISIBLE);
+            imageArt.setVisibility(View.GONE);
+            titleText.setVisibility(View.GONE);
+            djNameText.setVisibility(View.GONE);
             button1.setEnabled(true);
             button2.setEnabled(false);
             button3.setEnabled(true);
         } else if (mState == PlaybackStateCompat.STATE_STOPPED) {
+            imageLogo.setVisibility(View.VISIBLE);
+            imageArt.setVisibility(View.GONE);
+            titleText.setVisibility(View.GONE);
+            djNameText.setVisibility(View.GONE);
             button1.setEnabled(true);
             button2.setEnabled(false);
             button3.setEnabled(false);
         } else if (mState == PlaybackStateCompat.STATE_BUFFERING) {
+            imageLogo.setVisibility(View.VISIBLE);
+            imageArt.setVisibility(View.GONE);
+            titleText.setVisibility(View.GONE);
+            djNameText.setVisibility(View.GONE);
             button1.setEnabled(false);
             button2.setEnabled(false);
             button3.setEnabled(false);
@@ -133,6 +165,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        imageLogo = null;
         button1 = null;
         button2 = null;
         button3 = null;
@@ -189,23 +222,47 @@ public class HomeFragment extends Fragment {
             new MediaControllerCompat.Callback() {
                 @Override
                 public void onMetadataChanged(MediaMetadataCompat metadata) {
+                    Drawable imageResource = new BitmapDrawable(getResources(), MusicService.art);
+                    imageArt.setImageDrawable(imageResource);
+                    titleText.setText(MusicService.titleString);
+                    djNameText.setText(MusicService.djString);
                 }
 
                 @Override
                 public void onPlaybackStateChanged(PlaybackStateCompat state) {
                     if (state.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                        imageLogo.setVisibility(View.GONE);
+                        Drawable imageResource = new BitmapDrawable(getResources(), MusicService.art);
+                        imageArt.setImageDrawable(imageResource);
+                        imageArt.setVisibility(View.VISIBLE);
+                        titleText.setText(MusicService.titleString);
+                        titleText.setVisibility(View.VISIBLE);
+                        djNameText.setText(MusicService.djString);
+                        djNameText.setVisibility(View.VISIBLE);
                         button1.setEnabled(false);
                         button2.setEnabled(true);
                         button3.setEnabled(true);
                     } else if (state.getState() == PlaybackStateCompat.STATE_PAUSED) {
+                        imageLogo.setVisibility(View.VISIBLE);
+                        imageArt.setVisibility(View.GONE);
+                        titleText.setVisibility(View.GONE);
+                        djNameText.setVisibility(View.GONE);
                         button1.setEnabled(true);
                         button2.setEnabled(false);
                         button3.setEnabled(true);
                     } else if (state.getState() == PlaybackStateCompat.STATE_STOPPED) {
+                        imageLogo.setVisibility(View.VISIBLE);
+                        imageArt.setVisibility(View.GONE);
+                        titleText.setVisibility(View.GONE);
+                        djNameText.setVisibility(View.GONE);
                         button1.setEnabled(true);
                         button2.setEnabled(false);
                         button3.setEnabled(false);
                     } else if (state.getState() == PlaybackStateCompat.STATE_BUFFERING) {
+                        imageLogo.setVisibility(View.VISIBLE);
+                        imageArt.setVisibility(View.GONE);
+                        titleText.setVisibility(View.GONE);
+                        djNameText.setVisibility(View.GONE);
                         button1.setEnabled(false);
                         button2.setEnabled(false);
                         button3.setEnabled(false);

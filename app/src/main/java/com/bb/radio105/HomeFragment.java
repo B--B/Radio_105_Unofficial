@@ -16,6 +16,9 @@
 
 package com.bb.radio105;
 
+import static android.content.Context.UI_MODE_SERVICE;
+
+import android.app.UiModeManager;
 import android.content.ComponentName;
 import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
@@ -59,7 +62,13 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        root = inflater.inflate(R.layout.fragment_home, container, false);
+        // Android TV
+        UiModeManager uiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);
+        if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
+            root = inflater.inflate(R.layout.fragment_home_land_television, container, false);
+        } else {
+            root = inflater.inflate(R.layout.fragment_home, container, false);
+        }
 
         // Stock Colors
         MainActivity.updateColorsInterface.onUpdate(false);

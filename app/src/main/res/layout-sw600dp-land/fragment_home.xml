@@ -59,7 +59,7 @@
         android:layout_height="200dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="125dp"
+        android:layout_marginStart="150dp"
         android:layout_marginTop="75dp"
         android:contentDescription="@string/logo" />
 
@@ -67,21 +67,21 @@
         android:id="@+id/titleText"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginStart="75dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="100dp"
         android:gravity="center"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/djNameText" />
+        app:layout_constraintTop_toBottomOf="@+id/imageArt" />
 
     <TextView
         android:id="@+id/djNameText"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
-        android:layout_marginStart="75dp"
+        android:layout_marginStart="100dp"
         android:gravity="center"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/titleText" />
 </androidx.constraintlayout.widget.ConstraintLayout>

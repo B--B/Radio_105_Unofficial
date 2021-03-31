@@ -487,7 +487,9 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
      */
     @SuppressLint("UnspecifiedImmutableFlag")
     private void updateNotification(String text) {
-        art = mAlbumArtCache.get(artUrl);
+        if (mAlbumArtCache != null) {
+            art = mAlbumArtCache.get(artUrl);
+        }
         if (art == null) {
             // use a placeholder art while the remote art is being downloaded
             art = placeHolder;

@@ -20,6 +20,7 @@
     <string name="preferences_theming">App and Notification Theme</string>
     <string name="preferences_screen">Screen</string>
     <string name="blank_line" translatable="false">" "</string>
+    <string name="default_notification_channel_id" translatable="false">Radio105ServiceChannel</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Select Theme</string>

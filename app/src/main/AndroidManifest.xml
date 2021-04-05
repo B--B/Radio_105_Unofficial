@@ -30,6 +30,10 @@
         android:theme="@style/Theme.Radio105"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <!-- [START fcm_default_channel] -->
+        <meta-data
+            android:name="com.bb.radio105.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
         <activity
             android:name="com.bb.radio105.MainActivity"
             android:label="@string/app_name"

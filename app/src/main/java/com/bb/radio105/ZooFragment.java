@@ -82,6 +82,8 @@ public class ZooFragment extends Fragment {
         final String javaScript = "javascript:(function() { " +
                 "var element = document.getElementsByClassName('container');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('col-xs-12');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('tags vc_article_tag vc_theme_article_zoo');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('col-xs-12 vc_bg_white');" +

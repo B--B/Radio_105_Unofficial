@@ -19,6 +19,7 @@
     <string name="preferences_stop_service">Ferma/Pausa Servizio Streaming</string>
     <string name="preferences_theming">Tema App e Notifica</string>
     <string name="preferences_screen">Schermo</string>
+    <string name="copyright_info">&#169; Radio 105 e il logo Radio 105 &#8482; sono proprietà di RadioMediaset SpA. Tutti i diritti riservati.</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Seleziona Tema</string>

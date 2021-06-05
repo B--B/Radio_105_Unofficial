@@ -80,4 +80,11 @@
             app:key="@string/thanks_key"
             app:title="@string/special_thanks" />
     </PreferenceCategory>
+
+    <PreferenceCategory>
+        <Preference
+            app:key="@string/copyright"
+            app:summary="@string/copyright_info"
+            app:selectable="false" />
+    </PreferenceCategory>
 </PreferenceScreen>

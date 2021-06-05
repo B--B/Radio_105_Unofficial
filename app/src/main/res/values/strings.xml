@@ -21,6 +21,8 @@
     <string name="preferences_screen">Screen</string>
     <string name="blank_line" translatable="false">" "</string>
     <string name="default_notification_channel_id" translatable="false">Radio105ServiceChannel</string>
+    <string name="copyright" translatable="false">copyright</string>
+    <string name="copyright_info">&#169; Radio 105 and  Radio 105 logo &#8482; are property of RadioMediaset SpA. All rights reserved.</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Select Theme</string>

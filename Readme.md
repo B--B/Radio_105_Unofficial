@@ -45,7 +45,7 @@ I've decided to start the development of this app tired of the bugs in the offic
     * The stream can be stopped, paused and restarted even on secure lockscreen and with wearable devices
 
 2. 105 TV: a simple fragment that stream 105 Tv channel from [Mediaset Play](https://www.mediasetplay.mediaset.it/) <img src="images/Screenshot_3.png" align="right" height="75" >
-    * Automatically enable fullscreen when in portrait mode
+    * Automatically enable fullscreen when in landscape mode
     * Screen does not turns off when the user is in this section
 
 3. Podcast: the [105.net](https://105.net) podcast section <img src="images/Screenshot_4.png" align="right" height="75" >

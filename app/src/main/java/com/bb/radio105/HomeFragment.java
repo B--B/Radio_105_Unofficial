@@ -174,10 +174,13 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        imageArt = null;
         imageLogo = null;
         button1 = null;
         button2 = null;
         button3 = null;
+        djNameText = null;
+        titleText = null;
         root = null;
     }
 

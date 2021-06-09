@@ -20,6 +20,7 @@
     <string name="preferences_theming">Tema App e Notifica</string>
     <string name="preferences_screen">Schermo</string>
     <string name="copyright_info">&#169; Radio 105 e il logo Radio 105 &#8482; sono proprietà di RadioMediaset SpA. Tutti i diritti riservati.</string>
+    <string name="menu_developer">Informazioni Sviluppatore</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Seleziona Tema</string>
@@ -118,4 +119,9 @@
     <!-- Disclaimer -->
     <string name="disclaimer_title">Disclaimer</string>
     <string name="disclaimer">Questa applicazione NON è ufficiale, e non è in alcun modo supportata da Radio 105 o dal gruppo RadioMediaset SpA.</string>
+
+    <!-- Developer Fragment -->
+    <string name="app_repository">Repository dell\' app su GitHub</string>
+    <string name="bug_report">Segnala un problema</string>
+    <string name="developer_mail">Inviami una mail</string>
 </resources>

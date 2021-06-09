@@ -23,6 +23,7 @@
     <string name="default_notification_channel_id" translatable="false">Radio105ServiceChannel</string>
     <string name="copyright" translatable="false">copyright</string>
     <string name="copyright_info">&#169; Radio 105 and  Radio 105 logo &#8482; are property of RadioMediaset SpA. All rights reserved.</string>
+    <string name="menu_developer">Developer Info</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Select Theme</string>
@@ -140,4 +141,9 @@
     <!-- Disclaimer -->
     <string name="disclaimer_title">Disclaimer</string>
     <string name="disclaimer">This application is NOT official, and it\' s not supported in any way from Radio 105 or RadioMediaset SpA group.</string>
+
+    <!-- Developer Fragment -->
+    <string name="app_repository">App repository on GitHub</string>
+    <string name="bug_report">Report a Bug</string>
+    <string name="developer_mail">Send me a Mail</string>
 </resources>

@@ -39,4 +39,10 @@
         android:name="com.bb.radio105.Settings2Fragment"
         android:label="@string/title_activity_settings"
         tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/nav_developer"
+        android:name="com.bb.radio105.DeveloperFragment"
+        android:label="@string/menu_developer"
+        tools:layout="@layout/fragment_developer" />
 </navigation>

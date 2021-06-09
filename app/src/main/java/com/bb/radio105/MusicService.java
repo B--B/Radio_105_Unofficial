@@ -18,6 +18,8 @@
 package com.bb.radio105;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -120,6 +122,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
     // The tag we put on debug messages
     private final static String TAG = "Radio105Player";
+    private static final String CHANNEL_ID = "Radio105ServiceChannel";
 
     // our media player
     static MediaPlayer mPlayer = null;
@@ -572,6 +575,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         // Get streaming metadata
         getStreamingMetadata();
 
+        // Creating notification channel
+        createNotificationChannel();
         Intent intent = new Intent(this, MainActivity.class);
 
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
@@ -582,7 +587,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         }
         // Building notification here
-        mNotificationBuilder = new NotificationCompat.Builder(this, getString(R.string.default_notification_channel_id));
+        mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
         if (pref) {
             mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0, 1)
@@ -688,6 +693,18 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         //  Browsing not allowed
         if (TextUtils.equals(getString(R.string.app_name), parentId)) {
             result.sendResult(null);
+        }
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Foreground Service Channel",
+                    NotificationManager.IMPORTANCE_LOW
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
         }
     }
 

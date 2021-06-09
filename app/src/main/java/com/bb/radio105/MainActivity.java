@@ -16,6 +16,7 @@
 
 package com.bb.radio105;
 
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -82,6 +84,22 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         updateColorsInterface = this;
+
+        SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        boolean isFirstStart = mSharedPreferences.getBoolean("firstStart", true);
+
+        if (isFirstStart) {
+            new AlertDialog.Builder(MainActivity.this)
+                    .setCancelable(false)
+                    .setTitle(R.string.disclaimer_title)
+                    .setMessage(R.string.disclaimer)
+                    .setNeutralButton(R.string.ok, (arg0, arg1) -> {
+                        SharedPreferences.Editor editor = mSharedPreferences.edit();
+                        editor.putBoolean("firstStart", false);
+                        editor.apply();
+                    })
+                    .show();
+        }
 
         // Start the service worker controller here, actually only an instance is allowed, but
         // we have two fragments that runs webView. In addition the service worker controller must be

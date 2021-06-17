@@ -230,6 +230,29 @@ public class ZooFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        if (mWebView != null) {
+            Utils.callJavaScript(mWebView, "player.pause");
+            mWebView.getSettings().setJavaScriptEnabled(false);
+            mWebView.onPause();
+            mWebView.pauseTimers();
+        }
+        super.onPause();
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    @Override
+    public void onResume() {
+        if (mWebView != null) {
+            mWebView.getSettings().setJavaScriptEnabled(true);
+            Utils.callJavaScript(mWebView, "player.play");
+            mWebView.onResume();
+            mWebView.resumeTimers();
+        }
+        super.onResume();
+    }
+
+    @Override
     public void onDestroyView() {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.screen_on_key), false);

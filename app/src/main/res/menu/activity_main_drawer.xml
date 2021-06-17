@@ -30,6 +30,7 @@
             android:title="@string/title_activity_settings" />
         <item
             android:id="@+id/nav_developer"
+            android:icon="@drawable/ic_menu_developer"
             android:title="@string/menu_developer" />
     </group>
 </menu>

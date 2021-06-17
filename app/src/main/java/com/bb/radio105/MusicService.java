@@ -194,7 +194,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "radio105lock");
 
-//        mNotificationColor = getNotificationColor();
         mNotificationManager = NotificationManagerCompat.from(this);
 
         String pkg = getPackageName();
@@ -892,27 +891,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         }
     }
 
-/*
-    protected int getNotificationColor() {
-        int notificationColor = 0;
-        String packageName = getPackageName();
-        try {
-            Context packageContext = createPackageContext(packageName, 0);
-            ApplicationInfo applicationInfo =
-                    getPackageManager().getApplicationInfo(packageName, 0);
-            packageContext.setTheme(applicationInfo.theme);
-            Resources.Theme theme = packageContext.getTheme();
-            TypedArray ta = theme.obtainStyledAttributes(
-                    new int[]{android.R.attr.colorPrimary});
-            notificationColor = ta.getColor(0, Color.DKGRAY);
-            ta.recycle();
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return notificationColor;
-    }
-*/
-
     /**
      * Update the current media player state, optionally showing an error message.
      *
@@ -924,9 +902,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         if (mPlayer != null && mPlayer.isPlaying()) {
             position = mPlayer.getCurrentPosition();
         }
-//        PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder()
-//                .setActions(getAvailableActions());
-//        setCustomAction(stateBuilder);
         // If there is an error message, send it to the playback state:
         if (error != null) {
             // Error states are really only supposed to be used for errors that cause playback to
@@ -967,7 +942,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
         @Override
         public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
-//            Log.e("Radio105Streaming", "Received intent extras: " + mediaButtonEvent.getParcelableExtra(Intent.EXTRA_KEY_EVENT).toString());
             KeyEvent mKeyEvent = mediaButtonEvent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
             if (mKeyEvent.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PAUSE) {
                 mCallback.onPause();

@@ -7,6 +7,18 @@
     tools:context=".DeveloperFragment">
 
     <TextView
+        android:id="@+id/sources_and_bugs"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/sources_bugs"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/sources"
         android:textSize="20sp"
         android:layout_width="0dp"
@@ -21,16 +33,10 @@
         android:gravity="center_vertical"
         android:padding="8dp"
         android:text="@string/app_repository"
-        app:drawableTint="?android:attr/textColorSecondary"
         app:drawableStartCompat="@drawable/ic_github"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View style="@style/separator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sources" />
+        app:layout_constraintTop_toBottomOf="@id/sources_and_bugs" />
 
     <TextView
         android:id="@+id/bug"
@@ -58,6 +64,18 @@
         app:layout_constraintTop_toBottomOf="@id/bug" />
 
     <TextView
+        android:id="@+id/contact_me"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/contact_me"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bug" />
+
+    <TextView
         android:id="@+id/developer_mail"
         android:textSize="20sp"
         android:layout_width="0dp"
@@ -75,10 +93,67 @@
         app:drawableStartCompat="@drawable/ic_email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bug" />
+        app:layout_constraintTop_toBottomOf="@id/contact_me" />
 
     <View style="@style/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/developer_mail" />
+
+    <TextView
+        android:id="@+id/support_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/support_me"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/developer_mail" />
+
+    <TextView
+        android:id="@+id/rate_play_store"
+        android:textSize="20sp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="8dp"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:text="@string/rate_us_in_the_play_store"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/support_title"
+        app:drawableStartCompat="@drawable/ic_star" />
+
+    <TextView
+        android:id="@+id/recommend_to_friend"
+        android:textSize="20sp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="8dp"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:text="@string/recommend_to_a_friend"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rate_play_store"
+        app:drawableStartCompat="@drawable/ic_share" />
+
+    <View style="@style/separator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recommend_to_friend" />
 </androidx.constraintlayout.widget.ConstraintLayout>

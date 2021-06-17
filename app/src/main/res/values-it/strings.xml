@@ -124,4 +124,11 @@
     <string name="app_repository">Repository dell\' app su GitHub</string>
     <string name="bug_report">Segnala un problema</string>
     <string name="developer_mail">Inviami una mail</string>
+    <string name="support_me">Supporta l\' app</string>
+    <string name="rate_us_in_the_play_store">Vota l\' app nel Play Store</string>
+    <string name="recommend_to_a_friend">Consiglia l\' app ad un amico</string>
+    <string name="share_via">Condividi con…</string>
+    <string name="get_the_app">Scarica 105 Unofficial per Android</string>
+    <string name="contact_me">Contatta lo sviluppatore</string>
+    <string name="sources_bugs">Sorgenti e segnalazioni</string>
 </resources>

@@ -55,8 +55,6 @@ import androidx.fragment.app.Fragment;
  */
 
 public class SocialFragment extends Fragment {
-//    private static final String ARG_APPLICATION_ID = BuildConfig.APPLICATION_ID;
-//    private static final String ARG_APPLICATION_NAME = "Radio105";
     private static final String ARG_CONTACT_EMAIL_ADDRESS = "diretta@105.net";
     private static final String ARG_FACEBOOK_PAGE = "Radio105";
     private static final String ARG_TWITTER_PROFILE = "Radio105";
@@ -75,9 +73,6 @@ public class SocialFragment extends Fragment {
     private TextView twitchChannel;
     private TextView followTikTok;
     private TextView youtubeChannel;
-    // Recommendation links
-//    private TextView rateOnPlayStore;
-//    private TextView recommendToFriend;
     // Feedback links
     private TextView contactTitle;
     private TextView sendEmail;
@@ -102,9 +97,6 @@ public class SocialFragment extends Fragment {
         twitchChannel = root.findViewById(R.id.twitch_account);
         followTikTok = root.findViewById(R.id.follow_tiktok);
         youtubeChannel = root.findViewById(R.id.youtube_channel);
-
-//        rateOnPlayStore = root.findViewById(R.id.rate_play_store);
-//        recommendToFriend = root.findViewById(R.id.recommend_to_friend);
 
         contactTitle = root.findViewById(R.id.contact_title);
         sendEmail = root.findViewById(R.id.send_mail);
@@ -171,37 +163,6 @@ public class SocialFragment extends Fragment {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/channel/" + ARG_YOUTUBE_PROFILE)));
             }
         });
-
-/*
-        rateOnPlayStore.setOnClickListener(view13 -> {
-            // To count with Play market back stack, After pressing back button,
-            // to taken back to our application, we need to add following flags to intent.
-            int flags = Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
-            flags |= Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
-            Intent goToMarket = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("market://details?id=" + ARG_APPLICATION_ID))
-                    .addFlags(flags);
-            try {
-                startActivity(goToMarket);
-            } catch (ActivityNotFoundException e) {
-                startActivity(new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://play.google.com/store/apps/details?id=" + ARG_APPLICATION_ID)));
-            }
-        });
-
-        final String recommendSubject;
-            recommendSubject = getString(R.string.get_the_app_template, ARG_APPLICATION_NAME);
-
-        recommendToFriend.setOnClickListener(view15 -> {
-            String text = Uri.parse("http://play.google.com/store/apps/details?id=" + (ARG_APPLICATION_ID)).toString();
-
-            Intent sharingIntent = new Intent(Intent.ACTION_SEND)
-                    .setType("text/plain")
-                    .putExtra(Intent.EXTRA_SUBJECT, recommendSubject)
-                    .putExtra(Intent.EXTRA_TEXT, text);
-            startActivity(Intent.createChooser(sharingIntent, view15.getContext().getString(R.string.share_via)));
-        });
- */
 
         contactTitle.setVisibility(View.VISIBLE);
 

@@ -32,11 +32,9 @@
             android:layout_marginTop="16dp"
             android:layout_marginRight="16dp"
             android:text="@string/follow"
-            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/open_facebook_group"
@@ -52,11 +50,9 @@
             android:gravity="center_vertical"
             android:padding="8dp"
             android:text="@string/join_facebook_group"
-            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/follow_title"
-            tools:visibility="visible"
             app:drawableStartCompat="@drawable/ic_facebook" />
 
         <TextView
@@ -73,11 +69,9 @@
             android:gravity="center_vertical"
             android:padding="8dp"
             android:text="@string/follow_on_twitter"
-            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/open_facebook_group"
-            tools:visibility="visible"
             app:drawableStartCompat="@drawable/ic_twitter" />
 
         <TextView
@@ -94,11 +88,9 @@
             android:gravity="center_vertical"
             android:padding="8dp"
             android:text="@string/follow_on_instagram"
-            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/follow_twitter"
-            tools:visibility="visible"
             app:drawableStartCompat="@drawable/ic_instagram" />
 
         <TextView
@@ -115,11 +107,9 @@
             android:gravity="center_vertical"
             android:padding="8dp"
             android:text="@string/twitch_account"
-            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/follow_instagram"
-            tools:visibility="visible"
             app:drawableStartCompat="@drawable/ic_twitch" />
 
         <TextView
@@ -136,11 +126,9 @@
             android:gravity="center_vertical"
             android:padding="8dp"
             android:text="@string/follow_on_tiktok"
-            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/twitch_account"
-            tools:visibility="visible"
             app:drawableStartCompat="@drawable/ic_tiktok" />
 
         <TextView
@@ -157,11 +145,9 @@
             android:gravity="center_vertical"
             android:padding="8dp"
             android:text="@string/youtube_channel"
-            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/follow_tiktok"
-            tools:visibility="visible"
             app:drawableStartCompat="@drawable/ic_youtube" />
 
         <View style="@style/separator"
@@ -177,11 +163,9 @@
             android:layout_marginTop="16dp"
             android:layout_marginRight="16dp"
             android:text="@string/contact"
-            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/youtube_channel"
-            tools:visibility="visible" />
+            app:layout_constraintTop_toBottomOf="@+id/youtube_channel" />
 
         <TextView
             android:id="@+id/send_mail"
@@ -197,11 +181,9 @@
             android:gravity="center_vertical"
             android:padding="8dp"
             android:text="@string/send_email"
-            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/contact_title"
-            tools:visibility="visible"
             app:drawableStartCompat="@drawable/ic_email" />
 
         <TextView
@@ -218,11 +200,9 @@
             android:gravity="center_vertical"
             android:padding="8dp"
             android:text="@string/whatsapp_message"
-            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/send_mail"
-            tools:visibility="visible"
             app:drawableStartCompat="@drawable/ic_whatsapp" />
 
         <TextView
@@ -239,11 +219,9 @@
             android:gravity="center_vertical"
             android:padding="8dp"
             android:text="@string/telegram_message"
-            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/whatsapp_message"
-            tools:visibility="visible"
             app:drawableStartCompat="@drawable/ic_telegram" />
 
         <TextView
@@ -260,11 +238,9 @@
             android:gravity="center_vertical"
             android:padding="8dp"
             android:text="@string/sms_message"
-            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/telegram_message"
-            tools:visibility="visible"
             app:drawableStartCompat="@drawable/ic_message" />
 
         <View style="@style/separator"

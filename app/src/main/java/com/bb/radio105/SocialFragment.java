@@ -66,7 +66,6 @@ public class SocialFragment extends Fragment {
     private static final String ARG_TELEGRAM_ID = "1416935972";
 
     // Social networks links
-    private TextView followTitle;
     private TextView followTwitter;
     private TextView openFacebookGroup;
     private TextView followInstagram;
@@ -74,7 +73,6 @@ public class SocialFragment extends Fragment {
     private TextView followTikTok;
     private TextView youtubeChannel;
     // Feedback links
-    private TextView contactTitle;
     private TextView sendEmail;
     private TextView whatsappMessage;
     private TextView telegramMessage;
@@ -90,7 +88,6 @@ public class SocialFragment extends Fragment {
         // Stock Colors
         MainActivity.updateColorsInterface.onUpdate(false);
 
-        followTitle = root.findViewById(R.id.follow_title);
         followTwitter = root.findViewById(R.id.follow_twitter);
         openFacebookGroup = root.findViewById(R.id.open_facebook_group);
         followInstagram = root.findViewById(R.id.follow_instagram);
@@ -98,7 +95,6 @@ public class SocialFragment extends Fragment {
         followTikTok = root.findViewById(R.id.follow_tiktok);
         youtubeChannel = root.findViewById(R.id.youtube_channel);
 
-        contactTitle = root.findViewById(R.id.contact_title);
         sendEmail = root.findViewById(R.id.send_mail);
         whatsappMessage = root.findViewById(R.id.whatsapp_message);
         telegramMessage = root.findViewById(R.id.telegram_message);
@@ -111,9 +107,6 @@ public class SocialFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        followTitle.setVisibility(View.VISIBLE);
-
-        openFacebookGroup.setVisibility(View.VISIBLE);
         openFacebookGroup.setOnClickListener(view1 -> {
             try {
                 requireContext().getPackageManager().getPackageInfo("com.facebook.katana", 0);
@@ -123,7 +116,6 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        followTwitter.setVisibility(View.VISIBLE);
         followTwitter.setOnClickListener(view2 -> {
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=" + ARG_TWITTER_PROFILE)));
@@ -132,10 +124,8 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        followInstagram.setVisibility(View.VISIBLE);
         followInstagram.setOnClickListener(view3 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/_u/" + ARG_INSTAGRAM_PROFILE))));
 
-        twitchChannel.setVisibility(View.VISIBLE);
         twitchChannel.setOnClickListener(view4 -> {
             try {
                 requireContext().getPackageManager().getPackageInfo("com.zhiliaoapp.musically", 0);
@@ -145,7 +135,6 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        followTikTok.setVisibility(View.VISIBLE);
         followTikTok.setOnClickListener(view5 -> {
             try {
                 requireContext().getPackageManager().getPackageInfo("com.zhiliaoapp.musically", 0);
@@ -155,7 +144,6 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        youtubeChannel.setVisibility(View.VISIBLE);
         youtubeChannel.setOnClickListener(view6 -> {
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube.com/channel/" + ARG_YOUTUBE_PROFILE)));
@@ -164,18 +152,14 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        contactTitle.setVisibility(View.VISIBLE);
-
-        sendEmail.setVisibility(View.VISIBLE);
-        sendEmail.setOnClickListener(view9 -> {
+        sendEmail.setOnClickListener(view7 -> {
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                     "mailto", ARG_CONTACT_EMAIL_ADDRESS, null))
                     .putExtra(Intent.EXTRA_EMAIL, ARG_CONTACT_EMAIL_ADDRESS);
-            startActivity(Intent.createChooser(emailIntent, view9.getContext().getString(R.string.send_email)));
+            startActivity(Intent.createChooser(emailIntent, view7.getContext().getString(R.string.send_email)));
         });
 
-        whatsappMessage.setVisibility(View.VISIBLE);
-        whatsappMessage.setOnClickListener(view10 -> {
+        whatsappMessage.setOnClickListener(view8 -> {
             try {
                 requireContext().getPackageManager().getPackageInfo("com.whatsapp", 0);
                 startActivity(new Intent(Intent.ACTION_SEND, Uri.parse("https://wa.me/" + ARG_PHONE_NUMBER)));
@@ -184,8 +168,7 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        telegramMessage.setVisibility(View.VISIBLE);
-        telegramMessage.setOnClickListener(view11 -> {
+        telegramMessage.setOnClickListener(view9 -> {
             /* Open Telegram chat in browser as there' s no way to open a Telegram chat without a username,
             and Radio 105 Telegram account does not have a username.
             try {
@@ -196,8 +179,7 @@ public class SocialFragment extends Fragment {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://web.telegram.org/#/im?p=u" + ARG_TELEGRAM_ID)));
         });
 
-        smsMessage.setVisibility(View.VISIBLE);
-        smsMessage.setOnClickListener(view12 -> startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + ARG_PHONE_NUMBER))));
+        smsMessage.setOnClickListener(view10 -> startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + ARG_PHONE_NUMBER))));
     }
 
     public void onDestroyView() {

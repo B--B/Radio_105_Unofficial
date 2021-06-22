@@ -73,3 +73,11 @@ I've decided to start the development of this app tired of the bugs in the offic
     * Audio devices: pause streaming when an audio device (headset, BT, etc.) is disconnected *Default: enabled*
     * Reconnect stream: restart the radio stream after an error if internet is available  *Default: enabled*
     * Network change: restart the radio stream immediately when the device switch from mobile network to WiFi and vice versa  *Default: enabled*
+
+<br />
+<br />
+
+## Download:
+
+* [Latest version on GitHub](https://github.com/B--B/Radio_105_Unofficial/releases/latest)
+* [Latest version on Play Store](https://play.google.com/store/apps/details?id=com.bb.radio105)

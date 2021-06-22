@@ -79,6 +79,8 @@ public class PodcastFragment extends Fragment {
         mWebView = root.findViewById(R.id.webView_podcast);
         String url = "https://www.105.net/sezioni/995/podcast";
         final String javaScript = "javascript:(function() { " +
+                "var audio = document.querySelector('audio');" +
+                "if (document.body.contains(audio)) { audio.controlsList.remove('nodownload') };" +
                 "var element = document.getElementsByClassName('navbar-fixed-top hidden-print');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('container vc_bg_white');" +

@@ -80,6 +80,8 @@ public class ZooFragment extends Fragment {
         String url = "https://zoo.105.net";
         // TODO: Even if it's working this mess must be absolutely cleaned now that ads are gone
         final String javaScript = "javascript:(function() { " +
+                "var audio = document.querySelector('audio');" +
+                "if (document.body.contains(audio)) { audio.controlsList.remove('nodownload') };" +
                 "var element = document.getElementsByClassName('container');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('col-xs-12');" +

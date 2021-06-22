@@ -81,8 +81,13 @@ public class ZooFragment extends Fragment {
         // TODO: Even if it's working this mess must be absolutely cleaned now that ads are gone
         final String javaScript = "javascript:(function() { " +
                 "var audio = document.querySelector('audio');" +
+                "if (document.body.contains(audio)) { audio.style.minWidth = '280px' };" +
                 "if (document.body.contains(audio)) { audio.controlsList.remove('nodownload') };" +
+                "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
+                " if (element.length) { element[0].style.width = 'auto' }; " +
                 "var element = document.getElementsByClassName('container');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('clear');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('col-xs-12');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +

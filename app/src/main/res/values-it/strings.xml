@@ -21,6 +21,9 @@
     <string name="preferences_screen">Schermo</string>
     <string name="copyright_info">&#169; Radio 105 e il logo Radio 105 &#8482; sono proprietà di RadioMediaset SpA. Tutti i diritti riservati.</string>
     <string name="menu_developer">Informazioni Sviluppatore</string>
+    <string name="do_not_show_again">Non mostrare più.</string>
+    <string name="tv_screen_on">In questa sezione lo schermo del dispositivo rimarrà ACCESO indipendentemente dal timeout dello schermo impostato nel dispositivo.</string>
+    <string name="important">Importante</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Seleziona Tema</string>

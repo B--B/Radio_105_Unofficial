@@ -23,6 +23,9 @@
     <string name="copyright" translatable="false">copyright</string>
     <string name="copyright_info">&#169; Radio 105 and  Radio 105 logo &#8482; are property of RadioMediaset SpA. All rights reserved.</string>
     <string name="menu_developer">Developer Info</string>
+    <string name="do_not_show_again">Don\' t show again.</string>
+    <string name="tv_screen_on">In this section the device screen will stay ON regardless Android screen timeout setting.</string>
+    <string name="important">Important</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Select Theme</string>

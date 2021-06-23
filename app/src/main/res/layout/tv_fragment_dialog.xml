@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/tv_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_dialog_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_screen_on"
+            android:padding="20dp" />
+
+        <CheckBox
+            android:id="@+id/dontShowAgain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/do_not_show_again"
+            android:layout_marginStart="10dp">
+        </CheckBox>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

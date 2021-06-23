@@ -16,7 +16,11 @@
 
 package com.bb.radio105;
 
+import static android.content.Context.UI_MODE_SERVICE;
+
+import android.app.UiModeManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -25,11 +29,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -95,7 +102,33 @@ public class TvFragment extends Fragment {
         videoView.requestFocus();
         videoView.setOnInfoListener(onInfoToPlayStateListener);
         videoView.setVideoURI(Uri.parse(videoUrl));
-        videoView.start();
+
+
+        UiModeManager mUiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);
+        SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        boolean doNotAskAgain = mSharedPreferences.getBoolean("doNotAskAgain", false);
+
+        if ((mUiModeManager.getCurrentModeType() != Configuration.UI_MODE_TYPE_TELEVISION) && !doNotAskAgain) {
+            LayoutInflater mLayoutInflater = LayoutInflater.from(requireContext());
+            View tvDialogLayout = mLayoutInflater.inflate(R.layout.tv_fragment_dialog, null);
+            CheckBox dialogCheckBox = tvDialogLayout.findViewById(R.id.dontShowAgain);
+            new AlertDialog.Builder(requireContext())
+                    .setCancelable(false)
+                    .setTitle(R.string.important)
+                    .setView(tvDialogLayout)
+                    .setNeutralButton(R.string.ok, (arg0, arg1) -> {
+                        if (dialogCheckBox.isChecked()) {
+                            SharedPreferences.Editor editor = mSharedPreferences.edit();
+                            editor.putBoolean("doNotAskAgain", true);
+                            editor.apply();
+                        }
+                        videoView.start();
+                    })
+                    .show();
+        } else {
+            videoView.start();
+        }
+
         super.onStart();
     }
 

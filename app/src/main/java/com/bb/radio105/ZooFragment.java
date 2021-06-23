@@ -251,7 +251,6 @@ public class ZooFragment extends Fragment {
     public void onResume() {
         if (mWebView != null) {
             mWebView.getSettings().setJavaScriptEnabled(true);
-            Utils.callJavaScript(mWebView, "player.play");
             mWebView.onResume();
             mWebView.resumeTimers();
         }

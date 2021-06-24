@@ -145,7 +145,7 @@ public class Utils {
      * @param methodName function name
      * @param params     function parameters
      */
-    static void callJavaScript(AdblockWebView webView, String methodName, Object...params){
+    static void callJavaScript(AdblockWebView webView, String methodName, Object...params) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("javascript:try{");
         stringBuilder.append(methodName);
@@ -153,16 +153,15 @@ public class Utils {
         for (int i = 0; i < params.length; i++) {
             Object param = params[i];
 
-            if(param instanceof String){
+            if (param instanceof String) {
                 stringBuilder.append("'");
                 stringBuilder.append(param.toString().replace("'", "\\'"));
                 stringBuilder.append("'");
-            }else {
+            } else {
                 stringBuilder.append(param);
             }
-
             // If the last param, don't add ','.
-            if(i < params.length - 1){
+            if (i < params.length - 1) {
                 stringBuilder.append(",");
             }
         }

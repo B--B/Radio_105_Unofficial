@@ -73,7 +73,7 @@ public class Utils {
         DownloadManager downloadManager = (DownloadManager) mActivity.getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(mString);
         DownloadManager.Request request = new DownloadManager.Request(uri);
-        request.setTitle(mActivity.getString(R.string.menu_home));
+        request.setTitle(mActivity.getString(R.string.app_name));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             request.allowScanningByMediaScanner();
         }

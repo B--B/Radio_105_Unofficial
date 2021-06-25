@@ -16,13 +16,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        //noinspection JcenterRepositoryObsolete
-        jcenter() {
-            content {
-                includeModule("org.adblockplus", "adblock-android")
-                includeModule("org.adblockplus", "adblock-android-webview")
-            }
-        }
     }
     tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"

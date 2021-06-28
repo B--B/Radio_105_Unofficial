@@ -202,39 +202,36 @@ public class ZooFragment extends Fragment {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view,
                                                               WebResourceRequest request) {
-                String url = request.getUrl().toString();
-                WebResourceResponse mWebResourceResponse;
-                ZooFragment mZooFragment;
-                if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
-                    try {
+
+                try {
+                    String url = request.getUrl().toString();
+                    WebResourceResponse mWebResourceResponse;
+                    ZooFragment mZooFragment;
+                    if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
                         Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                         mZooFragment = ZooFragment.this;
                         mWebResourceResponse = new WebResourceResponse("image/jpg", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.JPEG));
                         return mWebResourceResponse;
-                    } catch (ExecutionException | InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                } else if (url.toLowerCase(Locale.ROOT).endsWith(".png")) {
-                    try {
+                    } else if (url.toLowerCase(Locale.ROOT).endsWith(".png")) {
                         Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                         mZooFragment = ZooFragment.this;
                         mWebResourceResponse = new WebResourceResponse("image/png", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.PNG));
                         return mWebResourceResponse;
-                    } catch (ExecutionException | InterruptedException e) {
-                        e.printStackTrace();
-                    }
 
-                } else if (url.toLowerCase(Locale.ROOT).endsWith(".webp")) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        try {
-                            Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
-                            mZooFragment = ZooFragment.this;
+                    } else if (url.toLowerCase(Locale.ROOT).endsWith(".webp")) {
+                        Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
+                        mZooFragment = ZooFragment.this;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                             mWebResourceResponse = new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP_LOSSY));
-                            return mWebResourceResponse;
-                        } catch (ExecutionException | InterruptedException e) {
-                            e.printStackTrace();
+                        } else {
+                            mWebResourceResponse = new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP));
                         }
+                        return mWebResourceResponse;
+                    } else {
+                        super.shouldInterceptRequest(view, request);
                     }
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
                 }
                 return super.shouldInterceptRequest(view, request);
             }

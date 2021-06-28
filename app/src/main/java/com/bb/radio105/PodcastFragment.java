@@ -34,6 +34,7 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -49,6 +50,7 @@ public class PodcastFragment extends Fragment {
 
     private AdblockWebView mWebView = null;
     private View root;
+    private ProgressBar mProgressBar;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -118,6 +120,8 @@ public class PodcastFragment extends Fragment {
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.loadUrl(url);
 
+        mProgressBar = root.findViewById(R.id.loading_podcast);
+
         mWebView.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -141,15 +145,15 @@ public class PodcastFragment extends Fragment {
 
             @Override
             public void onPageStarted(WebView webView, String url, Bitmap mBitmap) {
+                mProgressBar.setVisibility(View.VISIBLE);
                 webView.setVisibility(View.GONE);
-                root.findViewById(R.id.loading_podcast).setVisibility(View.VISIBLE);
                 super.onPageStarted(webView, url, mBitmap);
             }
 
             @Override
             public void onPageFinished (WebView webView, String url) {
                 webView.loadUrl(javaScript);
-                root.findViewById(R.id.loading_podcast).setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.GONE);
                 webView.setVisibility(View.VISIBLE);
                 super.onPageFinished(webView, url);
             }
@@ -190,6 +194,11 @@ public class PodcastFragment extends Fragment {
             private View fullScreenView;
             private ViewGroup mViewGroup;
             private WebChromeClient.CustomViewCallback mViewCallback;
+
+            @Override
+            public void onProgressChanged(final WebView view, final int newProgress) {
+                mProgressBar.setProgress(newProgress);
+            }
 
             @Override
             public void onShowCustomView(View view, WebChromeClient.CustomViewCallback mCustomViewCallback) {

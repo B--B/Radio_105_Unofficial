@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".PodcastFragment">
 
     <org.adblockplus.libadblockplus.android.webview.AdblockWebView
@@ -10,16 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <RelativeLayout
+    <ProgressBar
         android:id="@+id/loading_podcast"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center" >
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:indeterminate="false"
+        android:indeterminateOnly="false"
+        android:max="100"/>
 
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true" />
-    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

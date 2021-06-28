@@ -32,19 +32,30 @@ import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class PodcastFragment extends Fragment {
 
@@ -120,6 +131,7 @@ public class PodcastFragment extends Fragment {
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.loadUrl(url);
 
+
         mProgressBar = root.findViewById(R.id.loading_podcast);
 
         mWebView.setWebViewClient(new WebViewClient() {
@@ -163,9 +175,11 @@ public class PodcastFragment extends Fragment {
             public void onReceivedError(WebView webView, WebResourceRequest request, WebResourceError error) {
                 // Ignore some connection errors
                 // ERR_FAILED = -1
-                // ERR_CONNECTION_REFUSED = -6  --> needed for people with AD Blocker
+                // ERR_ADDRESS_UNREACHABLE = -2
+                // ERR_CONNECTION_REFUSED = -6
                 switch (error.getErrorCode()) {
                     case -1:
+                    case -2:
                     case -6:
                         break;
                     default:
@@ -180,13 +194,46 @@ public class PodcastFragment extends Fragment {
                 webView.loadUrl(Constants.ErrorPagePath);
             }
 
-            /* @Nullable
+            @Nullable
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view,
                                                               WebResourceRequest request) {
-                Log.e(Constants.LOG_TAG, "in WebView client. isMainFrame:"+request.isForMainFrame() +": " + request.getUrl());
+                String url = request.getUrl().toString();
+                WebResourceResponse mWebResourceResponse;
+                PodcastFragment mPodcastFragment;
+                if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
+                    try {
+                        Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
+                        mPodcastFragment = PodcastFragment.this;
+                        mWebResourceResponse = new WebResourceResponse("image/jpg", "UTF-8", mPodcastFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.JPEG));
+                        return mWebResourceResponse;
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else if (url.toLowerCase(Locale.ROOT).endsWith(".png")) {
+                    try {
+                        Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
+                        mPodcastFragment = PodcastFragment.this;
+                        mWebResourceResponse = new WebResourceResponse("image/png", "UTF-8", mPodcastFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.PNG));
+                        return mWebResourceResponse;
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                } else if (url.toLowerCase(Locale.ROOT).endsWith(".webp")) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        try {
+                            Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
+                            mPodcastFragment = PodcastFragment.this;
+                            mWebResourceResponse = new WebResourceResponse("image/webp", "UTF-8", mPodcastFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP_LOSSY));
+                            return mWebResourceResponse;
+                        } catch (ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
                 return super.shouldInterceptRequest(view, request);
-            } */
+            }
         });
 
         mWebView.setWebChromeClient(new WebChromeClient() {
@@ -273,5 +320,12 @@ public class PodcastFragment extends Fragment {
         }
         root = null;
         super.onDestroyView();
+    }
+
+    private InputStream getBitmapInputStream(Bitmap bitmap, Bitmap.CompressFormat compressFormat) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(compressFormat, 80, byteArrayOutputStream);
+        byte[] mByte = byteArrayOutputStream.toByteArray();
+        return new ByteArrayInputStream(mByte);
     }
 }

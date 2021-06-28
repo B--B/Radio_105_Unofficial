@@ -25,6 +25,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -170,8 +172,10 @@ public class ZooFragment extends Fragment {
             @Override
             public void onPageFinished (WebView webView, String url) {
                 webView.loadUrl(javaScript);
-                mProgressBar.setVisibility(View.GONE);
-                webView.setVisibility(View.VISIBLE);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    mProgressBar.setVisibility(View.GONE);
+                    webView.setVisibility(View.VISIBLE);
+                }, 200);
                 super.onPageFinished(webView, url);
             }
 

@@ -43,7 +43,11 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.adblockplus.libadblockplus.android.webview.BuildConfig;
+
 import java.util.Objects;
+
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements  UpdateColorsInterface, ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -99,6 +103,10 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
                         editor.apply();
                     })
                     .show();
+        }
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
         }
 
         // Start the service worker controller here, actually only an instance is allowed, but

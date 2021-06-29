@@ -28,6 +28,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,7 +99,7 @@ public class PodcastFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         mWebView = root.findViewById(R.id.webView_podcast);
-        String url = "https://www.105.net/sezioni/648/programmi";
+        String url = Constants.PODCAST_URL;
         final String javaScript = "javascript:(function() { " +
                 "var audio = document.querySelector('audio');" +
                 "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload')};" +
@@ -140,7 +141,10 @@ public class PodcastFragment extends Fragment {
         mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        mWebView.loadUrl(url);
+        if (Constants.podcastBundle == null) {
+            Constants.podcastBundle = new Bundle();
+            mWebView.loadUrl(url);
+        }
 
         mProgressBar = root.findViewById(R.id.loading_podcast);
 
@@ -174,6 +178,7 @@ public class PodcastFragment extends Fragment {
 
             @Override
             public void onPageFinished (WebView webView, String url) {
+                Constants.PODCAST_URL = url;
                 webView.loadUrl(javaScript);
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
                     if (mProgressBar != null) {
@@ -296,8 +301,19 @@ public class PodcastFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (Constants.podcastBundle != null) {
+            // mWebView.loadUrl("about:blank");
+            mWebView.restoreState(Constants.podcastBundle);
+            mWebView.reload();
+        }
+    }
+
+    @Override
     public void onPause() {
         if (mWebView != null) {
+            mWebView.saveState(Constants.podcastBundle);
             Utils.callJavaScript(mWebView, "player.pause");
             mWebView.getSettings().setJavaScriptEnabled(false);
             mWebView.onPause();

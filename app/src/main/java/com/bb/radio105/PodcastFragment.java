@@ -91,7 +91,7 @@ public class PodcastFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         mWebView = root.findViewById(R.id.webView_podcast);
-        String url = "https://www.105.net/sezioni/995/podcast";
+        String url = "https://www.105.net/sezioni/648/programmi";
         final String javaScript = "javascript:(function() { " +
                 "var audio = document.querySelector('audio');" +
                 "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload')};" +

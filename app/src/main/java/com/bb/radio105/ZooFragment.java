@@ -324,6 +324,7 @@ public class ZooFragment extends Fragment {
             mWebView.destroy();
             mWebView = null;
         }
+        mProgressBar = null;
         root = null;
         // Restore Glide memory values
         Glide.get(requireContext()).setMemoryCategory(MemoryCategory.NORMAL);

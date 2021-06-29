@@ -49,6 +49,7 @@ import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
@@ -76,6 +77,9 @@ public class ZooFragment extends Fragment {
         if (pref) {
             requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+
+        // Allow Glide to use more memory
+        Glide.get(requireContext()).setMemoryCategory(MemoryCategory.HIGH);
 
         // Custom Colors
         MainActivity.updateColorsInterface.onUpdate(true);
@@ -321,6 +325,8 @@ public class ZooFragment extends Fragment {
             mWebView = null;
         }
         root = null;
+        // Restore Glide memory values
+        Glide.get(requireContext()).setMemoryCategory(MemoryCategory.NORMAL);
         super.onDestroyView();
     }
 

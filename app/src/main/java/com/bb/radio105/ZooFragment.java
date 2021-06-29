@@ -54,6 +54,7 @@ import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
@@ -205,28 +206,26 @@ public class ZooFragment extends Fragment {
 
                 try {
                     String url = request.getUrl().toString();
-                    WebResourceResponse mWebResourceResponse;
                     ZooFragment mZooFragment;
+                    if (url.endsWith("mediaelement-and-player.min.js")) {
+                        return new WebResourceResponse("text/javascript", "UTF-8", new ByteArrayInputStream("// Script Blocked".getBytes(StandardCharsets.UTF_8)));
+                    }
                     if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
                         Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                         mZooFragment = ZooFragment.this;
-                        mWebResourceResponse = new WebResourceResponse("image/jpg", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.JPEG));
-                        return mWebResourceResponse;
+                        return new WebResourceResponse("image/jpg", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.JPEG));
                     } else if (url.toLowerCase(Locale.ROOT).endsWith(".png")) {
                         Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                         mZooFragment = ZooFragment.this;
-                        mWebResourceResponse = new WebResourceResponse("image/png", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.PNG));
-                        return mWebResourceResponse;
-
+                        return new WebResourceResponse("image/png", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.PNG));
                     } else if (url.toLowerCase(Locale.ROOT).endsWith(".webp")) {
                         Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                         mZooFragment = ZooFragment.this;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                            mWebResourceResponse = new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP_LOSSY));
+                            return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP_LOSSY));
                         } else {
-                            mWebResourceResponse = new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP));
+                            return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP));
                         }
-                        return mWebResourceResponse;
                     } else {
                         super.shouldInterceptRequest(view, request);
                     }

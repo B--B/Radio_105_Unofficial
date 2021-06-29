@@ -210,28 +210,25 @@ public class ZooFragment extends Fragment {
 
                 try {
                     String url = request.getUrl().toString();
-                    ZooFragment mZooFragment;
+                    ZooFragment mZooFragment = ZooFragment.this;
+                    Bitmap bitmap;
                     if (url.endsWith("mediaelement-and-player.min.js")) {
                         return new WebResourceResponse("text/javascript", "UTF-8", new ByteArrayInputStream("// Script Blocked".getBytes(StandardCharsets.UTF_8)));
-                    }
-                    if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
-                        Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
-                        mZooFragment = ZooFragment.this;
+                    } else if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
+                        bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                         return new WebResourceResponse("image/jpg", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.JPEG));
                     } else if (url.toLowerCase(Locale.ROOT).endsWith(".png")) {
-                        Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
-                        mZooFragment = ZooFragment.this;
+                        bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                         return new WebResourceResponse("image/png", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.PNG));
                     } else if (url.toLowerCase(Locale.ROOT).endsWith(".webp")) {
-                        Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
-                        mZooFragment = ZooFragment.this;
+                        bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                             return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP_LOSSY));
                         } else {
                             return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP));
                         }
                     } else {
-                        super.shouldInterceptRequest(view, request);
+                        return super.shouldInterceptRequest(view, request);
                     }
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();

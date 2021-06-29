@@ -136,7 +136,6 @@ public class PodcastFragment extends Fragment {
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.loadUrl(url);
 
-
         mProgressBar = root.findViewById(R.id.loading_podcast);
 
         mWebView.setWebViewClient(new WebViewClient() {
@@ -208,28 +207,25 @@ public class PodcastFragment extends Fragment {
 
                 try {
                     String url = request.getUrl().toString();
-                    PodcastFragment mPodcastFragment;
+                    PodcastFragment mPodcastFragment = PodcastFragment.this;
+                    Bitmap bitmap;
                     if (url.endsWith("mediaelement-and-player.min.js")) {
                         return new WebResourceResponse("text/javascript", "UTF-8", new ByteArrayInputStream("// Script Blocked".getBytes(StandardCharsets.UTF_8)));
-                    }
-                    if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
-                        Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
-                        mPodcastFragment = PodcastFragment.this;
+                    } else if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
+                        bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                         return new WebResourceResponse("image/jpg", "UTF-8", mPodcastFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.JPEG));
                     } else if (url.toLowerCase(Locale.ROOT).endsWith(".png")) {
-                        Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
-                        mPodcastFragment = PodcastFragment.this;
+                        bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                         return new WebResourceResponse("image/png", "UTF-8", mPodcastFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.PNG));
                     } else if (url.toLowerCase(Locale.ROOT).endsWith(".webp")) {
-                        Bitmap bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
-                        mPodcastFragment = PodcastFragment.this;
+                        bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                             return new WebResourceResponse("image/webp", "UTF-8", mPodcastFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP_LOSSY));
                         } else {
                             return new WebResourceResponse("image/webp", "UTF-8", mPodcastFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP));
                         }
                     } else {
-                        super.shouldInterceptRequest(view, request);
+                        return super.shouldInterceptRequest(view, request);
                     }
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();

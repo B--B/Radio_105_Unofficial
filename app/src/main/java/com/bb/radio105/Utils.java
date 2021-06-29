@@ -27,6 +27,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
+import android.webkit.WebView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -39,8 +40,6 @@ import java.io.InputStreamReader;
 import java.util.Objects;
 
 import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
-
-import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 
 public class Utils {
     /**
@@ -145,7 +144,7 @@ public class Utils {
      * @param methodName function name
      * @param params     function parameters
      */
-    static void callJavaScript(AdblockWebView webView, String methodName, Object...params) {
+    static void callJavaScript(WebView webView, String methodName, Object...params) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("javascript:try{");
         stringBuilder.append(methodName);

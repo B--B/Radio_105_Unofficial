@@ -52,8 +52,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -63,7 +61,7 @@ import java.util.concurrent.ExecutionException;
 
 public class PodcastFragment extends Fragment {
 
-    private AdblockWebView mWebView = null;
+    private WebView mWebView = null;
     private View root;
     private ProgressBar mProgressBar;
 

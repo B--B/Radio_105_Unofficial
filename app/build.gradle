@@ -47,7 +47,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     debugImplementation files('libs/adblock-android-abi_all-debug.aar')
-    debugImplementation files('libs/adblock-android-webview-debug.aar')
     releaseImplementation files('libs/adblock-android-abi_all-release.aar')
-    releaseImplementation files('libs/adblock-android-webview-release.aar')
 }

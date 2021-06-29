@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ZooFragment">
 
-    <org.adblockplus.libadblockplus.android.webview.AdblockWebView
+    <WebView
         android:id="@+id/webView_zoo"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

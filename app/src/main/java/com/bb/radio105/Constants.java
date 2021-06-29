@@ -16,6 +16,12 @@
 
 package com.bb.radio105;
 
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.SparseArray;
+
+import com.google.android.material.internal.ParcelableSparseArray;
+
 public class Constants {
     static final String ACTION_PLAY = "com.bb.radio105.action.PLAY";
     static final String ACTION_PAUSE = "com.bb.radio105.action.PAUSE";
@@ -32,4 +38,8 @@ public class Constants {
     static final float VOLUME_DUCK = 0.2f;
     // The volume we set the media player when we have audio focus.
     static final float VOLUME_NORMAL = 1.0f;
+    // WebView Constants
+    static String PODCAST_URL = "https://www.105.net/sezioni/648/programmi";
+    static Bundle podcastBundle;
+    static Bundle zooBundle = null;
 }

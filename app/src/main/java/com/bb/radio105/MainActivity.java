@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
 
     private AppBarConfiguration mAppBarConfiguration;
     static UpdateColorsInterface updateColorsInterface;
+    static Boolean isZooColor = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +141,10 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
         if (zooColors) {
             setZooColors();
         } else {
-            setStockColors();
+            if (isZooColor) {
+                setStockColors();
+                isZooColor = false;
+            }
         }
     }
 

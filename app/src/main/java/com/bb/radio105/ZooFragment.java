@@ -84,6 +84,7 @@ public class ZooFragment extends Fragment {
 
         // Custom Colors
         MainActivity.updateColorsInterface.onUpdate(true);
+        MainActivity.isZooColor = true;
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override

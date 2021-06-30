@@ -317,8 +317,7 @@ public class PodcastFragment extends Fragment {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
         if (mWebView != null) {
-            mWebView.destroy();
-            mWebView = null;
+            mWebView.dispose(null);
         }
         mProgressBar = null;
         root = null;

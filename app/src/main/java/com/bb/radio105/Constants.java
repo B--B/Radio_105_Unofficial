@@ -40,7 +40,7 @@ public class Constants {
     static final float VOLUME_NORMAL = 1.0f;
     // WebView Constants
     static final String PODCAST_STATE = "podcast_state";
-    static final String PODCAST_URL = "podcast_url";
     static Bundle podcastBundle;
-    static String zooBundle = null;
+    static final String ZOO_STATE = "zoo_state";
+    static Bundle zooBundle;
 }

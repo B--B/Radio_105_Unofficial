@@ -12,8 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-
-
     <ProgressBar
         android:id="@+id/loading_zoo"
         android:layout_width="match_parent"
@@ -22,6 +20,6 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:indeterminate="false"
         android:indeterminateOnly="false"
-        android:max="100"/>
+        android:max="100" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

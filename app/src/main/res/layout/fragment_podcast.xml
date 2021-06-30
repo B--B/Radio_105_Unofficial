@@ -20,7 +20,7 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:indeterminate="false"
         android:indeterminateOnly="false"
-        android:max="100"/>
+        android:max="100" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,7 +28,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,6 +101,7 @@ public class PodcastFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         mWebView = root.findViewById(R.id.webView_podcast);
+        mProgressBar = root.findViewById(R.id.loading_podcast);
         String url = "https://www.105.net/sezioni/648/programmi";
         final String javaScript = "javascript:(function() { " +
                 "var audio = document.querySelector('audio');" +
@@ -151,11 +151,7 @@ public class PodcastFragment extends Fragment {
             mWebView.loadUrl(url);
         } else {
             mWebView.restoreState(Constants.podcastBundle.getBundle(Constants.PODCAST_STATE));
-            final String urlStr = Constants.podcastBundle.getString(Constants.PODCAST_URL);
-            mWebView.reload();
         }
-
-        mProgressBar = root.findViewById(R.id.loading_podcast);
 
         mWebView.setWebViewClient(new WebViewClient() {
 
@@ -308,20 +304,16 @@ public class PodcastFragment extends Fragment {
     }
 
     @Override
-    public void onStop()
-    {
-        if (Constants.podcastBundle == null)
-        {
+    public void onStop() {
+        if (Constants.podcastBundle == null) {
             Timber.d("Podcast onStop: creates new outState bundle!");
             Constants.podcastBundle = new Bundle(ClassLoader.getSystemClassLoader());
         }
         final Bundle currentWebViewState = new Bundle(ClassLoader.getSystemClassLoader());
-        if (mWebView.saveState(currentWebViewState) == null)
-        {
+        if (mWebView.saveState(currentWebViewState) == null) {
             Timber.d("Podcast onStop: failed to obtain WebView state to save!");
         }
         Constants.podcastBundle.putBundle(Constants.PODCAST_STATE, currentWebViewState);
-        Constants.podcastBundle.putString(Constants.PODCAST_URL, mWebView.getUrl());
         super.onStop();
     }
 

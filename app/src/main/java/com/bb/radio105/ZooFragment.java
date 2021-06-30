@@ -52,6 +52,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 
 import java.io.ByteArrayInputStream;
@@ -60,6 +61,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+
+import timber.log.Timber;
 
 public class ZooFragment extends Fragment {
 
@@ -97,6 +100,7 @@ public class ZooFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         mWebView = root.findViewById(R.id.webView_zoo);
+        mProgressBar = root.findViewById(R.id.loading_zoo);
         String url = "https://zoo.105.net";
         // TODO: Even if it's working this mess must be absolutely cleaned now that ads are gone
         final String javaScript = "javascript:(function() { " +
@@ -145,9 +149,14 @@ public class ZooFragment extends Fragment {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        mWebView.loadUrl(url);
-
-        mProgressBar = root.findViewById(R.id.loading_zoo);
+        mWebView.setProvider(AdblockHelper.get().getProvider());
+        mWebView.setSiteKeysConfiguration(AdblockHelper.get().getSiteKeysConfiguration());
+        mWebView.enableJsInIframes(true);
+        if (Constants.zooBundle == null) {
+            mWebView.loadUrl(url);
+        } else {
+            mWebView.restoreState(Constants.zooBundle.getBundle(Constants.ZOO_STATE));
+        }
 
         mWebView.setWebViewClient(new WebViewClient() {
 
@@ -298,6 +307,20 @@ public class ZooFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        if (Constants.zooBundle == null) {
+            Timber.d("Zoo onStop: creates new outState bundle!");
+            Constants.zooBundle = new Bundle(ClassLoader.getSystemClassLoader());
+        }
+        final Bundle currentWebViewState = new Bundle(ClassLoader.getSystemClassLoader());
+        if (mWebView.saveState(currentWebViewState) == null) {
+            Timber.d("Zoo onStop: failed to obtain WebView state to save!");
+        }
+        Constants.zooBundle.putBundle(Constants.ZOO_STATE, currentWebViewState);
+        super.onStop();
+    }
+
+    @Override
     public void onPause() {
         if (mWebView != null) {
             Utils.callJavaScript(mWebView, "player.pause");
@@ -327,8 +350,7 @@ public class ZooFragment extends Fragment {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
         if (mWebView != null) {
-            mWebView.destroy();
-            mWebView = null;
+            mWebView.dispose(null);
         }
         mProgressBar = null;
         root = null;

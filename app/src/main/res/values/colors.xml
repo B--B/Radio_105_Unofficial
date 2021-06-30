@@ -10,4 +10,5 @@
     <color name="zoo_500">#ED008C</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="zoo_background">#121212</color>
 </resources>

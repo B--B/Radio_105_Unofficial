@@ -53,6 +53,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 
 import java.io.ByteArrayInputStream;
@@ -141,12 +142,15 @@ public class PodcastFragment extends Fragment {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        mWebView.setProvider(AdblockHelper.get().getProvider());
+        mWebView.setSiteKeysConfiguration(AdblockHelper.get().getSiteKeysConfiguration());
+        mWebView.enableJsInIframes(true);
         if (Constants.podcastBundle == null) {
             mWebView.loadUrl(url);
         } else {
             mWebView.restoreState(Constants.podcastBundle.getBundle(Constants.PODCAST_STATE));
             final String urlStr = Constants.podcastBundle.getString(Constants.PODCAST_URL);
-            mWebView.loadUrl(urlStr);
+            mWebView.reload();
         }
 
         mProgressBar = root.findViewById(R.id.loading_podcast);
@@ -221,7 +225,6 @@ public class PodcastFragment extends Fragment {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view,
                                                               WebResourceRequest request) {
-                request.getRequestHeaders().put("X-Modified-Intercept", "true");
                 try {
                     String url = request.getUrl().toString();
                     PodcastFragment mPodcastFragment = PodcastFragment.this;

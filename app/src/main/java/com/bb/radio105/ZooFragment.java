@@ -22,6 +22,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -149,6 +150,7 @@ public class ZooFragment extends Fragment {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.getSettings().setDatabaseEnabled(true);
+        mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.setProvider(AdblockHelper.get().getProvider());
         mWebView.setSiteKeysConfiguration(AdblockHelper.get().getSiteKeysConfiguration());

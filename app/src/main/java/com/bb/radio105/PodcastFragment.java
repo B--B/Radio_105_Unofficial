@@ -144,7 +144,7 @@ public class PodcastFragment extends Fragment {
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.setProvider(AdblockHelper.get().getProvider());
         mWebView.setSiteKeysConfiguration(AdblockHelper.get().getSiteKeysConfiguration());
-        mWebView.enableJsInIframes(true);
+        // mWebView.enableJsInIframes(true);
         if (Constants.podcastBundle == null) {
             mWebView.loadUrl(url);
         } else {

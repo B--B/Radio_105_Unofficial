@@ -44,6 +44,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
+import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
 import org.adblockplus.libadblockplus.android.webview.BuildConfig;
 
 import java.util.Objects;
@@ -145,6 +146,17 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
                 setStockColors();
                 isZooColor = false;
             }
+        }
+    }
+
+    @Override
+    public void onTrimMemory(final int level) {
+        // if a system demands more memory, call the GC of the adblock engine to release some
+        // this can free up to ~60-70% of memory occupied by the engine
+        if (level == TRIM_MEMORY_RUNNING_CRITICAL && AdblockHelper.get().isInit())
+        {
+            AdblockHelper.get().getProvider().onLowMemory();
+            Timber.w("Lacking memory! Notifying AdBlock about memory constraint");
         }
     }
 

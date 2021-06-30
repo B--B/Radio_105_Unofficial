@@ -141,6 +141,7 @@ public class PodcastFragment extends Fragment {
         mWebView.getSettings().setLoadsImagesAutomatically(true);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);
+        mWebView.getSettings().setDatabaseEnabled(true);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.setProvider(AdblockHelper.get().getProvider());
         mWebView.setSiteKeysConfiguration(AdblockHelper.get().getSiteKeysConfiguration());

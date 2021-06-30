@@ -17,10 +17,6 @@
 package com.bb.radio105;
 
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.SparseArray;
-
-import com.google.android.material.internal.ParcelableSparseArray;
 
 public class Constants {
     static final String ACTION_PLAY = "com.bb.radio105.action.PLAY";

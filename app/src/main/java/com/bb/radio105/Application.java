@@ -9,23 +9,13 @@ import timber.log.Timber;
 public class Application extends android.app.Application
 {
     private final AdblockEngineProvider.EngineCreatedListener engineCreatedListener =
-            new AdblockEngineProvider.EngineCreatedListener()
-            {
-                @Override
-                public void onAdblockEngineCreated(final AdblockEngine adblockEngine)
-                {
-                    // put your AdblockEngine initialization here
-                }
+            adblockEngine -> {
+                // put your AdblockEngine initialization here
             };
 
     private final AdblockEngineProvider.EngineDisposedListener engineDisposedListener =
-            new AdblockEngineProvider.EngineDisposedListener()
-            {
-                @Override
-                public void onAdblockEngineDisposed()
-                {
-                    // put your AdblockEngine de-initialization here
-                }
+            () -> {
+                // put your AdblockEngine de-initialization here
             };
 
     @Override

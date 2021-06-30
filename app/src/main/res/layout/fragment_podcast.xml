@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".PodcastFragment">
 
-    <WebView
+    <org.adblockplus.libadblockplus.android.webview.AdblockWebView
         android:id="@+id/webView_podcast"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

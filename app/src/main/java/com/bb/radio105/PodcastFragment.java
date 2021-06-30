@@ -246,7 +246,9 @@ public class PodcastFragment extends Fragment {
 
             @Override
             public void onProgressChanged(final WebView view, final int newProgress) {
-                mProgressBar.setProgress(newProgress);
+                if (mProgressBar != null) {
+                    mProgressBar.setProgress(newProgress);
+                }
             }
 
             @Override

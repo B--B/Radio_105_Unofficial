@@ -174,8 +174,12 @@ public class PodcastFragment extends Fragment {
             public void onPageFinished (WebView webView, String url) {
                 webView.loadUrl(javaScript);
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    mProgressBar.setVisibility(View.GONE);
-                    webView.setVisibility(View.VISIBLE);
+                    if (mProgressBar != null) {
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+                    if (mWebView != null) {
+                        webView.setVisibility(View.VISIBLE);
+                    }
                 }, 200);
                 super.onPageFinished(webView, url);
             }

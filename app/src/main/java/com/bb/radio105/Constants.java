@@ -39,7 +39,8 @@ public class Constants {
     // The volume we set the media player when we have audio focus.
     static final float VOLUME_NORMAL = 1.0f;
     // WebView Constants
-    static String PODCAST_URL = "https://www.105.net/sezioni/648/programmi";
+    static final String PODCAST_STATE = "podcast_state";
+    static final String PODCAST_URL = "podcast_url";
     static Bundle podcastBundle;
-    static Bundle zooBundle = null;
+    static String zooBundle = null;
 }

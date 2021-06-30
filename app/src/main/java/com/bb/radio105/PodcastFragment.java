@@ -63,6 +63,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import timber.log.Timber;
+
 public class PodcastFragment extends Fragment {
 
     private AdblockWebView mWebView = null;
@@ -99,7 +101,7 @@ public class PodcastFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         mWebView = root.findViewById(R.id.webView_podcast);
-        String url = Constants.PODCAST_URL;
+        String url = "https://www.105.net/sezioni/648/programmi";
         final String javaScript = "javascript:(function() { " +
                 "var audio = document.querySelector('audio');" +
                 "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload')};" +
@@ -142,8 +144,11 @@ public class PodcastFragment extends Fragment {
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         if (Constants.podcastBundle == null) {
-            Constants.podcastBundle = new Bundle();
             mWebView.loadUrl(url);
+        } else {
+            mWebView.restoreState(Constants.podcastBundle.getBundle(Constants.PODCAST_STATE));
+            final String urlStr = Constants.podcastBundle.getString(Constants.PODCAST_URL);
+            mWebView.loadUrl(urlStr);
         }
 
         mProgressBar = root.findViewById(R.id.loading_podcast);
@@ -178,7 +183,6 @@ public class PodcastFragment extends Fragment {
 
             @Override
             public void onPageFinished (WebView webView, String url) {
-                Constants.PODCAST_URL = url;
                 webView.loadUrl(javaScript);
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
                     if (mProgressBar != null) {
@@ -219,7 +223,7 @@ public class PodcastFragment extends Fragment {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view,
                                                               WebResourceRequest request) {
-
+                request.getRequestHeaders().put("X-Modified-Intercept", "true");
                 try {
                     String url = request.getUrl().toString();
                     PodcastFragment mPodcastFragment = PodcastFragment.this;
@@ -301,19 +305,26 @@ public class PodcastFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if (Constants.podcastBundle != null) {
-            // mWebView.loadUrl("about:blank");
-            mWebView.restoreState(Constants.podcastBundle);
-            mWebView.reload();
+    public void onStop()
+    {
+        if (Constants.podcastBundle == null)
+        {
+            Timber.d("Podcast onStop: creates new outState bundle!");
+            Constants.podcastBundle = new Bundle(ClassLoader.getSystemClassLoader());
         }
+        final Bundle currentWebViewState = new Bundle(ClassLoader.getSystemClassLoader());
+        if (mWebView.saveState(currentWebViewState) == null)
+        {
+            Timber.d("Podcast onStop: failed to obtain WebView state to save!");
+        }
+        Constants.podcastBundle.putBundle(Constants.PODCAST_STATE, currentWebViewState);
+        Constants.podcastBundle.putString(Constants.PODCAST_URL, mWebView.getUrl());
+        super.onStop();
     }
 
     @Override
     public void onPause() {
         if (mWebView != null) {
-            mWebView.saveState(Constants.podcastBundle);
             Utils.callJavaScript(mWebView, "player.pause");
             mWebView.getSettings().setJavaScriptEnabled(false);
             mWebView.onPause();

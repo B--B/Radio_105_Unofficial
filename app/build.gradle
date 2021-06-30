@@ -28,8 +28,8 @@ android {
         applicationId "com.bb.radio105"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 32
-        versionName "1.6.0"
+        versionCode 35
+        versionName "1.7.0-beta-1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

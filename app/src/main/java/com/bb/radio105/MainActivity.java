@@ -45,6 +45,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
+import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 import org.adblockplus.libadblockplus.android.webview.BuildConfig;
 
 import java.util.Objects;

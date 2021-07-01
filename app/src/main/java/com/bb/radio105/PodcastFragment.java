@@ -70,6 +70,8 @@ public class PodcastFragment extends Fragment {
     private AdblockWebView mWebView = null;
     private View root;
     private ProgressBar mProgressBar;
+    private PodcastWebViewClient mPodcastWebViewClient;
+    private PodcastWebChromeClient mPodcastWebChromeClient;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -87,6 +89,10 @@ public class PodcastFragment extends Fragment {
 
         // Stock Colors
         MainActivity.updateColorsInterface.onUpdate(false);
+
+        // WebView and Chrome clients
+        mPodcastWebViewClient = new PodcastWebViewClient();
+        mPodcastWebChromeClient = new PodcastWebChromeClient();
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -117,8 +123,8 @@ public class PodcastFragment extends Fragment {
             mWebView.restoreState(Constants.podcastBundle.getBundle(Constants.PODCAST_STATE));
         }
 
-        mWebView.setWebViewClient(new podcastWebViewClient());
-        mWebView.setWebChromeClient(new podcastWebChromeClient());
+        mWebView.setWebViewClient(mPodcastWebViewClient);
+        mWebView.setWebChromeClient(mPodcastWebChromeClient);
 
         mWebView.setDownloadListener((url1, userAgent, contentDisposition, mimetype, contentLength) -> {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
@@ -174,10 +180,12 @@ public class PodcastFragment extends Fragment {
         if (pref) {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+        mPodcastWebViewClient = null;
+        mPodcastWebChromeClient = null;
+        mProgressBar = null;
         if (mWebView != null) {
             mWebView.dispose(null);
         }
-        mProgressBar = null;
         root = null;
         // Restore Glide memory values
         Glide.get(requireContext()).setMemoryCategory(MemoryCategory.NORMAL);
@@ -191,7 +199,7 @@ public class PodcastFragment extends Fragment {
         return new ByteArrayInputStream(mByte);
     }
 
-    private class podcastWebChromeClient extends WebChromeClient {
+    private class PodcastWebChromeClient extends WebChromeClient {
         private View fullScreenView;
         private ViewGroup mViewGroup;
         private WebChromeClient.CustomViewCallback mViewCallback;
@@ -230,7 +238,7 @@ public class PodcastFragment extends Fragment {
         }
     }
 
-    private class podcastWebViewClient extends WebViewClient {
+    private class PodcastWebViewClient extends WebViewClient {
 
         final String javaScript = "javascript:(function() { " +
                 "var audio = document.querySelector('audio');" +

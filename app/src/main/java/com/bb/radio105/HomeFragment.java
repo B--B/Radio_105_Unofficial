@@ -16,19 +16,21 @@
 
 package com.bb.radio105;
 
+import static android.content.Context.BIND_AUTO_CREATE;
 import static android.content.Context.UI_MODE_SERVICE;
 
 import android.app.UiModeManager;
 import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.support.v4.media.MediaBrowserCompat;
+import android.os.IBinder;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,11 +54,14 @@ public class HomeFragment extends Fragment {
     private Button button2;
     private Button button3;
     private View root;
-    private MediaBrowserCompat mediaBrowser;
     private ImageView imageLogo;
     private ImageView imageArt;
     private TextView titleText;
     private TextView djNameText;
+    private MusicService.MusicServiceBinder mMusicServiceBinder;
+    private ServiceConnection mServiceConnection;
+    private MediaControllerCompat mMediaControllerCompat;
+    private MediaControllerCompat.Callback mCallback;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -89,11 +94,59 @@ public class HomeFragment extends Fragment {
         button2 = root.findViewById(R.id.button2);
         button3 = root.findViewById(R.id.button3);
 
-        // Create MediaBrowserServiceCompat
-        mediaBrowser = new MediaBrowserCompat(getContext(),
-                new ComponentName(getContext(), MusicService.class),
-                connectionCallbacks,
-                null); // optional Bundle
+        mCallback = new MediaControllerCompat.Callback() {
+            @Override
+            public void onMetadataChanged(MediaMetadataCompat metadata) {
+                Drawable imageResource = new BitmapDrawable(getResources(), MusicService.art);
+                imageArt.setImageDrawable(imageResource);
+                titleText.setText(MusicService.titleString);
+                djNameText.setText(MusicService.djString);
+            }
+
+            @Override
+            public void onPlaybackStateChanged(PlaybackStateCompat state) {
+                if (state.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                    imageLogo.setVisibility(View.GONE);
+                    Drawable imageResource = new BitmapDrawable(getResources(), MusicService.art);
+                    imageArt.setImageDrawable(imageResource);
+                    imageArt.setVisibility(View.VISIBLE);
+                    titleText.setText(MusicService.titleString);
+                    titleText.setVisibility(View.VISIBLE);
+                    djNameText.setText(MusicService.djString);
+                    djNameText.setVisibility(View.VISIBLE);
+                    button1.setEnabled(false);
+                    button2.setEnabled(true);
+                    button3.setEnabled(true);
+                } else if (state.getState() == PlaybackStateCompat.STATE_PAUSED) {
+                    imageLogo.setVisibility(View.VISIBLE);
+                    imageArt.setVisibility(View.GONE);
+                    titleText.setVisibility(View.GONE);
+                    djNameText.setVisibility(View.GONE);
+                    button1.setEnabled(true);
+                    button2.setEnabled(false);
+                    button3.setEnabled(true);
+                } else if (state.getState() == PlaybackStateCompat.STATE_STOPPED) {
+                    imageLogo.setVisibility(View.VISIBLE);
+                    imageArt.setVisibility(View.GONE);
+                    titleText.setVisibility(View.GONE);
+                    djNameText.setVisibility(View.GONE);
+                    button1.setEnabled(true);
+                    button2.setEnabled(false);
+                    button3.setEnabled(false);
+                } else if (state.getState() == PlaybackStateCompat.STATE_BUFFERING) {
+                    imageLogo.setVisibility(View.VISIBLE);
+                    imageArt.setVisibility(View.GONE);
+                    titleText.setVisibility(View.GONE);
+                    djNameText.setVisibility(View.GONE);
+                    button1.setEnabled(false);
+                    button2.setEnabled(false);
+                    button3.setEnabled(false);
+                }
+            }
+        };
+
+        // Finish building the UI
+        buildTransportControls();
 
         return root;
     }
@@ -115,7 +168,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mediaBrowser.connect();
         // Set buttons state
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
             imageLogo.setVisibility(View.GONE);
@@ -163,17 +215,14 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        if (MediaControllerCompat.getMediaController(requireActivity()) != null) {
-            MediaControllerCompat.getMediaController(requireActivity()).unregisterCallback(controllerCallback);
-        }
-        mediaBrowser.disconnect();
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mMusicServiceBinder = null;
+        if (mMediaControllerCompat != null) {
+            mMediaControllerCompat.unregisterCallback(mCallback);
+            mMediaControllerCompat = null;
+        }
+        requireContext().unbindService(mServiceConnection);
         imageArt = null;
         imageLogo = null;
         button1 = null;
@@ -186,99 +235,36 @@ public class HomeFragment extends Fragment {
 
     void buildTransportControls() {
 
+        mServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
+                mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
+                mCallback.onPlaybackStateChanged(mMediaControllerCompat.getPlaybackState());
+                mMediaControllerCompat.registerCallback(mCallback);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mMusicServiceBinder = null;
+                if (mMediaControllerCompat != null) {
+                    mMediaControllerCompat.unregisterCallback(mCallback);
+                    mMediaControllerCompat = null;
+                }
+            }
+        };
+
+        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, BIND_AUTO_CREATE);
+
         // Attach a listener to the button
-        button1.setOnClickListener(v -> MediaControllerCompat.getMediaController(requireActivity()).getTransportControls().play());
-        button2.setOnClickListener(v -> MediaControllerCompat.getMediaController(requireActivity()).getTransportControls().pause());
-        button3.setOnClickListener(v -> MediaControllerCompat.getMediaController(requireActivity()).getTransportControls().stop());
-
-        MediaControllerCompat mediaController = MediaControllerCompat.getMediaController(requireActivity());
-
-        // Register a Callback to stay in sync
-        mediaController.registerCallback(controllerCallback);
-
+        button1.setOnClickListener(v -> {
+            // If we are in a stopped state MusicService must be started
+            if (mState == PlaybackStateCompat.STATE_STOPPED) {
+                requireActivity().startService(new Intent(getContext(), MusicService.class));
+            }
+            mMediaControllerCompat.getTransportControls().play();
+        });
+        button2.setOnClickListener(v -> mMediaControllerCompat.getTransportControls().pause());
+        button3.setOnClickListener(v -> mMediaControllerCompat.getTransportControls().stop());
     }
-
-    // ********* MediaBrowserCompat.ConnectionCallback implementation:
-    private final MediaBrowserCompat.ConnectionCallback connectionCallbacks =
-            new MediaBrowserCompat.ConnectionCallback() {
-                @Override
-                public void onConnected() {
-
-                    // Get the token for the MediaSession
-                    MediaSessionCompat.Token token = mediaBrowser.getSessionToken();
-
-                    // Create a MediaControllerCompat
-                    MediaControllerCompat mediaController =
-                            new MediaControllerCompat(getContext(), // Context
-                                    token);
-
-                    // Save the controller
-                    MediaControllerCompat.setMediaController(requireActivity(), mediaController);
-
-                    // Finish building the UI
-                    buildTransportControls();
-                }
-
-                @Override
-                public void onConnectionSuspended() {
-                    // The Service has crashed. Disable transport controls until it automatically reconnects
-                }
-
-                @Override
-                public void onConnectionFailed() {
-                    // The Service has refused our connection
-                }
-            };
-
-    final MediaControllerCompat.Callback controllerCallback =
-            new MediaControllerCompat.Callback() {
-                @Override
-                public void onMetadataChanged(MediaMetadataCompat metadata) {
-                    Drawable imageResource = new BitmapDrawable(getResources(), MusicService.art);
-                    imageArt.setImageDrawable(imageResource);
-                    titleText.setText(MusicService.titleString);
-                    djNameText.setText(MusicService.djString);
-                }
-
-                @Override
-                public void onPlaybackStateChanged(PlaybackStateCompat state) {
-                    if (state.getState() == PlaybackStateCompat.STATE_PLAYING) {
-                        imageLogo.setVisibility(View.GONE);
-                        Drawable imageResource = new BitmapDrawable(getResources(), MusicService.art);
-                        imageArt.setImageDrawable(imageResource);
-                        imageArt.setVisibility(View.VISIBLE);
-                        titleText.setText(MusicService.titleString);
-                        titleText.setVisibility(View.VISIBLE);
-                        djNameText.setText(MusicService.djString);
-                        djNameText.setVisibility(View.VISIBLE);
-                        button1.setEnabled(false);
-                        button2.setEnabled(true);
-                        button3.setEnabled(true);
-                    } else if (state.getState() == PlaybackStateCompat.STATE_PAUSED) {
-                        imageLogo.setVisibility(View.VISIBLE);
-                        imageArt.setVisibility(View.GONE);
-                        titleText.setVisibility(View.GONE);
-                        djNameText.setVisibility(View.GONE);
-                        button1.setEnabled(true);
-                        button2.setEnabled(false);
-                        button3.setEnabled(true);
-                    } else if (state.getState() == PlaybackStateCompat.STATE_STOPPED) {
-                        imageLogo.setVisibility(View.VISIBLE);
-                        imageArt.setVisibility(View.GONE);
-                        titleText.setVisibility(View.GONE);
-                        djNameText.setVisibility(View.GONE);
-                        button1.setEnabled(true);
-                        button2.setEnabled(false);
-                        button3.setEnabled(false);
-                    } else if (state.getState() == PlaybackStateCompat.STATE_BUFFERING) {
-                        imageLogo.setVisibility(View.VISIBLE);
-                        imageArt.setVisibility(View.GONE);
-                        titleText.setVisibility(View.GONE);
-                        djNameText.setVisibility(View.GONE);
-                        button1.setEnabled(false);
-                        button2.setEnabled(false);
-                        button3.setEnabled(false);
-                    }
-                }
-            };
 }

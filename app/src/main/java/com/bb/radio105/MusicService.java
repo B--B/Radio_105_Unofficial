@@ -21,6 +21,7 @@ import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -34,30 +35,25 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.os.Binder;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
-import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.text.TextUtils;
 import android.util.LruCache;
-import android.view.KeyEvent;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.media.MediaBrowserServiceCompat;
 import androidx.media.session.MediaButtonReceiver;
 import androidx.preference.PreferenceManager;
 
-import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -67,7 +63,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Calendar;
-import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -93,13 +88,10 @@ import com.android.volley.toolbox.StringRequest;
  * Service that handles media playback.
  */
 
-public class MusicService extends MediaBrowserServiceCompat implements OnPreparedListener,
+public class MusicService extends Service implements OnPreparedListener,
         OnErrorListener, AudioManager.OnAudioFocusChangeListener {
 
     private final PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
-
-    // The notification color
-//    private int mNotificationColor;
 
     // Notification metadata
     static String titleString = null;
@@ -195,10 +187,9 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         mSession = new MediaSessionCompat(this, "MusicService");
         stateBuilder = new PlaybackStateCompat.Builder()
                 .setActions(
-                        PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_STOP);
+                        PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PAUSE | PlaybackStateCompat.ACTION_STOP);
         mSession.setPlaybackState(stateBuilder.build());
         mSession.setCallback(mCallback);
-        setSessionToken(mSession.getSessionToken());
         updatePlaybackState(null);
 
         mSession.setActive(true);
@@ -555,7 +546,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0, 1)
                     .setMediaSession(mSession.getSessionToken()));
-//            mNotificationBuilder.setColor(mNotificationColor);
         } else {
             mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0, 1));
@@ -633,17 +623,13 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
     @Nullable
     @Override
-    public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid, @Nullable Bundle rootHints) {
-        // Clients can connect, but this BrowserRoot is an empty hierarchy
-        // so onLoadChildren returns nothing. This disables the ability to browse for content.
-        return new BrowserRoot(getString(R.string.app_name), null);
+    public IBinder onBind(Intent intent) {
+        return new MusicServiceBinder();
     }
 
-    @Override
-    public void onLoadChildren(@NonNull @NotNull String parentId, @NonNull @NotNull MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>> result) {
-        //  Browsing not allowed
-        if (TextUtils.equals(getString(R.string.app_name), parentId)) {
-            result.sendResult(null);
+     class MusicServiceBinder extends Binder {
+        public MediaSessionCompat.Token getMediaSessionToken() {
+            return mSession.getSessionToken();
         }
     }
 
@@ -883,13 +869,5 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             processStopRequest();
         }
 
-        @Override
-        public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
-            KeyEvent mKeyEvent = mediaButtonEvent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-            if (mKeyEvent.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PAUSE) {
-                processPauseRequest();
-            }
-            return super.onMediaButtonEvent(mediaButtonEvent);
-        }
     };
 }

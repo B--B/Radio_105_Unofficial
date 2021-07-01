@@ -47,7 +47,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.LruCache;
 import android.util.SparseArray;
-import android.view.KeyEvent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -219,7 +218,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         mSession = new MediaSessionCompat(this, "MusicService");
         stateBuilder = new PlaybackStateCompat.Builder()
                 .setActions(
-                        PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PLAY_PAUSE);
+                        PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PAUSE | PlaybackStateCompat.ACTION_STOP);
         mSession.setPlaybackState(stateBuilder.build());
         mSession.setCallback(mCallback);
         setSessionToken(mSession.getSessionToken());
@@ -938,15 +937,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             mIntent.setAction(ACTION_STOP);
             mIntent.setPackage(getPackageName());
             startService(mIntent);
-        }
-
-        @Override
-        public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
-            KeyEvent mKeyEvent = mediaButtonEvent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-            if (mKeyEvent.getKeyCode() == KeyEvent.KEYCODE_MEDIA_PAUSE) {
-                mCallback.onPause();
-            }
-            return super.onMediaButtonEvent(mediaButtonEvent);
         }
     };
 }

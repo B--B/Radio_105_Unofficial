@@ -46,7 +46,6 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.LruCache;
-import android.util.SparseArray;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -54,6 +53,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.media.MediaBrowserServiceCompat;
+import androidx.media.session.MediaButtonReceiver;
 import androidx.preference.PreferenceManager;
 
 import org.jetbrains.annotations.NotNull;
@@ -76,10 +76,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import timber.log.Timber;
 
 import static android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY;
-import static com.bb.radio105.Constants.ACTION_ERROR;
-import static com.bb.radio105.Constants.ACTION_PAUSE;
-import static com.bb.radio105.Constants.ACTION_PLAY;
-import static com.bb.radio105.Constants.ACTION_STOP;
 import static com.bb.radio105.Constants.VOLUME_DUCK;
 import static com.bb.radio105.Constants.VOLUME_NORMAL;
 
@@ -115,9 +111,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
     // Metadata scheduler
     ScheduledExecutorService scheduler;
-
-    // SparseArray for notification actions
-    private final SparseArray<PendingIntent> mIntents = new SparseArray<>();
 
     // The tag we put on debug messages
     private final static String TAG = "Radio105Player";
@@ -195,23 +188,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
         mNotificationManager = NotificationManagerCompat.from(this);
 
-        String pkg = getPackageName();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mIntents.put(R.drawable.ic_pause, PendingIntent.getForegroundService(this, 100,
-                    new Intent(ACTION_PAUSE).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE));
-            mIntents.put(R.drawable.ic_play, PendingIntent.getForegroundService(this, 100,
-                    new Intent(ACTION_PLAY).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE));
-            mIntents.put(R.drawable.ic_stop, PendingIntent.getForegroundService(this, 100,
-                    new Intent(ACTION_STOP).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE));
-        } else {
-            mIntents.put(R.drawable.ic_pause, PendingIntent.getService(this, 100,
-                    new Intent(ACTION_PAUSE).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
-            mIntents.put(R.drawable.ic_play, PendingIntent.getService(this, 100,
-                    new Intent(ACTION_PLAY).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
-            mIntents.put(R.drawable.ic_stop, PendingIntent.getService(this, 100,
-                    new Intent(ACTION_STOP).setPackage(pkg), PendingIntent.FLAG_CANCEL_CURRENT));
-        }
-
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         // Start a new MediaSession
@@ -225,6 +201,9 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         updatePlaybackState(null);
 
         mSession.setActive(true);
+
+        Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null, getApplicationContext(), MediaButtonReceiver.class);
+        mSession.setMediaButtonReceiver(PendingIntent.getBroadcast(getApplicationContext(), 0, mediaButtonIntent, 0));
 
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
@@ -265,25 +244,10 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String action = intent.getAction();
-        switch (action) {
-            case ACTION_PLAY:
-                processPlayRequest();
-                break;
-            case ACTION_PAUSE:
-                processPauseRequest();
-                break;
-            case ACTION_STOP:
-                processStopRequest();
-                scheduler.shutdown();
-                djString = null;
-                artUrl = null;
-                break;
-        }
-
-        return START_NOT_STICKY; // Means we started the service, but don't want it to
-        // restart in case it's killed.
+        MediaButtonReceiver.handleIntent(mSession, intent);
+        return super.onStartCommand(intent, flags, startId);
     }
+
 
     private void processPlayRequest() {
         mPlayOnFocusGain = true;
@@ -510,8 +474,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             mNotificationBuilder.setContentTitle(titleString);
             mNotificationBuilder.setContentText(djString);
             mNotificationBuilder.setSubText(text);
-            mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mIntents.get(R.drawable.ic_pause));
-            mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
+            mNotificationBuilder.addAction(new NotificationCompat.Action(R.drawable.ic_pause, getString(R.string.pause), MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_PAUSE)));
+            mNotificationBuilder.addAction(new NotificationCompat.Action(R.drawable.ic_stop, getString(R.string.stop), MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP)));
             mSession.setMetadata
                     (new MediaMetadataCompat.Builder()
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
@@ -524,8 +488,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             mNotificationBuilder.setContentTitle(getString(R.string.radio));
             mNotificationBuilder.setContentText(text);
             mNotificationBuilder.setSubText(null);
-            mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mIntents.get(R.drawable.ic_play));
-            mNotificationBuilder.addAction(R.drawable.ic_stop, getString(R.string.stop), mIntents.get(R.drawable.ic_stop));
+            mNotificationBuilder.addAction(new NotificationCompat.Action(R.drawable.ic_play, getString(R.string.play), MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_PLAY)));
+            mNotificationBuilder.addAction(new NotificationCompat.Action(R.drawable.ic_stop, getString(R.string.stop), MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP)));
             mSession.setMetadata
                     (new MediaMetadataCompat.Builder()
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, placeHolder)
@@ -633,31 +597,18 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         relaxResources(true);
         giveUpAudioFocus();
 
-        Intent mIntent = new Intent();
-        mIntent.setAction(ACTION_ERROR);
-        mIntent.setPackage(getPackageName());
-
         if (pref) {
             // Try to restart the service immediately if we have a working internet connection
             if (isDeviceOnline()) {
                 Toast.makeText(getApplicationContext(), getString(R.string.reconnect),
                         Toast.LENGTH_SHORT).show();
-                // Send the intent for buttons change
-                Intent reconnect = new Intent();
-                reconnect.setAction(ACTION_PLAY);
-                reconnect.setPackage(getPackageName());
-                sendBroadcast(reconnect);
                 // Start the streaming
                 mCallback.onPlay();
             } else {
                 // Tell the user that streaming service cannot be recovered
                 Toast.makeText(getApplicationContext(), getString(R.string.no_reconnect),
                         Toast.LENGTH_SHORT).show();
-                // Send the error intent
-                sendBroadcast(mIntent);
             }
-        } else {
-            sendBroadcast(mIntent);
         }
         return true; // true indicates we handled the error
     }
@@ -677,6 +628,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         // Always release the MediaSession to clean up resources
         // and notify associated MediaController(s).
         mSession.release();
+        mSession.setActive(false);
     }
 
     @Nullable
@@ -918,26 +870,17 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
 
         @Override
         public void onPlay() {
-            Intent mIntent = new Intent();
-            mIntent.setAction(ACTION_PLAY);
-            mIntent.setPackage(getPackageName());
-            startService(mIntent);
+            processPlayRequest();
         }
 
         @Override
         public void onPause() {
-            Intent mIntent = new Intent();
-            mIntent.setAction(ACTION_PAUSE);
-            mIntent.setPackage(getPackageName());
-            startService(mIntent);
+            processPauseRequest();
         }
 
         @Override
         public void onStop() {
-            Intent mIntent = new Intent();
-            mIntent.setAction(ACTION_STOP);
-            mIntent.setPackage(getPackageName());
-            startService(mIntent);
+            processStopRequest();
         }
     };
 }

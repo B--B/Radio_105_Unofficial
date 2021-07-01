@@ -23,7 +23,6 @@ import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -44,6 +43,7 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 import org.adblockplus.libadblockplus.android.webview.BuildConfig;
 
 import java.util.Objects;
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
-            WebView.setWebContentsDebuggingEnabled(true);
+            AdblockWebView.setWebContentsDebuggingEnabled(true);
         }
 
         // Start the service worker controller here, actually only an instance is allowed, but

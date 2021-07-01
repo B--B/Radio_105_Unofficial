@@ -70,6 +70,8 @@ public class ZooFragment extends Fragment {
     private AdblockWebView mWebView = null;
     private View root;
     private ProgressBar mProgressBar;
+    private ZooWebViewClient mZooWebViewClient;
+    private ZooWebChromeClient mZooWebChromeClient;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -88,6 +90,10 @@ public class ZooFragment extends Fragment {
         // Custom Colors
         MainActivity.updateColorsInterface.onUpdate(true);
         MainActivity.isZooColor = true;
+
+        // WebView and Chrome clients
+        mZooWebViewClient = new ZooWebViewClient();
+        mZooWebChromeClient = new ZooWebChromeClient();
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -120,8 +126,8 @@ public class ZooFragment extends Fragment {
             mWebView.restoreState(Constants.zooBundle.getBundle(Constants.ZOO_STATE));
         }
 
-        mWebView.setWebViewClient(new zooWebViewClient());
-        mWebView.setWebChromeClient(new zooWebChromeClient());
+        mWebView.setWebViewClient(mZooWebViewClient);
+        mWebView.setWebChromeClient(mZooWebChromeClient);
 
         mWebView.setDownloadListener((url1, userAgent, contentDisposition, mimetype, contentLength) -> {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
@@ -178,10 +184,12 @@ public class ZooFragment extends Fragment {
         if (pref) {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+        mZooWebViewClient = null;
+        mZooWebChromeClient = null;
+        mProgressBar = null;
         if (mWebView != null) {
             mWebView.dispose(null);
         }
-        mProgressBar = null;
         root = null;
         // Restore Glide memory values
         Glide.get(requireContext()).setMemoryCategory(MemoryCategory.NORMAL);
@@ -195,7 +203,7 @@ public class ZooFragment extends Fragment {
         return new ByteArrayInputStream(mByte);
     }
 
-    private class zooWebChromeClient extends WebChromeClient {
+    private class ZooWebChromeClient extends WebChromeClient {
         private View fullScreenView;
         private ViewGroup mViewGroup;
         private WebChromeClient.CustomViewCallback mViewCallback;
@@ -234,7 +242,7 @@ public class ZooFragment extends Fragment {
         }
     }
 
-    private class zooWebViewClient extends WebViewClient {
+    private class ZooWebViewClient extends WebViewClient {
 
         final String javaScript = "javascript:(function() { " +
                 "var audio = document.querySelector('audio');" +

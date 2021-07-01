@@ -105,43 +105,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onPlaybackStateChanged(PlaybackStateCompat state) {
-                if (state.getState() == PlaybackStateCompat.STATE_PLAYING) {
-                    imageLogo.setVisibility(View.GONE);
-                    Drawable imageResource = new BitmapDrawable(getResources(), MusicService.art);
-                    imageArt.setImageDrawable(imageResource);
-                    imageArt.setVisibility(View.VISIBLE);
-                    titleText.setText(MusicService.titleString);
-                    titleText.setVisibility(View.VISIBLE);
-                    djNameText.setText(MusicService.djString);
-                    djNameText.setVisibility(View.VISIBLE);
-                    button1.setEnabled(false);
-                    button2.setEnabled(true);
-                    button3.setEnabled(true);
-                } else if (state.getState() == PlaybackStateCompat.STATE_PAUSED) {
-                    imageLogo.setVisibility(View.VISIBLE);
-                    imageArt.setVisibility(View.GONE);
-                    titleText.setVisibility(View.GONE);
-                    djNameText.setVisibility(View.GONE);
-                    button1.setEnabled(true);
-                    button2.setEnabled(false);
-                    button3.setEnabled(true);
-                } else if (state.getState() == PlaybackStateCompat.STATE_STOPPED) {
-                    imageLogo.setVisibility(View.VISIBLE);
-                    imageArt.setVisibility(View.GONE);
-                    titleText.setVisibility(View.GONE);
-                    djNameText.setVisibility(View.GONE);
-                    button1.setEnabled(true);
-                    button2.setEnabled(false);
-                    button3.setEnabled(false);
-                } else if (state.getState() == PlaybackStateCompat.STATE_BUFFERING) {
-                    imageLogo.setVisibility(View.VISIBLE);
-                    imageArt.setVisibility(View.GONE);
-                    titleText.setVisibility(View.GONE);
-                    djNameText.setVisibility(View.GONE);
-                    button1.setEnabled(false);
-                    button2.setEnabled(false);
-                    button3.setEnabled(false);
-                }
+                setButtonState();
             }
         };
 
@@ -168,44 +132,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        // Set buttons state
-        if (mState == PlaybackStateCompat.STATE_PLAYING) {
-            imageLogo.setVisibility(View.GONE);
-            Drawable imageResource = new BitmapDrawable(getResources(), MusicService.art);
-            imageArt.setImageDrawable(imageResource);
-            imageArt.setVisibility(View.VISIBLE);
-            titleText.setText(MusicService.titleString);
-            titleText.setVisibility(View.VISIBLE);
-            djNameText.setText(MusicService.djString);
-            djNameText.setVisibility(View.VISIBLE);
-            button1.setEnabled(false);
-            button2.setEnabled(true);
-            button3.setEnabled(true);
-        } else if (mState == PlaybackStateCompat.STATE_PAUSED) {
-            imageLogo.setVisibility(View.VISIBLE);
-            imageArt.setVisibility(View.GONE);
-            titleText.setVisibility(View.GONE);
-            djNameText.setVisibility(View.GONE);
-            button1.setEnabled(true);
-            button2.setEnabled(false);
-            button3.setEnabled(true);
-        } else if (mState == PlaybackStateCompat.STATE_STOPPED) {
-            imageLogo.setVisibility(View.VISIBLE);
-            imageArt.setVisibility(View.GONE);
-            titleText.setVisibility(View.GONE);
-            djNameText.setVisibility(View.GONE);
-            button1.setEnabled(true);
-            button2.setEnabled(false);
-            button3.setEnabled(false);
-        } else if (mState == PlaybackStateCompat.STATE_BUFFERING) {
-            imageLogo.setVisibility(View.VISIBLE);
-            imageArt.setVisibility(View.GONE);
-            titleText.setVisibility(View.GONE);
-            djNameText.setVisibility(View.GONE);
-            button1.setEnabled(false);
-            button2.setEnabled(false);
-            button3.setEnabled(false);
-        }
+        setButtonState();
     }
 
     @Override
@@ -266,5 +193,45 @@ public class HomeFragment extends Fragment {
         });
         button2.setOnClickListener(v -> mMediaControllerCompat.getTransportControls().pause());
         button3.setOnClickListener(v -> mMediaControllerCompat.getTransportControls().stop());
+    }
+
+    private void setButtonState() {
+        if (mState == PlaybackStateCompat.STATE_PLAYING) {
+            imageLogo.setVisibility(View.GONE);
+            Drawable imageResource = new BitmapDrawable(getResources(), MusicService.art);
+            imageArt.setImageDrawable(imageResource);
+            imageArt.setVisibility(View.VISIBLE);
+            titleText.setText(MusicService.titleString);
+            titleText.setVisibility(View.VISIBLE);
+            djNameText.setText(MusicService.djString);
+            djNameText.setVisibility(View.VISIBLE);
+            button1.setEnabled(false);
+            button2.setEnabled(true);
+            button3.setEnabled(true);
+        } else if (mState == PlaybackStateCompat.STATE_PAUSED) {
+            imageLogo.setVisibility(View.VISIBLE);
+            imageArt.setVisibility(View.GONE);
+            titleText.setVisibility(View.GONE);
+            djNameText.setVisibility(View.GONE);
+            button1.setEnabled(true);
+            button2.setEnabled(false);
+            button3.setEnabled(true);
+        } else if (mState == PlaybackStateCompat.STATE_STOPPED || mState == PlaybackStateCompat.STATE_ERROR) {
+            imageLogo.setVisibility(View.VISIBLE);
+            imageArt.setVisibility(View.GONE);
+            titleText.setVisibility(View.GONE);
+            djNameText.setVisibility(View.GONE);
+            button1.setEnabled(true);
+            button2.setEnabled(false);
+            button3.setEnabled(false);
+        } else if (mState == PlaybackStateCompat.STATE_BUFFERING) {
+            imageLogo.setVisibility(View.VISIBLE);
+            imageArt.setVisibility(View.GONE);
+            titleText.setVisibility(View.GONE);
+            djNameText.setVisibility(View.GONE);
+            button1.setEnabled(false);
+            button2.setEnabled(false);
+            button3.setEnabled(false);
+        }
     }
 }

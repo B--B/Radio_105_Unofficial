@@ -16,14 +16,20 @@
 
 package com.bb.radio105;
 
+import static android.content.Context.BIND_AUTO_CREATE;
 import static android.content.Context.UI_MODE_SERVICE;
 
 import android.app.UiModeManager;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,12 +45,17 @@ import androidx.preference.PreferenceManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import timber.log.Timber;
+
 public class TvFragment extends Fragment {
 
     private View root;
     private ProgressBar progressBar;
     private VideoView videoView;
     private String videoUrl;
+    MusicService mService;
+    private MusicService.MusicServiceBinder mMusicServiceBinder;
+    private ServiceConnection mServiceConnection;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -65,12 +76,38 @@ public class TvFragment extends Fragment {
             Utils.restoreScreen(requireActivity());
         }
 
+        progressBar.setVisibility(View.VISIBLE);
+
         return root;
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
+        mServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
+                mService = mMusicServiceBinder.getService();
+                // Stop radio streaming if running
+                if (mService.mState == PlaybackStateCompat.STATE_PLAYING) {
+                    mService.processPauseRequest();
+                }
+                Timber.e("Connection successful");
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                Timber.e("Service disconnected");
+            }
+        };
+
+        requireActivity().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, BIND_AUTO_CREATE);
+
+        // Stop radio streaming if running
+        //mService.processPauseRequest();
+
         // Start video streaming
         videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
         videoView.requestFocus();
@@ -104,6 +141,12 @@ public class TvFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        requireActivity().unbindService(mServiceConnection);
+    }
+
+    @Override
     public void onConfigurationChanged(@NotNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -119,6 +162,9 @@ public class TvFragment extends Fragment {
             Utils.restoreScreen(requireActivity());
         }
         requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        mService = null;
+        mMusicServiceBinder = null;
+        mServiceConnection = null;
         videoView = null;
         progressBar = null;
         videoUrl = null;

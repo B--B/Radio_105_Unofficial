@@ -150,6 +150,7 @@ public class HomeFragment extends Fragment {
             mMediaControllerCompat = null;
         }
         requireContext().unbindService(mServiceConnection);
+        mCallback = null;
         imageArt = null;
         imageLogo = null;
         button1 = null;

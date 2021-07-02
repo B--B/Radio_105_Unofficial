@@ -22,6 +22,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -91,7 +92,7 @@ import com.android.volley.toolbox.StringRequest;
 public class MusicService extends Service implements OnPreparedListener,
         OnErrorListener, AudioManager.OnAudioFocusChangeListener {
 
-    private final PlayerIntentReceiver playerIntentReceiver = new PlayerIntentReceiver();
+    private final AudioBecomingNoisyIntentReceiver mAudioBecomingNoisyIntentReceiver = new AudioBecomingNoisyIntentReceiver();
 
     // Notification metadata
     static String titleString = null;
@@ -199,7 +200,7 @@ public class MusicService extends Service implements OnPreparedListener,
 
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
-        registerReceiver(playerIntentReceiver, mIntentFilter);
+        registerReceiver(mAudioBecomingNoisyIntentReceiver, mIntentFilter);
 
         // simple album art cache that holds no more than
         // MAX_ALBUM_ART_CACHE_SIZE bytes:
@@ -611,7 +612,7 @@ public class MusicService extends Service implements OnPreparedListener,
         relaxResources(true);
         giveUpAudioFocus();
         NetworkUtil.unregisterNetworkCallback();
-        unregisterReceiver(playerIntentReceiver);
+        unregisterReceiver(mAudioBecomingNoisyIntentReceiver);
         titleString = null;
         art = null;
         placeHolder = null;
@@ -870,4 +871,18 @@ public class MusicService extends Service implements OnPreparedListener,
             processStopRequest();
         }
     };
+
+    // AudioBecomingNoisy broadcast receiver
+    class AudioBecomingNoisyIntentReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+                boolean pref = PreferenceManager.getDefaultSharedPreferences(context)
+                        .getBoolean(context.getString(R.string.noisy_key), true);
+                if (pref) {
+                    mCallback.onPause();
+                }
+            }
+        }
+    }
 }

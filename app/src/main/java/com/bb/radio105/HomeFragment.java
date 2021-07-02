@@ -46,8 +46,6 @@ import androidx.fragment.app.FragmentManager;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.bb.radio105.MusicService.mState;
-
 public class HomeFragment extends Fragment {
 
     private Button button1;
@@ -62,6 +60,8 @@ public class HomeFragment extends Fragment {
     private ServiceConnection mServiceConnection;
     private MediaControllerCompat mMediaControllerCompat;
     private MediaControllerCompat.Callback mCallback;
+    MusicService mService;
+    boolean mBound = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -97,10 +97,10 @@ public class HomeFragment extends Fragment {
         mCallback = new MediaControllerCompat.Callback() {
             @Override
             public void onMetadataChanged(MediaMetadataCompat metadata) {
-                Drawable imageResource = new BitmapDrawable(getResources(), MusicService.art);
+                Drawable imageResource = new BitmapDrawable(getResources(), mService.art);
                 imageArt.setImageDrawable(imageResource);
-                titleText.setText(MusicService.titleString);
-                djNameText.setText(MusicService.djString);
+                titleText.setText(mService.titleString);
+                djNameText.setText(mService.djString);
             }
 
             @Override
@@ -132,13 +132,41 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        setButtonState();
+        mServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
+                mService = mMusicServiceBinder.getService();
+                mMediaControllerCompat = new MediaControllerCompat(getContext(), mService.getMediaSessionToken());
+                mCallback.onPlaybackStateChanged(mMediaControllerCompat.getPlaybackState());
+                mMediaControllerCompat.registerCallback(mCallback);
+                mBound = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mMusicServiceBinder = null;
+                if (mMediaControllerCompat != null) {
+                    mMediaControllerCompat.unregisterCallback(mCallback);
+                    mMediaControllerCompat = null;
+                }
+                mBound = false;
+            }
+        };
+
+        requireActivity().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, BIND_AUTO_CREATE);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         requireActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        requireActivity().unbindService(mServiceConnection);
     }
 
     @Override
@@ -149,8 +177,8 @@ public class HomeFragment extends Fragment {
             mMediaControllerCompat.unregisterCallback(mCallback);
             mMediaControllerCompat = null;
         }
-        requireContext().unbindService(mServiceConnection);
         mCallback = null;
+        mService = null;
         imageArt = null;
         imageLogo = null;
         button1 = null;
@@ -163,53 +191,42 @@ public class HomeFragment extends Fragment {
 
     void buildTransportControls() {
 
-        mServiceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
-                mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
-                mCallback.onPlaybackStateChanged(mMediaControllerCompat.getPlaybackState());
-                mMediaControllerCompat.registerCallback(mCallback);
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mMusicServiceBinder = null;
-                if (mMediaControllerCompat != null) {
-                    mMediaControllerCompat.unregisterCallback(mCallback);
-                    mMediaControllerCompat = null;
-                }
-            }
-        };
-
-        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, BIND_AUTO_CREATE);
-
         // Attach a listener to the button
         button1.setOnClickListener(v -> {
-            // If we are in a stopped state MusicService must be started
-            if (mState == PlaybackStateCompat.STATE_STOPPED) {
-                requireActivity().startService(new Intent(getContext(), MusicService.class));
+            if (mBound) {
+                // If we are in a stopped state MusicService must be started
+                if (mService.mState == PlaybackStateCompat.STATE_STOPPED) {
+                    requireActivity().startService(new Intent(getContext(), MusicService.class));
+                }
+                mMediaControllerCompat.getTransportControls().play();
             }
-            mMediaControllerCompat.getTransportControls().play();
         });
-        button2.setOnClickListener(v -> mMediaControllerCompat.getTransportControls().pause());
-        button3.setOnClickListener(v -> mMediaControllerCompat.getTransportControls().stop());
+        button2.setOnClickListener(v -> {
+            if (mBound) {
+                mMediaControllerCompat.getTransportControls().pause();
+            }
+        });
+        button3.setOnClickListener(v -> {
+            if (mBound) {
+                mMediaControllerCompat.getTransportControls().stop();
+            }
+        });
     }
 
     private void setButtonState() {
-        if (mState == PlaybackStateCompat.STATE_PLAYING) {
+        if (mService.mState == PlaybackStateCompat.STATE_PLAYING) {
             imageLogo.setVisibility(View.GONE);
-            Drawable imageResource = new BitmapDrawable(getResources(), MusicService.art);
+            Drawable imageResource = new BitmapDrawable(getResources(), mService.art);
             imageArt.setImageDrawable(imageResource);
             imageArt.setVisibility(View.VISIBLE);
-            titleText.setText(MusicService.titleString);
+            titleText.setText(mService.titleString);
             titleText.setVisibility(View.VISIBLE);
-            djNameText.setText(MusicService.djString);
+            djNameText.setText(mService.djString);
             djNameText.setVisibility(View.VISIBLE);
             button1.setEnabled(false);
             button2.setEnabled(true);
             button3.setEnabled(true);
-        } else if (mState == PlaybackStateCompat.STATE_PAUSED) {
+        } else if (mService.mState == PlaybackStateCompat.STATE_PAUSED) {
             imageLogo.setVisibility(View.VISIBLE);
             imageArt.setVisibility(View.GONE);
             titleText.setVisibility(View.GONE);
@@ -217,7 +234,7 @@ public class HomeFragment extends Fragment {
             button1.setEnabled(true);
             button2.setEnabled(false);
             button3.setEnabled(true);
-        } else if (mState == PlaybackStateCompat.STATE_STOPPED || mState == PlaybackStateCompat.STATE_ERROR) {
+        } else if (mService.mState == PlaybackStateCompat.STATE_STOPPED || mService.mState == PlaybackStateCompat.STATE_ERROR) {
             imageLogo.setVisibility(View.VISIBLE);
             imageArt.setVisibility(View.GONE);
             titleText.setVisibility(View.GONE);
@@ -225,7 +242,7 @@ public class HomeFragment extends Fragment {
             button1.setEnabled(true);
             button2.setEnabled(false);
             button3.setEnabled(false);
-        } else if (mState == PlaybackStateCompat.STATE_BUFFERING) {
+        } else if (mService.mState == PlaybackStateCompat.STATE_BUFFERING) {
             imageLogo.setVisibility(View.VISIBLE);
             imageArt.setVisibility(View.GONE);
             titleText.setVisibility(View.GONE);

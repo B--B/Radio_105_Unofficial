@@ -95,13 +95,16 @@ public class MusicService extends Service implements OnPreparedListener,
     private final AudioBecomingNoisyIntentReceiver mAudioBecomingNoisyIntentReceiver = new AudioBecomingNoisyIntentReceiver();
 
     // Notification metadata
-    static String titleString = null;
-    static String djString = null;
+    String titleString = null;
+    String djString = null;
     String artUrl = null;
     private LruCache<String, Bitmap> mAlbumArtCache;
     private static final int MAX_ALBUM_ART_CACHE_SIZE = 1024*1024;
-    static Bitmap art;
+    Bitmap art;
     Bitmap placeHolder;
+
+    // Binder given to clients
+    private final IBinder mIBinder = new MusicServiceBinder();
 
     // Metadata scheduler
     ScheduledExecutorService scheduler;
@@ -114,7 +117,7 @@ public class MusicService extends Service implements OnPreparedListener,
     static MediaPlayer mPlayer = null;
 
     // Current local media player state
-    static int mState = PlaybackStateCompat.STATE_STOPPED;
+    int mState = PlaybackStateCompat.STATE_STOPPED;
 
     // do we have audio focus?
     enum AudioFocus {
@@ -626,13 +629,22 @@ public class MusicService extends Service implements OnPreparedListener,
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return new MusicServiceBinder();
+        return mIBinder;
     }
 
-     class MusicServiceBinder extends Binder {
-        public MediaSessionCompat.Token getMediaSessionToken() {
-            return mSession.getSessionToken();
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    class MusicServiceBinder extends Binder {
+        MusicService getService() {
+            return MusicService.this;
         }
+    }
+
+    /** method for clients */
+    MediaSessionCompat.Token getMediaSessionToken() {
+        return mSession.getSessionToken();
     }
 
     private void createNotificationChannel() {

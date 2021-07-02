@@ -264,7 +264,7 @@ public class MusicService extends Service implements OnPreparedListener,
         }
     }
 
-    private void processPauseRequest() {
+    void processPauseRequest() {
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
             // Pause media player and cancel the 'foreground service' state.
             mState = PlaybackStateCompat.STATE_PAUSED;

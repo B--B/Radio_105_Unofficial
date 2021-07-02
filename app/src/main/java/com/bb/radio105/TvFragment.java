@@ -19,7 +19,6 @@ package com.bb.radio105;
 import static android.content.Context.UI_MODE_SERVICE;
 
 import android.app.UiModeManager;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
@@ -40,8 +39,6 @@ import androidx.preference.PreferenceManager;
 
 import org.jetbrains.annotations.NotNull;
 
-import static com.bb.radio105.Constants.ACTION_PAUSE;
-
 public class TvFragment extends Fragment {
 
     private View root;
@@ -54,6 +51,11 @@ public class TvFragment extends Fragment {
 
         root = inflater.inflate(R.layout.fragment_tv, container, false);
 
+        requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        videoView = root.findViewById(R.id.videoView);
+        progressBar = root.findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+
         // Stock Colors
         MainActivity.updateColorsInterface.onUpdate(false);
 
@@ -63,46 +65,17 @@ public class TvFragment extends Fragment {
             Utils.restoreScreen(requireActivity());
         }
 
-        // Stop radio streaming if running
-        if (MusicService.mPlayer != null && MusicService.mPlayer.isPlaying()) {
-            Intent mIntent = new Intent();
-            mIntent.setAction(ACTION_PAUSE);
-            mIntent.setPackage(requireContext().getPackageName());
-            requireContext().startService(mIntent);
-        }
-
         return root;
     }
 
-    private final MediaPlayer.OnInfoListener onInfoToPlayStateListener = new MediaPlayer.OnInfoListener() {
-
-        @Override
-        public boolean onInfo(MediaPlayer mp, int what, int extra) {
-            if (MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START == what) {
-                progressBar.setVisibility(View.GONE);
-            }
-            if (MediaPlayer.MEDIA_INFO_BUFFERING_START == what) {
-                progressBar.setVisibility(View.VISIBLE);
-            }
-            if (MediaPlayer.MEDIA_INFO_BUFFERING_END == what) {
-                progressBar.setVisibility(View.VISIBLE);
-            }
-            return false;
-        }
-    };
-
     @Override
     public void onStart() {
-        requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        videoView = root.findViewById(R.id.videoView);
-        progressBar = root.findViewById(R.id.progressBar);
-        videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
+        super.onStart();
         // Start video streaming
-        progressBar.setVisibility(View.VISIBLE);
+        videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
         videoView.requestFocus();
         videoView.setOnInfoListener(onInfoToPlayStateListener);
         videoView.setVideoURI(Uri.parse(videoUrl));
-
 
         UiModeManager mUiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);
         SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
@@ -128,8 +101,6 @@ public class TvFragment extends Fragment {
         } else {
             videoView.start();
         }
-
-        super.onStart();
     }
 
     @Override
@@ -154,4 +125,21 @@ public class TvFragment extends Fragment {
         root = null;
         super.onDestroyView();
     }
+
+    private final MediaPlayer.OnInfoListener onInfoToPlayStateListener = new MediaPlayer.OnInfoListener() {
+
+        @Override
+        public boolean onInfo(MediaPlayer mp, int what, int extra) {
+            if (MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START == what) {
+                progressBar.setVisibility(View.GONE);
+            }
+            if (MediaPlayer.MEDIA_INFO_BUFFERING_START == what) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+            if (MediaPlayer.MEDIA_INFO_BUFFERING_END == what) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+            return false;
+        }
+    };
 }

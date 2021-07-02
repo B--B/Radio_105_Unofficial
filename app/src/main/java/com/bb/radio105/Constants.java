@@ -19,7 +19,6 @@ package com.bb.radio105;
 import android.os.Bundle;
 
 public class Constants {
-    static final String ACTION_PAUSE = "com.bb.radio105.action.PAUSE";
     // 404 custom error page
     static final String ErrorPagePath = "file:///android_asset/index.html";
     // Write storage permission

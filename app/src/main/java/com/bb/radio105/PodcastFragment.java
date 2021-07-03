@@ -291,7 +291,15 @@ public class PodcastFragment extends Fragment {
         public void onPageFinished (WebView webView, String url) {
             String javaScript = "javascript:(function() { " +
                     "var audio = document.querySelector('audio');" +
-                    "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload')};" +
+                    "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload');" +
+                    "audio.onplay = function() {" +
+                    "    audioElement = audio;" +
+                    "    JSPODCASTOUT.mediaPodcastAction('true');" +
+                    "};" +
+                    "audio.onpause = function() {" +
+                    "    audioElement = audio;" +
+                    "    JSPODCASTOUT.mediaPodcastAction('false');" +
+                    "};" + "};" +
                     "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
                     " if (element.length) { element[0].style.width = '100%' }; " +
                     "var element = document.getElementsByClassName('clear');" +
@@ -323,31 +331,7 @@ public class PodcastFragment extends Fragment {
                     "var element = document.getElementsByClassName('iubenda-cs-container');" +
                     " if (element.length) { element[0].style.display = 'none' }; " +
                     "var element = document.getElementsByClassName('container-fluid vc_bg_grad_green-blu-tone ghost_container');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var audioElement;" +
-                    "for(var i = 0; i < document.getElementsByTagName('audio').length; i++) {" +
-                    "    var aud = document.getElementsByTagName('audio')[0];" +
-                    "    aud.onplay = function(){" +
-                    "        audioElement = aud;" +
-                    "        JSPODCASTOUT.mediaPodcastAction('true');" +
-                    "    };" +
-                    "    aud.onpause = function(){" +
-                    "        audioElement = aud;" +
-                    "        JSPODCASTOUT.mediaPodcastAction('false');" +
-                    "    };" +
-                    "};" +
-                    "var videoElement;" +
-                    "for(var i = 0; i < document.getElementsByTagName('video').length; i++) {" +
-                    "    var vid = document.getElementsByTagName('video')[0];" +
-                    "    vid.onplay = function(){" +
-                    "        videoElement = vid;" +
-                    "        JSPODCASTOUT.mediaPodcastAction('true');" +
-                    "    };" +
-                    "    vid.onpause = function(){" +
-                    "        videoElement = vid;" +
-                    "        JSPODCASTOUT.mediaPodcastAction('false');" +
-                    "    };" +
-                    "};" + "})()";
+                    " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
 
             webView.loadUrl(javaScript);

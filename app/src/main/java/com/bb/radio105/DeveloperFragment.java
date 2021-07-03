@@ -99,6 +99,11 @@ public class DeveloperFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        sources = null;
+        bug = null;
+        developerMail = null;
+        rateOnPlayStore = null;
+        recommendToFriend = null;
         root = null;
         super.onDestroyView();
     }

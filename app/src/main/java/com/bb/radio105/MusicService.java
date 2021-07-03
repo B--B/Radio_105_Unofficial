@@ -288,9 +288,6 @@ public class MusicService extends Service implements OnPreparedListener,
             relaxResources(true);
             giveUpAudioFocus();
             updatePlaybackState(null);
-
-            // service is no longer necessary. Will be started again if needed.
-            stopSelf();
         }
     }
 
@@ -611,6 +608,7 @@ public class MusicService extends Service implements OnPreparedListener,
     @Override
     public void onDestroy() {
         // Service is being killed, so make sure we release our resources
+        stopSelf();
         mState = PlaybackStateCompat.STATE_STOPPED;
         relaxResources(true);
         giveUpAudioFocus();

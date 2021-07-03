@@ -19,7 +19,9 @@ package com.bb.radio105;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -27,6 +29,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,6 +75,9 @@ public class ZooFragment extends Fragment {
     private ProgressBar mProgressBar;
     private ZooWebViewClient mZooWebViewClient;
     private ZooWebChromeClient mZooWebChromeClient;
+    private MusicService mService;
+    private MusicService.MusicServiceBinder mMusicServiceBinder;
+    boolean mBound = false;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -142,7 +148,17 @@ public class ZooFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        // Bind music service
+        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
+    }
+
+    @Override
     public void onStop() {
+        super.onStop();
+        // Unbind music service
+        requireContext().unbindService(mServiceConnection);
         if (Constants.zooBundle == null) {
             Timber.d("onStop: created new outState bundle!");
             Constants.zooBundle = new Bundle(ClassLoader.getSystemClassLoader());
@@ -152,7 +168,6 @@ public class ZooFragment extends Fragment {
             Timber.d("onStop: failed to obtain WebView state to save!");
         }
         Constants.zooBundle.putBundle(Constants.ZOO_STATE, currentWebViewState);
-        super.onStop();
     }
 
     @Override
@@ -179,6 +194,8 @@ public class ZooFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        mService = null;
+        mMusicServiceBinder = null;
         boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.screen_on_key), false);
         if (pref) {
@@ -379,4 +396,20 @@ public class ZooFragment extends Fragment {
             return super.shouldInterceptRequest(view, request);
         }
     }
+
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Timber.e("Connection successful");
+            mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
+            mService = mMusicServiceBinder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Timber.e("Service crashed");
+            mService = null;
+            mBound = false;
+        }
+    };
 }

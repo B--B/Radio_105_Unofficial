@@ -19,7 +19,9 @@ package com.bb.radio105;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -27,6 +29,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,6 +75,9 @@ public class PodcastFragment extends Fragment {
     private ProgressBar mProgressBar;
     private PodcastWebViewClient mPodcastWebViewClient;
     private PodcastWebChromeClient mPodcastWebChromeClient;
+    private MusicService mService;
+    private MusicService.MusicServiceBinder mMusicServiceBinder;
+    boolean mBound = false;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -140,7 +146,17 @@ public class PodcastFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        // Bind music service
+        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
+    }
+
+    @Override
     public void onStop() {
+        super.onStop();
+        // Unbind music service
+        requireContext().unbindService(mServiceConnection);
         if (Constants.podcastBundle == null) {
             Timber.d("onStop: created new outState bundle!");
             Constants.podcastBundle = new Bundle(ClassLoader.getSystemClassLoader());
@@ -150,33 +166,35 @@ public class PodcastFragment extends Fragment {
             Timber.d("onStop: failed to obtain WebView state to save!");
         }
         Constants.podcastBundle.putBundle(Constants.PODCAST_STATE, currentWebViewState);
-        super.onStop();
     }
 
     @Override
     public void onPause() {
+        super.onPause();
         if (mWebView != null) {
             Utils.callJavaScript(mWebView, "player.pause");
             mWebView.getSettings().setJavaScriptEnabled(false);
             mWebView.onPause();
             mWebView.pauseTimers();
         }
-        super.onPause();
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onResume() {
+        super.onResume();
         if (mWebView != null) {
             mWebView.getSettings().setJavaScriptEnabled(true);
             mWebView.onResume();
             mWebView.resumeTimers();
         }
-        super.onResume();
     }
 
     @Override
     public void onDestroyView() {
+        super.onDestroyView();
+        mService = null;
+        mMusicServiceBinder = null;
         boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.screen_on_key), false);
         if (pref) {
@@ -191,7 +209,6 @@ public class PodcastFragment extends Fragment {
         root = null;
         // Restore Glide memory values
         Glide.get(requireContext()).setMemoryCategory(MemoryCategory.NORMAL);
-        super.onDestroyView();
     }
 
     private InputStream getBitmapInputStream(Bitmap bitmap, Bitmap.CompressFormat compressFormat) {
@@ -374,4 +391,20 @@ public class PodcastFragment extends Fragment {
             return super.shouldInterceptRequest(view, request);
         }
     }
+
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Timber.e("Connection successful");
+            mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
+            mService = mMusicServiceBinder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Timber.e("Service crashed");
+            mService = null;
+            mBound = false;
+        }
+    };
 }

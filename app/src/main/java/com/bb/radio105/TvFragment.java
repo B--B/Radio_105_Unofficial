@@ -141,7 +141,6 @@ public class TvFragment extends Fragment {
         requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mService = null;
         mMusicServiceBinder = null;
-        mServiceConnection = null;
         videoView = null;
         progressBar = null;
         videoUrl = null;

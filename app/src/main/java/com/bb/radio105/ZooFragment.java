@@ -144,12 +144,12 @@ public class ZooFragment extends Fragment {
     @Override
     public void onStop() {
         if (Constants.zooBundle == null) {
-            Timber.d("Zoo onStop: creates new outState bundle!");
+            Timber.d("onStop: created new outState bundle!");
             Constants.zooBundle = new Bundle(ClassLoader.getSystemClassLoader());
         }
         final Bundle currentWebViewState = new Bundle(ClassLoader.getSystemClassLoader());
         if (mWebView.saveState(currentWebViewState) == null) {
-            Timber.d("Zoo onStop: failed to obtain WebView state to save!");
+            Timber.d("onStop: failed to obtain WebView state to save!");
         }
         Constants.zooBundle.putBundle(Constants.ZOO_STATE, currentWebViewState);
         super.onStop();

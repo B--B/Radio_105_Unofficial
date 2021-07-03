@@ -16,7 +16,6 @@
 
 package com.bb.radio105;
 
-import static android.content.Context.BIND_AUTO_CREATE;
 import static android.content.Context.UI_MODE_SERVICE;
 
 import android.app.UiModeManager;
@@ -60,7 +59,7 @@ public class HomeFragment extends Fragment {
     private TextView djNameText;
     private MusicService.MusicServiceBinder mMusicServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
-    MusicService mService;
+    private MusicService mService;
     boolean mBound = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -114,7 +113,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, BIND_AUTO_CREATE);
+        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
         buildTransportControls();
     }
 
@@ -156,10 +155,6 @@ public class HomeFragment extends Fragment {
         // Attach a listener to the button
         button1.setOnClickListener(v -> {
             if (mBound) {
-                // If we are in a stopped state MusicService must be started
-                if (mService.mState == PlaybackStateCompat.STATE_STOPPED) {
-                    requireActivity().startService(new Intent(getContext(), MusicService.class));
-                }
                 mMediaControllerCompat.getTransportControls().play();
             }
         });
@@ -229,7 +224,8 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Timber.e("Service disconnected");
+            Timber.e("Service crashed");
+            mService = null;
             mMusicServiceBinder = null;
             if (mMediaControllerCompat != null) {
                 mMediaControllerCompat.unregisterCallback(mCallback);

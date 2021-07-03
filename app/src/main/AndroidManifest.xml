@@ -48,13 +48,12 @@
             android:name="com.bb.radio105.MusicService"
             android:exported="false">
             <intent-filter>
-                <action android:name="android.media.browse.MediaBrowserService" />
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </service>
 
         <receiver android:name="androidx.media.session.MediaButtonReceiver"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>

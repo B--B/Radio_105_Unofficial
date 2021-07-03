@@ -45,7 +45,8 @@
 
         <service
             android:name="com.bb.radio105.MusicService"
-            android:exported="false">
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
                 <action android:name="com.bb.radio105.action.PLAY" />

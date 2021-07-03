@@ -140,12 +140,12 @@ public class PodcastFragment extends Fragment {
     @Override
     public void onStop() {
         if (Constants.podcastBundle == null) {
-            Timber.d("Podcast onStop: creates new outState bundle!");
+            Timber.d("onStop: created new outState bundle!");
             Constants.podcastBundle = new Bundle(ClassLoader.getSystemClassLoader());
         }
         final Bundle currentWebViewState = new Bundle(ClassLoader.getSystemClassLoader());
         if (mWebView.saveState(currentWebViewState) == null) {
-            Timber.d("Podcast onStop: failed to obtain WebView state to save!");
+            Timber.d("onStop: failed to obtain WebView state to save!");
         }
         Constants.podcastBundle.putBundle(Constants.PODCAST_STATE, currentWebViewState);
         super.onStop();

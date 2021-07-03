@@ -241,7 +241,7 @@ public class MusicService extends Service implements OnPreparedListener,
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         MediaButtonReceiver.handleIntent(mSession, intent);
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
 

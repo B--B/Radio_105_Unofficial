@@ -16,7 +16,6 @@
 
 package com.bb.radio105;
 
-import static android.content.Context.BIND_AUTO_CREATE;
 import static android.content.Context.UI_MODE_SERVICE;
 
 import android.app.UiModeManager;
@@ -85,7 +84,7 @@ public class TvFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, BIND_AUTO_CREATE);
+        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
         // Start video streaming
         videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
         videoView.requestFocus();
@@ -181,7 +180,8 @@ public class TvFragment extends Fragment {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Timber.e("Service disconnected");
+            Timber.e("Service crashed");
+            mService = null;
             mBound = false;
         }
     };

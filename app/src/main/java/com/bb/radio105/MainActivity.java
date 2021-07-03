@@ -16,6 +16,7 @@
 
 package com.bb.radio105;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -61,6 +62,11 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+            AdblockWebView.setWebContentsDebuggingEnabled(true);
+        }
 
         final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
         // The apps theme is decided depending upon the saved preferences on app startup
@@ -109,10 +115,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
                     .show();
         }
 
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
-            AdblockWebView.setWebContentsDebuggingEnabled(true);
-        }
+        startService(new Intent(this, MusicService.class));
 
         // Start the service worker controller here, actually only an instance is allowed, but
         // we have two fragments that runs webView. In addition the service worker controller must be

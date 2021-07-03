@@ -31,10 +31,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -410,4 +412,18 @@ public class ZooFragment extends Fragment {
             mBound = false;
         }
     };
+
+    class JSInterface {
+        boolean isMediaPlaying;
+        @JavascriptInterface
+        public void mediaAction(String mString) {
+            Timber.e("isMediaPlaying is %s", mString);
+            isMediaPlaying = Boolean.parseBoolean(mString);
+            if (isMediaPlaying) {
+                if (mService.mState == PlaybackStateCompat.STATE_PLAYING) {
+                    mService.processPauseRequest();
+                }
+            }
+        }
+    }
 }

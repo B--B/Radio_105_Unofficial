@@ -31,10 +31,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -123,14 +125,14 @@ public class PodcastFragment extends Fragment {
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.setProvider(AdblockHelper.get().getProvider());
         mWebView.setSiteKeysConfiguration(AdblockHelper.get().getSiteKeysConfiguration());
+        mWebView.addJavascriptInterface(new JSInterface(),"JSOUT");
+        mWebView.setWebViewClient(mPodcastWebViewClient);
+        mWebView.setWebChromeClient(mPodcastWebChromeClient);
         if (Constants.podcastBundle == null) {
             mWebView.loadUrl(url);
         } else {
             mWebView.restoreState(Constants.podcastBundle.getBundle(Constants.PODCAST_STATE));
         }
-
-        mWebView.setWebViewClient(mPodcastWebViewClient);
-        mWebView.setWebChromeClient(mPodcastWebChromeClient);
 
         mWebView.setDownloadListener((url1, userAgent, contentDisposition, mimetype, contentLength) -> {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
@@ -257,41 +259,6 @@ public class PodcastFragment extends Fragment {
 
     private class PodcastWebViewClient extends WebViewClient {
 
-        final String javaScript = "javascript:(function() { " +
-                "var audio = document.querySelector('audio');" +
-                "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload')};" +
-                "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
-                " if (element.length) { element[0].style.width = '100%' }; " +
-                "var element = document.getElementsByClassName('clear');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('navbar-fixed-top hidden-print');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('container vc_bg_white');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('vc_share_buttons_horizontal');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('spacer t_40');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('col-xs-12');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('text_edit vc_textedit_title_refine_results null');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('vc_search_refine_results_standard');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('social social_buttons');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('vc_cont_article');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('bannervcms banner_masthead_2_970x250 ');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('anteprima_slider vc_preview_slider_dj ghost_container vc_txt_m variant vc_theme_light vc_br_100  null ');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('container-fluid vc_bg_darkgray vc_bt7_yellow vc_z2 vc_hidden_print');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('iubenda-cs-container');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('container-fluid vc_bg_grad_green-blu-tone ghost_container');" +
-                " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
         @Override
         public boolean shouldOverrideUrlLoading (WebView webView, WebResourceRequest request) {
@@ -321,7 +288,69 @@ public class PodcastFragment extends Fragment {
 
         @Override
         public void onPageFinished (WebView webView, String url) {
+            String javaScript = "javascript:(function() { " +
+                    "var audio = document.querySelector('audio');" +
+                    "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload')};" +
+                    "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
+                    " if (element.length) { element[0].style.width = '100%' }; " +
+                    "var element = document.getElementsByClassName('clear');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('navbar-fixed-top hidden-print');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('container vc_bg_white');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('vc_share_buttons_horizontal');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('spacer t_40');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('col-xs-12');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('text_edit vc_textedit_title_refine_results null');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('vc_search_refine_results_standard');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('social social_buttons');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('vc_cont_article');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('bannervcms banner_masthead_2_970x250 ');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('anteprima_slider vc_preview_slider_dj ghost_container vc_txt_m variant vc_theme_light vc_br_100  null ');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('container-fluid vc_bg_darkgray vc_bt7_yellow vc_z2 vc_hidden_print');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('iubenda-cs-container');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('container-fluid vc_bg_grad_green-blu-tone ghost_container');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " + "})()";
+
+            String mediaPlaying = "var audioElement;" +
+                    "for(var i = 0; i < document.getElementsByTagName('audio').length; i++){" +
+                    "    var aud = document.getElementsByTagName('audio')[0];" +
+                    "    aud.onplay = function(){" +
+                    "        audioElement = aud;" +
+                    "        JSOUT.mediaAction('true');" +
+                    "    };" +
+                    "    aud.onpause = function(){" +
+                    "        audioElement = aud;" +
+                    "        JSOUT.mediaAction('false');" +
+                    "    };" +
+                    "}" +
+                    "var videoElement;" +
+                    "for(var i = 0; i < document.getElementsByTagName('video').length; i++){" +
+                    "    var vid = document.getElementsByTagName('video')[0];" +
+                    "    vid.onplay = function(){" +
+                    "        videoElement = vid;" +
+                    "        JSOUT.mediaAction('true');" +
+                    "    };" +
+                    "    vid.onpause = function(){" +
+                    "        videoElement = vid;" +
+                    "        JSOUT.mediaAction('false');" +
+                    "    };" +
+                    "}";
+
             webView.loadUrl(javaScript);
+            webView.evaluateJavascript(mediaPlaying, null);
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (mProgressBar != null) {
                     mProgressBar.setVisibility(View.GONE);
@@ -405,4 +434,18 @@ public class PodcastFragment extends Fragment {
             mBound = false;
         }
     };
+
+    class JSInterface {
+        boolean isMediaPlaying;
+        @JavascriptInterface
+        public void mediaAction(String mString) {
+            Timber.e("isMediaPlaying is %s", mString);
+            isMediaPlaying = Boolean.parseBoolean(mString);
+            if (isMediaPlaying) {
+                if (mService.mState == PlaybackStateCompat.STATE_PLAYING) {
+                    mService.processPauseRequest();
+                }
+            }
+        }
+    }
 }

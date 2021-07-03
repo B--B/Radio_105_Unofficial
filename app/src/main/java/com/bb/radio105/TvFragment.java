@@ -55,7 +55,7 @@ public class TvFragment extends Fragment {
     private String videoUrl;
     MusicService mService;
     private MusicService.MusicServiceBinder mMusicServiceBinder;
-    private ServiceConnection mServiceConnection;
+    boolean mBound = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -85,29 +85,7 @@ public class TvFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        mServiceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
-                mService = mMusicServiceBinder.getService();
-                // Stop radio streaming if running
-                if (mService.mState == PlaybackStateCompat.STATE_PLAYING) {
-                    mService.processPauseRequest();
-                }
-                Timber.e("Connection successful");
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                Timber.e("Service disconnected");
-            }
-        };
-
-        requireActivity().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, BIND_AUTO_CREATE);
-
-        // Stop radio streaming if running
-        //mService.processPauseRequest();
-
+        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, BIND_AUTO_CREATE);
         // Start video streaming
         videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
         videoView.requestFocus();
@@ -143,7 +121,7 @@ public class TvFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        requireActivity().unbindService(mServiceConnection);
+        requireContext().unbindService(mServiceConnection);
     }
 
     @Override
@@ -173,7 +151,6 @@ public class TvFragment extends Fragment {
     }
 
     private final MediaPlayer.OnInfoListener onInfoToPlayStateListener = new MediaPlayer.OnInfoListener() {
-
         @Override
         public boolean onInfo(MediaPlayer mp, int what, int extra) {
             if (MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START == what) {
@@ -186,6 +163,26 @@ public class TvFragment extends Fragment {
                 progressBar.setVisibility(View.VISIBLE);
             }
             return false;
+        }
+    };
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Timber.e("Connection successful");
+            mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
+            mService = mMusicServiceBinder.getService();
+            // Stop radio streaming if running
+            if (mService.mState == PlaybackStateCompat.STATE_PLAYING) {
+                mService.processPauseRequest();
+            }
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Timber.e("Service disconnected");
+            mBound = false;
         }
     };
 }

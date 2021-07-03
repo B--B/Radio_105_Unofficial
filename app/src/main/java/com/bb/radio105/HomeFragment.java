@@ -46,6 +46,8 @@ import androidx.fragment.app.FragmentManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import timber.log.Timber;
+
 public class HomeFragment extends Fragment {
 
     private Button button1;
@@ -57,9 +59,7 @@ public class HomeFragment extends Fragment {
     private TextView titleText;
     private TextView djNameText;
     private MusicService.MusicServiceBinder mMusicServiceBinder;
-    private ServiceConnection mServiceConnection;
     private MediaControllerCompat mMediaControllerCompat;
-    private MediaControllerCompat.Callback mCallback;
     MusicService mService;
     boolean mBound = false;
 
@@ -94,24 +94,6 @@ public class HomeFragment extends Fragment {
         button2 = root.findViewById(R.id.button2);
         button3 = root.findViewById(R.id.button3);
 
-        mCallback = new MediaControllerCompat.Callback() {
-            @Override
-            public void onMetadataChanged(MediaMetadataCompat metadata) {
-                Drawable imageResource = new BitmapDrawable(getResources(), mService.art);
-                imageArt.setImageDrawable(imageResource);
-                titleText.setText(mService.titleString);
-                djNameText.setText(mService.djString);
-            }
-
-            @Override
-            public void onPlaybackStateChanged(PlaybackStateCompat state) {
-                setButtonState();
-            }
-        };
-
-        // Finish building the UI
-        buildTransportControls();
-
         return root;
     }
 
@@ -132,29 +114,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mServiceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
-                mService = mMusicServiceBinder.getService();
-                mMediaControllerCompat = new MediaControllerCompat(getContext(), mService.getMediaSessionToken());
-                mCallback.onPlaybackStateChanged(mMediaControllerCompat.getPlaybackState());
-                mMediaControllerCompat.registerCallback(mCallback);
-                mBound = true;
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mMusicServiceBinder = null;
-                if (mMediaControllerCompat != null) {
-                    mMediaControllerCompat.unregisterCallback(mCallback);
-                    mMediaControllerCompat = null;
-                }
-                mBound = false;
-            }
-        };
-
-        requireActivity().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, BIND_AUTO_CREATE);
+        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, BIND_AUTO_CREATE);
+        buildTransportControls();
     }
 
     @Override
@@ -166,7 +127,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        requireActivity().unbindService(mServiceConnection);
+        requireContext().unbindService(mServiceConnection);
     }
 
     @Override
@@ -177,6 +138,7 @@ public class HomeFragment extends Fragment {
             mMediaControllerCompat.unregisterCallback(mCallback);
             mMediaControllerCompat = null;
         }
+        mServiceConnection = null;
         mCallback = null;
         mService = null;
         imageArt = null;
@@ -252,4 +214,43 @@ public class HomeFragment extends Fragment {
             button3.setEnabled(false);
         }
     }
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Timber.e("Connection successful");
+            mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
+            mService = mMusicServiceBinder.getService();
+            mMediaControllerCompat = new MediaControllerCompat(getContext(), mService.getMediaSessionToken());
+            mCallback.onPlaybackStateChanged(mMediaControllerCompat.getPlaybackState());
+            mMediaControllerCompat.registerCallback(mCallback);
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Timber.e("Service disconnected");
+            mMusicServiceBinder = null;
+            if (mMediaControllerCompat != null) {
+                mMediaControllerCompat.unregisterCallback(mCallback);
+                mMediaControllerCompat = null;
+            }
+            mBound = false;
+        }
+    };
+
+    private MediaControllerCompat.Callback mCallback = new MediaControllerCompat.Callback() {
+        @Override
+        public void onMetadataChanged(MediaMetadataCompat metadata) {
+            Drawable imageResource = new BitmapDrawable(getResources(), mService.art);
+            imageArt.setImageDrawable(imageResource);
+            titleText.setText(mService.titleString);
+            djNameText.setText(mService.djString);
+        }
+
+        @Override
+        public void onPlaybackStateChanged(PlaybackStateCompat state) {
+            setButtonState();
+        }
+    };
 }

@@ -126,7 +126,7 @@ public class PodcastFragment extends Fragment {
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.setProvider(AdblockHelper.get().getProvider());
         mWebView.setSiteKeysConfiguration(AdblockHelper.get().getSiteKeysConfiguration());
-        mWebView.addJavascriptInterface(new JSInterface(),"JSOUT");
+        mWebView.addJavascriptInterface(new JSInterfacePodcast(),"JSPODCASTOUT");
         mWebView.setWebViewClient(mPodcastWebViewClient);
         mWebView.setWebChromeClient(mPodcastWebChromeClient);
         if (Constants.podcastBundle == null) {
@@ -323,35 +323,34 @@ public class PodcastFragment extends Fragment {
                     "var element = document.getElementsByClassName('iubenda-cs-container');" +
                     " if (element.length) { element[0].style.display = 'none' }; " +
                     "var element = document.getElementsByClassName('container-fluid vc_bg_grad_green-blu-tone ghost_container');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " + "})()";
-
-            String mediaPlaying = "var audioElement;" +
-                    "for(var i = 0; i < document.getElementsByTagName('audio').length; i++){" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var audioElement;" +
+                    "for(var i = 0; i < document.getElementsByTagName('audio').length; i++) {" +
                     "    var aud = document.getElementsByTagName('audio')[0];" +
                     "    aud.onplay = function(){" +
                     "        audioElement = aud;" +
-                    "        JSOUT.mediaAction('true');" +
+                    "        JSPODCASTOUT.mediaPodcastAction('true');" +
                     "    };" +
                     "    aud.onpause = function(){" +
                     "        audioElement = aud;" +
-                    "        JSOUT.mediaAction('false');" +
+                    "        JSPODCASTOUT.mediaPodcastAction('false');" +
                     "    };" +
-                    "}" +
+                    "};" +
                     "var videoElement;" +
-                    "for(var i = 0; i < document.getElementsByTagName('video').length; i++){" +
+                    "for(var i = 0; i < document.getElementsByTagName('video').length; i++) {" +
                     "    var vid = document.getElementsByTagName('video')[0];" +
                     "    vid.onplay = function(){" +
                     "        videoElement = vid;" +
-                    "        JSOUT.mediaAction('true');" +
+                    "        JSPODCASTOUT.mediaPodcastAction('true');" +
                     "    };" +
                     "    vid.onpause = function(){" +
                     "        videoElement = vid;" +
-                    "        JSOUT.mediaAction('false');" +
+                    "        JSPODCASTOUT.mediaPodcastAction('false');" +
                     "    };" +
-                    "}";
+                    "};" + "})()";
+
 
             webView.loadUrl(javaScript);
-            webView.evaluateJavascript(mediaPlaying, null);
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (mProgressBar != null) {
                     mProgressBar.setVisibility(View.GONE);
@@ -436,13 +435,13 @@ public class PodcastFragment extends Fragment {
         }
     };
 
-    class JSInterface {
-        boolean isMediaPlaying;
+    class JSInterfacePodcast {
+        boolean isMediaPlayingPodcast;
         @JavascriptInterface
-        public void mediaAction(String mString) {
-            Timber.e("isMediaPlaying is %s", mString);
-            isMediaPlaying = Boolean.parseBoolean(mString);
-            if (isMediaPlaying) {
+        public void mediaPodcastAction(String mString) {
+            Timber.e("isMediaPlayingPodcast is %s", mString);
+            isMediaPlayingPodcast = Boolean.parseBoolean(mString);
+            if (isMediaPlayingPodcast) {
                 if (mService.mState == PlaybackStateCompat.STATE_PLAYING) {
                     mService.processPauseRequest();
                 }

@@ -149,7 +149,6 @@ public class HomeFragment extends Fragment {
     }
 
     void buildTransportControls() {
-
         // Attach a listener to the button
         button1.setOnClickListener(v -> {
             if (mBound) {

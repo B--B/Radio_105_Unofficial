@@ -52,7 +52,7 @@ public class TvFragment extends Fragment {
     private ProgressBar progressBar;
     private VideoView videoView;
     private String videoUrl;
-    MusicService mService;
+    private MusicService mService;
     private MusicService.MusicServiceBinder mMusicServiceBinder;
     boolean mBound = false;
 
@@ -83,7 +83,7 @@ public class TvFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
+        // Bind music service
         requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
         // Start video streaming
         videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
@@ -120,6 +120,7 @@ public class TvFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        // Unbind music service
         requireContext().unbindService(mServiceConnection);
     }
 
@@ -135,6 +136,7 @@ public class TvFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        super.onDestroyView();
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Utils.restoreScreen(requireActivity());
         }
@@ -145,7 +147,6 @@ public class TvFragment extends Fragment {
         progressBar = null;
         videoUrl = null;
         root = null;
-        super.onDestroyView();
     }
 
     private final MediaPlayer.OnInfoListener onInfoToPlayStateListener = new MediaPlayer.OnInfoListener() {

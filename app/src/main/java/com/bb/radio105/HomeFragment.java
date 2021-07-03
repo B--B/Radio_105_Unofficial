@@ -137,8 +137,6 @@ public class HomeFragment extends Fragment {
             mMediaControllerCompat.unregisterCallback(mCallback);
             mMediaControllerCompat = null;
         }
-        mServiceConnection = null;
-        mCallback = null;
         mService = null;
         imageArt = null;
         imageLogo = null;

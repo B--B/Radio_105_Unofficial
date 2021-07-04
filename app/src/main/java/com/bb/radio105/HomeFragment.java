@@ -57,7 +57,7 @@ public class HomeFragment extends Fragment {
     private ImageView imageArt;
     private TextView titleText;
     private TextView djNameText;
-    private MusicService.MusicServiceBinder mMusicServiceBinder;
+    private MusicServiceBinder mMusicServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
     boolean mBound = false;
 
@@ -209,7 +209,7 @@ public class HomeFragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
-            mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
+            mMusicServiceBinder = (MusicServiceBinder) service;
             mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
             mCallback.onPlaybackStateChanged(mMediaControllerCompat.getPlaybackState());
             mMediaControllerCompat.registerCallback(mCallback);

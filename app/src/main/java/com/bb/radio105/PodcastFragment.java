@@ -77,7 +77,7 @@ public class PodcastFragment extends Fragment {
     private ProgressBar mProgressBar;
     private PodcastWebViewClient mPodcastWebViewClient;
     private PodcastWebChromeClient mPodcastWebChromeClient;
-    private MusicService.MusicServiceBinder mMusicServiceBinder;
+    private MusicServiceBinder mMusicServiceBinder;
     boolean mBound = false;
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -402,7 +402,7 @@ public class PodcastFragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
-            mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
+            mMusicServiceBinder = (MusicServiceBinder) service;
         }
 
         @Override
@@ -420,7 +420,7 @@ public class PodcastFragment extends Fragment {
             isMediaPlayingPodcast = Boolean.parseBoolean(mString);
             if (isMediaPlayingPodcast) {
                 if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
-                    mMusicServiceBinder.pauseStreaming();
+//                    mMusicServiceBinder.pauseStreaming();
                 }
             }
         }

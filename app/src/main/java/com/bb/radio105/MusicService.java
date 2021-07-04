@@ -36,7 +36,6 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
-import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -95,16 +94,19 @@ public class MusicService extends Service implements OnPreparedListener,
     private final AudioBecomingNoisyIntentReceiver mAudioBecomingNoisyIntentReceiver = new AudioBecomingNoisyIntentReceiver();
 
     // Notification metadata
-    String titleString = null;
-    String djString = null;
+    static String titleString = null;
+    static String djString = null;
     String artUrl = null;
     private LruCache<String, Bitmap> mAlbumArtCache;
     private static final int MAX_ALBUM_ART_CACHE_SIZE = 1024*1024;
-    Bitmap art;
+    static Bitmap art;
     Bitmap placeHolder;
 
     // Binder given to clients
     private final IBinder mIBinder = new MusicServiceBinder();
+
+    // MediaSession Token
+    static MediaSessionCompat.Token mToken;
 
     // Metadata scheduler
     ScheduledExecutorService scheduler;
@@ -117,7 +119,7 @@ public class MusicService extends Service implements OnPreparedListener,
     static MediaPlayer mPlayer = null;
 
     // Current local media player state
-    int mState = PlaybackStateCompat.STATE_STOPPED;
+    static int mState = PlaybackStateCompat.STATE_STOPPED;
 
     // do we have audio focus?
     enum AudioFocus {
@@ -197,6 +199,7 @@ public class MusicService extends Service implements OnPreparedListener,
         updatePlaybackState(null);
 
         mSession.setActive(true);
+        mToken = mSession.getSessionToken();
 
         Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null, getApplicationContext(), MediaButtonReceiver.class);
         mSession.setMediaButtonReceiver(PendingIntent.getBroadcast(getApplicationContext(), 0, mediaButtonIntent, 0));
@@ -547,7 +550,7 @@ public class MusicService extends Service implements OnPreparedListener,
         if (pref) {
             mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0, 1)
-                    .setMediaSession(mSession.getSessionToken()));
+                    .setMediaSession(mToken));
         } else {
             mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0, 1));
@@ -618,6 +621,7 @@ public class MusicService extends Service implements OnPreparedListener,
         art = null;
         placeHolder = null;
         scheduler = null;
+        mToken = null;
         // Always release the MediaSession to clean up resources
         // and notify associated MediaController(s).
         mSession.release();
@@ -628,32 +632,6 @@ public class MusicService extends Service implements OnPreparedListener,
     @Override
     public IBinder onBind(Intent intent) {
         return mIBinder;
-    }
-
-    /**
-     * Class used for the client Binder.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with IPC.
-     */
-    class MusicServiceBinder extends Binder {
-        /** methods for clients */
-        MediaSessionCompat.Token getMediaSessionToken() {
-            return mSession.getSessionToken();
-        }
-        Bitmap getArt() {
-            return art;
-        }
-        String getTitleString() {
-            return titleString;
-        }
-        String getDjString() {
-            return djString;
-        }
-        int getPlaybackState() {
-            return mState;
-        }
-        void pauseStreaming() {
-            processPauseRequest();
-        }
     }
 
     private void createNotificationChannel() {

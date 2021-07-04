@@ -52,7 +52,7 @@ public class TvFragment extends Fragment {
     private ProgressBar progressBar;
     private VideoView videoView;
     private String videoUrl;
-    private MusicService.MusicServiceBinder mMusicServiceBinder;
+    private MusicServiceBinder mMusicServiceBinder;
     boolean mBound = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -167,10 +167,10 @@ public class TvFragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
-            mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
+            mMusicServiceBinder = (MusicServiceBinder) service;
             // Stop radio streaming if running
             if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
-                mMusicServiceBinder.pauseStreaming();
+//                mMusicServiceBinder.pauseStreaming();
             }
             mBound = true;
         }

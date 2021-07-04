@@ -77,7 +77,6 @@ public class PodcastFragment extends Fragment {
     private ProgressBar mProgressBar;
     private PodcastWebViewClient mPodcastWebViewClient;
     private PodcastWebChromeClient mPodcastWebChromeClient;
-    private MusicService mService;
     private MusicService.MusicServiceBinder mMusicServiceBinder;
     boolean mBound = false;
 
@@ -194,7 +193,6 @@ public class PodcastFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mService = null;
         mMusicServiceBinder = null;
         boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.screen_on_key), false);
@@ -406,13 +404,11 @@ public class PodcastFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
             mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
-            mService = mMusicServiceBinder.getService();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Timber.e("Service crashed");
-            mService = null;
             mBound = false;
         }
     };
@@ -424,8 +420,8 @@ public class PodcastFragment extends Fragment {
             Timber.e("isMediaPlayingPodcast is %s", mString);
             isMediaPlayingPodcast = Boolean.parseBoolean(mString);
             if (isMediaPlayingPodcast) {
-                if (mService.mState == PlaybackStateCompat.STATE_PLAYING) {
-                    mService.processPauseRequest();
+                if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
+                    mMusicServiceBinder.pauseStreaming();
                 }
             }
         }

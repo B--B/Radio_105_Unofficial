@@ -77,7 +77,6 @@ public class ZooFragment extends Fragment {
     private ProgressBar mProgressBar;
     private ZooWebViewClient mZooWebViewClient;
     private ZooWebChromeClient mZooWebChromeClient;
-    private MusicService mService;
     private MusicService.MusicServiceBinder mMusicServiceBinder;
     boolean mBound = false;
 
@@ -196,7 +195,6 @@ public class ZooFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        mService = null;
         mMusicServiceBinder = null;
         boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.screen_on_key), false);
@@ -400,13 +398,11 @@ public class ZooFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
             mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
-            mService = mMusicServiceBinder.getService();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Timber.e("Service crashed");
-            mService = null;
             mBound = false;
         }
     };
@@ -418,8 +414,8 @@ public class ZooFragment extends Fragment {
             Timber.e("isMediaPlayingZoo is %s", mString);
             isMediaPlayingZoo = Boolean.parseBoolean(mString);
             if (isMediaPlayingZoo) {
-                if (mService.mState == PlaybackStateCompat.STATE_PLAYING) {
-                    mService.processPauseRequest();
+                if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
+                    mMusicServiceBinder.pauseStreaming();
                 }
             }
         }

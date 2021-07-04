@@ -250,6 +250,15 @@ public class MusicService extends Service implements OnPreparedListener,
         mPlayOnFocusGain = true;
         tryToGetAudioFocus();
 
+        // Get streaming metadata
+        getStreamingMetadata();
+        if (scheduler == null) {
+            // Set the task for retrieving the metadata every hour
+            scheduler = Executors.newSingleThreadScheduledExecutor();
+            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Rome"));
+            scheduler.scheduleAtFixedRate(this::getStreamingMetadata, millisToNextHour(calendar), 60*60*1000, TimeUnit.MILLISECONDS);
+        }
+
         // actually play the song
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
             // If we're stopped, just go ahead to the next song and start playing
@@ -279,6 +288,10 @@ public class MusicService extends Service implements OnPreparedListener,
     }
 
     private void processStopRequest() {
+        if (scheduler != null) {
+            scheduler.shutdown();
+            Timber.e("Stopped metadata scheduler");
+        }
         if (mState == PlaybackStateCompat.STATE_PLAYING || mState == PlaybackStateCompat.STATE_PAUSED) {
             mState = PlaybackStateCompat.STATE_STOPPED;
 
@@ -523,14 +536,6 @@ public class MusicService extends Service implements OnPreparedListener,
     private void setUpAsForeground(String text) {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(getString(R.string.notification_type_key), true);
-
-        // Set the task for retrieving the metadata every hour
-        scheduler = Executors.newSingleThreadScheduledExecutor();
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Rome"));
-        scheduler.scheduleAtFixedRate(this::getStreamingMetadata, millisToNextHour(calendar), 60*60*1000, TimeUnit.MILLISECONDS);
-
-        // Get streaming metadata
-        getStreamingMetadata();
 
         // Creating notification channel
         createNotificationChannel();

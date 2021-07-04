@@ -109,7 +109,7 @@ public class MusicService extends Service implements OnPreparedListener,
     static MediaSessionCompat.Token mToken;
 
     // Metadata scheduler
-    ScheduledExecutorService scheduler;
+    private ScheduledExecutorService scheduler;
 
     // The tag we put on debug messages
     private final static String TAG = "Radio105Player";
@@ -246,7 +246,6 @@ public class MusicService extends Service implements OnPreparedListener,
         MediaButtonReceiver.handleIntent(mSession, intent);
         return START_NOT_STICKY;
     }
-
 
     private void processPlayRequest() {
         mPlayOnFocusGain = true;

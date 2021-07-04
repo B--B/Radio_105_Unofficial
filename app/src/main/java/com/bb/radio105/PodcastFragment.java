@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,6 +80,7 @@ public class PodcastFragment extends Fragment {
     private PodcastWebChromeClient mPodcastWebChromeClient;
     private MusicServiceBinder mMusicServiceBinder;
     boolean mBound = false;
+    private MediaControllerCompat mMediaControllerCompat;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -156,6 +158,9 @@ public class PodcastFragment extends Fragment {
         super.onStop();
         // Unbind music service
         requireContext().unbindService(mServiceConnection);
+        if (mMediaControllerCompat != null) {
+            mMediaControllerCompat = null;
+        }
         if (Constants.podcastBundle == null) {
             Timber.d("onStop: created new outState bundle!");
             Constants.podcastBundle = new Bundle(ClassLoader.getSystemClassLoader());
@@ -193,6 +198,9 @@ public class PodcastFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         mMusicServiceBinder = null;
+        if (mMediaControllerCompat != null) {
+            mMediaControllerCompat = null;
+        }
         boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.screen_on_key), false);
         if (pref) {
@@ -403,6 +411,8 @@ public class PodcastFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
             mMusicServiceBinder = (MusicServiceBinder) service;
+            mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
+            mBound = true;
         }
 
         @Override
@@ -420,7 +430,7 @@ public class PodcastFragment extends Fragment {
             isMediaPlayingPodcast = Boolean.parseBoolean(mString);
             if (isMediaPlayingPodcast) {
                 if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
-//                    mMusicServiceBinder.pauseStreaming();
+                    mMediaControllerCompat.getTransportControls().pause();
                 }
             }
         }

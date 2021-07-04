@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,6 +80,7 @@ public class ZooFragment extends Fragment {
     private ZooWebChromeClient mZooWebChromeClient;
     private MusicServiceBinder mMusicServiceBinder;
     boolean mBound = false;
+    private MediaControllerCompat mMediaControllerCompat;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -159,6 +161,9 @@ public class ZooFragment extends Fragment {
         super.onStop();
         // Unbind music service
         requireContext().unbindService(mServiceConnection);
+        if (mMediaControllerCompat != null) {
+            mMediaControllerCompat = null;
+        }
         if (Constants.zooBundle == null) {
             Timber.d("onStop: created new outState bundle!");
             Constants.zooBundle = new Bundle(ClassLoader.getSystemClassLoader());
@@ -195,6 +200,9 @@ public class ZooFragment extends Fragment {
     @Override
     public void onDestroyView() {
         mMusicServiceBinder = null;
+        if (mMediaControllerCompat != null) {
+            mMediaControllerCompat = null;
+        }
         boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.screen_on_key), false);
         if (pref) {
@@ -397,6 +405,8 @@ public class ZooFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
             mMusicServiceBinder = (MusicServiceBinder) service;
+            mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
+            mBound = true;
         }
 
         @Override
@@ -414,7 +424,7 @@ public class ZooFragment extends Fragment {
             isMediaPlayingZoo = Boolean.parseBoolean(mString);
             if (isMediaPlayingZoo) {
                 if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
-//                    mMusicServiceBinder.pauseStreaming();
+                    mMediaControllerCompat.getTransportControls().pause();
                 }
             }
         }

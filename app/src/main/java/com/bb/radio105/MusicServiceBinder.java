@@ -36,9 +36,4 @@ class MusicServiceBinder extends Binder implements IMusicService {
     public int getPlaybackState() {
         return mState;
     }
-
-   // @Override
-   // public void pauseStreaming() {
-   //     processPauseRequest();
-   // }
 }

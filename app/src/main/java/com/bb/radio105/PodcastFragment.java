@@ -73,7 +73,7 @@ import timber.log.Timber;
 
 public class PodcastFragment extends Fragment {
 
-    private AdblockWebView mWebView = null;
+    static AdblockWebView mWebView = null;
     private View root;
     private ProgressBar mProgressBar;
     private PodcastWebViewClient mPodcastWebViewClient;
@@ -81,6 +81,7 @@ public class PodcastFragment extends Fragment {
     private MusicServiceBinder mMusicServiceBinder;
     boolean mBound = false;
     private MediaControllerCompat mMediaControllerCompat;
+    static boolean isMediaPlayingPodcast;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -423,7 +424,6 @@ public class PodcastFragment extends Fragment {
     };
 
     class JSInterfacePodcast {
-        boolean isMediaPlayingPodcast;
         @JavascriptInterface
         public void mediaPodcastAction(String mString) {
             Timber.e("isMediaPlayingPodcast is %s", mString);

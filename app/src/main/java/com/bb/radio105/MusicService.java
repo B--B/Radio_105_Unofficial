@@ -861,6 +861,12 @@ public class MusicService extends Service implements OnPreparedListener,
         @Override
         public void onPlay() {
             processPlayRequest();
+            if (PodcastFragment.isMediaPlayingPodcast) {
+                Utils.callJavaScript(PodcastFragment.mWebView,"player.pause");
+            }
+            if (ZooFragment.isMediaPlayingZoo) {
+                Utils.callJavaScript(ZooFragment.mWebView, "player.pause");
+            }
         }
 
         @Override

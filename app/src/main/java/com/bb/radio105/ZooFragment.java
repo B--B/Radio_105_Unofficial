@@ -73,7 +73,7 @@ import timber.log.Timber;
 
 public class ZooFragment extends Fragment {
 
-    private AdblockWebView mWebView = null;
+    static AdblockWebView mWebView = null;
     private View root;
     private ProgressBar mProgressBar;
     private ZooWebViewClient mZooWebViewClient;
@@ -81,6 +81,7 @@ public class ZooFragment extends Fragment {
     private MusicServiceBinder mMusicServiceBinder;
     boolean mBound = false;
     private MediaControllerCompat mMediaControllerCompat;
+    static boolean isMediaPlayingZoo;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -417,7 +418,6 @@ public class ZooFragment extends Fragment {
     };
 
     class JSInterfaceZoo {
-        boolean isMediaPlayingZoo;
         @JavascriptInterface
         public void mediaZooAction(String mString) {
             Timber.e("isMediaPlayingZoo is %s", mString);

@@ -77,7 +77,7 @@ public class ZooFragment extends Fragment {
     private ProgressBar mProgressBar;
     private ZooWebViewClient mZooWebViewClient;
     private ZooWebChromeClient mZooWebChromeClient;
-    private MusicService.MusicServiceBinder mMusicServiceBinder;
+    private MusicServiceBinder mMusicServiceBinder;
     boolean mBound = false;
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -397,7 +397,7 @@ public class ZooFragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
-            mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
+            mMusicServiceBinder = (MusicServiceBinder) service;
         }
 
         @Override
@@ -415,7 +415,7 @@ public class ZooFragment extends Fragment {
             isMediaPlayingZoo = Boolean.parseBoolean(mString);
             if (isMediaPlayingZoo) {
                 if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
-                    mMusicServiceBinder.pauseStreaming();
+//                    mMusicServiceBinder.pauseStreaming();
                 }
             }
         }

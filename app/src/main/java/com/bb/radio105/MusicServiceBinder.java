@@ -6,7 +6,6 @@ import static com.bb.radio105.MusicService.mState;
 import static com.bb.radio105.MusicService.mToken;
 import static com.bb.radio105.MusicService.titleString;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Binder;
 import android.support.v4.media.session.MediaSessionCompat;

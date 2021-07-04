@@ -126,6 +126,11 @@ public class HomeFragment extends Fragment {
     public void onStop() {
         super.onStop();
         requireContext().unbindService(mServiceConnection);
+        mMusicServiceBinder = null;
+        if (mMediaControllerCompat != null) {
+            mMediaControllerCompat.unregisterCallback(mCallback);
+            mMediaControllerCompat = null;
+        }
     }
 
     @Override
@@ -219,11 +224,6 @@ public class HomeFragment extends Fragment {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Timber.e("Service crashed");
-            mMusicServiceBinder = null;
-            if (mMediaControllerCompat != null) {
-                mMediaControllerCompat.unregisterCallback(mCallback);
-                mMediaControllerCompat = null;
-            }
             mBound = false;
         }
     };

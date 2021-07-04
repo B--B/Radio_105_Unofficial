@@ -23,6 +23,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     private AppBarConfiguration mAppBarConfiguration;
     static UpdateColorsInterface updateColorsInterface;
     static Boolean isZooColor = false;
+    private Intent startMusicService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,8 +116,6 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
                     .show();
         }
 
-        startService(new Intent(this, MusicService.class));
-
         // Start the service worker controller here, actually only an instance is allowed, but
         // we have two fragments that runs webView. In addition the service worker controller must be
         // started BEFORE the webView instance, and in this way webView cannot start before the service.
@@ -164,9 +164,24 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        startMusicService = new Intent(this, MusicService.class);
+        startService(startMusicService);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (MusicService.mState == PlaybackStateCompat.STATE_STOPPED) {
+            stopService(startMusicService);
+        }
+    }
+    @Override
     public void onDestroy() {
-        updateColorsInterface = null;
         super.onDestroy();
+        startMusicService = null;
+        updateColorsInterface = null;
     }
 
     @Override

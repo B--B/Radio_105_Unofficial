@@ -52,7 +52,6 @@ public class TvFragment extends Fragment {
     private ProgressBar progressBar;
     private VideoView videoView;
     private String videoUrl;
-    private MusicService mService;
     private MusicService.MusicServiceBinder mMusicServiceBinder;
     boolean mBound = false;
 
@@ -141,7 +140,6 @@ public class TvFragment extends Fragment {
             Utils.restoreScreen(requireActivity());
         }
         requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        mService = null;
         mMusicServiceBinder = null;
         videoView = null;
         progressBar = null;
@@ -170,10 +168,9 @@ public class TvFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
             mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
-            mService = mMusicServiceBinder.getService();
             // Stop radio streaming if running
-            if (mService.mState == PlaybackStateCompat.STATE_PLAYING) {
-                mService.processPauseRequest();
+            if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
+                mMusicServiceBinder.pauseStreaming();
             }
             mBound = true;
         }
@@ -181,7 +178,6 @@ public class TvFragment extends Fragment {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Timber.e("Service crashed");
-            mService = null;
             mBound = false;
         }
     };

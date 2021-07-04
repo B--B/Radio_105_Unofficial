@@ -267,7 +267,7 @@ public class MusicService extends Service implements OnPreparedListener,
         }
     }
 
-    void processPauseRequest() {
+    private void processPauseRequest() {
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
             // Pause media player and cancel the 'foreground service' state.
             mState = PlaybackStateCompat.STATE_PAUSED;
@@ -635,14 +635,25 @@ public class MusicService extends Service implements OnPreparedListener,
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
     class MusicServiceBinder extends Binder {
-        MusicService getService() {
-            return MusicService.this;
+        /** methods for clients */
+        MediaSessionCompat.Token getMediaSessionToken() {
+            return mSession.getSessionToken();
         }
-    }
-
-    /** method for clients */
-    MediaSessionCompat.Token getMediaSessionToken() {
-        return mSession.getSessionToken();
+        Bitmap getArt() {
+            return art;
+        }
+        String getTitleString() {
+            return titleString;
+        }
+        String getDjString() {
+            return djString;
+        }
+        int getPlaybackState() {
+            return mState;
+        }
+        void pauseStreaming() {
+            processPauseRequest();
+        }
     }
 
     private void createNotificationChannel() {

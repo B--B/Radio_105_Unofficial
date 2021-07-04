@@ -59,7 +59,6 @@ public class HomeFragment extends Fragment {
     private TextView djNameText;
     private MusicService.MusicServiceBinder mMusicServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
-    private MusicService mService;
     boolean mBound = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -137,7 +136,6 @@ public class HomeFragment extends Fragment {
             mMediaControllerCompat.unregisterCallback(mCallback);
             mMediaControllerCompat = null;
         }
-        mService = null;
         imageArt = null;
         imageLogo = null;
         button1 = null;
@@ -168,19 +166,19 @@ public class HomeFragment extends Fragment {
     }
 
     private void setButtonState() {
-        if (mService.mState == PlaybackStateCompat.STATE_PLAYING) {
+        if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
             imageLogo.setVisibility(View.GONE);
-            Drawable imageResource = new BitmapDrawable(getResources(), mService.art);
+            Drawable imageResource = new BitmapDrawable(getResources(), mMusicServiceBinder.getArt());
             imageArt.setImageDrawable(imageResource);
             imageArt.setVisibility(View.VISIBLE);
-            titleText.setText(mService.titleString);
+            titleText.setText(mMusicServiceBinder.getTitleString());
             titleText.setVisibility(View.VISIBLE);
-            djNameText.setText(mService.djString);
+            djNameText.setText(mMusicServiceBinder.getDjString());
             djNameText.setVisibility(View.VISIBLE);
             button1.setEnabled(false);
             button2.setEnabled(true);
             button3.setEnabled(true);
-        } else if (mService.mState == PlaybackStateCompat.STATE_PAUSED) {
+        } else if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PAUSED) {
             imageLogo.setVisibility(View.VISIBLE);
             imageArt.setVisibility(View.GONE);
             titleText.setVisibility(View.GONE);
@@ -188,7 +186,7 @@ public class HomeFragment extends Fragment {
             button1.setEnabled(true);
             button2.setEnabled(false);
             button3.setEnabled(true);
-        } else if (mService.mState == PlaybackStateCompat.STATE_STOPPED || mService.mState == PlaybackStateCompat.STATE_ERROR) {
+        } else if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_STOPPED || mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_ERROR) {
             imageLogo.setVisibility(View.VISIBLE);
             imageArt.setVisibility(View.GONE);
             titleText.setVisibility(View.GONE);
@@ -196,7 +194,7 @@ public class HomeFragment extends Fragment {
             button1.setEnabled(true);
             button2.setEnabled(false);
             button3.setEnabled(false);
-        } else if (mService.mState == PlaybackStateCompat.STATE_BUFFERING) {
+        } else if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_BUFFERING) {
             imageLogo.setVisibility(View.VISIBLE);
             imageArt.setVisibility(View.GONE);
             titleText.setVisibility(View.GONE);
@@ -212,8 +210,7 @@ public class HomeFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
             mMusicServiceBinder = (MusicService.MusicServiceBinder) service;
-            mService = mMusicServiceBinder.getService();
-            mMediaControllerCompat = new MediaControllerCompat(getContext(), mService.getMediaSessionToken());
+            mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
             mCallback.onPlaybackStateChanged(mMediaControllerCompat.getPlaybackState());
             mMediaControllerCompat.registerCallback(mCallback);
             mBound = true;
@@ -222,7 +219,6 @@ public class HomeFragment extends Fragment {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Timber.e("Service crashed");
-            mService = null;
             mMusicServiceBinder = null;
             if (mMediaControllerCompat != null) {
                 mMediaControllerCompat.unregisterCallback(mCallback);
@@ -235,10 +231,10 @@ public class HomeFragment extends Fragment {
     private final MediaControllerCompat.Callback mCallback = new MediaControllerCompat.Callback() {
         @Override
         public void onMetadataChanged(MediaMetadataCompat metadata) {
-            Drawable imageResource = new BitmapDrawable(getResources(), mService.art);
+            Drawable imageResource = new BitmapDrawable(getResources(), mMusicServiceBinder.getArt());
             imageArt.setImageDrawable(imageResource);
-            titleText.setText(mService.titleString);
-            djNameText.setText(mService.djString);
+            titleText.setText(mMusicServiceBinder.getTitleString());
+            djNameText.setText(mMusicServiceBinder.getDjString());
         }
 
         @Override

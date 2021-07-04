@@ -98,16 +98,16 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onConfigurationChanged(@NotNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
         FragmentManager fragmentManager = getParentFragmentManager();
         fragmentManager.
                 beginTransaction()
                 .detach(this)
-                .commitAllowingStateLoss();
-        super.onConfigurationChanged(newConfig);
+                .commitNowAllowingStateLoss();
         fragmentManager.
                 beginTransaction().
                 attach(this).
-                commitAllowingStateLoss();
+                commitNowAllowingStateLoss();
     }
 
     @Override

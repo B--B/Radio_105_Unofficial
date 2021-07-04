@@ -289,16 +289,15 @@ public class PodcastFragment extends Fragment {
         @Override
         public void onPageFinished (WebView webView, String url) {
             String javaScript = "javascript:(function() { " +
-                    "var audio = document.querySelector('audio');" +
+                    "var audio = document.querySelector('audio'); " +
                     "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload');" +
-                    "audio.onplay = function() {" +
-                    "    audioElement = audio;" +
-                    "    JSPODCASTOUT.mediaPodcastAction('true');" +
+                    "    audio.onplay = function() {" +
+                    "        JSPODCASTOUT.mediaPodcastAction('true');" +
+                    "    };" +
+                    "    audio.onpause = function() {" +
+                    "        JSPODCASTOUT.mediaPodcastAction('false');" +
+                    "    };" +
                     "};" +
-                    "audio.onpause = function() {" +
-                    "    audioElement = audio;" +
-                    "    JSPODCASTOUT.mediaPodcastAction('false');" +
-                    "};" + "};" +
                     "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
                     " if (element.length) { element[0].style.width = '100%' }; " +
                     "var element = document.getElementsByClassName('clear');" +
@@ -331,7 +330,6 @@ public class PodcastFragment extends Fragment {
                     " if (element.length) { element[0].style.display = 'none' }; " +
                     "var element = document.getElementsByClassName('container-fluid vc_bg_grad_green-blu-tone ghost_container');" +
                     " if (element.length) { element[0].style.display = 'none' }; " + "})()";
-
 
             webView.loadUrl(javaScript);
             new Handler(Looper.getMainLooper()).postDelayed(() -> {

@@ -96,11 +96,11 @@ public class MusicService extends Service implements OnPreparedListener,
     // Notification metadata
     static String titleString = null;
     static String djString = null;
-    String artUrl = null;
+    private String artUrl = null;
     private LruCache<String, Bitmap> mAlbumArtCache;
     private static final int MAX_ALBUM_ART_CACHE_SIZE = 1024*1024;
     static Bitmap art;
-    Bitmap placeHolder;
+    private Bitmap placeHolder;
 
     // Binder given to clients
     private final IBinder mIBinder = new MusicServiceBinder();
@@ -111,8 +111,7 @@ public class MusicService extends Service implements OnPreparedListener,
     // Metadata scheduler
     private ScheduledExecutorService scheduler;
 
-    // The tag we put on debug messages
-    private final static String TAG = "Radio105Player";
+    // The service channel ID
     private static final String CHANNEL_ID = "Radio105ServiceChannel";
 
     // our media player
@@ -179,7 +178,7 @@ public class MusicService extends Service implements OnPreparedListener,
     @Override
     public void onCreate() {
         super.onCreate();
-        Timber.tag(TAG).i("debug: Creating service");
+        Timber.i("debug: Creating service");
 
         // Create the Wifi lock (this does not acquire the lock, this just creates it)
         mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
@@ -390,7 +389,7 @@ public class MusicService extends Service implements OnPreparedListener,
                 // Acquire the WiFi lock
                 mWifiLock.acquire();
             } catch (IOException ex) {
-                Timber.tag("MusicService").e("IOException playing next song: %s", ex.getMessage());
+                Timber.e("IOException playing next song: %s", ex.getMessage());
                 updatePlaybackState(ex.getMessage());
             }
         });
@@ -425,7 +424,7 @@ public class MusicService extends Service implements OnPreparedListener,
                 // Acquire th WiFi lock
                 mWifiLock.acquire();
             } catch (IOException ex) {
-                Timber.tag("MusicService").e("IOException playing next song: %s", ex.getMessage());
+                Timber.e("IOException playing next song: %s", ex.getMessage());
                 updatePlaybackState(ex.getMessage());
             }
         });
@@ -590,7 +589,7 @@ public class MusicService extends Service implements OnPreparedListener,
 
         Toast.makeText(getApplicationContext(), getString(R.string.error),
                 Toast.LENGTH_SHORT).show();
-        Timber.tag(TAG).e("Error: what=" + what + ", extra=" + extra);
+        Timber.e("Error: what =  %s, extra = %s", what, extra);
 
         mState = PlaybackStateCompat.STATE_STOPPED;
         relaxResources(true);

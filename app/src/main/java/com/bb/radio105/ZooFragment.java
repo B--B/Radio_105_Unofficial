@@ -288,8 +288,15 @@ public class ZooFragment extends Fragment {
         @Override
         public void onPageFinished(WebView webView, String url) {
             String javaScript = "javascript:(function() { " +
-                    "var audio = document.querySelector('audio');" +
-                    "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload')};" +
+                    "var audio = document.querySelector('audio'); " +
+                    "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload'); " +
+                    "    audio.onplay = function() {" +
+                    "        JSZOOOUT.mediaZooAction('true');" +
+                    "    };" +
+                    "    audio.onpause = function() {" +
+                    "        JSZOOOUT.mediaZooAction('false');" +
+                    "    };" +
+                    "};" +
                     "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
                     " if (element.length) { element[0].style.width = '100%' }; " +
                     "var element = document.getElementsByClassName('container');" +
@@ -317,45 +324,9 @@ public class ZooFragment extends Fragment {
                     "var element = document.getElementsByClassName('share vc_share_buttons null');" +
                     " if (element.length) { element[0].style.display = 'none' }; " +
                     "var element = document.getElementsByClassName('bannervcms banner_masthead ');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementById('adv-gpt-masthead-leaderboard-container1');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementById('google_ads_iframe_/4758/altri_radiomediaset_radio105/altre_1__container__');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementById('div-gpt-320x50');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementById('google_ads_iframe_/4758/altri_radiomediaset_radio105/altre_2__container__');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementsByClassName('iubenda-cs-container');" +
                     " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
-            String test = "var audioElement;" +
-                    "for(var i = 0; i < document.getElementsByTagName('audio').length; i++){" +
-                    "    var aud = document.getElementsByTagName('audio')[0];" +
-                    "    aud.onplay = function(){" +
-                    "        audioElement = aud;" +
-                    "        JSZOOOUT.mediaZooAction('true');" +
-                    "    };" +
-                    "    aud.onpause = function(){" +
-                    "        audioElement = aud;" +
-                    "        JSZOOOUT.mediaZooAction('false');" +
-                    "    };" +
-                    "};" +
-                    "var videoElement;" +
-                    "for(var i = 0; i < document.getElementsByTagName('video').length; i++){" +
-                    "    var vid = document.getElementsByTagName('video')[0];" +
-                    "    vid.onplay = function(){" +
-                    "        videoElement = vid;" +
-                    "        JSOUT.mediaZooAction('true');" +
-                    "    };" +
-                    "    vid.onpause = function(){" +
-                    "        videoElement = vid;" +
-                    "        JSOUT.mediaZooAction('false');" +
-                    "    };" +
-                    "};";
-
             webView.loadUrl(javaScript);
-            webView.evaluateJavascript(test, null);
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (mProgressBar != null) {
                     mProgressBar.setVisibility(View.GONE);

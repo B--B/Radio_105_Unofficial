@@ -9,5 +9,4 @@ interface IMusicService {
     String getTitleString();
     String getDjString();
     int getPlaybackState();
-    // void pauseStreaming();
 }

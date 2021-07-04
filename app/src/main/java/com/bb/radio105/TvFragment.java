@@ -28,6 +28,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +55,7 @@ public class TvFragment extends Fragment {
     private String videoUrl;
     private MusicServiceBinder mMusicServiceBinder;
     boolean mBound = false;
+    private MediaControllerCompat mMediaControllerCompat;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -121,6 +123,9 @@ public class TvFragment extends Fragment {
         super.onStop();
         // Unbind music service
         requireContext().unbindService(mServiceConnection);
+        if (mMediaControllerCompat != null) {
+            mMediaControllerCompat = null;
+        }
     }
 
     @Override
@@ -141,6 +146,9 @@ public class TvFragment extends Fragment {
         }
         requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mMusicServiceBinder = null;
+        if (mMediaControllerCompat != null) {
+            mMediaControllerCompat = null;
+        }
         videoView = null;
         progressBar = null;
         videoUrl = null;
@@ -168,9 +176,11 @@ public class TvFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
             mMusicServiceBinder = (MusicServiceBinder) service;
+            mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
+            mBound = true;
             // Stop radio streaming if running
             if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
-//                mMusicServiceBinder.pauseStreaming();
+                mMediaControllerCompat.getTransportControls().pause();
             }
             mBound = true;
         }

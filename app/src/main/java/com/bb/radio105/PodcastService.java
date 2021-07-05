@@ -37,8 +37,15 @@ public class PodcastService extends Service {
     private NotificationCompat.Builder mNotificationBuilder = null;
     private boolean serviceCreated = false;
     private PowerManager.WakeLock mWakeLock;
-    static boolean isPlayingPodcast = false;
     private WifiManager.WifiLock mWifiLock;
+
+    enum State {
+        Stopped,
+        Playing,
+        Paused
+    }
+
+    static State mState = State.Stopped;
 
     @Override
     public void onCreate() {
@@ -48,7 +55,8 @@ public class PodcastService extends Service {
         mNotificationManager = NotificationManagerCompat.from(this);
         // Set the PlaceHolder when service starts
         placeHolder = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
-
+        // Set the streaming state
+        mState = State.Stopped;
         //Acquire wake locks
         mWakeLock = ((PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE))
                 .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:PodcastServiceWakelock");
@@ -194,14 +202,14 @@ public class PodcastService extends Service {
     private void processPlayRequestNotification() {
         Utils.callJavaScript(mWebView, "player.play");
         updateNotification(getString(R.string.playing));
-        isPlayingPodcast = true;
+        mState = State.Playing;
     }
 
     private void processPauseRequestNotification() {
         Timber.e("Processing pause request from notification");
         Utils.callJavaScript(mWebView, "player.pause");
         updateNotification(getString(R.string.in_pause));
-        isPlayingPodcast = false;
+        mState = State.Paused;
     }
 
     private void processPlayRequest() {
@@ -211,18 +219,18 @@ public class PodcastService extends Service {
             setUpAsForeground(getString(R.string.playing));
             serviceCreated = true;
         }
-        isPlayingPodcast = true;
+        mState = State.Playing;
     }
 
     private void processPauseRequest() {
         updateNotification(getString(R.string.in_pause));
-        isPlayingPodcast = false;
+        mState = State.Paused;
     }
 
     private void processStopRequest() {
         stopForeground(true);
         PodcastFragment.isMediaPlayingPodcast = false;
-        isPlayingPodcast = false;
+        mState = State.Stopped;
     }
 
     private void createNotificationChannel() {

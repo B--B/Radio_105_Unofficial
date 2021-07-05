@@ -16,6 +16,8 @@
 
 package com.bb.radio105;
 
+import static com.bb.radio105.PodcastService.mState;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -179,7 +181,7 @@ public class PodcastFragment extends Fragment {
             Timber.d("onStop: failed to obtain WebView state to save!");
         }
         Constants.podcastBundle.putBundle(Constants.PODCAST_STATE, currentWebViewState);
-        if (!PodcastService.isPlayingPodcast) {
+        if (mState == PodcastService.State.Stopped) {
             requireContext().stopService(startPodcastService);
         }
         mWebView.removeJavascriptInterface("JSPODCASTOUT");
@@ -188,7 +190,7 @@ public class PodcastFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (!PodcastService.isPlayingPodcast) {
+        if (mState != PodcastService.State.Playing) {
             if (mWebView != null) {
                 mWebView.getSettings().setJavaScriptEnabled(false);
                 mWebView.onPause();
@@ -201,7 +203,7 @@ public class PodcastFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (!PodcastService.isPlayingPodcast) {
+        if (mState != PodcastService.State.Playing) {
             if (mWebView != null) {
                 mWebView.getSettings().setJavaScriptEnabled(true);
                 mWebView.onResume();

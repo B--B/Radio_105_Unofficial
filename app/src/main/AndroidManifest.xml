@@ -53,6 +53,19 @@
             </intent-filter>
         </service>
 
+        <service
+            android:name="com.bb.radio105.PodcastService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="com.bb.radio105.action.PLAY_NOTIFICATION" />
+                <action android:name="com.bb.radio105.action.PAUSE_NOTIFICATION" />
+                <action android:name="com.bb.radio105.action.PLAY" />
+                <action android:name="com.bb.radio105.action.PAUSE" />
+                <action android:name="com.bb.radio105.action.STOP" />
+            </intent-filter>
+        </service>
+
         <receiver android:name="androidx.media.session.MediaButtonReceiver"
             android:exported="false">
             <intent-filter>

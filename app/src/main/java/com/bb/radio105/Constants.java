@@ -19,6 +19,12 @@ package com.bb.radio105;
 import android.os.Bundle;
 
 public class Constants {
+    // Intent Actions
+    static final String ACTION_PLAY_NOTIFICATION = "com.bb.radio105.action.PLAY_NOTIFICATION";
+    static final String ACTION_PAUSE_NOTIFICATION = "com.bb.radio105.action.PAUSE_NOTIFICATION";
+    static final String ACTION_PLAY = "com.bb.radio105.action.PLAY";
+    static final String ACTION_PAUSE = "com.bb.radio105.action.PAUSE";
+    static final String ACTION_STOP = "com.bb.radio105.action.STOP";
     // 404 custom error page
     static final String ErrorPagePath = "file:///android_asset/index.html";
     // Write storage permission

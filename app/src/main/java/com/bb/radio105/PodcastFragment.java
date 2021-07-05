@@ -81,6 +81,7 @@ public class PodcastFragment extends Fragment {
     private IMusicService mMusicServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingPodcast;
+    private boolean serviceCreated = false;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -176,11 +177,12 @@ public class PodcastFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (mWebView != null) {
-            Utils.callJavaScript(mWebView, "player.pause");
-            mWebView.getSettings().setJavaScriptEnabled(false);
-            mWebView.onPause();
-            mWebView.pauseTimers();
+        if (!PodcastService.isPlayingPodcast) {
+            if (mWebView != null) {
+                mWebView.getSettings().setJavaScriptEnabled(false);
+                mWebView.onPause();
+                mWebView.pauseTimers();
+            }
         }
     }
 
@@ -188,10 +190,12 @@ public class PodcastFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mWebView != null) {
-            mWebView.getSettings().setJavaScriptEnabled(true);
-            mWebView.onResume();
-            mWebView.resumeTimers();
+        if (!PodcastService.isPlayingPodcast) {
+            if (mWebView != null) {
+                mWebView.getSettings().setJavaScriptEnabled(true);
+                mWebView.onResume();
+                mWebView.resumeTimers();
+            }
         }
     }
 
@@ -212,6 +216,11 @@ public class PodcastFragment extends Fragment {
         mProgressBar = null;
         if (mWebView != null) {
             mWebView.dispose(null);
+            mWebView.destroy();
+        }
+        if (serviceCreated) {
+            stopPodcast();
+            serviceCreated = false;
         }
         root = null;
         // Restore Glide memory values
@@ -290,6 +299,10 @@ public class PodcastFragment extends Fragment {
         public void onPageStarted(WebView webView, String url, Bitmap mBitmap) {
             mProgressBar.setVisibility(View.VISIBLE);
             webView.setVisibility(View.GONE);
+            if (serviceCreated) {
+                stopPodcast();
+                serviceCreated = false;
+            }
             super.onPageStarted(webView, url, mBitmap);
         }
 
@@ -430,7 +443,32 @@ public class PodcastFragment extends Fragment {
                 if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
                     mMediaControllerCompat.getTransportControls().pause();
                 }
+                playPodcast();
+                serviceCreated = true;
+            } else {
+                pausePodcast();
             }
         }
+    }
+
+    private void playPodcast() {
+        Intent mIntent = new Intent();
+        mIntent.setAction("com.bb.radio105.action.PLAY");
+        mIntent.setPackage(requireContext().getPackageName());
+        requireContext().startService(mIntent);
+    }
+
+    private void pausePodcast() {
+        Intent mIntent = new Intent();
+        mIntent.setAction("com.bb.radio105.action.PAUSE");
+        mIntent.setPackage(requireContext().getPackageName());
+        requireContext().startService(mIntent);
+    }
+
+    private void stopPodcast() {
+        Intent mIntent = new Intent();
+        mIntent.setAction("com.bb.radio105.action.STOP");
+        mIntent.setPackage(requireContext().getPackageName());
+        requireContext().startService(mIntent);
     }
 }

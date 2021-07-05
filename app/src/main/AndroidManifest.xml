@@ -58,6 +58,7 @@
             android:exported="false"
             android:foregroundServiceType="mediaPlayback">
             <intent-filter>
+                <action android:name="com.bb.radio105.action.START" />
                 <action android:name="com.bb.radio105.action.PLAY_NOTIFICATION" />
                 <action android:name="com.bb.radio105.action.PAUSE_NOTIFICATION" />
                 <action android:name="com.bb.radio105.action.PLAY" />

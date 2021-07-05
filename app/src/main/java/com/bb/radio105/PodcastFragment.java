@@ -82,6 +82,8 @@ public class PodcastFragment extends Fragment {
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingPodcast;
     private boolean serviceCreated = false;
+    private Intent startPodcastService;
+
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -128,7 +130,6 @@ public class PodcastFragment extends Fragment {
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.setProvider(AdblockHelper.get().getProvider());
         mWebView.setSiteKeysConfiguration(AdblockHelper.get().getSiteKeysConfiguration());
-        mWebView.addJavascriptInterface(new JSInterfacePodcast(),"JSPODCASTOUT");
         mWebView.setWebViewClient(mPodcastWebViewClient);
         mWebView.setWebChromeClient(mPodcastWebChromeClient);
         if (Constants.podcastBundle == null) {
@@ -153,6 +154,11 @@ public class PodcastFragment extends Fragment {
         super.onStart();
         // Bind music service
         requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
+        // Start podcast service
+        mWebView.addJavascriptInterface(new JSInterfacePodcast(),"JSPODCASTOUT");
+        startPodcastService = new Intent(getContext(), PodcastService.class);
+        startPodcastService.setAction("com.bb.radio105.action.START");
+        requireContext().startService(startPodcastService);
     }
 
     @Override
@@ -172,6 +178,10 @@ public class PodcastFragment extends Fragment {
             Timber.d("onStop: failed to obtain WebView state to save!");
         }
         Constants.podcastBundle.putBundle(Constants.PODCAST_STATE, currentWebViewState);
+        if (!PodcastService.isPlayingPodcast) {
+            requireContext().stopService(startPodcastService);
+        }
+        mWebView.removeJavascriptInterface("JSPODCASTOUT");
     }
 
     @Override
@@ -202,25 +212,27 @@ public class PodcastFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mMusicServiceBinder = null;
-        if (mMediaControllerCompat != null) {
-            mMediaControllerCompat = null;
-        }
         boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.screen_on_key), false);
         if (pref) {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+        if (serviceCreated) {
+            Timber.e("Stopping Podcast Service");
+            mWebView.loadUrl("about:blank");
+            requireContext().stopService(startPodcastService);
+            serviceCreated = false;
+        }
+        mMusicServiceBinder = null;
+        if (mMediaControllerCompat != null) {
+            mMediaControllerCompat = null;
         }
         mPodcastWebViewClient = null;
         mPodcastWebChromeClient = null;
         mProgressBar = null;
         if (mWebView != null) {
             mWebView.dispose(null);
-            mWebView.destroy();
-        }
-        if (serviceCreated) {
-            stopPodcast();
-            serviceCreated = false;
+            mWebView = null;
         }
         root = null;
         // Restore Glide memory values

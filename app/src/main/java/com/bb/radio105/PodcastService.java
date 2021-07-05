@@ -4,6 +4,7 @@ import static com.bb.radio105.Constants.ACTION_PAUSE;
 import static com.bb.radio105.Constants.ACTION_PAUSE_NOTIFICATION;
 import static com.bb.radio105.Constants.ACTION_PLAY;
 import static com.bb.radio105.Constants.ACTION_PLAY_NOTIFICATION;
+import static com.bb.radio105.Constants.ACTION_START;
 import static com.bb.radio105.Constants.ACTION_STOP;
 import static com.bb.radio105.PodcastFragment.mWebView;
 
@@ -23,7 +24,8 @@ import android.os.PowerManager;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.preference.PreferenceManager;
+
+import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 
 import timber.log.Timber;
 
@@ -34,9 +36,10 @@ public class PodcastService extends Service {
     final int NOTIFICATION_ID = 2;
     private NotificationManagerCompat mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder = null;
-    private boolean serviceAlreadyCreated = false;
+    private boolean serviceCreated = false;
     private PowerManager.WakeLock wakeLock;
     static boolean isPlayingPodcast = false;
+    private AdblockWebView mAdblockWebView;
 
     @Override
     public void onCreate() {
@@ -50,38 +53,43 @@ public class PodcastService extends Service {
         //Acquire wake lock
         PowerManager mPowerManager = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
         this.wakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:PodcastServiceWakelock");
+
+        mAdblockWebView = mWebView;
     }
 
     @SuppressLint("WakelockTimeout")
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {String action = intent.getAction();
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        String action = intent.getAction();
         switch (action) {
+            case ACTION_START:
+                break;
             case ACTION_PLAY_NOTIFICATION:
                 processPlayRequestNotification();
-                if (!wakeLock.isHeld()) {
+                if (wakeLock != null && !wakeLock.isHeld()) {
                     wakeLock.acquire();
                 }
                 break;
             case ACTION_PAUSE_NOTIFICATION:
-                if (wakeLock.isHeld()) {
+                if (wakeLock != null && wakeLock.isHeld()) {
                 wakeLock.release();
                 }
                 processPauseRequestNotification();
                 break;
             case ACTION_PLAY:
-                if (!wakeLock.isHeld()) {
+                if (wakeLock != null && !wakeLock.isHeld()) {
                 wakeLock.acquire();
                 }
                 processPlayRequest();
                 break;
             case ACTION_PAUSE:
-                if (wakeLock.isHeld()) {
+                if (wakeLock != null && wakeLock.isHeld()) {
                 wakeLock.release();
                 }
                 processPauseRequest();
                 break;
             case ACTION_STOP:
-                if (wakeLock.isHeld()) {
+                if (wakeLock != null && wakeLock.isHeld()) {
                 wakeLock.release();
                 }
                 processStopRequest();
@@ -97,20 +105,13 @@ public class PodcastService extends Service {
     }
 
     @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        // There is no way to keep a WebView reference without reloading it, the only way is to kill the
-        // service in the same moment.
-        Utils.callJavaScript(mWebView, "player.pause");
-        processStopRequest();
-        super.onTaskRemoved(rootIntent);
-    }
-
-    @Override
     public void onDestroy() {
         // Service is being killed, so make sure we release our resources
+        mAdblockWebView = null;
         mNotificationBuilder = null;
         mNotificationManager = null;
-        if (wakeLock.isHeld()) {
+        placeHolder = null;
+        if (wakeLock != null && wakeLock.isHeld()) {
             wakeLock.release();
         }
         wakeLock = null;
@@ -169,6 +170,7 @@ public class PodcastService extends Service {
         Intent pauseIntent = new Intent();
         pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION);
         PendingIntent mPauseIntent = PendingIntent.getService(this, 101, pauseIntent, 0);
+
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setContentText(text);
         mNotificationBuilder.clearActions();
@@ -181,24 +183,24 @@ public class PodcastService extends Service {
     }
 
     private void processPlayRequestNotification() {
-        Utils.callJavaScript(mWebView, "player.play");
+        Utils.callJavaScript(mAdblockWebView, "player.play");
         updateNotification(getString(R.string.playing));
         isPlayingPodcast = true;
     }
 
     private void processPauseRequestNotification() {
         Timber.e("Processing pause request from notification");
-        Utils.callJavaScript(mWebView, "player.pause");
+        Utils.callJavaScript(mAdblockWebView, "player.pause");
         updateNotification(getString(R.string.in_pause));
         isPlayingPodcast = false;
     }
 
     private void processPlayRequest() {
-        if (serviceAlreadyCreated) {
+        if (serviceCreated) {
             updateNotification(getString(R.string.playing));
         } else {
             setUpAsForeground(getString(R.string.playing));
-            serviceAlreadyCreated = true;
+            serviceCreated = true;
         }
         isPlayingPodcast = true;
     }
@@ -209,10 +211,9 @@ public class PodcastService extends Service {
     }
 
     private void processStopRequest() {
+        stopForeground(true);
         PodcastFragment.isMediaPlayingPodcast = false;
         isPlayingPodcast = false;
-        stopForeground(true);
-        stopSelf();
     }
 
     private void createNotificationChannel() {

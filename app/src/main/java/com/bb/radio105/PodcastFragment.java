@@ -82,6 +82,7 @@ public class PodcastFragment extends Fragment {
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingPodcast;
     private boolean serviceCreated = false;
+    private boolean serviceDestroying = false;
     private Intent startPodcastService;
 
 
@@ -219,9 +220,11 @@ public class PodcastFragment extends Fragment {
         }
         if (serviceCreated) {
             Timber.e("Stopping Podcast Service");
+            Utils.callJavaScript(mWebView,"player.pause");
+            serviceDestroying = true;
+            serviceCreated = false;
             mWebView.loadUrl("about:blank");
             requireContext().stopService(startPodcastService);
-            serviceCreated = false;
         }
         mMusicServiceBinder = null;
         if (mMediaControllerCompat != null) {
@@ -458,7 +461,11 @@ public class PodcastFragment extends Fragment {
                 playPodcast();
                 serviceCreated = true;
             } else {
-                pausePodcast();
+                if (!serviceDestroying) {
+                    pausePodcast();
+                } else {
+                    serviceDestroying = false;
+                }
             }
         }
     }

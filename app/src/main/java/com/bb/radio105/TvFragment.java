@@ -53,7 +53,7 @@ public class TvFragment extends Fragment {
     private ProgressBar progressBar;
     private VideoView videoView;
     private String videoUrl;
-    private MusicServiceBinder mMusicServiceBinder;
+    private IMusicService mMusicServiceBinder;
     boolean mBound = false;
     private MediaControllerCompat mMediaControllerCompat;
 
@@ -175,7 +175,7 @@ public class TvFragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
-            mMusicServiceBinder = (MusicServiceBinder) service;
+            mMusicServiceBinder = (IMusicService) service;
             mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
             mBound = true;
             // Stop radio streaming if running

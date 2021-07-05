@@ -78,7 +78,7 @@ public class PodcastFragment extends Fragment {
     private ProgressBar mProgressBar;
     private PodcastWebViewClient mPodcastWebViewClient;
     private PodcastWebChromeClient mPodcastWebChromeClient;
-    private MusicServiceBinder mMusicServiceBinder;
+    private IMusicService mMusicServiceBinder;
     boolean mBound = false;
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingPodcast;
@@ -412,7 +412,7 @@ public class PodcastFragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
-            mMusicServiceBinder = (MusicServiceBinder) service;
+            mMusicServiceBinder = (IMusicService) service;
             mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
             mBound = true;
         }

@@ -78,7 +78,7 @@ public class ZooFragment extends Fragment {
     private ProgressBar mProgressBar;
     private ZooWebViewClient mZooWebViewClient;
     private ZooWebChromeClient mZooWebChromeClient;
-    private MusicServiceBinder mMusicServiceBinder;
+    private IMusicService mMusicServiceBinder;
     boolean mBound = false;
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingZoo;
@@ -406,7 +406,7 @@ public class ZooFragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
-            mMusicServiceBinder = (MusicServiceBinder) service;
+            mMusicServiceBinder = (IMusicService) service;
             mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
             mBound = true;
         }

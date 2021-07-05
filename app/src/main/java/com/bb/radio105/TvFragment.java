@@ -54,7 +54,6 @@ public class TvFragment extends Fragment {
     private VideoView videoView;
     private String videoUrl;
     private MusicServiceBinder mMusicServiceBinder;
-    boolean mBound = false;
     private MediaControllerCompat mMediaControllerCompat;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -177,18 +176,15 @@ public class TvFragment extends Fragment {
             Timber.e("Connection successful");
             mMusicServiceBinder = (MusicServiceBinder) service;
             mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
-            mBound = true;
             // Stop radio streaming if running
             if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
                 mMediaControllerCompat.getTransportControls().pause();
             }
-            mBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Timber.e("Service crashed");
-            mBound = false;
         }
     };
 }

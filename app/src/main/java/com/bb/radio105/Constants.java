@@ -20,6 +20,7 @@ import android.os.Bundle;
 
 public class Constants {
     // Intent Actions
+    static final String ACTION_START = "com.bb.radio105.action.START";
     static final String ACTION_PLAY_NOTIFICATION = "com.bb.radio105.action.PLAY_NOTIFICATION";
     static final String ACTION_PAUSE_NOTIFICATION = "com.bb.radio105.action.PAUSE_NOTIFICATION";
     static final String ACTION_PLAY = "com.bb.radio105.action.PLAY";

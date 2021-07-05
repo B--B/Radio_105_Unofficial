@@ -79,7 +79,6 @@ public class PodcastFragment extends Fragment {
     private PodcastWebViewClient mPodcastWebViewClient;
     private PodcastWebChromeClient mPodcastWebChromeClient;
     private IMusicService mMusicServiceBinder;
-    boolean mBound = false;
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingPodcast;
 
@@ -414,13 +413,11 @@ public class PodcastFragment extends Fragment {
             Timber.e("Connection successful");
             mMusicServiceBinder = (IMusicService) service;
             mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
-            mBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Timber.e("Service crashed");
-            mBound = false;
         }
     };
 

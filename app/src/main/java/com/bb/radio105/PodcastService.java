@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -24,8 +25,6 @@ import android.os.PowerManager;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
-import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 
 import timber.log.Timber;
 
@@ -37,9 +36,9 @@ public class PodcastService extends Service {
     private NotificationManagerCompat mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder = null;
     private boolean serviceCreated = false;
-    private PowerManager.WakeLock wakeLock;
+    private PowerManager.WakeLock mWakeLock;
     static boolean isPlayingPodcast = false;
-    private AdblockWebView mAdblockWebView;
+    private WifiManager.WifiLock mWifiLock;
 
     @Override
     public void onCreate() {
@@ -50,11 +49,11 @@ public class PodcastService extends Service {
         // Set the PlaceHolder when service starts
         placeHolder = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
 
-        //Acquire wake lock
-        PowerManager mPowerManager = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
-        this.wakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:PodcastServiceWakelock");
-
-        mAdblockWebView = mWebView;
+        //Acquire wake locks
+        mWakeLock = ((PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE))
+                .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:PodcastServiceWakelock");
+        mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
+                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:PodcastServiceWiFiWakelock");
     }
 
     @SuppressLint("WakelockTimeout")
@@ -66,31 +65,38 @@ public class PodcastService extends Service {
                 break;
             case ACTION_PLAY_NOTIFICATION:
                 processPlayRequestNotification();
-                if (wakeLock != null && !wakeLock.isHeld()) {
-                    wakeLock.acquire();
-                }
+                mWakeLock.acquire();
+                mWifiLock.acquire();
                 break;
             case ACTION_PAUSE_NOTIFICATION:
-                if (wakeLock != null && wakeLock.isHeld()) {
-                wakeLock.release();
+                if (mWakeLock.isHeld()) {
+                    mWakeLock.release();
+                }
+                if (mWifiLock.isHeld()) {
+                    mWifiLock.release();
                 }
                 processPauseRequestNotification();
                 break;
             case ACTION_PLAY:
-                if (wakeLock != null && !wakeLock.isHeld()) {
-                wakeLock.acquire();
-                }
+                mWakeLock.acquire();
+                mWifiLock.acquire();
                 processPlayRequest();
                 break;
             case ACTION_PAUSE:
-                if (wakeLock != null && wakeLock.isHeld()) {
-                wakeLock.release();
+                if (mWakeLock.isHeld()) {
+                    mWakeLock.release();
+                }
+                if (mWifiLock.isHeld()) {
+                    mWifiLock.release();
                 }
                 processPauseRequest();
                 break;
             case ACTION_STOP:
-                if (wakeLock != null && wakeLock.isHeld()) {
-                wakeLock.release();
+                if (mWakeLock.isHeld()) {
+                    mWakeLock.release();
+                }
+                if (mWifiLock.isHeld()) {
+                    mWifiLock.release();
                 }
                 processStopRequest();
                 break;
@@ -107,14 +113,17 @@ public class PodcastService extends Service {
     @Override
     public void onDestroy() {
         // Service is being killed, so make sure we release our resources
-        mAdblockWebView = null;
+        if (mWakeLock != null && mWakeLock.isHeld()) {
+            mWakeLock.release();
+        }
+        if (mWifiLock != null && mWifiLock.isHeld()) {
+            mWifiLock.release();
+        }
         mNotificationBuilder = null;
         mNotificationManager = null;
         placeHolder = null;
-        if (wakeLock != null && wakeLock.isHeld()) {
-            wakeLock.release();
-        }
-        wakeLock = null;
+        mWakeLock = null;
+        mWifiLock = null;
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
@@ -183,14 +192,14 @@ public class PodcastService extends Service {
     }
 
     private void processPlayRequestNotification() {
-        Utils.callJavaScript(mAdblockWebView, "player.play");
+        Utils.callJavaScript(mWebView, "player.play");
         updateNotification(getString(R.string.playing));
         isPlayingPodcast = true;
     }
 
     private void processPauseRequestNotification() {
         Timber.e("Processing pause request from notification");
-        Utils.callJavaScript(mAdblockWebView, "player.pause");
+        Utils.callJavaScript(mWebView, "player.pause");
         updateNotification(getString(R.string.in_pause));
         isPlayingPodcast = false;
     }

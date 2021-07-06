@@ -359,9 +359,7 @@ public class ZooFragment extends Fragment {
                 if (mProgressBar != null) {
                     mProgressBar.setVisibility(View.GONE);
                 }
-                if (webView != null) {
-                    webView.setVisibility(View.VISIBLE);
-                }
+                webView.setVisibility(View.VISIBLE);
             }, 200);
             super.onPageFinished(webView, url);
         }

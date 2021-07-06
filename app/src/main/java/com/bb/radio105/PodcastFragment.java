@@ -41,6 +41,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -64,6 +65,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import org.adblockplus.libadblockplus.android.AdblockEngineProvider;
 import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 
@@ -81,13 +83,10 @@ public class PodcastFragment extends Fragment {
     static AdblockWebView mWebView = null;
     private View root;
     private ProgressBar mProgressBar;
-    private PodcastWebViewClient mPodcastWebViewClient;
-    private PodcastWebChromeClient mPodcastWebChromeClient;
     private IMusicService mMusicServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
     private Intent startPodcastService;
     static boolean isMediaPlayingPodcast;
-
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -107,8 +106,8 @@ public class PodcastFragment extends Fragment {
         MainActivity.updateColorsInterface.onUpdate(false);
 
         // WebView and Chrome clients
-        mPodcastWebViewClient = new PodcastWebViewClient();
-        mPodcastWebChromeClient = new PodcastWebChromeClient();
+        PodcastWebViewClient mPodcastWebViewClient = new PodcastWebViewClient();
+        PodcastWebChromeClient mPodcastWebChromeClient = new PodcastWebChromeClient();
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -159,7 +158,6 @@ public class PodcastFragment extends Fragment {
         // Bind music service
         requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
         // Start podcast service
-        mWebView.addJavascriptInterface(new JSInterfacePodcast(),"JSPODCASTOUT");
         startPodcastService = new Intent(getContext(), PodcastService.class);
         startPodcastService.setAction("com.bb.radio105.action.START");
         requireContext().startService(startPodcastService);
@@ -185,7 +183,6 @@ public class PodcastFragment extends Fragment {
         if (mState == Stopped) {
             requireContext().stopService(startPodcastService);
         }
-        mWebView.removeJavascriptInterface("JSPODCASTOUT");
     }
 
     @Override
@@ -224,29 +221,29 @@ public class PodcastFragment extends Fragment {
         if (mState != Stopped) {
             Timber.e("Stopping Podcast Service");
             mState = Stopped;
-            Utils.callJavaScript(mWebView,"player.pause");
             requireContext().stopService(startPodcastService);
         }
-
         // Restore Glide memory values
         Glide.get(requireContext()).setMemoryCategory(MemoryCategory.NORMAL);
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
         mMusicServiceBinder = null;
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
         }
-        mPodcastWebViewClient = null;
-        mPodcastWebChromeClient = null;
         mProgressBar = null;
-        if (mWebView != null) {
-            mWebView.loadUrl("about:blank");
-            mWebView.destroy();
-            mWebView = null;
+        AdblockHelper.get().getProvider().release();
+        ViewParent parent = mWebView.getParent();
+        if (parent != null) {
+            ((ViewGroup) parent).removeView(mWebView);
         }
+        mWebView.stopLoading();
+        mWebView.clearHistory();
+        mWebView.removeJavascriptInterface("JSPODCASTOUT");
+        mWebView.loadUrl("about:blank");
+        mWebView.getSettings().setJavaScriptEnabled(false);
+        mWebView.removeAllViews();
+        mWebView.destroy();
+        mWebView = null;
         root = null;
     }
 
@@ -257,7 +254,7 @@ public class PodcastFragment extends Fragment {
         return new ByteArrayInputStream(mByte);
     }
 
-    private class PodcastWebChromeClient extends WebChromeClient {
+    private final class PodcastWebChromeClient extends WebChromeClient {
         private View fullScreenView;
         private ViewGroup mViewGroup;
         private WebChromeClient.CustomViewCallback mViewCallback;
@@ -296,9 +293,7 @@ public class PodcastFragment extends Fragment {
         }
     }
 
-    private class PodcastWebViewClient extends WebViewClient {
-
-
+    private final class PodcastWebViewClient extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading (WebView webView, WebResourceRequest request) {
             if (Uri.parse(request.getUrl().toString()).getHost().contains("zoo.105.net")) {

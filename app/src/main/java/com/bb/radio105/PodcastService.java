@@ -35,7 +35,6 @@ public class PodcastService extends Service {
     final int NOTIFICATION_ID = 2;
     private NotificationManagerCompat mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder = null;
-    private boolean serviceCreated = false;
     private PowerManager.WakeLock mWakeLock;
     private WifiManager.WifiLock mWifiLock;
 
@@ -132,6 +131,8 @@ public class PodcastService extends Service {
         placeHolder = null;
         mWakeLock = null;
         mWifiLock = null;
+        stopForeground(true);
+        stopSelf();
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
@@ -191,7 +192,7 @@ public class PodcastService extends Service {
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setContentText(text);
         mNotificationBuilder.clearActions();
-        if (PodcastFragment.isMediaPlayingPodcast) {
+        if (mState == State.Playing) {
             mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mPauseIntent);
         } else {
             mNotificationBuilder.addAction(R.drawable.ic_play, getString(R.string.play), mPlayIntent);
@@ -213,11 +214,10 @@ public class PodcastService extends Service {
     }
 
     private void processPlayRequest() {
-        if (serviceCreated) {
-            updateNotification(getString(R.string.playing));
-        } else {
+        if (mState == State.Stopped) {
             setUpAsForeground(getString(R.string.playing));
-            serviceCreated = true;
+        } else {
+            updateNotification(getString(R.string.playing));
         }
         mState = State.Playing;
     }
@@ -229,7 +229,6 @@ public class PodcastService extends Service {
 
     private void processStopRequest() {
         stopForeground(true);
-        PodcastFragment.isMediaPlayingPodcast = false;
         mState = State.Stopped;
     }
 

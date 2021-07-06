@@ -36,6 +36,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -59,8 +60,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import org.adblockplus.libadblockplus.android.AdblockEngineProvider;
 import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
+import org.adblockplus.libadblockplus.sitekey.SiteKeysConfiguration;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -81,6 +84,8 @@ public class ZooFragment extends Fragment {
     private IMusicService mMusicServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingZoo;
+    private AdblockEngineProvider mAdblockEngineProvider;
+    private SiteKeysConfiguration mSiteKeysConfiguration;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -104,6 +109,10 @@ public class ZooFragment extends Fragment {
         mZooWebViewClient = new ZooWebViewClient();
         mZooWebChromeClient = new ZooWebChromeClient();
 
+        // AdBlockHelper
+        mAdblockEngineProvider = (AdblockHelper.get().getProvider());
+        mSiteKeysConfiguration = (AdblockHelper.get().getSiteKeysConfiguration());
+
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
@@ -126,8 +135,8 @@ public class ZooFragment extends Fragment {
         mWebView.getSettings().setDatabaseEnabled(true);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        mWebView.setProvider(AdblockHelper.get().getProvider());
-        mWebView.setSiteKeysConfiguration(AdblockHelper.get().getSiteKeysConfiguration());
+        mWebView.setProvider(mAdblockEngineProvider);
+        mWebView.setSiteKeysConfiguration(mSiteKeysConfiguration);
         mWebView.addJavascriptInterface(new JSInterfaceZoo(),"JSZOOOUT");
         mWebView.setWebViewClient(mZooWebViewClient);
         mWebView.setWebChromeClient(mZooWebChromeClient);
@@ -209,11 +218,24 @@ public class ZooFragment extends Fragment {
         if (pref) {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+        mProgressBar = null;
+        mAdblockEngineProvider.release();
+        mAdblockEngineProvider = null;
+        mSiteKeysConfiguration = null;
         mZooWebViewClient = null;
         mZooWebChromeClient = null;
-        mProgressBar = null;
         if (mWebView != null) {
-            mWebView.dispose(null);
+            ViewParent parent = mWebView.getParent();
+            if (parent != null) {
+                ((ViewGroup) parent).removeView(mWebView);
+            }
+            mWebView.stopLoading();
+            mWebView.clearHistory();
+            mWebView.removeJavascriptInterface("JSZOOOUT");
+            mWebView.loadUrl("javascript:document.open();document.close();");
+            mWebView.getSettings().setJavaScriptEnabled(false);
+            mWebView.removeAllViews();
+            mWebView.destroy();
         }
         root = null;
         // Restore Glide memory values
@@ -337,7 +359,7 @@ public class ZooFragment extends Fragment {
                 if (mProgressBar != null) {
                     mProgressBar.setVisibility(View.GONE);
                 }
-                if (mWebView != null) {
+                if (webView != null) {
                     webView.setVisibility(View.VISIBLE);
                 }
             }, 200);

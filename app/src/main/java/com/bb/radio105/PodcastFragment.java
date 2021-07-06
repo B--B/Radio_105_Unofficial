@@ -16,6 +16,9 @@
 
 package com.bb.radio105;
 
+import static com.bb.radio105.PodcastService.State.Paused;
+import static com.bb.radio105.PodcastService.State.Playing;
+import static com.bb.radio105.PodcastService.State.Stopped;
 import static com.bb.radio105.PodcastService.mState;
 
 import android.Manifest;
@@ -82,10 +85,8 @@ public class PodcastFragment extends Fragment {
     private PodcastWebChromeClient mPodcastWebChromeClient;
     private IMusicService mMusicServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
-    static boolean isMediaPlayingPodcast;
-    private boolean serviceCreated = false;
-    private boolean serviceDestroying = false;
     private Intent startPodcastService;
+    static boolean isMediaPlayingPodcast;
 
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -181,7 +182,7 @@ public class PodcastFragment extends Fragment {
             Timber.d("onStop: failed to obtain WebView state to save!");
         }
         Constants.podcastBundle.putBundle(Constants.PODCAST_STATE, currentWebViewState);
-        if (mState == PodcastService.State.Stopped) {
+        if (mState == Stopped) {
             requireContext().stopService(startPodcastService);
         }
         mWebView.removeJavascriptInterface("JSPODCASTOUT");
@@ -190,7 +191,7 @@ public class PodcastFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (mState != PodcastService.State.Playing) {
+        if (mState != Playing) {
             if (mWebView != null) {
                 mWebView.getSettings().setJavaScriptEnabled(false);
                 mWebView.onPause();
@@ -203,7 +204,7 @@ public class PodcastFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mState != PodcastService.State.Playing) {
+        if (mState != Playing) {
             if (mWebView != null) {
                 mWebView.getSettings().setJavaScriptEnabled(true);
                 mWebView.onResume();
@@ -220,14 +221,20 @@ public class PodcastFragment extends Fragment {
         if (pref) {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-        if (serviceCreated) {
+        if (mState != Stopped) {
             Timber.e("Stopping Podcast Service");
+            mState = Stopped;
             Utils.callJavaScript(mWebView,"player.pause");
-            serviceDestroying = true;
-            serviceCreated = false;
-            mWebView.loadUrl("about:blank");
             requireContext().stopService(startPodcastService);
         }
+
+        // Restore Glide memory values
+        Glide.get(requireContext()).setMemoryCategory(MemoryCategory.NORMAL);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         mMusicServiceBinder = null;
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
@@ -236,12 +243,11 @@ public class PodcastFragment extends Fragment {
         mPodcastWebChromeClient = null;
         mProgressBar = null;
         if (mWebView != null) {
-            mWebView.dispose(null);
+            mWebView.loadUrl("about:blank");
+            mWebView.destroy();
             mWebView = null;
         }
         root = null;
-        // Restore Glide memory values
-        Glide.get(requireContext()).setMemoryCategory(MemoryCategory.NORMAL);
     }
 
     private InputStream getBitmapInputStream(Bitmap bitmap, Bitmap.CompressFormat compressFormat) {
@@ -316,9 +322,8 @@ public class PodcastFragment extends Fragment {
         public void onPageStarted(WebView webView, String url, Bitmap mBitmap) {
             mProgressBar.setVisibility(View.VISIBLE);
             webView.setVisibility(View.GONE);
-            if (serviceCreated) {
+            if (mState != Stopped) {
                 stopPodcast();
-                serviceCreated = false;
             }
             super.onPageStarted(webView, url, mBitmap);
         }
@@ -460,13 +465,12 @@ public class PodcastFragment extends Fragment {
                 if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
                     mMediaControllerCompat.getTransportControls().pause();
                 }
-                playPodcast();
-                serviceCreated = true;
+                if (mState == Stopped || mState == Paused) {
+                    playPodcast();
+                }
             } else {
-                if (!serviceDestroying) {
+                if (mState == Playing) {
                     pausePodcast();
-                } else {
-                    serviceDestroying = false;
                 }
             }
         }

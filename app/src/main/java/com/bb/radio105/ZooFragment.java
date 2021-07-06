@@ -85,7 +85,6 @@ public class ZooFragment extends Fragment {
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingZoo;
     private AdblockEngineProvider mAdblockEngineProvider;
-    private SiteKeysConfiguration mSiteKeysConfiguration;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -111,7 +110,6 @@ public class ZooFragment extends Fragment {
 
         // AdBlockHelper
         mAdblockEngineProvider = (AdblockHelper.get().getProvider());
-        mSiteKeysConfiguration = (AdblockHelper.get().getSiteKeysConfiguration());
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -136,7 +134,7 @@ public class ZooFragment extends Fragment {
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.setProvider(mAdblockEngineProvider);
-        mWebView.setSiteKeysConfiguration(mSiteKeysConfiguration);
+        mWebView.setSiteKeysConfiguration(AdblockHelper.get().getSiteKeysConfiguration());
         mWebView.addJavascriptInterface(new JSInterfaceZoo(),"JSZOOOUT");
         mWebView.setWebViewClient(mZooWebViewClient);
         mWebView.setWebChromeClient(mZooWebChromeClient);
@@ -209,19 +207,18 @@ public class ZooFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        mMusicServiceBinder = null;
-        if (mMediaControllerCompat != null) {
-            mMediaControllerCompat = null;
-        }
+        super.onDestroyView();
+        Timber.e("onDestroy called");
         boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.screen_on_key), false);
         if (pref) {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+        mMusicServiceBinder = null;
+        if (mMediaControllerCompat != null) {
+            mMediaControllerCompat = null;
+        }
         mProgressBar = null;
-        mAdblockEngineProvider.release();
-        mAdblockEngineProvider = null;
-        mSiteKeysConfiguration = null;
         mZooWebViewClient = null;
         mZooWebChromeClient = null;
         if (mWebView != null) {
@@ -237,10 +234,11 @@ public class ZooFragment extends Fragment {
             mWebView.removeAllViews();
             mWebView.destroy();
         }
+        mAdblockEngineProvider.release();
+        mAdblockEngineProvider = null;
         root = null;
         // Restore Glide memory values
         Glide.get(requireContext()).setMemoryCategory(MemoryCategory.NORMAL);
-        super.onDestroyView();
     }
 
     private InputStream getBitmapInputStream(Bitmap bitmap, Bitmap.CompressFormat compressFormat) {

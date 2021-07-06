@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
                         R.raw.easylist_minified,
                         R.raw.exceptionrules_minimal)
                 .getSiteKeysConfiguration().setForceChecks(true);
+        registerComponentCallbacks(this);
 
         SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean isFirstStart = mSharedPreferences.getBoolean("firstStart", true);
@@ -187,6 +188,8 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     @Override
     public void onDestroy() {
         super.onDestroy();
+        unregisterComponentCallbacks(this);
+        AdblockHelper.deinit();
         startMusicService = null;
         updateColorsInterface = null;
     }

@@ -139,20 +139,20 @@ public class PodcastService extends Service {
     private void setUpAsForeground(String text) {
         // Creating notification channel
         createNotificationChannel();
-        Intent intent = new Intent(this, MainActivity.class);
 
         //Intent for Pause
         Intent pauseIntent = new Intent();
         pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION);
         PendingIntent mPauseIntent = PendingIntent.getService(this, 101, pauseIntent, 0);
 
+        Intent intent = getPackageManager()
+                .getLaunchIntentForPackage(getPackageName())
+                .setPackage(null)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        } else {
-            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        }
+        pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
         // Building notification here
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
         mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
@@ -171,14 +171,15 @@ public class PodcastService extends Service {
 
     @SuppressLint("UnspecifiedImmutableFlag")
     private void updateNotification(String text) {
-        Intent intent = new Intent(this, MainActivity.class);
+
+        Intent intent = getPackageManager()
+                .getLaunchIntentForPackage(getPackageName())
+                .setPackage(null)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        } else {
-            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        }
+        pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
         //Intent for Play
         Intent playIntent = new Intent();
         playIntent.setAction(Constants.ACTION_PLAY_NOTIFICATION);

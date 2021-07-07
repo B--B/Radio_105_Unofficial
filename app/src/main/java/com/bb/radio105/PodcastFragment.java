@@ -65,7 +65,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import org.adblockplus.libadblockplus.android.AdblockEngineProvider;
 import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 
@@ -134,6 +133,7 @@ public class PodcastFragment extends Fragment {
         mWebView.setSiteKeysConfiguration(AdblockHelper.get().getSiteKeysConfiguration());
         mWebView.setWebViewClient(mPodcastWebViewClient);
         mWebView.setWebChromeClient(mPodcastWebChromeClient);
+        mWebView.addJavascriptInterface(new JSInterfacePodcast(),"JSPODCASTOUT");
         if (Constants.podcastBundle == null) {
             mWebView.loadUrl(url);
         } else {
@@ -458,6 +458,7 @@ public class PodcastFragment extends Fragment {
                     mMediaControllerCompat.getTransportControls().pause();
                 }
                 if (mState == Stopped || mState == Paused) {
+                    Timber.e("Received play request for PodcastService");
                     playPodcast();
                 }
             } else {

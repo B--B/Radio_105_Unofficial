@@ -202,34 +202,35 @@ public class PodcastService extends Service {
 
     private void processPlayRequestNotification() {
         Utils.callJavaScript(mWebView, "player.play");
-        updateNotification(getString(R.string.playing));
         mState = State.Playing;
+        updateNotification(getString(R.string.playing));
     }
 
     private void processPauseRequestNotification() {
         Timber.e("Processing pause request from notification");
         Utils.callJavaScript(mWebView, "player.pause");
-        updateNotification(getString(R.string.in_pause));
         mState = State.Paused;
+        updateNotification(getString(R.string.in_pause));
     }
 
     private void processPlayRequest() {
         if (mState == State.Stopped) {
+            mState = State.Playing;
             setUpAsForeground(getString(R.string.playing));
         } else {
+            mState = State.Playing;
             updateNotification(getString(R.string.playing));
         }
-        mState = State.Playing;
     }
 
     private void processPauseRequest() {
-        updateNotification(getString(R.string.in_pause));
         mState = State.Paused;
+        updateNotification(getString(R.string.in_pause));
     }
 
     private void processStopRequest() {
-        stopForeground(true);
         mState = State.Stopped;
+        stopForeground(true);
     }
 
     private void createNotificationChannel() {

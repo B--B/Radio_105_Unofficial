@@ -250,6 +250,7 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                     if (type) {
                         // Restart the stream. Don't use MediaSession callback as we are
                         // already onPlay and the stream will restart in a few moments
+                        if (mWifiLock.isHeld()) mWifiLock.release();
                         recoverStream();
                     }
                 }
@@ -298,6 +299,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             updatePlaybackState(null);
             updateNotification(getString(R.string.playing));
             configAndStartMediaPlayer();
+            // Acquire the WiFi lock
+            mWifiLock.acquire();
         }
         if (!mSession.isActive()) {
             mSession.setActive(true);
@@ -310,7 +313,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
             mState = PlaybackStateCompat.STATE_PAUSED;
             updatePlaybackState(null);
             mPlayer.pause();
-            relaxResources();
+            // we can release the Wifi lock, if we're holding it
+            if (mWifiLock.isHeld()) mWifiLock.release();
             updateNotification(getString(R.string.in_pause));
             // do not give up audio focus
         }
@@ -348,11 +352,6 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
         }
 
         // we can also release the Wifi lock, if we're holding it
-        if (mWifiLock.isHeld()) mWifiLock.release();
-    }
-
-    private void relaxResources() {
-        // we can release the Wifi lock, if we're holding it
         if (mWifiLock.isHeld()) mWifiLock.release();
     }
 
@@ -416,11 +415,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 // Until the media player is prepared, we *cannot* call start() on it!
                 mPlayer.prepare();
 
-                // If we are streaming from the internet, we want to hold a Wifi lock, which prevents
-                // the Wifi radio from going to sleep while the song is playing. If, on the other hand,
-                // we are *not* streaming, we want to release the lock if we were holding it before.
+                // Acquire the WiFi lock
                 mWifiLock.acquire();
-                if (mWifiLock.isHeld()) mWifiLock.release();
             } catch (IOException ex) {
                 Timber.tag("MusicService").e("IOException playing next song: %s", ex.getMessage());
                 updatePlaybackState(ex.getMessage());
@@ -454,11 +450,8 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 // Until the media player is prepared, we *cannot* call start() on it!
                 mPlayer.prepare();
 
-                // If we are streaming from the internet, we want to hold a Wifi lock, which prevents
-                // the Wifi radio from going to sleep while the song is playing. If, on the other hand,
-                // we are *not* streaming, we want to release the lock if we were holding it before.
+                // Acquire th WiFi lock
                 mWifiLock.acquire();
-                if (mWifiLock.isHeld()) mWifiLock.release();
             } catch (IOException ex) {
                 Timber.tag("MusicService").e("IOException playing next song: %s", ex.getMessage());
                 updatePlaybackState(ex.getMessage());

@@ -100,13 +100,15 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
         NavigationUI.setupWithNavController(navigationView, navController);
         updateColorsInterface = this;
 
-        AdblockHelper.get()
-                .init(this, null /*use default value*/, AdblockHelper.PREFERENCE_NAME)
-                .preloadSubscriptions(
-                        R.raw.easylist_minified,
-                        R.raw.exceptionrules_minimal)
-                .getSiteKeysConfiguration().setForceChecks(false);
-        registerComponentCallbacks(this);
+        if (!AdblockHelper.get().isInit()) {
+            AdblockHelper.get()
+                    .init(this, null /*use default value*/, AdblockHelper.PREFERENCE_NAME)
+                    .preloadSubscriptions(
+                            R.raw.easylist_minified,
+                            R.raw.exceptionrules_minimal)
+                    .getSiteKeysConfiguration().setForceChecks(false);
+            registerComponentCallbacks(this);
+        }
 
         SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean isFirstStart = mSharedPreferences.getBoolean("firstStart", true);

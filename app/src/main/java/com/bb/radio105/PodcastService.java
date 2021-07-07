@@ -6,7 +6,6 @@ import static com.bb.radio105.Constants.ACTION_PLAY;
 import static com.bb.radio105.Constants.ACTION_PLAY_NOTIFICATION;
 import static com.bb.radio105.Constants.ACTION_START;
 import static com.bb.radio105.Constants.ACTION_STOP;
-import static com.bb.radio105.PodcastFragment.mWebView;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
@@ -202,16 +201,26 @@ public class PodcastService extends Service {
     }
 
     private void processPlayRequestNotification() {
-        Utils.callJavaScript(mWebView, "player.play");
+        //Utils.callJavaScript(mWebView, "player.play");
         mState = State.Playing;
         updateNotification(getString(R.string.playing));
+        if (ZooFragment.zooService) {
+            ZooFragment.mIPodcastService.playbackState("Play");
+        } else {
+            PodcastFragment.mIPodcastService.playbackState("Play");
+        }
     }
 
     private void processPauseRequestNotification() {
         Timber.e("Processing pause request from notification");
-        Utils.callJavaScript(mWebView, "player.pause");
+       // Utils.callJavaScript(mWebView, "player.pause");
         mState = State.Paused;
         updateNotification(getString(R.string.in_pause));
+        if (ZooFragment.zooService) {
+            ZooFragment.mIPodcastService.playbackState("Pause");
+        } else {
+            PodcastFragment.mIPodcastService.playbackState("Pause");
+        }
     }
 
     private void processPlayRequest() {

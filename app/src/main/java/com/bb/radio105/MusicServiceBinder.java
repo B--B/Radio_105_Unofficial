@@ -10,29 +10,24 @@ import android.graphics.Bitmap;
 import android.os.Binder;
 import android.support.v4.media.session.MediaSessionCompat;
 
-class MusicServiceBinder extends Binder implements IMusicService {
+class MusicServiceBinder extends Binder {
     /** methods for clients */
-    @Override
     public MediaSessionCompat.Token getMediaSessionToken() {
         return mToken;
     }
 
-    @Override
     public Bitmap getArt() {
         return art;
     }
 
-    @Override
     public String getTitleString() {
         return titleString;
     }
 
-    @Override
     public String getDjString() {
         return djString;
     }
 
-    @Override
     public int getPlaybackState() {
         return mState;
     }

@@ -16,6 +16,11 @@
 
 package com.bb.radio105;
 
+import static com.bb.radio105.PodcastService.State.Paused;
+import static com.bb.radio105.PodcastService.State.Playing;
+import static com.bb.radio105.PodcastService.State.Stopped;
+import static com.bb.radio105.PodcastService.mState;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -36,7 +41,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -60,10 +64,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import org.adblockplus.libadblockplus.android.AdblockEngineProvider;
 import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
-import org.adblockplus.libadblockplus.sitekey.SiteKeysConfiguration;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -74,17 +76,17 @@ import java.util.concurrent.ExecutionException;
 
 import timber.log.Timber;
 
-public class ZooFragment extends Fragment {
+public class ZooFragment extends Fragment implements IPodcastService {
 
-    static AdblockWebView mWebView = null;
+    private AdblockWebView mWebView;
     private View root;
     private ProgressBar mProgressBar;
-    private ZooWebViewClient mZooWebViewClient;
-    private ZooWebChromeClient mZooWebChromeClient;
-    private IMusicService mMusicServiceBinder;
+    private MusicServiceBinder mMusicServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
-    static boolean isMediaPlayingZoo;
-    private AdblockEngineProvider mAdblockEngineProvider;
+    private Intent startPodcastService;
+    static boolean isMediaPlayingPodcast;
+    static boolean zooService;
+    static IPodcastService mIPodcastService;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -104,12 +106,9 @@ public class ZooFragment extends Fragment {
         MainActivity.updateColorsInterface.onUpdate(true);
         MainActivity.isZooColor = true;
 
-        // WebView and Chrome clients
-        mZooWebViewClient = new ZooWebViewClient();
-        mZooWebChromeClient = new ZooWebChromeClient();
-
-        // AdBlockHelper
-        mAdblockEngineProvider = (AdblockHelper.get().getProvider());
+        // Playback state interface
+        mIPodcastService = this;
+        zooService = true;
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -124,26 +123,198 @@ public class ZooFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         mWebView = root.findViewById(R.id.webView_zoo);
-        mProgressBar = root.findViewById(R.id.loading_zoo);
         String url = "https://zoo.105.net";
+        final String javaScript = "javascript:(function() { " +
+                "var audio = document.querySelector('audio'); " +
+                "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload'); " +
+                "    audio.onplay = function() {" +
+                "        JSZOOOUT.mediaZooAction('true');" +
+                "    };" +
+                "    audio.onpause = function() {" +
+                "        JSZOOOUT.mediaZooAction('false');" +
+                "    };" +
+                "};" +
+                "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
+                " if (element.length) { element[0].style.width = '100%' }; " +
+                "var element = document.getElementsByClassName('container');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('clear');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('col-xs-12');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('tags vc_article_tag vc_theme_article_zoo');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('col-xs-12 vc_bg_white');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('spacer spacer t_20');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('container vc_bg_black');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('text_edit vc_textedit_box_previews vc_column vc_theme_zoo');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('vc_container_social_button vc_theme_zoo');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('bannervcms banner_rectangle_mobile_320x50_3 ');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('iubenda-cs-container');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('share vc_share_buttons null');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('bannervcms banner_masthead ');" +
+                " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
         mWebView.getSettings().setLoadsImagesAutomatically(true);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);
-        mWebView.getSettings().setDatabaseEnabled(true);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        mWebView.setProvider(mAdblockEngineProvider);
+        mWebView.setProvider(AdblockHelper.get().getProvider());
         mWebView.setSiteKeysConfiguration(AdblockHelper.get().getSiteKeysConfiguration());
         mWebView.addJavascriptInterface(new JSInterfaceZoo(),"JSZOOOUT");
-        mWebView.setWebViewClient(mZooWebViewClient);
-        mWebView.setWebChromeClient(mZooWebChromeClient);
-
         if (Constants.zooBundle == null) {
             mWebView.loadUrl(url);
         } else {
             mWebView.restoreState(Constants.zooBundle.getBundle(Constants.ZOO_STATE));
         }
+
+        mProgressBar = root.findViewById(R.id.loading_zoo);
+
+        mWebView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public boolean shouldOverrideUrlLoading (WebView webView, WebResourceRequest request) {
+                if (Uri.parse(request.getUrl().toString()).getHost().contains("zoo.105.net")) {
+                    return false;
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(R.string.unsupported_title);
+                builder.setMessage(R.string.unsupported_description);
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.setPositiveButton(R.string.open_browser, (dialog, id) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.valueOf(Uri.parse(request.getUrl().toString()))))));
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                return true;
+            }
+
+            @Override
+            public void onPageStarted(WebView webView, String url, Bitmap mBitmap) {
+                webView.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.VISIBLE);
+                if (mState != Stopped) {
+                    stopPodcast();
+                }
+                super.onPageStarted(webView, url, mBitmap);
+            }
+
+            @Override
+            public void onPageFinished (WebView webView, String url) {
+                webView.loadUrl(javaScript);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    if (mProgressBar != null) {
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+                    webView.setVisibility(View.VISIBLE);
+                }, 200);
+                super.onPageFinished(webView, url);
+            }
+
+            @RequiresApi(Build.VERSION_CODES.M)
+            @Override
+            public void onReceivedError(WebView webView, WebResourceRequest request, WebResourceError error) {
+                // Ignore some connection errors
+                // ERR_FAILED = -1
+                // ERR_ADDRESS_UNREACHABLE = -2
+                // ERR_CONNECTION_REFUSED = -6
+                switch (error.getErrorCode()) {
+                    case -1:
+                    case -2:
+                    case -6:
+                        break;
+                    default:
+                        webView.loadUrl(Constants.ErrorPagePath);
+                        break;
+                }
+            }
+
+            @Deprecated
+            @Override
+            public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
+                webView.loadUrl(Constants.ErrorPagePath);
+            }
+
+            @Nullable
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view,
+                                                              WebResourceRequest request) {
+
+                try {
+                    String url = request.getUrl().toString();
+                    ZooFragment mZooFragment = ZooFragment.this;
+                    Bitmap bitmap;
+                    if (url.endsWith("mediaelement-and-player.min.js")) {
+                        return new WebResourceResponse("text/javascript", "UTF-8", new ByteArrayInputStream("// Script Blocked".getBytes(StandardCharsets.UTF_8)));
+                    } else if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
+                        bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
+                        return new WebResourceResponse("image/jpg", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.JPEG));
+                    } else if (url.toLowerCase(Locale.ROOT).endsWith(".png")) {
+                        bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
+                        return new WebResourceResponse("image/png", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.PNG));
+                    } else if (url.toLowerCase(Locale.ROOT).endsWith(".webp")) {
+                        bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP_LOSSY));
+                        } else {
+                            return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP));
+                        }
+                    } else {
+                        return super.shouldInterceptRequest(view, request);
+                    }
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return super.shouldInterceptRequest(view, request);
+            }
+        });
+
+        mWebView.setWebChromeClient(new WebChromeClient() {
+
+            private View fullScreenView;
+            private ViewGroup mViewGroup;
+            private WebChromeClient.CustomViewCallback mViewCallback;
+
+            @Override
+            public void onProgressChanged(final WebView view, final int newProgress) {
+                if (mProgressBar != null) {
+                    mProgressBar.setProgress(newProgress);
+                }
+            }
+
+            @Override
+            public void onShowCustomView(View view, WebChromeClient.CustomViewCallback mCustomViewCallback) {
+                if (fullScreenView != null) {
+                    mCustomViewCallback.onCustomViewHidden();
+                    return;
+                }
+
+                ViewGroup.LayoutParams layoutParams =
+                        new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT);
+                mViewGroup = (ViewGroup) root.getRootView();
+                fullScreenView = view;
+
+                mViewCallback = mCustomViewCallback;
+                mViewGroup.addView(fullScreenView, layoutParams);
+            }
+
+            @Override
+            public void onHideCustomView() {
+                if (fullScreenView != null) {
+                    mViewGroup.removeView(fullScreenView);
+                    fullScreenView = null;
+                    mViewCallback.onCustomViewHidden();
+                }
+            }
+        });
 
         mWebView.setDownloadListener((url1, userAgent, contentDisposition, mimetype, contentLength) -> {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
@@ -162,6 +333,10 @@ public class ZooFragment extends Fragment {
         super.onStart();
         // Bind music service
         requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
+        // Start podcast service
+        startPodcastService = new Intent(getContext(), PodcastService.class);
+        startPodcastService.setAction("com.bb.radio105.action.START");
+        requireContext().startService(startPodcastService);
     }
 
     @Override
@@ -171,6 +346,9 @@ public class ZooFragment extends Fragment {
         requireContext().unbindService(mServiceConnection);
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
+        }
+        if (mState == Stopped) {
+            requireContext().stopService(startPodcastService);
         }
         if (Constants.zooBundle == null) {
             Timber.d("onStop: created new outState bundle!");
@@ -186,8 +364,6 @@ public class ZooFragment extends Fragment {
     @Override
     public void onPause() {
         if (mWebView != null) {
-            Utils.callJavaScript(mWebView, "player.pause");
-            mWebView.getSettings().setJavaScriptEnabled(false);
             mWebView.onPause();
             mWebView.pauseTimers();
         }
@@ -198,7 +374,6 @@ public class ZooFragment extends Fragment {
     @Override
     public void onResume() {
         if (mWebView != null) {
-            mWebView.getSettings().setJavaScriptEnabled(true);
             mWebView.onResume();
             mWebView.resumeTimers();
         }
@@ -207,38 +382,34 @@ public class ZooFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-        Timber.e("onDestroy called");
         boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.screen_on_key), false);
         if (pref) {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+        if (mState != Stopped) {
+            Timber.e("Stopping Podcast Service");
+            mState = Stopped;
+            isMediaPlayingPodcast = false;
+            requireContext().stopService(startPodcastService);
+        }
+        mIPodcastService = null;
+        zooService = false;
         mMusicServiceBinder = null;
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
         }
-        mProgressBar = null;
-        mZooWebViewClient = null;
-        mZooWebChromeClient = null;
         if (mWebView != null) {
-            ViewParent parent = mWebView.getParent();
-            if (parent != null) {
-                ((ViewGroup) parent).removeView(mWebView);
-            }
-            mWebView.stopLoading();
-            mWebView.clearHistory();
-            mWebView.removeJavascriptInterface("JSZOOOUT");
-            mWebView.loadUrl("javascript:document.open();document.close();");
-            mWebView.getSettings().setJavaScriptEnabled(false);
             mWebView.removeAllViews();
+            mWebView.dispose(null);
             mWebView.destroy();
         }
-        mAdblockEngineProvider.release();
-        mAdblockEngineProvider = null;
+        mProgressBar = null;
         root = null;
         // Restore Glide memory values
         Glide.get(requireContext()).setMemoryCategory(MemoryCategory.NORMAL);
+        super.onDestroyView();
+        mWebView = null;
     }
 
     private InputStream getBitmapInputStream(Bitmap bitmap, Bitmap.CompressFormat compressFormat) {
@@ -248,182 +419,11 @@ public class ZooFragment extends Fragment {
         return new ByteArrayInputStream(mByte);
     }
 
-    private class ZooWebChromeClient extends WebChromeClient {
-        private View fullScreenView;
-        private ViewGroup mViewGroup;
-        private WebChromeClient.CustomViewCallback mViewCallback;
-
-        @Override
-        public void onProgressChanged(final WebView view, final int newProgress) {
-            if (mProgressBar != null) {
-                mProgressBar.setProgress(newProgress);
-            }
-        }
-
-        @Override
-        public void onShowCustomView(View view, WebChromeClient.CustomViewCallback mCustomViewCallback) {
-            if (fullScreenView != null) {
-                mCustomViewCallback.onCustomViewHidden();
-                return;
-            }
-
-            ViewGroup.LayoutParams layoutParams =
-                    new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT);
-            mViewGroup = (ViewGroup) root.getRootView();
-            fullScreenView = view;
-
-            mViewCallback = mCustomViewCallback;
-            mViewGroup.addView(fullScreenView, layoutParams);
-        }
-
-        @Override
-        public void onHideCustomView() {
-            if (fullScreenView != null) {
-                mViewGroup.removeView(fullScreenView);
-                fullScreenView = null;
-                mViewCallback.onCustomViewHidden();
-            }
-        }
-    }
-
-    private class ZooWebViewClient extends WebViewClient {
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView webView, WebResourceRequest request) {
-            if (Uri.parse(request.getUrl().toString()).getHost().contains("zoo.105.net")) {
-                return false;
-            }
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle(R.string.unsupported_title);
-            builder.setMessage(R.string.unsupported_description);
-            builder.setNegativeButton(R.string.cancel, null);
-            builder.setPositiveButton(R.string.open_browser, (dialog, id) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.valueOf(Uri.parse(request.getUrl().toString()))))));
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-            return true;
-        }
-
-        @Override
-        public void onPageStarted(WebView webView, String url, Bitmap mBitmap) {
-            webView.setVisibility(View.GONE);
-            mProgressBar.setVisibility(View.VISIBLE);
-            super.onPageStarted(webView, url, mBitmap);
-        }
-
-        @Override
-        public void onPageFinished(WebView webView, String url) {
-            String javaScript = "javascript:(function() { " +
-                    "var audio = document.querySelector('audio'); " +
-                    "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload'); " +
-                    "    audio.onplay = function() {" +
-                    "        JSZOOOUT.mediaZooAction('true');" +
-                    "    };" +
-                    "    audio.onpause = function() {" +
-                    "        JSZOOOUT.mediaZooAction('false');" +
-                    "    };" +
-                    "};" +
-                    "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
-                    " if (element.length) { element[0].style.width = '100%' }; " +
-                    "var element = document.getElementsByClassName('container');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementsByClassName('clear');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementsByClassName('col-xs-12');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementsByClassName('tags vc_article_tag vc_theme_article_zoo');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementsByClassName('col-xs-12 vc_bg_white');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementsByClassName('spacer spacer t_20');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementsByClassName('container vc_bg_black');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementsByClassName('text_edit vc_textedit_box_previews vc_column vc_theme_zoo');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementsByClassName('vc_container_social_button vc_theme_zoo');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementsByClassName('bannervcms banner_rectangle_mobile_320x50_3 ');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementsByClassName('iubenda-cs-container');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementsByClassName('share vc_share_buttons null');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " +
-                    "var element = document.getElementsByClassName('bannervcms banner_masthead ');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " + "})()";
-
-            webView.loadUrl(javaScript);
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                if (mProgressBar != null) {
-                    mProgressBar.setVisibility(View.GONE);
-                }
-                webView.setVisibility(View.VISIBLE);
-            }, 200);
-            super.onPageFinished(webView, url);
-        }
-
-        @RequiresApi(Build.VERSION_CODES.M)
-        @Override
-        public void onReceivedError(WebView webView, WebResourceRequest request, WebResourceError error) {
-            // Ignore some connection errors
-            // ERR_FAILED = -1
-            // ERR_ADDRESS_UNREACHABLE = -2
-            // ERR_CONNECTION_REFUSED = -6
-            switch (error.getErrorCode()) {
-                case -1:
-                case -2:
-                case -6:
-                    break;
-                default:
-                    webView.loadUrl(Constants.ErrorPagePath);
-                    break;
-            }
-        }
-
-        @Deprecated
-        @Override
-        public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
-            webView.loadUrl(Constants.ErrorPagePath);
-        }
-
-        @Nullable
-        @Override
-        public WebResourceResponse shouldInterceptRequest(WebView view,
-                                                          WebResourceRequest request) {
-            try {
-                String url = request.getUrl().toString();
-                ZooFragment mZooFragment = ZooFragment.this;
-                Bitmap bitmap;
-                if (url.endsWith("mediaelement-and-player.min.js")) {
-                    return new WebResourceResponse("text/javascript", "UTF-8", new ByteArrayInputStream("// Script Blocked".getBytes(StandardCharsets.UTF_8)));
-                } else if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
-                    bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
-                    return new WebResourceResponse("image/jpg", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.JPEG));
-                } else if (url.toLowerCase(Locale.ROOT).endsWith(".png")) {
-                    bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
-                    return new WebResourceResponse("image/png", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.PNG));
-                } else if (url.toLowerCase(Locale.ROOT).endsWith(".webp")) {
-                    bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP_LOSSY));
-                    } else {
-                        return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP));
-                    }
-                } else {
-                    return super.shouldInterceptRequest(view, request);
-                }
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
-            return super.shouldInterceptRequest(view, request);
-        }
-    }
-
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
-            mMusicServiceBinder = (IMusicService) service;
+            mMusicServiceBinder = (MusicServiceBinder) service;
             mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
         }
 
@@ -433,16 +433,55 @@ public class ZooFragment extends Fragment {
         }
     };
 
+    @Override
+    public void playbackState(String playbackState) {
+        if (playbackState.equals("Play")) {
+            Utils.callJavaScript(mWebView, "player.play");
+        } else {
+            Utils.callJavaScript(mWebView, "player.pause");
+        }
+    }
+
     class JSInterfaceZoo {
         @JavascriptInterface
         public void mediaZooAction(String mString) {
-            Timber.e("isMediaPlayingZoo is %s", mString);
-            isMediaPlayingZoo = Boolean.parseBoolean(mString);
-            if (isMediaPlayingZoo) {
+            Timber.e("isMediaPlayingPodcast is %s", mString);
+            isMediaPlayingPodcast = Boolean.parseBoolean(mString);
+            if (isMediaPlayingPodcast) {
                 if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
                     mMediaControllerCompat.getTransportControls().pause();
                 }
+                if (mState == Stopped || mState == Paused) {
+                    Timber.e("Received play request from ZooFragment");
+                    playPodcast();
+                }
+            } else {
+                if (mState == Playing) {
+                    Timber.e("Received pause request from ZooFragment");
+                    pausePodcast();
+                }
             }
         }
+    }
+
+    private void playPodcast() {
+        Intent mIntent = new Intent();
+        mIntent.setAction("com.bb.radio105.action.PLAY");
+        mIntent.setPackage(requireContext().getPackageName());
+        requireContext().startService(mIntent);
+    }
+
+    private void pausePodcast() {
+        Intent mIntent = new Intent();
+        mIntent.setAction("com.bb.radio105.action.PAUSE");
+        mIntent.setPackage(requireContext().getPackageName());
+        requireContext().startService(mIntent);
+    }
+
+    private void stopPodcast() {
+        Intent mIntent = new Intent();
+        mIntent.setAction("com.bb.radio105.action.STOP");
+        mIntent.setPackage(requireContext().getPackageName());
+        requireContext().startService(mIntent);
     }
 }

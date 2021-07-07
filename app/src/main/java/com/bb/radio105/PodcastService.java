@@ -30,7 +30,8 @@ import timber.log.Timber;
 public class PodcastService extends Service {
 
     private static final String CHANNEL_ID = "PodcastServiceChannel";
-    private Bitmap placeHolder;
+    private Bitmap podcastLogo;
+    private Bitmap zooLogo;
     final int NOTIFICATION_ID = 2;
     private NotificationManagerCompat mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder = null;
@@ -51,8 +52,9 @@ public class PodcastService extends Service {
         Timber.i("debug: Creating service");
 
         mNotificationManager = NotificationManagerCompat.from(this);
-        // Set the PlaceHolder when service starts
-        placeHolder = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
+        // Set the PlaceHolders when service starts
+        podcastLogo = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_podcast_logo);
+        zooLogo = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_zoo_logo);
         // Set the streaming state
         mState = State.Stopped;
         //Acquire wake locks
@@ -127,7 +129,8 @@ public class PodcastService extends Service {
         }
         mNotificationBuilder = null;
         mNotificationManager = null;
-        placeHolder = null;
+        podcastLogo = null;
+        zooLogo = null;
         mWakeLock = null;
         mWifiLock = null;
         stopForeground(true);
@@ -157,10 +160,16 @@ public class PodcastService extends Service {
         mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0));
         mNotificationBuilder.setContentText(text);
-        mNotificationBuilder.setLargeIcon(placeHolder);
         mNotificationBuilder.setShowWhen(false);
-        mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
-        mNotificationBuilder.setContentTitle(getString(R.string.radio));
+        if (ZooFragment.zooService) {
+            mNotificationBuilder.setSmallIcon(R.drawable.ic_zoo_notification);
+            mNotificationBuilder.setContentTitle(getString(R.string.zoo_service));
+            mNotificationBuilder.setLargeIcon(zooLogo);
+        } else {
+            mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
+            mNotificationBuilder.setContentTitle(getString(R.string.podcast_service));
+            mNotificationBuilder.setLargeIcon(podcastLogo);
+        }
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         mNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);

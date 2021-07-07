@@ -849,7 +849,6 @@ public class MusicService extends Service implements OnPreparedListener,
 
     // *********  MediaSession.Callback implementation:
     private final MediaSessionCompat.Callback mCallback = new MediaSessionCompat.Callback() {
-
         @Override
         public void onPlay() {
             processPlayRequest();
@@ -870,7 +869,6 @@ public class MusicService extends Service implements OnPreparedListener,
         public void onStop() {
             processStopRequest();
         }
-
     };
 
     // AudioBecomingNoisy broadcast receiver

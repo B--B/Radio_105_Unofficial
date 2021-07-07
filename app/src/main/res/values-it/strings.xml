@@ -24,6 +24,8 @@
     <string name="do_not_show_again">Non mostrare più.</string>
     <string name="tv_screen_on">In questa sezione lo schermo del dispositivo rimarrà ACCESO indipendentemente dal timeout dello schermo impostato nel dispositivo.</string>
     <string name="important">Importante</string>
+    <string name="podcast_service">105 Podcast e Repliche</string>
+    <string name="zoo_service">The 105 Zoo</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Seleziona Tema</string>

@@ -18,12 +18,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
+import android.util.LruCache;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+
+import java.io.IOException;
 
 import timber.log.Timber;
 
@@ -37,6 +42,8 @@ public class PodcastService extends Service {
     private NotificationCompat.Builder mNotificationBuilder = null;
     private PowerManager.WakeLock mWakeLock;
     private WifiManager.WifiLock mWifiLock;
+    private LruCache<String, Bitmap> mAlbumArtCache;
+    private static final int MAX_ALBUM_ART_CACHE_SIZE = 1024*1024;
 
     enum State {
         Stopped,
@@ -62,6 +69,15 @@ public class PodcastService extends Service {
                 .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:PodcastServiceWakelock");
         mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:PodcastServiceWiFiWakelock");
+
+        // simple album art cache that holds no more than
+        // MAX_ALBUM_ART_CACHE_SIZE bytes:
+        mAlbumArtCache = new LruCache<String, Bitmap>(MAX_ALBUM_ART_CACHE_SIZE) {
+            @Override
+            protected int sizeOf(String key, Bitmap value) {
+                return value.getByteCount();
+            }
+        };
     }
 
     @SuppressLint("WakelockTimeout")
@@ -254,6 +270,11 @@ public class PodcastService extends Service {
         if (mState == State.Stopped) {
             mState = State.Playing;
             setUpAsForeground(getString(R.string.playing));
+            if (ZooFragment.zooService) {
+                fetchBitmapFromURLThread(ZooFragment.podcastImageUrl);
+            } else {
+                fetchBitmapFromURLThread(PodcastFragment.podcastImageUrl);
+            }
         } else {
             mState = State.Playing;
             updateNotification(getString(R.string.playing));
@@ -280,5 +301,23 @@ public class PodcastService extends Service {
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
         }
+    }
+
+    void fetchBitmapFromURLThread(final String source) {
+        Thread thread = new Thread(() -> {
+            try {
+                Bitmap bitmap;
+                bitmap = BitmapHelper.fetchAndRescaleBitmap(source,
+                        BitmapHelper.MEDIA_ART_WIDTH, BitmapHelper.MEDIA_ART_HEIGHT);
+                mAlbumArtCache.put(source, bitmap);
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    mNotificationBuilder.setLargeIcon(bitmap);
+                    mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        thread.start();
     }
 }

@@ -83,6 +83,8 @@ public class PodcastFragment extends Fragment implements IPodcastService {
     private Intent startPodcastService;
     static boolean isMediaPlayingPodcast;
     static IPodcastService mIPodcastService;
+    static String podcastTitle;
+    static String podcastSubtitle;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -127,6 +129,12 @@ public class PodcastFragment extends Fragment implements IPodcastService {
                 "        JSPODCASTOUT.mediaPodcastAction('false');" +
                 "    };" +
                 "};" +
+                "var podcastText = document.getElementsByClassName('occhiello_articolo');" +
+                " if (podcastText.length) { var text = podcastText[0].textContent; " +
+                "JSPODCASTOUT.getPodcastTitle(text); };" +
+                "var podcastSubText = document.getElementsByClassName('titolo_articolo titolo');" +
+                " if (podcastSubText.length) { var text = podcastSubText[0].textContent; " +
+                "JSPODCASTOUT.getPodcastSubtitle(text); };" +
                 "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
                 " if (element.length) { element[0].style.width = '100%' }; " +
                 "var element = document.getElementsByClassName('clear');" +
@@ -203,6 +211,8 @@ public class PodcastFragment extends Fragment implements IPodcastService {
                 mProgressBar.setVisibility(View.VISIBLE);
                 if (mState != Stopped) {
                     stopPodcast();
+                    podcastTitle = null;
+                    podcastSubtitle = null;
                 }
                 super.onPageStarted(webView, url, mBitmap);
             }
@@ -388,6 +398,8 @@ public class PodcastFragment extends Fragment implements IPodcastService {
             mState = Stopped;
             isMediaPlayingPodcast = false;
             requireContext().stopService(startPodcastService);
+            podcastTitle = null;
+            podcastSubtitle = null;
         }
         mIPodcastService = null;
         mMusicServiceBinder = null;
@@ -447,6 +459,18 @@ public class PodcastFragment extends Fragment implements IPodcastService {
                     pausePodcast();
                 }
             }
+        }
+
+        @JavascriptInterface
+        public void getPodcastTitle(String mString) {
+            Timber.e("Podcast title is %s", mString);
+            podcastTitle = mString;
+        }
+
+        @JavascriptInterface
+        public void getPodcastSubtitle(String mString) {
+            Timber.e("Podcast subtitle is %s", mString);
+            podcastSubtitle = mString;
         }
     }
 

@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
                     .preloadSubscriptions(
                             R.raw.easylist_minified,
                             R.raw.exceptionrules_minimal)
-                    .getSiteKeysConfiguration().setForceChecks(false);
+                    .getSiteKeysConfiguration().setForceChecks(true);
             registerComponentCallbacks(this);
         }
 

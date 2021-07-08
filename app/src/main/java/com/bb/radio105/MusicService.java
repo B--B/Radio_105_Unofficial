@@ -887,7 +887,9 @@ public class MusicService extends Service implements OnPreparedListener,
                 boolean pref = PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(context.getString(R.string.noisy_key), true);
                 if (pref) {
-                    mCallback.onPause();
+                    if (mState == PlaybackStateCompat.STATE_PLAYING) {
+                        mCallback.onPause();
+                    }
                 }
             }
         }

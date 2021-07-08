@@ -7,6 +7,8 @@ import static com.bb.radio105.Constants.ACTION_PLAY;
 import static com.bb.radio105.Constants.ACTION_PLAY_NOTIFICATION;
 import static com.bb.radio105.Constants.ACTION_START;
 import static com.bb.radio105.Constants.ACTION_STOP;
+import static com.bb.radio105.Constants.podcastBundle;
+import static com.bb.radio105.Constants.zooBundle;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
@@ -108,9 +110,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(mAudioBecomingNoisyIntentReceiver, mIntentFilter);
-
-        // Request audio focus here
-        tryToGetAudioFocus();
     }
 
     @SuppressLint("WakelockTimeout")
@@ -119,6 +118,8 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         String action = intent.getAction();
         switch (action) {
             case ACTION_START:
+                // Request audio focus here
+                tryToGetAudioFocus();
                 break;
             case ACTION_PLAY_NOTIFICATION:
                 processPlayRequestNotification();
@@ -188,6 +189,12 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
             }
         }
         handleFocusRequest();
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        zooBundle = null;
+        podcastBundle = null;
     }
 
     @Override

@@ -363,21 +363,25 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
     @Override
     public void onPause() {
-        if (mWebView != null) {
-            mWebView.onPause();
-            mWebView.pauseTimers();
-        }
         super.onPause();
+        if (mState != Playing) {
+            if (mWebView != null) {
+                mWebView.onPause();
+                mWebView.pauseTimers();
+            }
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onResume() {
-        if (mWebView != null) {
-            mWebView.onResume();
-            mWebView.resumeTimers();
-        }
         super.onResume();
+        if (mState != Playing) {
+            if (mWebView != null) {
+                mWebView.onResume();
+                mWebView.resumeTimers();
+            }
+        }
     }
 
     @Override

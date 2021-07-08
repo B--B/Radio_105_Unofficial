@@ -159,16 +159,34 @@ public class PodcastService extends Service {
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
         mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0));
-        mNotificationBuilder.setContentText(text);
+        mNotificationBuilder.setSubText(text);
         mNotificationBuilder.setShowWhen(false);
         if (ZooFragment.zooService) {
-            mNotificationBuilder.setSmallIcon(R.drawable.ic_zoo_notification);
-            mNotificationBuilder.setContentTitle(getString(R.string.zoo_service));
             mNotificationBuilder.setLargeIcon(zooLogo);
+            mNotificationBuilder.setSmallIcon(R.drawable.ic_zoo_notification);
+            if (ZooFragment.podcastTitle != null) {
+                mNotificationBuilder.setContentTitle(ZooFragment.podcastTitle);
+            } else {
+                mNotificationBuilder.setContentTitle(getString(R.string.zoo_service));
+            }
+            if (ZooFragment.podcastSubtitle != null) {
+                mNotificationBuilder.setContentText(ZooFragment.podcastSubtitle);
+            } else {
+                mNotificationBuilder.setContentText(getString(R.string.zoo_service));
+            }
         } else {
-            mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
-            mNotificationBuilder.setContentTitle(getString(R.string.podcast_service));
             mNotificationBuilder.setLargeIcon(podcastLogo);
+            mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
+            if (PodcastFragment.podcastTitle != null) {
+                mNotificationBuilder.setContentTitle(PodcastFragment.podcastTitle);
+            } else {
+                mNotificationBuilder.setContentTitle(getString(R.string.podcast_service));
+            }
+            if (PodcastFragment.podcastSubtitle != null) {
+                mNotificationBuilder.setContentText(PodcastFragment.podcastSubtitle);
+            } else {
+                mNotificationBuilder.setContentText(getString(R.string.podcast_service));
+            }
         }
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
@@ -199,7 +217,7 @@ public class PodcastService extends Service {
         PendingIntent mPauseIntent = PendingIntent.getService(this, 101, pauseIntent, 0);
 
         mNotificationBuilder.setContentIntent(pIntent);
-        mNotificationBuilder.setContentText(text);
+        mNotificationBuilder.setSubText(text);
         mNotificationBuilder.clearActions();
         if (mState == State.Playing) {
             mNotificationBuilder.addAction(R.drawable.ic_pause, getString(R.string.pause), mPauseIntent);

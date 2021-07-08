@@ -1,5 +1,6 @@
 package com.bb.radio105;
 
+import static android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY;
 import static com.bb.radio105.Constants.ACTION_PAUSE;
 import static com.bb.radio105.Constants.ACTION_PAUSE_NOTIFICATION;
 import static com.bb.radio105.Constants.ACTION_PLAY;
@@ -12,8 +13,10 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.wifi.WifiManager;
@@ -27,12 +30,15 @@ import android.util.LruCache;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.preference.PreferenceManager;
 
 import java.io.IOException;
 
 import timber.log.Timber;
 
 public class PodcastService extends Service {
+
+    private final AudioBecomingNoisyIntentReceiver mAudioBecomingNoisyIntentReceiver = new AudioBecomingNoisyIntentReceiver();
 
     private static final String CHANNEL_ID = "PodcastServiceChannel";
     private Bitmap podcastLogo;
@@ -78,6 +84,10 @@ public class PodcastService extends Service {
                 return value.getByteCount();
             }
         };
+
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
+        registerReceiver(mAudioBecomingNoisyIntentReceiver, mIntentFilter);
     }
 
     @SuppressLint("WakelockTimeout")
@@ -143,6 +153,7 @@ public class PodcastService extends Service {
         if (mWifiLock != null && mWifiLock.isHeld()) {
             mWifiLock.release();
         }
+        unregisterReceiver(mAudioBecomingNoisyIntentReceiver);
         mNotificationBuilder = null;
         mNotificationManager = null;
         podcastLogo = null;
@@ -319,5 +330,21 @@ public class PodcastService extends Service {
             }
         });
         thread.start();
+    }
+
+    // AudioBecomingNoisy broadcast receiver
+    class AudioBecomingNoisyIntentReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+                boolean pref = PreferenceManager.getDefaultSharedPreferences(context)
+                        .getBoolean(context.getString(R.string.noisy_key), true);
+                if (pref) {
+                    if (mState == State.Playing) {
+                        processPauseRequestNotification();
+                    }
+                }
+            }
+        }
     }
 }

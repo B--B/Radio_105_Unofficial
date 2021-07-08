@@ -25,6 +25,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -126,7 +127,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         mWebView = root.findViewById(R.id.webView_zoo);
-        String url = "https://zoo.105.net/audio/lo-zoo-di-105/121624/lunedi.html";
+        String url = "https://zoo.105.net";
         final String javaScript = "javascript:(function() { " +
                 "var audio = document.querySelector('audio'); " +
                 "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload'); " +
@@ -461,6 +462,23 @@ public class ZooFragment extends Fragment implements IPodcastService {
             Utils.callJavaScript(mWebView, "player.play");
         } else {
             Utils.callJavaScript(mWebView, "player.pause");
+        }
+    }
+
+    @Override
+    public void duckRequest(Boolean mustDuck) {
+        if (mustDuck) {
+            mWebView.evaluateJavascript("javascript:(function() { " +
+                    "var audio = document.querySelector('audio'); " +
+                    "if (document.body.contains(audio)) { " +
+                    "    audio.volume = 0.2;};" +
+                    "})()", null);
+        } else {
+            mWebView.evaluateJavascript("javascript:(function() { " +
+                    "var audio = document.querySelector('audio'); " +
+                    "if (document.body.contains(audio)) { " +
+                    "    audio.volume = 1.0;};" +
+                    "})()", null);
         }
     }
 

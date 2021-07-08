@@ -19,6 +19,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
+import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
@@ -36,7 +39,7 @@ import java.io.IOException;
 
 import timber.log.Timber;
 
-public class PodcastService extends Service {
+public class PodcastService extends Service implements AudioManager.OnAudioFocusChangeListener {
 
     private final AudioBecomingNoisyIntentReceiver mAudioBecomingNoisyIntentReceiver = new AudioBecomingNoisyIntentReceiver();
 
@@ -59,12 +62,29 @@ public class PodcastService extends Service {
 
     static State mState = State.Stopped;
 
+    // do we have audio focus?
+    enum AudioFocus {
+        NoFocusNoDuck,    // we don't have audio focus, and can't duck
+        NoFocusCanDuck,   // we don't have focus, but can play at a low volume ("ducking")
+        Focused           // we have full audio focus
+    }
+
+    // Type of audio focus we have:
+    private AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
+
+    private AudioManager mAudioManager;
+    private boolean mPlayOnFocusGain;
+    private AudioFocusRequest mFocusRequest;
+
     @Override
     public void onCreate() {
         super.onCreate();
         Timber.i("debug: Creating service");
 
         mNotificationManager = NotificationManagerCompat.from(this);
+
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
         // Set the PlaceHolders when service starts
         podcastLogo = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_podcast_logo);
         zooLogo = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_zoo_logo);
@@ -88,6 +108,9 @@ public class PodcastService extends Service {
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(mAudioBecomingNoisyIntentReceiver, mIntentFilter);
+
+        // Request audio focus here
+        tryToGetAudioFocus();
     }
 
     @SuppressLint("WakelockTimeout")
@@ -145,8 +168,34 @@ public class PodcastService extends Service {
     }
 
     @Override
+    public void onAudioFocusChange(int focusChange) {
+        if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+            // We have gained focus:
+            mAudioFocus = AudioFocus.Focused;
+        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS ||
+                focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
+                focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+            // We have lost focus. If we can duck (low playback volume), we can keep playing.
+            // Otherwise, we need to pause the playback.
+            boolean canDuck = focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK;
+            mAudioFocus = canDuck ? AudioFocus.NoFocusCanDuck : AudioFocus.NoFocusNoDuck;
+            // If we are playing, we need to reset media player by calling configMediaPlayerState
+            // with mAudioFocus properly set.
+            if (mState == State.Playing && !canDuck) {
+                // If we don't have audio focus and can't duck, we save the information that
+                // we were playing, so that we can resume playback once we get the focus back.
+                mPlayOnFocusGain = true;
+            }
+        }
+        handleFocusRequest();
+    }
+
+    @Override
     public void onDestroy() {
         // Service is being killed, so make sure we release our resources
+        giveUpAudioFocus();
+        processStopRequest();
+        stopSelf();
         if (mWakeLock != null && mWakeLock.isHeld()) {
             mWakeLock.release();
         }
@@ -160,8 +209,6 @@ public class PodcastService extends Service {
         zooLogo = null;
         mWakeLock = null;
         mWifiLock = null;
-        stopForeground(true);
-        stopSelf();
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
@@ -255,7 +302,7 @@ public class PodcastService extends Service {
     }
 
     private void processPlayRequestNotification() {
-        //Utils.callJavaScript(mWebView, "player.play");
+        mPlayOnFocusGain = true;
         mState = State.Playing;
         updateNotification(getString(R.string.playing));
         if (ZooFragment.zooService) {
@@ -267,7 +314,7 @@ public class PodcastService extends Service {
 
     private void processPauseRequestNotification() {
         Timber.e("Processing pause request from notification");
-       // Utils.callJavaScript(mWebView, "player.pause");
+        // Utils.callJavaScript(mWebView, "player.pause");
         mState = State.Paused;
         updateNotification(getString(R.string.in_pause));
         if (ZooFragment.zooService) {
@@ -277,7 +324,20 @@ public class PodcastService extends Service {
         }
     }
 
+    private void processDuckPauseRequest() {
+        Timber.e("Processing pause request from notification");
+        // Utils.callJavaScript(mWebView, "player.pause");
+        mState = State.Playing;
+        updateNotification(getString(R.string.in_pause));
+        if (ZooFragment.zooService) {
+            ZooFragment.mIPodcastService.playbackState("Pause");
+        } else {
+            PodcastFragment.mIPodcastService.playbackState("Pause");
+        }
+    }
+
     private void processPlayRequest() {
+        mPlayOnFocusGain = true;
         if (mState == State.Stopped) {
             mState = State.Playing;
             setUpAsForeground(getString(R.string.playing));
@@ -299,6 +359,7 @@ public class PodcastService extends Service {
 
     private void processStopRequest() {
         mState = State.Stopped;
+        giveUpAudioFocus();
         stopForeground(true);
     }
 
@@ -345,6 +406,80 @@ public class PodcastService extends Service {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Try to get the system audio focus.
+     */
+    void tryToGetAudioFocus() {
+        if (mAudioFocus != AudioFocus.Focused) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                mFocusRequest = (new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                        .setAudioAttributes(
+                                new AudioAttributes.Builder()
+                                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                        .build()
+                        )
+                        .build()
+                );
+                if (AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAudioManager.requestAudioFocus(mFocusRequest)) {
+                    mAudioFocus = AudioFocus.Focused;
+                }
+            } else {
+                int result = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
+                        AudioManager.AUDIOFOCUS_GAIN);
+                if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    mAudioFocus = AudioFocus.Focused;
+                }
+            }
+        }
+    }
+
+    /**
+     * Give up the audio focus.
+     */
+    void giveUpAudioFocus() {
+        if (mAudioFocus == AudioFocus.Focused) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAudioManager.abandonAudioFocusRequest(mFocusRequest)) {
+                    mAudioFocus = AudioFocus.NoFocusNoDuck;
+                }
+            } else {
+                if (mAudioManager.abandonAudioFocus(this) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    mAudioFocus = AudioFocus.NoFocusNoDuck;
+                }
+            }
+        }
+    }
+
+    private void handleFocusRequest() {
+        if (mAudioFocus == AudioFocus.NoFocusNoDuck) {
+            // If we don't have audio focus and can't duck, we have to pause, even if mState
+            // is State.Playing. But we stay in the Playing state so that we know we have to resume
+            // playback once we get the focus back.
+            if (mState == State.Playing) processDuckPauseRequest();
+            return;
+        } else if (mAudioFocus == AudioFocus.NoFocusCanDuck) {
+            if (ZooFragment.zooService) {
+                ZooFragment.mIPodcastService.duckRequest(true);
+            } else {
+                PodcastFragment.mIPodcastService.duckRequest(true);
+            }
+        } else {
+            if (ZooFragment.zooService) {
+                ZooFragment.mIPodcastService.duckRequest(false);
+            } else {
+                PodcastFragment.mIPodcastService.duckRequest(false);
+            }
+        }
+        // If we were playing when we lost focus, we need to resume playing.
+        if (mPlayOnFocusGain) {
+            if (mState != State.Playing) {
+                processPlayRequestNotification();
+            }
+            mPlayOnFocusGain = false;
         }
     }
 }

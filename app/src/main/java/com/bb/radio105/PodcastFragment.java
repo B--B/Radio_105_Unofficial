@@ -495,6 +495,23 @@ public class PodcastFragment extends Fragment implements IPodcastService {
         }
     }
 
+    @Override
+    public void duckRequest(Boolean mustDuck) {
+        if (mustDuck) {
+            mWebView.evaluateJavascript("javascript:(function() { " +
+                    "var audio = document.querySelector('audio'); " +
+                    "if (document.body.contains(audio)) { " +
+                    "    audio.volume = 0.2;};" +
+                    "})()", null);
+        } else {
+            mWebView.evaluateJavascript("javascript:(function() { " +
+                    "var audio = document.querySelector('audio'); " +
+                    "if (document.body.contains(audio)) { " +
+                    "    audio.volume = 1.0;};" +
+                    "})()", null);
+        }
+    }
+
     private void playPodcast() {
         Intent mIntent = new Intent();
         mIntent.setAction("com.bb.radio105.action.PLAY");

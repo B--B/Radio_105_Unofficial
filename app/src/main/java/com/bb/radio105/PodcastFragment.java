@@ -85,6 +85,7 @@ public class PodcastFragment extends Fragment implements IPodcastService {
     static IPodcastService mIPodcastService;
     static String podcastTitle;
     static String podcastSubtitle;
+    static String podcastImageUrl;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -134,7 +135,10 @@ public class PodcastFragment extends Fragment implements IPodcastService {
                 "JSPODCASTOUT.getPodcastTitle(text); };" +
                 "var podcastSubText = document.getElementsByClassName('titolo_articolo titolo');" +
                 " if (podcastSubText.length) { var text = podcastSubText[0].textContent; " +
-                "JSPODCASTOUT.getPodcastSubtitle(text); };" +
+                "JSPODCASTOUT.getPodcastSubtitle(text); " +
+                "var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
+                " if (document.body.contains(image)) { JSPODCASTOUT.getPodcastImage(image.src); };" +
+                "};" +
                 "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
                 " if (element.length) { element[0].style.width = '100%' }; " +
                 "var element = document.getElementsByClassName('clear');" +
@@ -213,6 +217,7 @@ public class PodcastFragment extends Fragment implements IPodcastService {
                     stopPodcast();
                     podcastTitle = null;
                     podcastSubtitle = null;
+                    podcastImageUrl = null;
                 }
                 super.onPageStarted(webView, url, mBitmap);
             }
@@ -400,6 +405,7 @@ public class PodcastFragment extends Fragment implements IPodcastService {
             requireContext().stopService(startPodcastService);
             podcastTitle = null;
             podcastSubtitle = null;
+            podcastImageUrl = null;
         }
         mIPodcastService = null;
         mMusicServiceBinder = null;
@@ -471,6 +477,12 @@ public class PodcastFragment extends Fragment implements IPodcastService {
         public void getPodcastSubtitle(String mString) {
             Timber.e("Podcast subtitle is %s", mString);
             podcastSubtitle = mString;
+        }
+
+        @JavascriptInterface
+        public void getPodcastImage(String mString) {
+            Timber.e("Podcast image url is %s", mString);
+            podcastImageUrl = mString;
         }
     }
 

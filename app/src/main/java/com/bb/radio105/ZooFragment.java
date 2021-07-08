@@ -89,6 +89,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     static IPodcastService mIPodcastService;
     static String podcastTitle;
     static String podcastSubtitle;
+    static String podcastImageUrl;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -125,7 +126,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         mWebView = root.findViewById(R.id.webView_zoo);
-        String url = "https://zoo.105.net";
+        String url = "https://zoo.105.net/audio/lo-zoo-di-105/121624/lunedi.html";
         final String javaScript = "javascript:(function() { " +
                 "var audio = document.querySelector('audio'); " +
                 "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload'); " +
@@ -138,7 +139,10 @@ public class ZooFragment extends Fragment implements IPodcastService {
                 "};" +
                 "var podcastText = document.getElementsByClassName('titolo_articolo titolo');" +
                 " if (podcastText.length) { var text = podcastText[0].textContent; " +
-                "JSZOOOUT.getPodcastTitle(text); };" +
+                "JSZOOOUT.getPodcastTitle(text); " +
+                "var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
+                " if (document.body.contains(image)) { JSZOOOUT.getPodcastImage(image.src); };" +
+                "};" +
                 "var podcastSubText = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
                 " if (podcastSubText.length) { var text = podcastSubText[0].textContent; " +
                 "JSZOOOUT.getPodcastSubtitle(text); };" +
@@ -212,6 +216,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     stopPodcast();
                     podcastTitle = null;
                     podcastSubtitle = null;
+                    podcastImageUrl = null;
                 }
                 super.onPageStarted(webView, url, mBitmap);
             }
@@ -408,6 +413,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
             requireContext().stopService(startPodcastService);
             podcastTitle = null;
             podcastSubtitle = null;
+            podcastImageUrl = null;
         }
         mIPodcastService = null;
         zooService = false;
@@ -489,6 +495,12 @@ public class ZooFragment extends Fragment implements IPodcastService {
         public void getPodcastSubtitle(String mString) {
             Timber.e("Podcast subtitle is %s", mString);
             podcastSubtitle = mString;
+        }
+
+        @JavascriptInterface
+        public void getPodcastImage(String mString) {
+            Timber.e("Podcast image url is %s", mString);
+            podcastImageUrl = mString;
         }
     }
 

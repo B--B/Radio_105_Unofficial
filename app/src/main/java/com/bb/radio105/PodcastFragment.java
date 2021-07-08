@@ -400,12 +400,12 @@ public class PodcastFragment extends Fragment implements IPodcastService {
         }
         if (mState != Stopped) {
             Timber.e("Stopping Podcast Service");
-            mState = Stopped;
             isMediaPlayingPodcast = false;
-            requireContext().stopService(startPodcastService);
+            mState = Stopped;
             podcastTitle = null;
             podcastSubtitle = null;
             podcastImageUrl = null;
+            requireContext().stopService(startPodcastService);
         }
         mIPodcastService = null;
         mMusicServiceBinder = null;

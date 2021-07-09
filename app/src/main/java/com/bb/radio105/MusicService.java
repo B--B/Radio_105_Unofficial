@@ -37,15 +37,12 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.LruCache;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -97,10 +94,9 @@ public class MusicService extends Service implements OnPreparedListener,
     static String titleString = null;
     static String djString = null;
     private String artUrl = null;
-    private LruCache<String, Bitmap> mAlbumArtCache;
-    private static final int MAX_ALBUM_ART_CACHE_SIZE = 1024*1024;
-    static Bitmap art;
     private Bitmap placeHolder;
+    static Bitmap art;
+    private Bitmap smallIcon;
 
     // Binder given to clients
     private final IBinder mIBinder = new MusicServiceBinder();
@@ -206,15 +202,6 @@ public class MusicService extends Service implements OnPreparedListener,
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(mAudioBecomingNoisyIntentReceiver, mIntentFilter);
-
-        // simple album art cache that holds no more than
-        // MAX_ALBUM_ART_CACHE_SIZE bytes:
-        mAlbumArtCache = new LruCache<String, Bitmap>(MAX_ALBUM_ART_CACHE_SIZE) {
-            @Override
-            protected int sizeOf(String key, Bitmap value) {
-                return value.getByteCount();
-            }
-        };
 
         // Set the PlaceHolder when service starts
         placeHolder = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
@@ -449,12 +436,10 @@ public class MusicService extends Service implements OnPreparedListener,
      */
     @SuppressLint("UnspecifiedImmutableFlag")
     private void updateNotification(String text) {
-        if (mAlbumArtCache != null) {
-            art = mAlbumArtCache.get(artUrl);
-        }
         if (art == null) {
             // use a placeholder art while the remote art is being downloaded
             art = placeHolder;
+            smallIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_podcast_logo);
         }
         if (titleString == null) {
             titleString = getString(R.string.radio_105);
@@ -474,7 +459,8 @@ public class MusicService extends Service implements OnPreparedListener,
         } else {
             pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
         }
-            mNotificationBuilder.setContentIntent(pIntent);
+
+        mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.clearActions();
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
             mNotificationBuilder.setLargeIcon(art);
@@ -486,6 +472,7 @@ public class MusicService extends Service implements OnPreparedListener,
             mSession.setMetadata
                     (new MediaMetadataCompat.Builder()
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
+                            .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, smallIcon)
                             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, titleString)
                             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, djString)
                             .build()
@@ -545,7 +532,6 @@ public class MusicService extends Service implements OnPreparedListener,
             pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_IMMUTABLE);
         } else {
             pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
-
         }
 
         // Building notification here
@@ -621,10 +607,11 @@ public class MusicService extends Service implements OnPreparedListener,
         NetworkUtil.unregisterNetworkCallback();
         unregisterReceiver(mAudioBecomingNoisyIntentReceiver);
         titleString = null;
-        art = null;
         placeHolder = null;
         scheduler = null;
         mToken = null;
+        art = null;
+        smallIcon = null;
         // Always release the MediaSession to clean up resources
         // and notify associated MediaController(s).
         mSession.release();
@@ -740,7 +727,7 @@ public class MusicService extends Service implements OnPreparedListener,
                     }
                     // Fetch the album art here
                     if (artUrl != null) {
-                        fetchBitmapFromURLThread(artUrl);
+                        fetchBitmapFromURL(artUrl);
                     }
                 },
                 error -> {
@@ -750,25 +737,30 @@ public class MusicService extends Service implements OnPreparedListener,
         requestQueue.add(stringRequest);
     }
 
-    void fetchBitmapFromURLThread(final String source) {
-        Thread thread = new Thread(() -> {
-            try {
-                Bitmap bitmap;
-                bitmap = BitmapHelper.fetchAndRescaleBitmap(source,
-                        BitmapHelper.MEDIA_ART_WIDTH, BitmapHelper.MEDIA_ART_HEIGHT);
-                mAlbumArtCache.put(source, bitmap);
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    // Update metadata only if the stream is playing, the placeHolder is used on PAUSE state
-                    // and the new metadata will be used when we move on PLAY state
-                    if (mState == PlaybackStateCompat.STATE_PLAYING) {
-                        updateNotification(getString(R.string.playing));
-                    }
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
+    private void fetchBitmapFromURL(String mString) {
+        AlbumArtCache.getInstance().fetch(mString, new AlbumArtCache.FetchListener() {
+            @Override
+            public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
+                art = bitmap;
+                smallIcon = icon;
+                mSession.setMetadata
+                        (new MediaMetadataCompat.Builder()
+                        // set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is used, for
+                        // example, on the lockscreen background when the media session is active.
+                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
+                        // set small version of the album art in the DISPLAY_ICON. This is used on
+                        // the MediaDescription and thus it should be small to be serialized if
+                        // necessary..
+                        .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, icon)
+                        .build()
+                        );
+                // Update metadata only if the stream is playing, the placeHolder is used on PAUSE state
+                // and the new metadata will be used when we move on PLAY state
+                if (mState == PlaybackStateCompat.STATE_PLAYING) {
+                    updateNotification(getString(R.string.playing));
+                }
             }
         });
-        thread.start();
     }
 
     static long millisToNextHour(Calendar calendar) {

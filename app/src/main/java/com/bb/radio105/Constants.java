@@ -19,13 +19,20 @@ package com.bb.radio105;
 import android.os.Bundle;
 
 public class Constants {
-    // Intent Actions
-    static final String ACTION_START = "com.bb.radio105.action.START";
-    static final String ACTION_PLAY_NOTIFICATION = "com.bb.radio105.action.PLAY_NOTIFICATION";
-    static final String ACTION_PAUSE_NOTIFICATION = "com.bb.radio105.action.PAUSE_NOTIFICATION";
-    static final String ACTION_PLAY = "com.bb.radio105.action.PLAY";
-    static final String ACTION_PAUSE = "com.bb.radio105.action.PAUSE";
-    static final String ACTION_STOP = "com.bb.radio105.action.STOP";
+    // Podcast Service Actions
+    static final String ACTION_START_PODCAST = "com.bb.radio105.action.START_PODCAST";
+    static final String ACTION_PLAY_NOTIFICATION_PODCAST = "com.bb.radio105.action.PLAY_NOTIFICATION_PODCAST";
+    static final String ACTION_PAUSE_NOTIFICATION_PODCAST = "com.bb.radio105.action.PAUSE_NOTIFICATION_PODCAST";
+    static final String ACTION_PLAY_PODCAST = "com.bb.radio105.action.PLAY_PODCAST";
+    static final String ACTION_PAUSE_PODCAST = "com.bb.radio105.action.PAUSE_PODCAST";
+    static final String ACTION_STOP_PODCAST = "com.bb.radio105.action.STOP_PODCAST";
+    // Zoo Service Actions
+    static final String ACTION_START_ZOO = "com.bb.radio105.action.START_ZOO";
+    static final String ACTION_PLAY_NOTIFICATION_ZOO = "com.bb.radio105.action.PLAY_NOTIFICATION_ZOO";
+    static final String ACTION_PAUSE_NOTIFICATION_ZOO = "com.bb.radio105.action.PAUSE_NOTIFICATION_ZOO";
+    static final String ACTION_PLAY_ZOO = "com.bb.radio105.action.PLAY_ZOO";
+    static final String ACTION_PAUSE_ZOO = "com.bb.radio105.action.PAUSE_ZOO";
+    static final String ACTION_STOP_ZOO = "com.bb.radio105.action.STOP_ZOO";
     // 404 custom error page
     static final String ErrorPagePath = "file:///android_asset/index.html";
     // Write storage permission

@@ -342,7 +342,7 @@ public class PodcastFragment extends Fragment implements IPodcastService {
         requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
         // Start podcast service
         startPodcastService = new Intent(getContext(), PodcastService.class);
-        startPodcastService.setAction("com.bb.radio105.action.START");
+        startPodcastService.setAction("com.bb.radio105.action.START_PODCAST");
         requireContext().startService(startPodcastService);
     }
 
@@ -400,8 +400,7 @@ public class PodcastFragment extends Fragment implements IPodcastService {
         }
         if (mState != Stopped) {
             Timber.e("Stopping Podcast Service");
-            isMediaPlayingPodcast = false;
-            mState = Stopped;
+            stopPodcast();
             podcastTitle = null;
             podcastSubtitle = null;
             podcastImageUrl = null;
@@ -514,21 +513,21 @@ public class PodcastFragment extends Fragment implements IPodcastService {
 
     private void playPodcast() {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.PLAY");
+        mIntent.setAction("com.bb.radio105.action.PLAY_PODCAST");
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
     }
 
     private void pausePodcast() {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.PAUSE");
+        mIntent.setAction("com.bb.radio105.action.PAUSE_PODCAST");
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
     }
 
     private void stopPodcast() {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.STOP");
+        mIntent.setAction("com.bb.radio105.action.STOP_PODCAST");
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
     }

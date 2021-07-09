@@ -187,18 +187,25 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         // Creating notification channel
         createNotificationChannel();
 
-        //Intent for Pause
-        Intent pauseIntent = new Intent();
-        pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION_PODCAST);
-        PendingIntent mPauseIntent = PendingIntent.getService(this, 101, pauseIntent, 0);
-
         Intent intent = getPackageManager()
                 .getLaunchIntentForPackage(getPackageName())
                 .setPackage(null)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent;
-        pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+        //Intent for Pause
+        Intent pauseIntent = new Intent();
+        pauseIntent.setAction(ACTION_PAUSE_NOTIFICATION_PODCAST);
+        PendingIntent mPauseIntent;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_IMMUTABLE);
+            mPauseIntent = PendingIntent.getService(this, 111, pauseIntent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+            mPauseIntent = PendingIntent.getService(this, 111, pauseIntent, 0);
+        }
 
         // Building notification here
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
@@ -235,17 +242,26 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent;
-        pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
         //Intent for Play
         Intent playIntent = new Intent();
-        playIntent.setAction(Constants.ACTION_PLAY_NOTIFICATION_PODCAST);
-        PendingIntent mPlayIntent = PendingIntent.getService(this, 100, playIntent, 0);
+        playIntent.setAction(Constants.ACTION_PLAY_NOTIFICATION_ZOO);
+        PendingIntent mPlayIntent;
 
         //Intent for Pause
         Intent pauseIntent = new Intent();
-        pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION_PODCAST);
-        PendingIntent mPauseIntent = PendingIntent.getService(this, 101, pauseIntent, 0);
+        pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION_ZOO);
+        PendingIntent mPauseIntent;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_IMMUTABLE);
+            mPlayIntent = PendingIntent.getService(this, 110, playIntent, PendingIntent.FLAG_IMMUTABLE);
+            mPauseIntent = PendingIntent.getService(this, 111, pauseIntent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+            mPlayIntent = PendingIntent.getService(this, 110, playIntent, 0);
+            mPauseIntent = PendingIntent.getService(this, 111, pauseIntent, 0);
+        }
 
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setSubText(text);

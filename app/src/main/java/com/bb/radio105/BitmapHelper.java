@@ -18,16 +18,26 @@ package com.bb.radio105;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import timber.log.Timber;
+
 public class BitmapHelper {
 
-    // Bitmap size for album art in media notification
-    public static final int MEDIA_ART_WIDTH = 256;
-    public static final int MEDIA_ART_HEIGHT = 256;
+    // Max read limit that we allow our input stream to mark/reset.
+    private static final int MAX_READ_LIMIT_PER_IMG = 1024 * 1024;
+
+    public static Bitmap scaleBitmap(Bitmap src, int maxWidth, int maxHeight) {
+        double scaleFactor = Math.min(
+                ((double) maxWidth)/src.getWidth(), ((double) maxHeight)/src.getHeight());
+        return Bitmap.createScaledBitmap(src,
+                (int) (src.getWidth() * scaleFactor), (int) (src.getHeight() * scaleFactor), false);
+    }
 
     public static Bitmap scaleBitmap(int scaleFactor, InputStream is) {
         // Get the dimensions of the bitmap
@@ -35,6 +45,7 @@ public class BitmapHelper {
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
+
         return BitmapFactory.decodeStream(is, null, bmOptions);
     }
 
@@ -52,15 +63,20 @@ public class BitmapHelper {
     public static Bitmap fetchAndRescaleBitmap(String uri, int width, int height)
             throws IOException {
         URL url = new URL(uri);
-        HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
-        httpConnection.setDoInput(true);
-        httpConnection.connect();
-        InputStream inputStream = httpConnection.getInputStream();
-        int scaleFactor = findScaleFactor(width, height, inputStream);
-        httpConnection = (HttpURLConnection) url.openConnection();
-        httpConnection.setDoInput(true);
-        httpConnection.connect();
-        inputStream = httpConnection.getInputStream();
-        return scaleBitmap(scaleFactor, inputStream);
+        BufferedInputStream is = null;
+        try {
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            is = new BufferedInputStream(urlConnection.getInputStream());
+            is.mark(MAX_READ_LIMIT_PER_IMG);
+            int scaleFactor = findScaleFactor(width, height, is);
+            Timber.e("Scaling bitmap %s%s%s%s%s%s%s%s", uri, " by factor ", scaleFactor, " to support ",
+                    width, "x", height, "requested dimension");
+            is.reset();
+            return scaleBitmap(scaleFactor, is);
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
     }
 }

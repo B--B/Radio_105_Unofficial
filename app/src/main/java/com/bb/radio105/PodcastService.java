@@ -29,6 +29,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.LruCache;
 
 import androidx.annotation.Nullable;
@@ -51,7 +53,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
     private NotificationCompat.Builder mNotificationBuilder = null;
     private PowerManager.WakeLock mWakeLock;
     private WifiManager.WifiLock mWifiLock;
-    private LruCache<String, Bitmap> mAlbumArtCache;
     private static final int MAX_ALBUM_ART_CACHE_SIZE = 1024*1024;
 
     enum State {
@@ -90,15 +91,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
                 .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:PodcastServiceWakelock");
         mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:PodcastServiceWiFiWakelock");
-
-        // simple album art cache that holds no more than
-        // MAX_ALBUM_ART_CACHE_SIZE bytes:
-        mAlbumArtCache = new LruCache<String, Bitmap>(MAX_ALBUM_ART_CACHE_SIZE) {
-            @Override
-            protected int sizeOf(String key, Bitmap value) {
-                return value.getByteCount();
-            }
-        };
 
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
@@ -315,7 +307,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         if (mState == State.Stopped) {
             mState = State.Playing;
             setUpAsForeground(getString(R.string.playing));
-            fetchBitmapFromURLThread(PodcastFragment.podcastImageUrl);
+            fetchBitmapFromURL(PodcastFragment.podcastImageUrl);
         } else {
             mState = State.Playing;
             updateNotification(getString(R.string.playing));
@@ -358,22 +350,14 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         }
     }
 
-    void fetchBitmapFromURLThread(final String source) {
-        Thread thread = new Thread(() -> {
-            try {
-                Bitmap bitmap;
-                bitmap = BitmapHelper.fetchAndRescaleBitmap(source,
-                        BitmapHelper.MEDIA_ART_WIDTH, BitmapHelper.MEDIA_ART_HEIGHT);
-                mAlbumArtCache.put(source, bitmap);
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    mNotificationBuilder.setLargeIcon(bitmap);
-                    mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
+    private void fetchBitmapFromURL(String mString) {
+        AlbumArtCache.getInstance().fetch(mString, new AlbumArtCache.FetchListener() {
+            @Override
+            public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
+                mNotificationBuilder.setLargeIcon(bitmap);
+                mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
             }
         });
-        thread.start();
     }
 
     // AudioBecomingNoisy broadcast receiver

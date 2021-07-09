@@ -25,18 +25,13 @@ import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.PowerManager;
-import android.util.LruCache;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
-
-import java.io.IOException;
 
 import timber.log.Timber;
 
@@ -51,8 +46,6 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
     private NotificationCompat.Builder mNotificationBuilder = null;
     private PowerManager.WakeLock mWakeLock;
     private WifiManager.WifiLock mWifiLock;
-    private LruCache<String, Bitmap> mAlbumArtCache;
-    private static final int MAX_ALBUM_ART_CACHE_SIZE = 1024*1024;
 
     enum State {
         Stopped,
@@ -90,15 +83,6 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
                 .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:ZooServiceWakelock");
         mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:ZooServiceWiFiWakelock");
-
-        // simple album art cache that holds no more than
-        // MAX_ALBUM_ART_CACHE_SIZE bytes:
-        mAlbumArtCache = new LruCache<String, Bitmap>(MAX_ALBUM_ART_CACHE_SIZE) {
-            @Override
-            protected int sizeOf(String key, Bitmap value) {
-                return value.getByteCount();
-            }
-        };
 
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
@@ -315,7 +299,7 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         if (mState == State.Stopped) {
             mState = State.Playing;
             setUpAsForeground(getString(R.string.playing));
-            fetchBitmapFromURLThread(ZooFragment.podcastImageUrl);
+            fetchBitmapFromURL(ZooFragment.podcastImageUrl);
         } else {
             mState = State.Playing;
             updateNotification(getString(R.string.playing));
@@ -359,22 +343,14 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         }
     }
 
-    void fetchBitmapFromURLThread(final String source) {
-        Thread thread = new Thread(() -> {
-            try {
-                Bitmap bitmap;
-                bitmap = BitmapHelper.fetchAndRescaleBitmap(source,
-                        BitmapHelper.MEDIA_ART_WIDTH, BitmapHelper.MEDIA_ART_HEIGHT);
-                mAlbumArtCache.put(source, bitmap);
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    mNotificationBuilder.setLargeIcon(bitmap);
-                    mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
+    private void fetchBitmapFromURL(String mString) {
+        AlbumArtCache.getInstance().fetch(mString, new AlbumArtCache.FetchListener() {
+            @Override
+            public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
+                mNotificationBuilder.setLargeIcon(bitmap);
+                mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
             }
         });
-        thread.start();
     }
 
     // AudioBecomingNoisy broadcast receiver

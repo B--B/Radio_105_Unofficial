@@ -22,8 +22,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.AudioAttributes;
-import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -74,9 +72,7 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
     // Type of audio focus we have:
     private AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
 
-    private AudioManager mAudioManager;
     private boolean mPlayOnFocusGain;
-    private AudioFocusRequest mFocusRequest;
 
     @Override
     public void onCreate() {
@@ -84,8 +80,6 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         Timber.i("debug: Creating service");
 
         mNotificationManager = NotificationManagerCompat.from(this);
-
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         // Set the PlaceHolders when service starts
         zooLogo = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_zoo_logo);
@@ -116,8 +110,6 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         String action = intent.getAction();
         switch (action) {
             case ACTION_START_ZOO:
-                // Request audio focus here
-                tryToGetAudioFocus();
                 break;
             case ACTION_PLAY_NOTIFICATION_ZOO:
                 processPlayRequestNotification();
@@ -334,7 +326,7 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
             mState = State.Stopped;
             stopForeground(true);
         }
-        giveUpAudioFocus();
+        // giveUpAudioFocus();
     }
 
     private void createNotificationChannel() {
@@ -383,51 +375,6 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         }
     }
 
-    /**
-     * Try to get the system audio focus.
-     */
-    void tryToGetAudioFocus() {
-        if (mAudioFocus != AudioFocus.Focused) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                mFocusRequest = (new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                        .setAudioAttributes(
-                                new AudioAttributes.Builder()
-                                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                                        .build()
-                        )
-                        .build()
-                );
-                if (AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAudioManager.requestAudioFocus(mFocusRequest)) {
-                    mAudioFocus = AudioFocus.Focused;
-                }
-            } else {
-                int result = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
-                        AudioManager.AUDIOFOCUS_GAIN);
-                if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                    mAudioFocus = AudioFocus.Focused;
-                }
-            }
-        }
-    }
-
-    /**
-     * Give up the audio focus.
-     */
-    void giveUpAudioFocus() {
-        if (mAudioFocus == AudioFocus.Focused) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAudioManager.abandonAudioFocusRequest(mFocusRequest)) {
-                    mAudioFocus = AudioFocus.NoFocusNoDuck;
-                }
-            } else {
-                if (mAudioManager.abandonAudioFocus(this) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                    mAudioFocus = AudioFocus.NoFocusNoDuck;
-                }
-            }
-        }
-    }
-
     private void handleFocusRequest() {
         if (mAudioFocus == AudioFocus.NoFocusNoDuck) {
             // If we don't have audio focus and can't duck, we have to pause, even if mState
@@ -435,11 +382,7 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
             // playback once we get the focus back.
             if (mState == State.Playing) processDuckPauseRequest();
             return;
-        } else if (mAudioFocus == AudioFocus.NoFocusCanDuck) {
-            ZooFragment.mIPodcastService.duckRequest(true);
-        } else {
-            ZooFragment.mIPodcastService.duckRequest(false);
-        }
+        } else ZooFragment.mIPodcastService.duckRequest(mAudioFocus == AudioFocus.NoFocusCanDuck);
         // If we were playing when we lost focus, we need to resume playing.
         if (mPlayOnFocusGain) {
             if (mState != State.Playing) {

@@ -163,7 +163,9 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         // Service is being killed, so make sure we release our resources
-        processStopRequest();
+        if (mState != State.Stopped) {
+            processStopRequest();
+        }
         stopSelf();
         zooBundle = null;
         podcastBundle = null;

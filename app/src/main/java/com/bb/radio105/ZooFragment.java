@@ -171,6 +171,13 @@ public class ZooFragment extends Fragment implements IPodcastService {
                 "var element = document.getElementsByClassName('share vc_share_buttons null');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('bannervcms banner_masthead ');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('spacer spacer t_40');" +
+                " if (element.length) { element[element.length -1].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('text_edit vc_textedit_box_previews vc_theme_zoo');" +
+                " if (element.length) { element[element.length -1].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('anteprima_articolo article_cont vc_preview_small_right_webradio vc_txt_xs vc_theme_default" +
+                " vc_theme_zoo Zoo di 105 vc_section_zoo-radio vc_macro_section_webradio vc_macro_section_canale-105 zooradio scheda cms_article ');" +
                 " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
         mWebView.getSettings().setLoadsImagesAutomatically(true);

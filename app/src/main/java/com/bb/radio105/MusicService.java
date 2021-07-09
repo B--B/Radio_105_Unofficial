@@ -498,9 +498,12 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent;
-        pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
-
-        mNotificationBuilder.setContentIntent(pIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+        }
+            mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.clearActions();
         if (mState == PlaybackStateCompat.STATE_PLAYING) {
             mNotificationBuilder.setLargeIcon(art);
@@ -575,7 +578,12 @@ public class MusicService extends MediaBrowserServiceCompat implements OnPrepare
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
         PendingIntent pIntent;
-        pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+        }
 
         // Building notification here
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);

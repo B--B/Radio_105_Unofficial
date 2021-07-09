@@ -290,9 +290,9 @@ public class ZooFragment extends Fragment implements IPodcastService {
                         return super.shouldInterceptRequest(view, request);
                     }
                 } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
+                    Timber.e("Image load failed with error %s", e);
+                    return super.shouldInterceptRequest(view, request);
                 }
-                return super.shouldInterceptRequest(view, request);
             }
         });
 
@@ -413,6 +413,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
         }
         if (mState != Stopped) {
             Timber.e("Stopping Podcast Service");
+            isMediaPlayingPodcast = false;
             stopPodcast();
             podcastTitle = null;
             podcastSubtitle = null;

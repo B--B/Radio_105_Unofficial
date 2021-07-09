@@ -2,12 +2,12 @@ package com.bb.radio105;
 
 import static android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY;
 
-import static com.bb.radio105.Constants.ACTION_PAUSE_NOTIFICATION_PODCAST;
-import static com.bb.radio105.Constants.ACTION_PAUSE_PODCAST;
-import static com.bb.radio105.Constants.ACTION_PLAY_NOTIFICATION_PODCAST;
-import static com.bb.radio105.Constants.ACTION_PLAY_PODCAST;
-import static com.bb.radio105.Constants.ACTION_START_PODCAST;
-import static com.bb.radio105.Constants.ACTION_STOP_PODCAST;
+import static com.bb.radio105.Constants.ACTION_PAUSE_NOTIFICATION_ZOO;
+import static com.bb.radio105.Constants.ACTION_PAUSE_ZOO;
+import static com.bb.radio105.Constants.ACTION_PLAY_NOTIFICATION_ZOO;
+import static com.bb.radio105.Constants.ACTION_PLAY_ZOO;
+import static com.bb.radio105.Constants.ACTION_START_ZOO;
+import static com.bb.radio105.Constants.ACTION_STOP_ZOO;
 import static com.bb.radio105.Constants.podcastBundle;
 import static com.bb.radio105.Constants.zooBundle;
 
@@ -42,13 +42,13 @@ import java.io.IOException;
 
 import timber.log.Timber;
 
-public class PodcastService extends Service implements AudioManager.OnAudioFocusChangeListener {
+public class ZooService extends Service implements AudioManager.OnAudioFocusChangeListener {
 
     private final AudioBecomingNoisyIntentReceiver mAudioBecomingNoisyIntentReceiver = new AudioBecomingNoisyIntentReceiver();
 
-    private static final String CHANNEL_ID = "PodcastServiceChannel";
-    private Bitmap podcastLogo;
-    final int NOTIFICATION_ID = 2;
+    private static final String CHANNEL_ID = "ZooServiceChannel";
+    private Bitmap zooLogo;
+    final int NOTIFICATION_ID = 3;
     private NotificationManagerCompat mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder = null;
     private PowerManager.WakeLock mWakeLock;
@@ -88,14 +88,14 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         // Set the PlaceHolders when service starts
-        podcastLogo = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_podcast_logo);
+        zooLogo = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_zoo_logo);
         // Set the streaming state
         mState = State.Stopped;
         //Acquire wake locks
         mWakeLock = ((PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE))
-                .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:PodcastServiceWakelock");
+                .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:ZooServiceWakelock");
         mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
-                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:PodcastServiceWiFiWakelock");
+                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:ZooServiceWiFiWakelock");
 
         // simple album art cache that holds no more than
         // MAX_ALBUM_ART_CACHE_SIZE bytes:
@@ -111,27 +111,27 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         registerReceiver(mAudioBecomingNoisyIntentReceiver, mIntentFilter);
     }
 
-    @SuppressLint("WakelockTimeout")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
         switch (action) {
-            case ACTION_START_PODCAST:
+            case ACTION_START_ZOO:
                 // Request audio focus here
                 tryToGetAudioFocus();
                 break;
-            case ACTION_PLAY_NOTIFICATION_PODCAST:
+            case ACTION_PLAY_NOTIFICATION_ZOO:
+                processPlayRequestNotification();
                 break;
-            case ACTION_PAUSE_NOTIFICATION_PODCAST:
+            case ACTION_PAUSE_NOTIFICATION_ZOO:
                 processPauseRequestNotification();
                 break;
-            case ACTION_PLAY_PODCAST:
+            case ACTION_PLAY_ZOO:
                 processPlayRequest();
                 break;
-            case ACTION_PAUSE_PODCAST:
+            case ACTION_PAUSE_ZOO:
                 processPauseRequest();
                 break;
-            case ACTION_STOP_PODCAST:
+            case ACTION_STOP_ZOO:
                 processStopRequest();
                 break;
         }
@@ -184,7 +184,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         unregisterReceiver(mAudioBecomingNoisyIntentReceiver);
         mNotificationBuilder = null;
         mNotificationManager = null;
-        podcastLogo = null;
+        zooLogo = null;
         mWakeLock = null;
         mWifiLock = null;
     }
@@ -196,7 +196,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
 
         //Intent for Pause
         Intent pauseIntent = new Intent();
-        pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION_PODCAST);
+        pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION_ZOO);
         PendingIntent mPauseIntent = PendingIntent.getService(this, 101, pauseIntent, 0);
 
         Intent intent = getPackageManager()
@@ -214,18 +214,19 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         mNotificationBuilder.setSubText(text);
         mNotificationBuilder.setShowWhen(false);
 
-        mNotificationBuilder.setLargeIcon(podcastLogo);
-        mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
-        if (PodcastFragment.podcastTitle != null) {
-            mNotificationBuilder.setContentTitle(PodcastFragment.podcastTitle);
+        mNotificationBuilder.setLargeIcon(zooLogo);
+        mNotificationBuilder.setSmallIcon(R.drawable.ic_zoo_notification);
+        if (ZooFragment.podcastTitle != null) {
+            mNotificationBuilder.setContentTitle(ZooFragment.podcastTitle);
         } else {
-            mNotificationBuilder.setContentTitle(getString(R.string.podcast_service));
+            mNotificationBuilder.setContentTitle(getString(R.string.zoo_service));
         }
-        if (PodcastFragment.podcastSubtitle != null) {
-            mNotificationBuilder.setContentText(PodcastFragment.podcastSubtitle);
+        if (ZooFragment.podcastSubtitle != null) {
+            mNotificationBuilder.setContentText(ZooFragment.podcastSubtitle);
         } else {
-            mNotificationBuilder.setContentText(getString(R.string.podcast_service));
+            mNotificationBuilder.setContentText(getString(R.string.zoo_service));
         }
+
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         mNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
@@ -246,12 +247,12 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
 
         //Intent for Play
         Intent playIntent = new Intent();
-        playIntent.setAction(Constants.ACTION_PLAY_NOTIFICATION_PODCAST);
+        playIntent.setAction(Constants.ACTION_PLAY_NOTIFICATION_ZOO);
         PendingIntent mPlayIntent = PendingIntent.getService(this, 100, playIntent, 0);
 
         //Intent for Pause
         Intent pauseIntent = new Intent();
-        pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION_PODCAST);
+        pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION_ZOO);
         PendingIntent mPauseIntent = PendingIntent.getService(this, 101, pauseIntent, 0);
 
         mNotificationBuilder.setContentIntent(pIntent);
@@ -272,7 +273,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         mWifiLock.acquire();
         mState = State.Playing;
         updateNotification(getString(R.string.playing));
-        PodcastFragment.mIPodcastService.playbackState("Play");
+        ZooFragment.mIPodcastService.playbackState("Play");
     }
 
     private void processPauseRequestNotification() {
@@ -285,7 +286,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         }
         mState = State.Paused;
         updateNotification(getString(R.string.in_pause));
-        PodcastFragment.mIPodcastService.playbackState("Pause");
+        ZooFragment.mIPodcastService.playbackState("Pause");
     }
 
     private void processDuckPauseRequest() {
@@ -293,7 +294,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         // Utils.callJavaScript(mWebView, "player.pause");
         mState = State.Playing;
         updateNotification(getString(R.string.in_pause));
-        PodcastFragment.mIPodcastService.playbackState("Pause");
+        ZooFragment.mIPodcastService.playbackState("Pause");
     }
 
     @SuppressLint("WakelockTimeout")
@@ -304,7 +305,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         if (mState == State.Stopped) {
             mState = State.Playing;
             setUpAsForeground(getString(R.string.playing));
-            fetchBitmapFromURLThread(PodcastFragment.podcastImageUrl);
+            fetchBitmapFromURLThread(ZooFragment.podcastImageUrl);
         } else {
             mState = State.Playing;
             updateNotification(getString(R.string.playing));
@@ -340,7 +341,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
-                    "Podcast Service Channel",
+                    "Zoo Service Channel",
                     NotificationManager.IMPORTANCE_LOW
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
@@ -435,9 +436,9 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
             if (mState == State.Playing) processDuckPauseRequest();
             return;
         } else if (mAudioFocus == AudioFocus.NoFocusCanDuck) {
-            PodcastFragment.mIPodcastService.duckRequest(true);
+            ZooFragment.mIPodcastService.duckRequest(true);
         } else {
-            PodcastFragment.mIPodcastService.duckRequest(false);
+            ZooFragment.mIPodcastService.duckRequest(false);
         }
         // If we were playing when we lost focus, we need to resume playing.
         if (mPlayOnFocusGain) {

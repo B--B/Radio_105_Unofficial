@@ -16,16 +16,15 @@
 
 package com.bb.radio105;
 
-import static com.bb.radio105.PodcastService.State.Paused;
-import static com.bb.radio105.PodcastService.State.Playing;
-import static com.bb.radio105.PodcastService.State.Stopped;
-import static com.bb.radio105.PodcastService.mState;
+import static com.bb.radio105.ZooService.State.Paused;
+import static com.bb.radio105.ZooService.State.Playing;
+import static com.bb.radio105.ZooService.State.Stopped;
+import static com.bb.radio105.ZooService.mState;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -84,9 +83,8 @@ public class ZooFragment extends Fragment implements IPodcastService {
     private ProgressBar mProgressBar;
     private MusicServiceBinder mMusicServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
-    private Intent startPodcastService;
+    private Intent startZooService;
     static boolean isMediaPlayingPodcast;
-    static boolean zooService;
     static IPodcastService mIPodcastService;
     static String podcastTitle;
     static String podcastSubtitle;
@@ -112,7 +110,6 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
         // Playback state interface
         mIPodcastService = this;
-        zooService = true;
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -350,9 +347,9 @@ public class ZooFragment extends Fragment implements IPodcastService {
         // Bind music service
         requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
         // Start podcast service
-        startPodcastService = new Intent(getContext(), PodcastService.class);
-        startPodcastService.setAction("com.bb.radio105.action.START");
-        requireContext().startService(startPodcastService);
+        startZooService = new Intent(getContext(), ZooService.class);
+        startZooService.setAction("com.bb.radio105.action.START_ZOO");
+        requireContext().startService(startZooService);
     }
 
     @Override
@@ -364,7 +361,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
             mMediaControllerCompat = null;
         }
         if (mState == Stopped) {
-            requireContext().stopService(startPodcastService);
+            requireContext().stopService(startZooService);
         }
         if (Constants.zooBundle == null) {
             Timber.d("onStop: created new outState bundle!");
@@ -409,15 +406,13 @@ public class ZooFragment extends Fragment implements IPodcastService {
         }
         if (mState != Stopped) {
             Timber.e("Stopping Podcast Service");
-            isMediaPlayingPodcast = false;
-            mState = Stopped;
+            stopPodcast();
             podcastTitle = null;
             podcastSubtitle = null;
             podcastImageUrl = null;
-            requireContext().stopService(startPodcastService);
+            requireContext().stopService(startZooService);
         }
         mIPodcastService = null;
-        zooService = false;
         mMusicServiceBinder = null;
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
@@ -524,21 +519,21 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
     private void playPodcast() {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.PLAY");
+        mIntent.setAction("com.bb.radio105.action.PLAY_ZOO");
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
     }
 
     private void pausePodcast() {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.PAUSE");
+        mIntent.setAction("com.bb.radio105.action.PAUSE_ZOO");
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
     }
 
     private void stopPodcast() {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.STOP");
+        mIntent.setAction("com.bb.radio105.action.STOP_ZOO");
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
     }

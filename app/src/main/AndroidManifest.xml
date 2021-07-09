@@ -57,12 +57,26 @@
             android:exported="false"
             android:foregroundServiceType="mediaPlayback">
             <intent-filter>
-                <action android:name="com.bb.radio105.action.START" />
-                <action android:name="com.bb.radio105.action.PLAY_NOTIFICATION" />
-                <action android:name="com.bb.radio105.action.PAUSE_NOTIFICATION" />
-                <action android:name="com.bb.radio105.action.PLAY" />
-                <action android:name="com.bb.radio105.action.PAUSE" />
-                <action android:name="com.bb.radio105.action.STOP" />
+                <action android:name="com.bb.radio105.action.START_PODCAST" />
+                <action android:name="com.bb.radio105.action.PLAY_NOTIFICATION_PODCAST" />
+                <action android:name="com.bb.radio105.action.PAUSE_NOTIFICATION_PODCAST" />
+                <action android:name="com.bb.radio105.action.PLAY_PODCAST" />
+                <action android:name="com.bb.radio105.action.PAUSE_PODCAST" />
+                <action android:name="com.bb.radio105.action.STOP_PODCAST" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="com.bb.radio105.ZooService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="com.bb.radio105.action.START_ZOO" />
+                <action android:name="com.bb.radio105.action.PLAY_NOTIFICATION_ZOO" />
+                <action android:name="com.bb.radio105.action.PAUSE_NOTIFICATION_ZOO" />
+                <action android:name="com.bb.radio105.action.PLAY_ZOO" />
+                <action android:name="com.bb.radio105.action.PAUSE_ZOO" />
+                <action android:name="com.bb.radio105.action.STOP_ZOO" />
             </intent-filter>
         </service>
 

@@ -25,20 +25,13 @@ import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.PowerManager;
-import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.LruCache;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
-
-import java.io.IOException;
 
 import timber.log.Timber;
 
@@ -53,7 +46,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
     private NotificationCompat.Builder mNotificationBuilder = null;
     private PowerManager.WakeLock mWakeLock;
     private WifiManager.WifiLock mWifiLock;
-    private static final int MAX_ALBUM_ART_CACHE_SIZE = 1024*1024;
 
     enum State {
         Stopped,
@@ -239,12 +231,12 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
 
         //Intent for Play
         Intent playIntent = new Intent();
-        playIntent.setAction(Constants.ACTION_PLAY_NOTIFICATION_ZOO);
+        playIntent.setAction(ACTION_PLAY_NOTIFICATION_PODCAST);
         PendingIntent mPlayIntent;
 
         //Intent for Pause
         Intent pauseIntent = new Intent();
-        pauseIntent.setAction(Constants.ACTION_PAUSE_NOTIFICATION_ZOO);
+        pauseIntent.setAction(ACTION_PAUSE_NOTIFICATION_PODCAST);
         PendingIntent mPauseIntent;
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {

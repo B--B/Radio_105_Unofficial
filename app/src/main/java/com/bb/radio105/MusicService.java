@@ -735,7 +735,8 @@ public class MusicService extends Service implements OnPreparedListener,
                     // Fetch the album art here
                     if (artUrlResized != null) {
                         art = AlbumArtCache.getInstance().getBigImage(artUrlResized);
-                        if (art == null) {
+                        smallIcon = AlbumArtCache.getInstance().getIconImage(artUrlResized);
+                        if (art == null | smallIcon == null) {
                             fetchBitmapFromURL(artUrlResized);
                         }
                     }
@@ -750,7 +751,7 @@ public class MusicService extends Service implements OnPreparedListener,
     private void fetchBitmapFromURL(String mString) {
         AlbumArtCache.getInstance().fetch(mString, new AlbumArtCache.FetchListener() {
             @Override
-            public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
+            public void onFetched(Bitmap bitmap, Bitmap icon) {
                 art = bitmap;
                 smallIcon = icon;
                 mSession.setMetadata

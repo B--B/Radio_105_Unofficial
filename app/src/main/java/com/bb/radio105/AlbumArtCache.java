@@ -64,7 +64,7 @@ final class AlbumArtCache {
         Bitmap[] bitmap = mCache.get(artUrl);
         if (bitmap != null) {
             Timber.e("getOrFetch: album art is in cache, using it %s", artUrl);
-            listener.onFetched(artUrl, bitmap[BIG_BITMAP_INDEX], bitmap[ICON_BITMAP_INDEX]);
+            listener.onFetched(bitmap[BIG_BITMAP_INDEX], bitmap[ICON_BITMAP_INDEX]);
             return;
         }
 
@@ -79,7 +79,7 @@ final class AlbumArtCache {
                             MAX_ART_WIDTH_ICON, MAX_ART_HEIGHT_ICON);
                     bitmaps = new Bitmap[] {bitmap2, icon};
                     mCache.put(artUrl, bitmaps);
-                    new Handler(Looper.getMainLooper()).post(() -> listener.onFetched(artUrl,
+                    new Handler(Looper.getMainLooper()).post(() -> listener.onFetched(
                             bitmaps[BIG_BITMAP_INDEX], bitmaps[ICON_BITMAP_INDEX]));
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -89,9 +89,6 @@ final class AlbumArtCache {
     }
 
     public static abstract class FetchListener {
-        public abstract void onFetched(String artUrl, Bitmap bigImage, Bitmap iconImage);
-        public void onError(String artUrl, Exception e) {
-            Timber.e(e, "AlbumArtFetchListener: error while downloading %s", artUrl);
-        }
+        public abstract void onFetched(Bitmap bigImage, Bitmap iconImage);
     }
 }

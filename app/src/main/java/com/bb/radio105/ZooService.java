@@ -353,7 +353,7 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
     private void fetchBitmapFromURL(String mString) {
         AlbumArtCache.getInstance().fetch(mString, new AlbumArtCache.FetchListener() {
             @Override
-            public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
+            public void onFetched(Bitmap bitmap, Bitmap icon) {
                 art = bitmap;
                 mNotificationBuilder.setLargeIcon(bitmap);
                 mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());

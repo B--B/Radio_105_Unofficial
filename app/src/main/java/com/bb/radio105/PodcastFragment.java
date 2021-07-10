@@ -123,10 +123,10 @@ public class PodcastFragment extends Fragment implements IPodcastService {
         String javaScript = "javascript:(function() { " +
                 "var home = document.createElement('IMG'); " +
                 "home.src = 'images/logos/3/logo_colored.jpg?v=1500902417000'; " +
-                "home.style.marginLeft = '5%';" +
+                "home.style.marginLeft = '30px';" +
                 "home.style.position = 'absolute';" +
-                "home.style.top = '0.5%';" +
-                "home.style.height = '8%';" +
+                "home.style.top = '10px';" +
+                "home.style.width = '40px';" +
                 "home.addEventListener('click', function() { " +
                 "location.href = 'https://www.105.net/sezioni/648/programmi'; });" +
                 "document.body.appendChild(home); " +

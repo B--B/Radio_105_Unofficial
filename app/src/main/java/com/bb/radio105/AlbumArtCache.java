@@ -32,7 +32,8 @@ final class AlbumArtCache {
     }
 
     private AlbumArtCache() {
-        // Holds no more than MAX_ALBUM_ART_CACHE_SIZE bytes, bounded by maxmemory/4 and
+        super();
+        // Holds no more than MAX_ALBUM_ART_CACHE_SIZE bytes, bounded by max memory/4 and
         // Integer.MAX_VALUE:
         int maxSize = Math.min(MAX_ALBUM_ART_CACHE_SIZE,
                 (int) (Math.min(Integer.MAX_VALUE, Runtime.getRuntime().maxMemory()/4)));
@@ -60,30 +61,26 @@ final class AlbumArtCache {
         // artwork fetched have a poor quality. All artworks links have a fixed part "resizer/WIDTH/HEIGHT/true", here
         // the original link sizes will be changed to 800x800, for an higher quality image. If for some reason the
         // replace won't work the original string will be used.
-        String artUrlResized = artUrl.replaceAll("(resizer/)[^&]*(/true)", "$1800/800$2");
-        Timber.e("artUrl changed, new URL is %s", artUrlResized);
-        Bitmap[] bitmap = mCache.get(artUrlResized);
+        Bitmap[] bitmap = mCache.get(artUrl);
         if (bitmap != null) {
-            Timber.e("getOrFetch: album art is in cache, using it %s", artUrlResized);
-            listener.onFetched(artUrlResized, bitmap[BIG_BITMAP_INDEX], bitmap[ICON_BITMAP_INDEX]);
+            Timber.e("getOrFetch: album art is in cache, using it %s", artUrl);
+            listener.onFetched(artUrl, bitmap[BIG_BITMAP_INDEX], bitmap[ICON_BITMAP_INDEX]);
             return;
         }
 
-        Timber.e("getOrFetch: starting thread to fetch %s", artUrlResized);
+        Timber.e("getOrFetch: starting thread to fetch %s", artUrl);
 
             Thread thread = new Thread(() -> {
                 Bitmap[] bitmaps;
                 try {
-                    Bitmap bitmap2 = BitmapHelper.fetchAndRescaleBitmap(artUrlResized,
+                    Bitmap bitmap2 = BitmapHelper.fetchAndRescaleBitmap(artUrl,
                             MAX_ART_WIDTH, MAX_ART_HEIGHT);
                     Bitmap icon = BitmapHelper.scaleBitmap(bitmap2,
                             MAX_ART_WIDTH_ICON, MAX_ART_HEIGHT_ICON);
                     bitmaps = new Bitmap[] {bitmap2, icon};
-                    mCache.put(artUrlResized, bitmaps);
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        listener.onFetched(artUrlResized,
-                                bitmaps[BIG_BITMAP_INDEX], bitmaps[ICON_BITMAP_INDEX]);
-                    });
+                    mCache.put(artUrl, bitmaps);
+                    new Handler(Looper.getMainLooper()).post(() -> listener.onFetched(artUrl,
+                            bitmaps[BIG_BITMAP_INDEX], bitmaps[ICON_BITMAP_INDEX]));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -94,7 +91,7 @@ final class AlbumArtCache {
     public static abstract class FetchListener {
         public abstract void onFetched(String artUrl, Bitmap bigImage, Bitmap iconImage);
         public void onError(String artUrl, Exception e) {
-            Timber.e("AlbumArtFetchListener: error while downloading %s", artUrl);
+            Timber.e(e, "AlbumArtFetchListener: error while downloading %s", artUrl);
         }
     }
 }

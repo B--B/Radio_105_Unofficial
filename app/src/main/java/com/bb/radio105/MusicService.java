@@ -97,6 +97,7 @@ public class MusicService extends Service implements OnPreparedListener,
     private Bitmap placeHolder;
     static Bitmap art;
     private Bitmap smallIcon;
+    private String artUrlResized;
 
     // Binder given to clients
     private final IBinder mIBinder = new MusicServiceBinder();
@@ -471,6 +472,7 @@ public class MusicService extends Service implements OnPreparedListener,
             mNotificationBuilder.addAction(new NotificationCompat.Action(R.drawable.ic_stop, getString(R.string.stop), MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP)));
             mSession.setMetadata
                     (new MediaMetadataCompat.Builder()
+                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, art)
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, smallIcon)
                             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, titleString)
@@ -486,6 +488,7 @@ public class MusicService extends Service implements OnPreparedListener,
             mNotificationBuilder.addAction(new NotificationCompat.Action(R.drawable.ic_stop, getString(R.string.stop), MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP)));
             mSession.setMetadata
                     (new MediaMetadataCompat.Builder()
+                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, placeHolder)
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, placeHolder)
                             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getString(R.string.radio_105))
                             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
@@ -500,6 +503,7 @@ public class MusicService extends Service implements OnPreparedListener,
             mNotificationBuilder.addAction(0, null, null);
             mSession.setMetadata
                     (new MediaMetadataCompat.Builder()
+                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, placeHolder)
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, placeHolder)
                             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getString(R.string.radio_105))
                             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
@@ -556,6 +560,7 @@ public class MusicService extends Service implements OnPreparedListener,
         mNotificationBuilder.addAction(0, null, null);
         mSession.setMetadata
                 (new MediaMetadataCompat.Builder()
+                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, placeHolder)
                         .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, placeHolder)
                         .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getString(R.string.radio_105))
                         .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, text)
@@ -724,10 +729,15 @@ public class MusicService extends Service implements OnPreparedListener,
                     }
                     if (artElement != null) {
                         artUrl = artElement.absUrl("src");
+                        artUrlResized = artUrl.replaceAll("(resizer/)[^&]*(/true)", "$1480/480$2");
+                        Timber.e("artUrl changed, new URL is %s", artUrlResized);
                     }
                     // Fetch the album art here
-                    if (artUrl != null) {
-                        fetchBitmapFromURL(artUrl);
+                    if (artUrlResized != null) {
+                        art = AlbumArtCache.getInstance().getBigImage(artUrlResized);
+                        if (art == null) {
+                            fetchBitmapFromURL(artUrlResized);
+                        }
                     }
                 },
                 error -> {
@@ -752,6 +762,9 @@ public class MusicService extends Service implements OnPreparedListener,
                         // the MediaDescription and thus it should be small to be serialized if
                         // necessary..
                         .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, icon)
+                        // set METADATA_KEY_ART, which is used on some android versions for the album
+                        // art on the lockscreen background when the media session is active.
+                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, bitmap)
                         .build()
                         );
                 // Update metadata only if the stream is playing, the placeHolder is used on PAUSE state

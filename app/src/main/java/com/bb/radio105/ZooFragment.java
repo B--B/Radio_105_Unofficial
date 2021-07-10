@@ -520,8 +520,8 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
         @JavascriptInterface
         public void getPodcastImage(String mString) {
-            Timber.e("Podcast image url is %s", mString);
-            podcastImageUrl = mString;
+            podcastImageUrl = mString.replaceAll("(resizer/)[^&]*(/true)", "$1480/480$2");
+            Timber.e("artUrl changed, new URL is %s", podcastImageUrl);
         }
     }
 

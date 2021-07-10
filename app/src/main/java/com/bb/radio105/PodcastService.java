@@ -46,6 +46,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
     private NotificationCompat.Builder mNotificationBuilder = null;
     private PowerManager.WakeLock mWakeLock;
     private WifiManager.WifiLock mWifiLock;
+    private Bitmap art;
 
     enum State {
         Stopped,
@@ -200,7 +201,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         mNotificationBuilder.setSubText(text);
         mNotificationBuilder.setShowWhen(false);
 
-        mNotificationBuilder.setLargeIcon(podcastLogo);
         mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
         if (PodcastFragment.podcastTitle != null) {
             mNotificationBuilder.setContentTitle(PodcastFragment.podcastTitle);
@@ -211,6 +211,11 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
             mNotificationBuilder.setContentText(PodcastFragment.podcastSubtitle);
         } else {
             mNotificationBuilder.setContentText(getString(R.string.podcast_service));
+        }
+        if (art != null) {
+            mNotificationBuilder.setLargeIcon(art);
+        } else {
+            mNotificationBuilder.setLargeIcon(podcastLogo);
         }
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
@@ -298,8 +303,11 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         mWifiLock.acquire();
         if (mState == State.Stopped) {
             mState = State.Playing;
+            art = AlbumArtCache.getInstance().getBigImage(ZooFragment.podcastImageUrl);
+            if (art == null) {
+                fetchBitmapFromURL(PodcastFragment.podcastImageUrl);
+            }
             setUpAsForeground(getString(R.string.playing));
-            fetchBitmapFromURL(PodcastFragment.podcastImageUrl);
         } else {
             mState = State.Playing;
             updateNotification(getString(R.string.playing));
@@ -346,6 +354,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         AlbumArtCache.getInstance().fetch(mString, new AlbumArtCache.FetchListener() {
             @Override
             public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
+                art = bitmap;
                 mNotificationBuilder.setLargeIcon(bitmap);
                 mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
             }

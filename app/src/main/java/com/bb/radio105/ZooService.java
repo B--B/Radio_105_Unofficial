@@ -41,6 +41,7 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
 
     private static final String CHANNEL_ID = "ZooServiceChannel";
     private Bitmap zooLogo;
+    private Bitmap art;
     final int NOTIFICATION_ID = 3;
     private NotificationManagerCompat mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder = null;
@@ -199,7 +200,6 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         mNotificationBuilder.setSubText(text);
         mNotificationBuilder.setShowWhen(false);
 
-        mNotificationBuilder.setLargeIcon(zooLogo);
         mNotificationBuilder.setSmallIcon(R.drawable.ic_zoo_notification);
         if (ZooFragment.podcastTitle != null) {
             mNotificationBuilder.setContentTitle(ZooFragment.podcastTitle);
@@ -211,7 +211,11 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         } else {
             mNotificationBuilder.setContentText(getString(R.string.zoo_service));
         }
-
+        if (art != null) {
+            mNotificationBuilder.setLargeIcon(art);
+        } else {
+            mNotificationBuilder.setLargeIcon(zooLogo);
+        }
         mNotificationBuilder.setContentIntent(pIntent);
         mNotificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         mNotificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
@@ -298,8 +302,11 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         mWifiLock.acquire();
         if (mState == State.Stopped) {
             mState = State.Playing;
+            art = AlbumArtCache.getInstance().getBigImage(ZooFragment.podcastImageUrl);
+            if (art == null) {
+                fetchBitmapFromURL(ZooFragment.podcastImageUrl);
+            }
             setUpAsForeground(getString(R.string.playing));
-            fetchBitmapFromURL(ZooFragment.podcastImageUrl);
         } else {
             mState = State.Playing;
             updateNotification(getString(R.string.playing));
@@ -347,6 +354,7 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         AlbumArtCache.getInstance().fetch(mString, new AlbumArtCache.FetchListener() {
             @Override
             public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
+                art = bitmap;
                 mNotificationBuilder.setLargeIcon(bitmap);
                 mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
             }

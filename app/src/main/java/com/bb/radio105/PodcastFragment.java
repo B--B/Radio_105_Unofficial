@@ -121,6 +121,15 @@ public class PodcastFragment extends Fragment implements IPodcastService {
         mWebView = root.findViewById(R.id.webView_podcast);
         String url = "https://www.105.net/sezioni/648/programmi";
         String javaScript = "javascript:(function() { " +
+                "var home = document.createElement('IMG'); " +
+                "home.src = 'images/logos/3/logo_colored.jpg?v=1500902417000'; " +
+                "home.style.marginLeft = '5%';" +
+                "home.style.position = 'absolute';" +
+                "home.style.top = '0.5%';" +
+                "home.style.height = '8%';" +
+                "home.addEventListener('click', function() { " +
+                "location.href = 'https://www.105.net/sezioni/648/programmi'; });" +
+                "document.body.appendChild(home); " +
                 "var audio = document.querySelector('audio'); " +
                 "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload');" +
                 "    audio.onplay = function() {" +

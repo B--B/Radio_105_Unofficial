@@ -303,7 +303,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         mWifiLock.acquire();
         if (mState == State.Stopped) {
             mState = State.Playing;
-            art = AlbumArtCache.getInstance().getBigImage(PodcastFragment.podcastImageUrl);
+            art = AlbumArtCache.getInstance().getBigImage(PodcastFragment.podcastImageUrl.substring(0, 45));
             if (art == null) {
                 fetchBitmapFromURL(PodcastFragment.podcastImageUrl);
             }

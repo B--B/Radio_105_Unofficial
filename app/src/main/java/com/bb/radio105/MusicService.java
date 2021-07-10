@@ -437,6 +437,7 @@ public class MusicService extends Service implements OnPreparedListener,
      */
     @SuppressLint("UnspecifiedImmutableFlag")
     private void updateNotification(String text) {
+        String artUri = artUrl.replaceAll("(resizer/)[^&]*(/true)", "$1800/800$2");
         if (art == null) {
             // use a placeholder art while the remote art is being downloaded
             art = placeHolder;
@@ -474,6 +475,8 @@ public class MusicService extends Service implements OnPreparedListener,
                     (new MediaMetadataCompat.Builder()
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, art)
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, artUri)
+                            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, artUri)
                             .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, smallIcon)
                             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, titleString)
                             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, djString)
@@ -754,19 +757,23 @@ public class MusicService extends Service implements OnPreparedListener,
             public void onFetched(Bitmap bitmap, Bitmap icon) {
                 art = bitmap;
                 smallIcon = icon;
+                String artUri = artUrl.replaceAll("(resizer/)[^&]*(/true)", "$1800/800$2");
                 mSession.setMetadata
                         (new MediaMetadataCompat.Builder()
-                        // set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is used, for
-                        // example, on the lockscreen background when the media session is active.
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
-                        // set small version of the album art in the DISPLAY_ICON. This is used on
-                        // the MediaDescription and thus it should be small to be serialized if
-                        // necessary..
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, icon)
-                        // set METADATA_KEY_ART, which is used on some android versions for the album
-                        // art on the lockscreen background when the media session is active.
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, bitmap)
-                        .build()
+                                // set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is used, for
+                                // example, on the lockscreen background when the media session is active.
+                                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
+                                // set small version of the album art in the DISPLAY_ICON. This is used on
+                                // the MediaDescription and thus it should be small to be serialized if
+                                // necessary..
+                                .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, icon)
+                                // set METADATA_KEY_ART, which is used on some android versions for the album
+                                // art on the lockscreen background when the media session is active.
+                                .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, bitmap)
+                                // We also set high definition artworks URI.
+                                .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, artUri)
+                                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, artUri)
+                                .build()
                         );
                 // Update metadata only if the stream is playing, the placeHolder is used on PAUSE state
                 // and the new metadata will be used when we move on PLAY state

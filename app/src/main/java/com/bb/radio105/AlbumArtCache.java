@@ -78,7 +78,8 @@ final class AlbumArtCache {
                     Bitmap icon = BitmapHelper.scaleBitmap(bitmap2,
                             MAX_ART_WIDTH_ICON, MAX_ART_HEIGHT_ICON);
                     bitmaps = new Bitmap[] {bitmap2, icon};
-                    mCache.put(artUrl, bitmaps);
+
+                    mCache.put(artUrl.substring(0, 45), bitmaps);
                     new Handler(Looper.getMainLooper()).post(() -> listener.onFetched(
                             bitmaps[BIG_BITMAP_INDEX], bitmaps[ICON_BITMAP_INDEX]));
                 } catch (IOException e) {

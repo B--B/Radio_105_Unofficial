@@ -302,7 +302,7 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         mWifiLock.acquire();
         if (mState == State.Stopped) {
             mState = State.Playing;
-            art = AlbumArtCache.getInstance().getBigImage(ZooFragment.podcastImageUrl);
+            art = AlbumArtCache.getInstance().getBigImage(ZooFragment.podcastImageUrl.substring(0, 45));
             if (art == null) {
                 fetchBitmapFromURL(ZooFragment.podcastImageUrl);
             }

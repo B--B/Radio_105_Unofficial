@@ -396,7 +396,7 @@ public class PodcastFragment extends Fragment implements IPodcastService {
     @Override
     public void onPause() {
         super.onPause();
-        if (mState != Playing) {
+        if (mState == Stopped) {
             if (mWebView != null) {
                 mWebView.onPause();
                 mWebView.pauseTimers();
@@ -408,7 +408,7 @@ public class PodcastFragment extends Fragment implements IPodcastService {
     @Override
     public void onResume() {
         super.onResume();
-        if (mState != Playing) {
+        if (mState == Stopped) {
             if (mWebView != null) {
                 mWebView.onResume();
                 mWebView.resumeTimers();

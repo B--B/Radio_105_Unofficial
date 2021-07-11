@@ -123,9 +123,9 @@ public class PodcastFragment extends Fragment implements IPodcastService {
         String javaScript = "javascript:(function() { " +
                 "var home = document.createElement('IMG'); " +
                 "home.src = 'images/logos/3/logo_colored.jpg?v=1500902417000'; " +
-                "home.style.marginLeft = '30px';" +
+                "home.style.marginLeft = '20px';" +
                 "home.style.position = 'absolute';" +
-                "home.style.top = '10px';" +
+                "home.style.top = '15px';" +
                 "home.style.width = '40px';" +
                 "home.addEventListener('click', function() { " +
                 "location.href = 'https://www.105.net/sezioni/648/programmi'; });" +
@@ -148,13 +148,25 @@ public class PodcastFragment extends Fragment implements IPodcastService {
                 "var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
                 " if (document.body.contains(image)) { JSPODCASTOUT.getPodcastImage(image.src); };" +
                 "};" +
+                "var element = document.getElementsByClassName('breadcrumbs_orizzontale vc_breadcrumbs null');" +
+                " if (element.length) { element[0].innerHTML = '' }; " +
+                "var x = window.matchMedia('(max-width: 767px)');" +
+                "if (x.matches) {" +
+                "var element = document.getElementsByClassName('breadcrumbs_orizzontale vc_breadcrumbs null');" +
+                " if (element.length) { element[0].style.display = 'hide' }; } else {" +
+                "var element = document.getElementsByClassName('breadcrumbs_orizzontale vc_breadcrumbs null');" +
+                " if (element.length) { element[0].style.display = 'show' }; } " +
+                "var element = document.getElementsByClassName('bannervcms banner_728x90_leaderboard ');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('container-fluid skin-visible vc_bg_yellow vc_bb6_darkgrey vc_z50 hidden-sm hidden-xs affix-top');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('container-fluid skin-visible vc_bg_yellow vc_z50 hidden-sm hidden-xs');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
                 " if (element.length) { element[0].style.width = '100%' }; " +
                 "var element = document.getElementsByClassName('clear');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('navbar-fixed-top hidden-print');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('container vc_bg_white');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('vc_share_buttons_horizontal');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
@@ -177,6 +189,10 @@ public class PodcastFragment extends Fragment implements IPodcastService {
                 "var element = document.getElementsByClassName('container-fluid vc_bg_darkgray vc_bt7_yellow vc_z2 vc_hidden_print');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('iubenda-cs-container');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('container-fluid skin-visible vc_bg_yellow vc_bb6_darkgrey vc_z50 hidden-sm hidden-xs affix');" +
+                " if (element.length) { element[0].style.display = 'none' }; " +
+                "var element = document.getElementsByClassName('vc_hidden_print vc_cont_menu_bar');" +
                 " if (element.length) { element[0].style.display = 'none' }; " +
                 "var element = document.getElementsByClassName('container-fluid vc_bg_grad_green-blu-tone ghost_container');" +
                 " if (element.length) { element[0].style.display = 'none' }; " + "})()";
@@ -399,6 +415,23 @@ public class PodcastFragment extends Fragment implements IPodcastService {
             }
         }
     }
+
+    /*
+    @Override
+    public void onConfigurationChanged(@NotNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        String javaScript = "javascript:(function() { " +
+                "var x = window.matchMedia('(max-width: 767px)');" +
+                "if (x.matches) {" +
+                "var element = document.getElementsByClassName('breadcrumbs_orizzontale vc_breadcrumbs null');" +
+                " if (element.length) { element[0].style.display = 'hide' }; } else {" +
+                "var element = document.getElementsByClassName('breadcrumbs_orizzontale vc_breadcrumbs null');" +
+                " if (element.length) { element[0].style.display = 'show' }; } " +
+                "})()";
+        mWebView.evaluateJavascript(javaScript, null);
+        Timber.e("Triggered configuration change");
+    }
+    */
 
     @Override
     public void onDestroyView() {

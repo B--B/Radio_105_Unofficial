@@ -126,6 +126,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
         mWebView = root.findViewById(R.id.webView_zoo);
         String url = "https://zoo.105.net";
         final String javaScript = "javascript:(function() { " +
+                "document.body.style.backgroundColor = '#121212';" +
                 "var audio = document.querySelector('audio'); " +
                 "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload'); " +
                 "    audio.onplay = function() {" +

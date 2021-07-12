@@ -437,7 +437,10 @@ public class MusicService extends Service implements OnPreparedListener,
      */
     @SuppressLint("UnspecifiedImmutableFlag")
     private void updateNotification(String text) {
-        String artUri = artUrl.replaceAll("(resizer/)[^&]*(/true)", "$1800/800$2");
+        String artUri = null;
+        if (artUrl != null) {
+            artUri = artUrl.replaceAll("(resizer/)[^&]*(/true)", "$1800/800$2");
+        }
         if (art == null) {
             // use a placeholder art while the remote art is being downloaded
             art = placeHolder;

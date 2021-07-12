@@ -392,7 +392,6 @@ public class ZooFragment extends Fragment implements IPodcastService {
         }
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onResume() {
         super.onResume();

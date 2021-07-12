@@ -404,7 +404,6 @@ public class PodcastFragment extends Fragment implements IPodcastService {
         }
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onResume() {
         super.onResume();

@@ -23,10 +23,8 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.IBinder;
-import android.os.PowerManager;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -45,8 +43,6 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
     final int NOTIFICATION_ID = 3;
     private NotificationManagerCompat mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder = null;
-    private PowerManager.WakeLock mWakeLock;
-    private WifiManager.WifiLock mWifiLock;
 
     enum State {
         Stopped,
@@ -79,11 +75,6 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         zooLogo = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_zoo_logo);
         // Set the streaming state
         mState = State.Stopped;
-        //Acquire wake locks
-        mWakeLock = ((PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE))
-                .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:ZooServiceWakelock");
-        mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
-                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:ZooServiceWiFiWakelock");
 
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
@@ -164,8 +155,6 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         mNotificationBuilder = null;
         mNotificationManager = null;
         zooLogo = null;
-        mWakeLock = null;
-        mWifiLock = null;
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
@@ -269,8 +258,6 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         Timber.e("Processing play request from notification");
         ZooFragment.mIPodcastService.playbackState("Play");
         mPlayOnFocusGain = true;
-        mWakeLock.acquire();
-        mWifiLock.acquire();
         mState = State.Playing;
         updateNotification(getString(R.string.playing));
     }
@@ -278,12 +265,6 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
     private void processPauseRequestNotification() {
         Timber.e("Processing pause request from notification");
         ZooFragment.mIPodcastService.playbackState("Pause");
-        if (mWakeLock.isHeld()) {
-            mWakeLock.release();
-        }
-        if (mWifiLock.isHeld()) {
-            mWifiLock.release();
-        }
         mState = State.Paused;
         updateNotification(getString(R.string.in_pause));
     }
@@ -299,8 +280,6 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
     private void processPlayRequest() {
         Timber.e("Processing play request");
         mPlayOnFocusGain = true;
-        mWakeLock.acquire();
-        mWifiLock.acquire();
         if (mState == State.Stopped) {
             mState = State.Playing;
             art = AlbumArtCache.getInstance().getBigImage(ZooFragment.podcastImageUrl.substring(0, 45));
@@ -316,24 +295,12 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
 
     private void processPauseRequest() {
         Timber.e("Processing pause request");
-        if (mWakeLock.isHeld()) {
-            mWakeLock.release();
-        }
-        if (mWifiLock.isHeld()) {
-            mWifiLock.release();
-        }
         mState = State.Paused;
         updateNotification(getString(R.string.in_pause));
     }
 
     private void processStopRequest() {
         Timber.e("Processing stop request");
-        if (mWakeLock.isHeld()) {
-            mWakeLock.release();
-        }
-        if (mWifiLock.isHeld()) {
-            mWifiLock.release();
-        }
         if (mState != State.Stopped) {
             mState = State.Stopped;
             stopForeground(true);

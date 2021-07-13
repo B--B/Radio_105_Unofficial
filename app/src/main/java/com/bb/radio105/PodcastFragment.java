@@ -25,17 +25,20 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
@@ -89,6 +92,8 @@ public class PodcastFragment extends Fragment implements IPodcastService {
     static String podcastTitle;
     static String podcastSubtitle;
     static String podcastImageUrl;
+    private PowerManager.WakeLock mWakeLock;
+    private WifiManager.WifiLock mWifiLock;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -106,8 +111,15 @@ public class PodcastFragment extends Fragment implements IPodcastService {
 
         // Stock Colors
         MainActivity.updateColorsInterface.onUpdate(false);
+
         // Playback state interface
         mIPodcastService = this;
+
+        //Acquire wake locks
+        mWakeLock = ((PowerManager) requireContext().getSystemService(Context.POWER_SERVICE))
+                .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:PodcastServiceWakelock");
+        mWifiLock = ((WifiManager) requireContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE))
+                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:PodcastServiceWiFiWakelock");
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -241,6 +253,12 @@ public class PodcastFragment extends Fragment implements IPodcastService {
             public void onPageStarted(WebView webView, String url, Bitmap mBitmap) {
                 webView.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.VISIBLE);
+                if (mWakeLock.isHeld()) {
+                    mWakeLock.release();
+                }
+                if (mWifiLock.isHeld()) {
+                    mWifiLock.release();
+                }
                 if (mState != Stopped) {
                     stopPodcast();
                     podcastTitle = null;
@@ -451,6 +469,14 @@ public class PodcastFragment extends Fragment implements IPodcastService {
         if (pref) {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+        if (mWakeLock.isHeld()) {
+            mWakeLock.release();
+        }
+        if (mWifiLock.isHeld()) {
+            mWifiLock.release();
+        }
+        mWakeLock = null;
+        mWifiLock = null;
         if (mState != Stopped) {
             Timber.e("Stopping Podcast Service");
             isMediaPlayingPodcast = false;
@@ -499,12 +525,19 @@ public class PodcastFragment extends Fragment implements IPodcastService {
         }
     };
 
+    @SuppressLint("WakelockTimeout")
     class JSInterfacePodcast {
         @JavascriptInterface
         public void mediaPodcastAction(String mString) {
             Timber.e("isMediaPlayingPodcast is %s", mString);
             isMediaPlayingPodcast = Boolean.parseBoolean(mString);
             if (isMediaPlayingPodcast) {
+                if (!mWakeLock.isHeld()) {
+                    mWakeLock.acquire();
+                }
+                if (!mWifiLock.isHeld()) {
+                    mWifiLock.acquire();
+                }
                 if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
                     mMediaControllerCompat.getTransportControls().pause();
                 }
@@ -513,6 +546,12 @@ public class PodcastFragment extends Fragment implements IPodcastService {
                     playPodcast();
                 }
             } else {
+                if (mWakeLock.isHeld()) {
+                    mWakeLock.release();
+                }
+                if (mWifiLock.isHeld()) {
+                    mWifiLock.release();
+                }
                 if (mState == Playing) {
                     Timber.e("Received pause request from PodcastFragment");
                     pausePodcast();
@@ -543,9 +582,9 @@ public class PodcastFragment extends Fragment implements IPodcastService {
     public void playbackState(String playbackState) {
         Timber.e("Playback state changed, new state is %s", playbackState);
         if (playbackState.equals("Play")) {
-            mWebView.evaluateJavascript("javascript:(player.play()); ", null);
+            mWebView.loadUrl("javascript:(player.play());");
         } else {
-            mWebView.evaluateJavascript("javascript:(player.pause()); ", null);
+            mWebView.loadUrl("javascript:(player.pause());");
         }
     }
 

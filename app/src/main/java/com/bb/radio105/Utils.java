@@ -40,8 +40,6 @@ import java.util.Objects;
 
 import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
 
-import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
-
 public class Utils {
     /**
      * Requests the {@link android.Manifest.permission#WRITE_EXTERNAL_STORAGE} permission.

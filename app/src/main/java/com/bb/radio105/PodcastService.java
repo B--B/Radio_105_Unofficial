@@ -267,16 +267,18 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
 
     @SuppressLint("WakelockTimeout")
     private void processPlayRequestNotification() {
+        Timber.e("Processing play request from notification");
+        PodcastFragment.mIPodcastService.playbackState("Play");
         mPlayOnFocusGain = true;
         mWakeLock.acquire();
         mWifiLock.acquire();
         mState = State.Playing;
         updateNotification(getString(R.string.playing));
-        PodcastFragment.mIPodcastService.playbackState("Play");
     }
 
     private void processPauseRequestNotification() {
         Timber.e("Processing pause request from notification");
+        PodcastFragment.mIPodcastService.playbackState("Pause");
         if (mWakeLock.isHeld()) {
             mWakeLock.release();
         }
@@ -285,12 +287,10 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         }
         mState = State.Paused;
         updateNotification(getString(R.string.in_pause));
-        PodcastFragment.mIPodcastService.playbackState("Pause");
     }
 
     private void processDuckPauseRequest() {
-        Timber.e("Processing pause request from notification");
-        // Utils.callJavaScript(mWebView, "player.pause");
+        Timber.e("Processing duck pause request from notification");
         mState = State.Playing;
         updateNotification(getString(R.string.in_pause));
         PodcastFragment.mIPodcastService.playbackState("Pause");
@@ -298,6 +298,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
 
     @SuppressLint("WakelockTimeout")
     private void processPlayRequest() {
+        Timber.e("Processing play request");
         mPlayOnFocusGain = true;
         mWakeLock.acquire();
         mWifiLock.acquire();
@@ -315,6 +316,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
     }
 
     private void processPauseRequest() {
+        Timber.e("Processing pause request");
         if (mWakeLock.isHeld()) {
             mWakeLock.release();
         }
@@ -326,6 +328,7 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
     }
 
     private void processStopRequest() {
+        Timber.e("Processing stop request");
         if (mWakeLock.isHeld()) {
             mWakeLock.release();
         }

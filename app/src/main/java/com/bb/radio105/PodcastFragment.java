@@ -541,10 +541,11 @@ public class PodcastFragment extends Fragment implements IPodcastService {
 
     @Override
     public void playbackState(String playbackState) {
+        Timber.e("Playback state changed, new state is %s", playbackState);
         if (playbackState.equals("Play")) {
-            Utils.callJavaScript(mWebView, "player.play");
+            mWebView.evaluateJavascript("javascript:(player.play()); ", null);
         } else {
-            Utils.callJavaScript(mWebView, "player.pause");
+            mWebView.evaluateJavascript("javascript:(player.pause()); ", null);
         }
     }
 

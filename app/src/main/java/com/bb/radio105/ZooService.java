@@ -266,16 +266,18 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
 
     @SuppressLint("WakelockTimeout")
     private void processPlayRequestNotification() {
+        Timber.e("Processing play request from notification");
+        ZooFragment.mIPodcastService.playbackState("Play");
         mPlayOnFocusGain = true;
         mWakeLock.acquire();
         mWifiLock.acquire();
         mState = State.Playing;
         updateNotification(getString(R.string.playing));
-        ZooFragment.mIPodcastService.playbackState("Play");
     }
 
     private void processPauseRequestNotification() {
         Timber.e("Processing pause request from notification");
+        ZooFragment.mIPodcastService.playbackState("Pause");
         if (mWakeLock.isHeld()) {
             mWakeLock.release();
         }
@@ -284,12 +286,10 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
         }
         mState = State.Paused;
         updateNotification(getString(R.string.in_pause));
-        ZooFragment.mIPodcastService.playbackState("Pause");
     }
 
     private void processDuckPauseRequest() {
-        Timber.e("Processing pause request from notification");
-        // Utils.callJavaScript(mWebView, "player.pause");
+        Timber.e("Processing duck pause request from notification");
         mState = State.Playing;
         updateNotification(getString(R.string.in_pause));
         ZooFragment.mIPodcastService.playbackState("Pause");
@@ -297,6 +297,7 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
 
     @SuppressLint("WakelockTimeout")
     private void processPlayRequest() {
+        Timber.e("Processing play request");
         mPlayOnFocusGain = true;
         mWakeLock.acquire();
         mWifiLock.acquire();
@@ -314,6 +315,7 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
     }
 
     private void processPauseRequest() {
+        Timber.e("Processing pause request");
         if (mWakeLock.isHeld()) {
             mWakeLock.release();
         }
@@ -325,6 +327,7 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
     }
 
     private void processStopRequest() {
+        Timber.e("Processing stop request");
         if (mWakeLock.isHeld()) {
             mWakeLock.release();
         }
@@ -335,7 +338,6 @@ public class ZooService extends Service implements AudioManager.OnAudioFocusChan
             mState = State.Stopped;
             stopForeground(true);
         }
-        // giveUpAudioFocus();
     }
 
     private void createNotificationChannel() {

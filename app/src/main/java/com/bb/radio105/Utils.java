@@ -145,7 +145,7 @@ public class Utils {
      * @param methodName function name
      * @param params     function parameters
      */
-    static void callJavaScript(AdblockWebView webView, String methodName, Object...params) {
+    /* static void callJavaScript(AdblockWebView webView, String methodName, Object...params) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("javascript:try{");
         stringBuilder.append(methodName);
@@ -168,4 +168,5 @@ public class Utils {
         stringBuilder.append(")}catch(error){Android.onError(error.message);}");
         webView.loadUrl(stringBuilder.toString());
     }
+     */
 }

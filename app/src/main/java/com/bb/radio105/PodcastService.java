@@ -25,7 +25,9 @@ import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 
 import androidx.annotation.Nullable;
@@ -99,6 +101,17 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
                 break;
             case ACTION_PLAY_NOTIFICATION_PODCAST:
                 processPlayRequestNotification();
+                // HACK: After some minutes in pause state with the app in background sometimes
+                // play action won't work at all. And there's nothing in logs that helps me actually.
+                // The javascript is not executed and isMediaPlayingPodcast remain false. Only ways for
+                // recover the stream are: 1 open the app or 2 press pause/play button again on notification.
+                // This is just an ugly hack, and should be removed as soon as possible
+                if (!PodcastFragment.isMediaPlayingPodcast) {
+                    Timber.e("!BUG! Trying to restart stream");
+                    processPauseRequestNotification();
+                    // Add a small delay
+                    new Handler(Looper.getMainLooper()).postDelayed(this::processPlayRequestNotification, 200);
+                }
                 break;
             case ACTION_PAUSE_NOTIFICATION_PODCAST:
                 processPauseRequestNotification();

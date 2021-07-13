@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.AudioManager;
 import android.os.Build;
 import android.os.IBinder;
 
@@ -33,7 +32,7 @@ import androidx.preference.PreferenceManager;
 
 import timber.log.Timber;
 
-public class PodcastService extends Service implements AudioManager.OnAudioFocusChangeListener {
+public class PodcastService extends Service {
 
     private final AudioBecomingNoisyIntentReceiver mAudioBecomingNoisyIntentReceiver = new AudioBecomingNoisyIntentReceiver();
 
@@ -51,18 +50,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
     }
 
     static State mState = State.Stopped;
-
-    // do we have audio focus?
-    enum AudioFocus {
-        NoFocusNoDuck,    // we don't have audio focus, and can't duck
-        NoFocusCanDuck,   // we don't have focus, but can play at a low volume ("ducking")
-        Focused           // we have full audio focus
-    }
-
-    // Type of audio focus we have:
-    private AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
-
-    private boolean mPlayOnFocusGain;
 
     @Override
     public void onCreate() {
@@ -111,29 +98,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    @Override
-    public void onAudioFocusChange(int focusChange) {
-        if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-            // We have gained focus:
-            mAudioFocus = AudioFocus.Focused;
-        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS ||
-                focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
-                focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
-            // We have lost focus. If we can duck (low playback volume), we can keep playing.
-            // Otherwise, we need to pause the playback.
-            boolean canDuck = focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK;
-            mAudioFocus = canDuck ? AudioFocus.NoFocusCanDuck : AudioFocus.NoFocusNoDuck;
-            // If we are playing, we need to reset media player by calling configMediaPlayerState
-            // with mAudioFocus properly set.
-            if (mState == State.Playing && !canDuck) {
-                // If we don't have audio focus and can't duck, we save the information that
-                // we were playing, so that we can resume playback once we get the focus back.
-                mPlayOnFocusGain = true;
-            }
-        }
-        handleFocusRequest();
     }
 
     @Override
@@ -257,7 +221,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
     private void processPlayRequestNotification() {
         Timber.e("Processing play request from notification");
         PodcastFragment.mIPodcastService.playbackState("Play");
-        mPlayOnFocusGain = true;
         mState = State.Playing;
         updateNotification(getString(R.string.playing));
     }
@@ -279,7 +242,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
     @SuppressLint("WakelockTimeout")
     private void processPlayRequest() {
         Timber.e("Processing play request");
-        mPlayOnFocusGain = true;
         if (mState == State.Stopped) {
             mState = State.Playing;
             art = AlbumArtCache.getInstance().getBigImage(PodcastFragment.podcastImageUrl.substring(0, 45));
@@ -343,23 +305,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
                     }
                 }
             }
-        }
-    }
-
-    private void handleFocusRequest() {
-        if (mAudioFocus == AudioFocus.NoFocusNoDuck) {
-            // If we don't have audio focus and can't duck, we have to pause, even if mState
-            // is State.Playing. But we stay in the Playing state so that we know we have to resume
-            // playback once we get the focus back.
-            if (mState == State.Playing) processDuckPauseRequest();
-            return;
-        } else PodcastFragment.mIPodcastService.duckRequest(mAudioFocus == AudioFocus.NoFocusCanDuck);
-        // If we were playing when we lost focus, we need to resume playing.
-        if (mPlayOnFocusGain) {
-            if (mState != State.Playing) {
-                processPlayRequestNotification();
-            }
-            mPlayOnFocusGain = false;
         }
     }
 }

@@ -23,12 +23,8 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
-import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
-import android.os.PowerManager;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -46,8 +42,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
     final int NOTIFICATION_ID = 2;
     private NotificationManagerCompat mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder = null;
-    private PowerManager.WakeLock mWakeLock;
-    private WifiManager.WifiLock mWifiLock;
     private Bitmap art;
 
     enum State {
@@ -81,11 +75,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         podcastLogo = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_podcast_logo);
         // Set the streaming state
         mState = State.Stopped;
-        //Acquire wake locks
-        mWakeLock = ((PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE))
-                .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:PodcastServiceWakelock");
-        mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
-                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:PodcastServiceWiFiWakelock");
 
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
@@ -101,17 +90,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
                 break;
             case ACTION_PLAY_NOTIFICATION_PODCAST:
                 processPlayRequestNotification();
-                // HACK: After some minutes in pause state with the app in background sometimes
-                // play action won't work at all. And there's nothing in logs that helps me actually.
-                // The javascript is not executed and isMediaPlayingPodcast remain false. Only ways for
-                // recover the stream are: 1 open the app or 2 press pause/play button again on notification.
-                // This is just an ugly hack, and should be removed as soon as possible
-                if (!PodcastFragment.isMediaPlayingPodcast) {
-                    Timber.e("!BUG! Trying to restart stream");
-                    processPauseRequestNotification();
-                    // Add a small delay
-                    new Handler(Looper.getMainLooper()).postDelayed(this::processPlayRequestNotification, 200);
-                }
                 break;
             case ACTION_PAUSE_NOTIFICATION_PODCAST:
                 processPauseRequestNotification();
@@ -178,8 +156,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         mNotificationBuilder = null;
         mNotificationManager = null;
         podcastLogo = null;
-        mWakeLock = null;
-        mWifiLock = null;
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
@@ -278,13 +254,10 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
         mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
     }
 
-    @SuppressLint("WakelockTimeout")
     private void processPlayRequestNotification() {
         Timber.e("Processing play request from notification");
         PodcastFragment.mIPodcastService.playbackState("Play");
         mPlayOnFocusGain = true;
-        mWakeLock.acquire();
-        mWifiLock.acquire();
         mState = State.Playing;
         updateNotification(getString(R.string.playing));
     }
@@ -292,12 +265,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
     private void processPauseRequestNotification() {
         Timber.e("Processing pause request from notification");
         PodcastFragment.mIPodcastService.playbackState("Pause");
-        if (mWakeLock.isHeld()) {
-            mWakeLock.release();
-        }
-        if (mWifiLock.isHeld()) {
-            mWifiLock.release();
-        }
         mState = State.Paused;
         updateNotification(getString(R.string.in_pause));
     }
@@ -313,8 +280,6 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
     private void processPlayRequest() {
         Timber.e("Processing play request");
         mPlayOnFocusGain = true;
-        mWakeLock.acquire();
-        mWifiLock.acquire();
         if (mState == State.Stopped) {
             mState = State.Playing;
             art = AlbumArtCache.getInstance().getBigImage(PodcastFragment.podcastImageUrl.substring(0, 45));
@@ -330,24 +295,12 @@ public class PodcastService extends Service implements AudioManager.OnAudioFocus
 
     private void processPauseRequest() {
         Timber.e("Processing pause request");
-        if (mWakeLock.isHeld()) {
-            mWakeLock.release();
-        }
-        if (mWifiLock.isHeld()) {
-            mWifiLock.release();
-        }
         mState = State.Paused;
         updateNotification(getString(R.string.in_pause));
     }
 
     private void processStopRequest() {
         Timber.e("Processing stop request");
-        if (mWakeLock.isHeld()) {
-            mWakeLock.release();
-        }
-        if (mWifiLock.isHeld()) {
-            mWifiLock.release();
-        }
         if (mState != State.Stopped) {
             mState = State.Stopped;
             stopForeground(true);

@@ -488,26 +488,9 @@ public class ZooFragment extends Fragment implements IPodcastService {
     public void playbackState(String playbackState) {
         Timber.e("Playback state changed, new state is %s", playbackState);
         if (playbackState.equals("Play")) {
-            mWebView.loadUrl("javascript:(player.play());");
+            mWebView.evaluateJavascript("javascript:(player.play());", null);
         } else {
-            mWebView.loadUrl("javascript:(player.pause());");
-        }
-    }
-
-    @Override
-    public void duckRequest(Boolean mustDuck) {
-        if (mustDuck) {
-            mWebView.evaluateJavascript("javascript:(function() { " +
-                    "var audio = document.querySelector('audio'); " +
-                    "if (document.body.contains(audio)) { " +
-                    "    audio.volume = 0.2;};" +
-                    "})()", null);
-        } else {
-            mWebView.evaluateJavascript("javascript:(function() { " +
-                    "var audio = document.querySelector('audio'); " +
-                    "if (document.body.contains(audio)) { " +
-                    "    audio.volume = 1.0;};" +
-                    "})()", null);
+            mWebView.evaluateJavascript("javascript:(player.pause());", null);
         }
     }
 

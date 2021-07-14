@@ -247,7 +247,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
             @Override
             public void onPageFinished (WebView webView, String url) {
-                webView.loadUrl(javaScript);
+                webView.evaluateJavascript(javaScript, null);
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
                     if (mProgressBar != null) {
                         mProgressBar.setVisibility(View.GONE);

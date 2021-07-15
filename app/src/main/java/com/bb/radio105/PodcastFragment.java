@@ -583,6 +583,13 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
         Timber.e("Playback state changed, new state is %s", playbackState);
         if (playbackState.equals("Play")) {
             mWebView.evaluateJavascript("javascript:(player.play());", null);
+            // FIXME: this shit is necessary as 105.net closes the connection if the audio is paused for a few minutes.
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                if (!isMediaPlayingPodcast) {
+                    Timber.e("!HACK! Trying to start the stream again");
+                    mWebView.evaluateJavascript("javascript:(function() { player.pause(); player.play();})()", null);
+                }
+            }, 100);
         } else {
             mWebView.evaluateJavascript("javascript:(player.pause());", null);
         }

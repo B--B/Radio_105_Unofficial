@@ -45,7 +45,6 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
 import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 import org.adblockplus.libadblockplus.android.webview.BuildConfig;

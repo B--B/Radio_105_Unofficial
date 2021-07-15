@@ -133,38 +133,4 @@ public class Utils {
         }
         return line;
     }
-
-    /**
-     * Call javascript functions in webView.
-     * Credits to mttdat:
-     * https://github.com/mttdat/utils/blob/master/utils/src/main/java/mttdat/utils/WebViewUtils.java
-     *
-     * @param webView    webView object
-     * @param methodName function name
-     * @param params     function parameters
-     */
-    /* static void callJavaScript(AdblockWebView webView, String methodName, Object...params) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("javascript:try{");
-        stringBuilder.append(methodName);
-        stringBuilder.append("(");
-        for (int i = 0; i < params.length; i++) {
-            Object param = params[i];
-
-            if (param instanceof String) {
-                stringBuilder.append("'");
-                stringBuilder.append(param.toString().replace("'", "\\'"));
-                stringBuilder.append("'");
-            } else {
-                stringBuilder.append(param);
-            }
-            // If the last param, don't add ','.
-            if (i < params.length - 1) {
-                stringBuilder.append(",");
-            }
-        }
-        stringBuilder.append(")}catch(error){Android.onError(error.message);}");
-        webView.loadUrl(stringBuilder.toString());
-    }
-     */
 }

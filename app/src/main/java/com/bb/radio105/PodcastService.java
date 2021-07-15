@@ -232,13 +232,6 @@ public class PodcastService extends Service {
         updateNotification(getString(R.string.in_pause));
     }
 
-    private void processDuckPauseRequest() {
-        Timber.e("Processing duck pause request from notification");
-        mState = State.Playing;
-        updateNotification(getString(R.string.in_pause));
-        PodcastFragment.mIPodcastService.playbackState("Pause");
-    }
-
     @SuppressLint("WakelockTimeout")
     private void processPlayRequest() {
         Timber.e("Processing play request");

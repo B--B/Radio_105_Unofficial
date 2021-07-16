@@ -6,7 +6,6 @@ import static com.bb.radio105.Constants.ACTION_PAUSE_NOTIFICATION_PODCAST;
 import static com.bb.radio105.Constants.ACTION_PAUSE_PODCAST;
 import static com.bb.radio105.Constants.ACTION_PLAY_NOTIFICATION_PODCAST;
 import static com.bb.radio105.Constants.ACTION_PLAY_PODCAST;
-import static com.bb.radio105.Constants.ACTION_START_PODCAST;
 import static com.bb.radio105.Constants.ACTION_STOP_PODCAST;
 import static com.bb.radio105.Constants.podcastBundle;
 import static com.bb.radio105.Constants.zooBundle;
@@ -73,8 +72,6 @@ public class PodcastService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
         switch (action) {
-            case ACTION_START_PODCAST:
-                break;
             case ACTION_PLAY_NOTIFICATION_PODCAST:
                 processPlayRequestNotification();
                 break;

@@ -6,7 +6,6 @@ import static com.bb.radio105.Constants.ACTION_PAUSE_NOTIFICATION_ZOO;
 import static com.bb.radio105.Constants.ACTION_PAUSE_ZOO;
 import static com.bb.radio105.Constants.ACTION_PLAY_NOTIFICATION_ZOO;
 import static com.bb.radio105.Constants.ACTION_PLAY_ZOO;
-import static com.bb.radio105.Constants.ACTION_START_ZOO;
 import static com.bb.radio105.Constants.ACTION_STOP_ZOO;
 import static com.bb.radio105.Constants.podcastBundle;
 import static com.bb.radio105.Constants.zooBundle;
@@ -72,8 +71,6 @@ public class ZooService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
         switch (action) {
-            case ACTION_START_ZOO:
-                break;
             case ACTION_PLAY_NOTIFICATION_ZOO:
                 processPlayRequestNotification();
                 break;

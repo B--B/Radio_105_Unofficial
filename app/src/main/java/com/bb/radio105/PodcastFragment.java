@@ -86,7 +86,6 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
     private ProgressBar mProgressBar;
     private MusicServiceBinder mMusicServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
-    private Intent startPodcastService;
     static boolean isMediaPlayingPodcast;
     static IPodcastService mIPodcastService;
     static String podcastTitle;
@@ -395,10 +394,6 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
         super.onStart();
         // Bind music service
         requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
-        // Start podcast service
-        startPodcastService = new Intent(getContext(), PodcastService.class);
-        startPodcastService.setAction("com.bb.radio105.action.START_PODCAST");
-        requireContext().startService(startPodcastService);
     }
 
     @Override
@@ -408,9 +403,6 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
         requireContext().unbindService(mServiceConnection);
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
-        }
-        if (mState == Stopped) {
-            requireContext().stopService(startPodcastService);
         }
         if (Constants.podcastBundle == null) {
             Timber.d("onStop: created new outState bundle!");
@@ -484,7 +476,6 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
             podcastTitle = null;
             podcastSubtitle = null;
             podcastImageUrl = null;
-            requireContext().stopService(startPodcastService);
         }
         mIPodcastService = null;
         mMusicServiceBinder = null;

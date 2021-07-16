@@ -86,7 +86,6 @@ public class ZooFragment extends Fragment implements IPodcastService {
     private ProgressBar mProgressBar;
     private MusicServiceBinder mMusicServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
-    private Intent startZooService;
     static boolean isMediaPlayingPodcast;
     static IPodcastService mIPodcastService;
     static String podcastTitle;
@@ -371,10 +370,6 @@ public class ZooFragment extends Fragment implements IPodcastService {
         super.onStart();
         // Bind music service
         requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
-        // Start podcast service
-        startZooService = new Intent(getContext(), ZooService.class);
-        startZooService.setAction("com.bb.radio105.action.START_ZOO");
-        requireContext().startService(startZooService);
     }
 
     @Override
@@ -384,9 +379,6 @@ public class ZooFragment extends Fragment implements IPodcastService {
         requireContext().unbindService(mServiceConnection);
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
-        }
-        if (mState == Stopped) {
-            requireContext().stopService(startZooService);
         }
         if (Constants.zooBundle == null) {
             Timber.d("onStop: created new outState bundle!");
@@ -443,7 +435,6 @@ public class ZooFragment extends Fragment implements IPodcastService {
             podcastTitle = null;
             podcastSubtitle = null;
             podcastImageUrl = null;
-            requireContext().stopService(startZooService);
         }
         mIPodcastService = null;
         mMusicServiceBinder = null;

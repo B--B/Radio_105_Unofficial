@@ -18,11 +18,12 @@ I've decided to start the development of this app tired of the bugs in the offic
 * Completely open source
 * Compatible with all devices running android Lollipop and above
 * No Ads
-* No external libraries except [AdBlockPlus](https://github.com/adblockplus/libadblockplus-android) webView for Podcast and The 105 Zoo sections, [jsoup](https://jsoup.org/) for parsing radio streaming metadata and [Timber](https://github.com/JakeWharton/timber) for logging.
+* No external libraries except [AdBlockPlus](https://gitlab.com/eyeo/distpartners/libadblockplus-android) for Podcast and The 105 Zoo sections, [jsoup](https://jsoup.org/) for parsing radio streaming metadata, [Glide](https://github.com/bumptech/glide) for WebView image caching, [LeakCanary](https://github.com/square/leakcanary) (only in Debug builds) for memory leaks detection and [Timber](https://github.com/JakeWharton/timber) (only in Debug builds) for logging
 * The radio streaming can be controlled with wearable devices or Android Auto
 * Can be installed on android TV --> Tested with Android TV emulator
 * Compatible with wearable devices --> Tested with Wear OS emulator and with Xiaomi Band 4 and 5
 * Fully compatible with Android 12
+* The version downloadable from Play Store use the new [Android App Bundle](https://developer.android.com/platform/technology/app-bundle) format
 
 <br />
 <br />
@@ -48,15 +49,21 @@ I've decided to start the development of this app tired of the bugs in the offic
     * Automatically enable fullscreen when in landscape mode
     * Screen does not turns off when the user is in this section
 
-3. Podcast: the [105.net](https://105.net) podcast section <img src="images/Screenshot_4.png" align="right" height="75" >
+3. Podcast: the [105.net](https://105.net) programs section <img src="images/Screenshot_4.png" align="right" height="75" >
     * All ad and banners completely removed
     * Podcast can be listened and downloaded (write on storage permission is required for download on Android versions < 10)
+    * Starting from version 1.7.0 podcast can be listened even with the screen off or with the app in background, and a notification with play/pause button is displayed. The feature works fine, but there are some limitation at the moment:
+        * It' not a MediaSession, this means standard notification and no multimedia controls on wearable devices
+        * Streaming service will stop if app is removed from recent apps list
     * No cookies
     * If for some reason a link can't be opened, the app will prompt the user to open it in an external browser
 
 4. The 105 Zoo: the complete [zoo.105.net](https://zoo.105.net) site <img src="images/Screenshot_5.png" align="right" height="75" >
     * All ad and banners completely removed
     * Podcast can be listened and downloaded (write on storage permission is required for download on Android versions < 10)
+    * Starting from version 1.7.0 podcast can be listened even with the screen off or with the app in background, and a notification with play/pause button is displayed. The feature works fine, but there are some limitation at the moment:
+        * It' not a MediaSession, this means standard notification and no multimedia controls on wearable devices
+        * Streaming service will stop if app is removed from recent apps list
     * No cookies
     * If for some reason a link can't be opened, the app will prompt the user to open it in an external browser
 
@@ -69,15 +76,42 @@ I've decided to start the development of this app tired of the bugs in the offic
     * Theme: choose between light, dark or system theme *Default: system*
     * Notification type: allow user to choose between a standard or a multimedia notification during the audio streaming *Default: media notification* | **Removed in Android TV devices**
     * Screen on: keep the screen on when in podcast and the 105 zoo sections *Default: disabled* | **Removed in Android TV devices**
-    * Stop streaming setting: allow system to stop streaming when app is removed from recent tasks *Default: disabled* **Removed in Android TV and in MiUi/EMUI devices**
+    * Stop streaming setting: allow system to stop streaming when app is removed from recent tasks *Default: disabled* | **Removed in Android TV and in MiUi/EMUI devices**
     * Audio devices: pause streaming when an audio device (headset, BT, etc.) is disconnected *Default: enabled*
     * Reconnect stream: restart the radio stream after an error if internet is available  *Default: enabled*
     * Network change: restart the radio stream immediately when the device switch from mobile network to WiFi and vice versa  *Default: enabled*
+
+
+7. Developer Info <img src="images/Screenshot_10.png" align="right" height="75" >
+    * Provide developer contact, bug report and sources link on GitHub
+    * Provide link to Play Store page and share/vote app buttons
 
 <br />
 <br />
 
 ## Download:
 
-* [Latest version on GitHub](https://github.com/B--B/Radio_105_Unofficial/releases/latest)
-* [Latest version on Play Store](https://play.google.com/store/apps/details?id=com.bb.radio105)
+* [Latest version on GitHub](https://github.com/B--B/Radio_105_Unofficial/releases/latest)  --> APK signed with my signing key
+* [Latest version on Play Store](https://play.google.com/store/apps/details?id=com.bb.radio105) --> AAB signed by Google with a different signing key
+
+Please note that signing keys are different, this means that you need to uninstall Play Store version if you want to install GitHub version. Usually updates on GitHub are pushed a couple of days before Play Store releases, but keep in mind that using GitHub version will stop updates from Play Store, and you have to update manually the app everytime a new version is released.
+
+## Build Instructions
+
+1. [Android Studio Preview](https://developer.android.com/studio/preview) is suggested, stable version can be used for compiling too, but build.gradle should be modified as stable version does not support the gradle plugin version in use. Installation info [here](https://developer.android.com/studio/install).
+
+2. Download the repository zip and uncompress it or clone the repository with `git clone https://github.com/B--B/Radio_105_Unofficial.git`
+
+3. Open Android Studio and in **Project** section click on **Open** and select the repository folder
+
+4. Let Android Studio download and setup all dependencies, then in the menu bar, click **Build --> Generate Signed Bundle/APK**.
+
+5. Choose **APK** and click **Next**
+
+6. Create a signing key for signing the apk, click on **Create New...**, provide all required info then click **OK** --> This step is required only the first time
+
+7. Once you have the signing key, put your keystore password and click on **Next**
+
+8. Select *debug* or *release* package and click **Finish**
+
+9. APK will be generated in folder `Radio_105_Unofficial/app/release/` for *release* APKs, and in `Radio_105_Unofficial/app/debug/` folder for *debug* APKs.

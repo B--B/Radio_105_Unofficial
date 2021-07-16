@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     private AppBarConfiguration mAppBarConfiguration;
     static UpdateColorsInterface updateColorsInterface;
     static Boolean isZooColor = false;
-    private Intent startMusicService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,23 +175,17 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     @Override
     public void onStart() {
         super.onStart();
-        startMusicService = new Intent(this, MusicService.class);
-        startService(startMusicService);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (MusicService.mState == PlaybackStateCompat.STATE_STOPPED) {
-            stopService(startMusicService);
-        }
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
         unregisterComponentCallbacks(this);
         AdblockHelper.deinit();
-        startMusicService = null;
         updateColorsInterface = null;
     }
 

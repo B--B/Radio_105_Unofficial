@@ -60,10 +60,14 @@ public class HomeFragment extends Fragment {
     private MusicServiceBinder mMusicServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
     boolean mBound = false;
+    private Intent startMusicService;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+        startMusicService = new Intent(requireContext(), MusicService.class);
+        requireContext().startService(startMusicService);
 
         // Android TV
         UiModeManager uiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);
@@ -149,6 +153,10 @@ public class HomeFragment extends Fragment {
         djNameText = null;
         titleText = null;
         root = null;
+        if (MusicService.mState == PlaybackStateCompat.STATE_STOPPED) {
+            requireContext().stopService(startMusicService);
+        }
+        startMusicService = null;
     }
 
     void buildTransportControls() {

@@ -16,9 +16,6 @@
 
 package com.bb.radio105;
 
-import static com.bb.radio105.ZooService.State.Paused;
-import static com.bb.radio105.ZooService.State.Playing;
-import static com.bb.radio105.ZooService.State.Stopped;
 import static com.bb.radio105.ZooService.mState;
 
 import android.Manifest;
@@ -235,7 +232,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                 if (mWifiLock.isHeld()) {
                     mWifiLock.release();
                 }
-                if (mState != Stopped) {
+                if (mState !=  PlaybackStateCompat.STATE_STOPPED) {
                     stopPodcast();
                     podcastTitle = null;
                     podcastSubtitle = null;
@@ -368,15 +365,19 @@ public class ZooFragment extends Fragment implements IPodcastService {
     @Override
     public void onStart() {
         super.onStart();
-        // Bind music service
-        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
+        // Bind music service only if is already running
+        if (MusicService.mState != PlaybackStateCompat.STATE_STOPPED) {
+            requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        // Unbind music service
-        requireContext().unbindService(mServiceConnection);
+        if (MusicService.mState != PlaybackStateCompat.STATE_STOPPED) {
+            // Unbind music service
+            requireContext().unbindService(mServiceConnection);
+        }
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
         }
@@ -394,7 +395,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     @Override
     public void onPause() {
         super.onPause();
-        if (mState == Stopped) {
+        if (mState ==  PlaybackStateCompat.STATE_STOPPED) {
             if (mWebView != null) {
                 mWebView.onPause();
                 mWebView.pauseTimers();
@@ -405,7 +406,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     @Override
     public void onResume() {
         super.onResume();
-        if (mState == Stopped) {
+        if (mState ==  PlaybackStateCompat.STATE_STOPPED) {
             if (mWebView != null) {
                 mWebView.onResume();
                 mWebView.resumeTimers();
@@ -428,7 +429,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
         }
         mWakeLock = null;
         mWifiLock = null;
-        if (mState != Stopped) {
+        if (mState !=  PlaybackStateCompat.STATE_STOPPED) {
             Timber.e("Stopping Podcast Service");
             isMediaPlayingPodcast = false;
             stopPodcast();
@@ -505,10 +506,11 @@ public class ZooFragment extends Fragment implements IPodcastService {
                 if (!mWifiLock.isHeld()) {
                     mWifiLock.acquire();
                 }
-                if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
-                    mMediaControllerCompat.getTransportControls().pause();
+                if (MusicService.mState != PlaybackStateCompat.STATE_STOPPED) {
+                    mMediaControllerCompat.getTransportControls().stop();
+                    requireContext().unbindService(mServiceConnection);
                 }
-                if (mState == Stopped || mState == Paused) {
+                if (mState ==  PlaybackStateCompat.STATE_STOPPED || mState ==  PlaybackStateCompat.STATE_PAUSED) {
                     Timber.e("Received play request from ZooFragment");
                     playPodcast();
                 }
@@ -519,7 +521,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                 if (mWifiLock.isHeld()) {
                     mWifiLock.release();
                 }
-                if (mState == Playing) {
+                if (mState ==  PlaybackStateCompat.STATE_PLAYING) {
                     Timber.e("Received pause request from ZooFragment");
                     pausePodcast();
                 }

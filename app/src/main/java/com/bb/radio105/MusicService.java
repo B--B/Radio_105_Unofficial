@@ -760,7 +760,7 @@ public class MusicService extends Service implements OnPreparedListener,
             public void onFetched(Bitmap bitmap, Bitmap icon) {
                 art = bitmap;
                 smallIcon = icon;
-                String artUri = artUrl.replaceAll("(resizer/)[^&]*(/true)", "$1800/800$2");
+                String artUri = mString.replaceAll("(resizer/)[^&]*(/true)", "$1800/800$2");
                 mSession.setMetadata
                         (new MediaMetadataCompat.Builder()
                                 // set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is used, for

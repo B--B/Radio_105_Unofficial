@@ -1,5 +1,18 @@
 # Radio 105 Unofficial App
 
+<p align="center">
+    <a href="https://github.com/B--B/Radio_105_Unofficial/releases" alt="Releases">
+        <img src="https://badgen.net/github/releases/B--B/Radio_105_Unofficial" /></a>
+    <a href="#Download" alt="Latest Release">
+        <img src="https://badgen.net/github/release/B--B/Radio_105_Unofficial" /></a>
+    <a href="https://github.com/B--B/Radio_105_Unofficial/tags" alt="Tags">
+        <img src="https://badgen.net/github/tag/B--B/Radio_105_Unofficial" /></a>
+    <a href="https://github.com/B--B/Radio_105_Unofficial/commits/main" alt="Commits">
+        <img src="https://badgen.net/github/commits/B--B/Radio_105_Unofficial/main" /></a>
+    <a href="https://github.com/B--B/Radio_105_Unofficial/commits/main" alt="Last Commit">
+        <img src="https://badgen.net/github/last-commit/B--B/Radio_105_Unofficial/main" /></a>
+</p>
+
 <br />
 <br />
 
@@ -8,12 +21,7 @@
 <br />
 <br />
 
-I've decided to start the development of this app tired of the bugs in the official app, especially with newer android versions.
-
-<br />
-<br />
-
-**Features:**
+### Features:
 
 * Completely open source
 * Compatible with all devices running android Lollipop and above
@@ -28,7 +36,7 @@ I've decided to start the development of this app tired of the bugs in the offic
 <br />
 <br />
 
-**Permissions:**
+### Permissions:
 
 * INTERNET
 * ACCESS_NETWORK_STATE and ACCESS_WIFI_STATE: needed by recover stream option and for properly set the partial WiFi wakelock
@@ -39,7 +47,7 @@ I've decided to start the development of this app tired of the bugs in the offic
 <br />
 <br />
 
-**Sections:**
+### Sections:
 
 1. Radio: the place where the radio streaming can be started and controlled <img src="images/Screenshot_1.png" align="right" height="75" ><img src="images/Screenshot_2.png" align="right" height="75" />
     * When the stream starts a notification with multimedia commands will be created
@@ -53,7 +61,7 @@ I've decided to start the development of this app tired of the bugs in the offic
     * All ad and banners completely removed
     * Podcast can be listened and downloaded (write on storage permission is required for download on Android versions < 10)
     * Starting from version 1.7.0 podcast can be listened even with the screen off or with the app in background, and a notification with play/pause button is displayed. The feature works fine, but there are some limitation at the moment:
-        * ~~It' not a MediaSession, this means standard notification and~~ no multimedia controls on wearable devices
+        * It' not a MediaSession, this means standard notification and no multimedia controls on wearable devices
         * Streaming service will stop if app is removed from recent apps list
     * No cookies
     * If for some reason a link can't be opened, the app will prompt the user to open it in an external browser
@@ -62,7 +70,7 @@ I've decided to start the development of this app tired of the bugs in the offic
     * All ad and banners completely removed
     * Podcast can be listened and downloaded (write on storage permission is required for download on Android versions < 10)
     * Starting from version 1.7.0 podcast can be listened even with the screen off or with the app in background, and a notification with play/pause button is displayed. The feature works fine, but there are some limitation at the moment:
-        * ~~It's not a MediaSession, this means standard notification and~~ no multimedia controls on wearable devices
+        * It's not a MediaSession, this means standard notification and no multimedia controls on wearable devices
         * Streaming service will stop if app is removed from recent apps list
     * No cookies
     * If for some reason a link can't be opened, the app will prompt the user to open it in an external browser
@@ -81,7 +89,6 @@ I've decided to start the development of this app tired of the bugs in the offic
     * Reconnect stream: restart the radio stream after an error if internet is available  *Default: enabled*
     * Network change: restart the radio stream immediately when the device switch from mobile network to WiFi and vice versa  *Default: enabled*
 
-
 7. Developer Info <img src="images/Screenshot_10.png" align="right" height="75" >
     * Provide developer contact, bug report and sources link on GitHub
     * Provide link to Play Store page and share/vote app buttons
@@ -91,10 +98,14 @@ I've decided to start the development of this app tired of the bugs in the offic
 
 ## Download:
 
-* [Latest version on GitHub](https://github.com/B--B/Radio_105_Unofficial/releases/latest)  --> APK signed with my signing key
-* [Latest version on Play Store](https://play.google.com/store/apps/details?id=com.bb.radio105) --> AAB signed by Google with a different signing key
+<p align="center">
+    <a href='https://github.com/B--B/Radio_105_Unofficial/releases/latest'>
+        <img alt='Get it on GitHub' src='https://badgen.net/badge/icon/Get%20it%20on%20GitHub?scale=2&icon=github&label'/></a>
+    <a href='https://play.google.com/store/apps/details?id=com.bb.radio105'>
+        <img alt='Get it on Play Store' src='https://badgen.net/badge/icon/Get%20it%20on%20Play%20Store?scale=2&icon=googleplay&label'/></a>
+</p>
 
-Please note that signing keys are different, this means that you need to uninstall Play Store version if you want to install GitHub version. Usually updates on GitHub are pushed a couple of days before Play Store releases, but keep in mind that using GitHub version will stop updates from Play Store, and you have to update manually the app everytime a new version is released.
+Please note that signing keys are different, this means that you need to uninstall Play Store version if you want to install GitHub version. Usually updates on GitHub are pushed a couple of days before Play Store releases (this is due to Google app review times), but keep in mind that using GitHub version will stop updates from Play Store, and you have to update manually the app from GitHub everytime a new version is released.
 
 ## Build Instructions
 

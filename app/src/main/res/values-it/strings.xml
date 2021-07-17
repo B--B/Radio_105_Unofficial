@@ -91,18 +91,18 @@
 
     <!-- Social Fragment -->
     <string name="contact">Scrivi alla diretta</string>
-    <string name="follow">Seguici</string>
-    <string name="follow_on_twitter">Seguici su Twitter</string>
-    <string name="follow_on_instagram">Seguici su Instagram</string>
-    <string name="follow_on_tiktok">Seguici su TikTok</string>
+    <string name="follow">Segui Radio 105</string>
+    <string name="follow_on_twitter">Segui su Twitter</string>
+    <string name="follow_on_instagram">Segui su Instagram</string>
+    <string name="follow_on_tiktok">Segui su TikTok</string>
     <string name="join_facebook_group">Metti like alla pagina Facebook</string>
     <string name="send_email">Invia una e-mail</string>
     <string name="menu_socials">Social</string>
     <string name="whatsapp_message">Invia un messaggio Whatsapp</string>
     <string name="telegram_message">Invia un messaggio Telegram</string>
     <string name="sms_message">Invia un SMS</string>
-    <string name="youtube_channel">Il nostro canale YouTube</string>
-    <string name="twitch_account">Il nostro account Twitch</string>
+    <string name="youtube_channel">Canale YouTube</string>
+    <string name="twitch_account">Account Twitch</string>
 
     <!-- Network Change -->
     <string name="network_change_off">L\' applicazione non proverà a riconnettere lo streaming radio quando il telefono passa dalla rete mobile alla rete wireless e viceversa</string>

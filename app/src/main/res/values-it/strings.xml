@@ -136,4 +136,6 @@
     <string name="get_the_app">Scarica 105 Unofficial per Android</string>
     <string name="contact_me">Contatta lo sviluppatore</string>
     <string name="sources_bugs">Sorgenti e segnalazioni</string>
+    <string name="app_info">Informazioni app</string>
+    <string name="app_version">Versione App: &#160;</string>
 </resources>

@@ -157,4 +157,6 @@
     <string name="get_the_app">Get 105 Unofficial app for Android</string>
     <string name="contact_me">Contact the developer</string>
     <string name="sources_bugs">Sources and bug reports</string>
+    <string name="app_info">App info</string>
+    <string name="app_version">App Version: &#160;</string>
 </resources>

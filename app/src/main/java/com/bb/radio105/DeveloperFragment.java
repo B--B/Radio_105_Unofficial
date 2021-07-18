@@ -26,6 +26,8 @@ public class DeveloperFragment extends Fragment {
     private TextView developerMail;
     private TextView rateOnPlayStore;
     private TextView recommendToFriend;
+    private TextView appVersion;
+    private String versionNumber;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -47,6 +49,8 @@ public class DeveloperFragment extends Fragment {
         developerMail = root.findViewById(R.id.developer_mail);
         rateOnPlayStore = root.findViewById(R.id.rate_play_store);
         recommendToFriend = root.findViewById(R.id.recommend_to_friend);
+        appVersion = root.findViewById(R.id.app_version);
+        versionNumber = BuildConfig.VERSION_NAME;
 
         return root;
     }
@@ -95,6 +99,9 @@ public class DeveloperFragment extends Fragment {
             startActivity(Intent.createChooser(sharingIntent, view5.getContext().getString(R.string.share_via)));
         });
 
+        final String appVersionString;
+        appVersionString = getString(R.string.app_version) + versionNumber;
+        appVersion.setText(appVersionString);
     }
 
     @Override

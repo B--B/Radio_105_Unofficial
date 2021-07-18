@@ -54,6 +54,7 @@
     <string name="adblockplus"><a href="https://github.com/adblockplus/libadblockplus-android">Adblockplus</a> per la loro versione di WebView con ad blocker</string>
     <string name="tinyPng"><a href="https://tinypng.com/">TinyPng</a> per la riduzione della dimensione delle immagini</string>
     <string name="social"><a href="https://github.com/saschpe/android-social-fragment">Sascha Peilicke</a> per il suo Android Social Fragment dal quale ho preso spunto</string>
+    <string name="mockups"><a href="https://mockuphone.com/">MockUPhone</a> per i mockup dei dispositivi negli screenshot</string>
     <string name="bb" tools:ignore="TypographyDashes">Creato e Prodotto da \nB--B</string>
 
     <!-- Notification commands -->

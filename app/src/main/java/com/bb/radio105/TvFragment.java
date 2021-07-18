@@ -83,8 +83,10 @@ public class TvFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        // Bind music service
-        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
+        // Bind music service only if is already running
+        if (MusicService.mState != PlaybackStateCompat.STATE_STOPPED) {
+            requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
+        }
         // Start video streaming
         videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
         videoView.requestFocus();
@@ -120,8 +122,10 @@ public class TvFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        // Unbind music service
-        requireContext().unbindService(mServiceConnection);
+        if (MusicService.mState != PlaybackStateCompat.STATE_STOPPED) {
+            // Unbind music service
+            requireContext().unbindService(mServiceConnection);
+        }
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
         }

@@ -95,6 +95,9 @@ public class HomeFragment extends Fragment {
         button1 = root.findViewById(R.id.button1);
         button2 = root.findViewById(R.id.button2);
         button3 = root.findViewById(R.id.button3);
+        button1.setEnabled(false);
+        button2.setEnabled(false);
+        button3.setEnabled(false);
 
         return root;
     }

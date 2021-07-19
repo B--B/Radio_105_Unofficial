@@ -2,7 +2,7 @@
     <!-- Splash screen theme -->
     <style name="Theme.105Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splash_screen</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_splash_screen_logo</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_splash_screen_logo_foreground</item>
         <item name="postSplashScreenTheme">@style/Theme.Radio105.NoActionBar</item>
     </style>
     <!-- Base application theme. -->

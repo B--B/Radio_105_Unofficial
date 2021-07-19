@@ -18,7 +18,7 @@
     <string name="preferences_reconnect">Streaming Recovery</string>
     <string name="preferences_stop_service">Stop/Pause Streaming Service</string>
     <string name="preferences_theming">App and Notification Theme</string>
-    <string name="preferences_screen">Screen</string>
+    <string name="preferences_webviews">Podcast and Zoo sections</string>
     <string name="blank_line" translatable="false">" "</string>
     <string name="copyright" translatable="false">copyright</string>
     <string name="copyright_info">&#169; Radio 105 and  Radio 105 logo &#8482; are property of RadioMediaset SpA. All rights reserved.</string>
@@ -78,6 +78,12 @@
     <string name="screen_on_summary_on">Screen will stay always on in Podcast/The 105 Zoo section</string>
     <string name="screen_on_summary_off">Screen will regularly turns off in Podcast and The 105 Zoo sections</string>
 
+    <!-- WebView postVisual callback -->
+    <string name="post_callback_key" translatable="false">post_callback</string>
+    <string name="post_callback_title">WebViews postVisualStateCallback</string>
+    <string name="post_callback_summary_on">WebViews will use a postVisualStateCallback for set visibility when page is loaded in Podcast/Zoo sections. This method may NOT be compatible with all devices, but is faster and do not cause graphical glitches</string>
+    <string name="post_callback_summary_off">WebViews will use a safe way for set visibility when page is loaded in Podcast/Zoo sections. This method is slower and can cause sporadic graphical glitches, but is compatible with almost all devices</string>
+
     <!-- Browser alertdialog -->
     <string name="unsupported_title">Link not supported</string>
     <string name="unsupported_description">The link you clicked is not supported in this app but you can open it with your default browser app</string>
@@ -129,7 +135,7 @@
 
     <!-- Preference  Screen Keys -->
     <string name="app_pref_key" translatable="false">app_pref</string>
-    <string name="screen_pref_key" translatable="false">screen_pref</string>
+    <string name="webviews_pref_key" translatable="false">webviews_pref</string>
     <string name="preference_key" translatable="false">preference</string>
     <string name="streaming_pref_key" translatable="false">streaming_pref</string>
     <string name="miui_emui_pref_key" translatable="false">miui_emui_pref</string>

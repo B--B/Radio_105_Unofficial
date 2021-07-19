@@ -18,7 +18,7 @@
     <string name="preferences_reconnect">Ripristino Streaming</string>
     <string name="preferences_stop_service">Ferma/Pausa Servizio Streaming</string>
     <string name="preferences_theming">Tema App e Notifica</string>
-    <string name="preferences_screen">Schermo</string>
+    <string name="preferences_webviews">Sezioni Podcast e Zoo</string>
     <string name="copyright_info">&#169; Radio 105 e il logo Radio 105 &#8482; sono proprietà di RadioMediaset SpA. Tutti i diritti riservati.</string>
     <string name="menu_developer">Informazioni Sviluppatore</string>
     <string name="do_not_show_again">Non mostrare più.</string>
@@ -70,6 +70,11 @@
     <string name="screen_on_title">Schermo Sempre Acceso</string>
     <string name="screen_on_summary_on">Lo schermo rimarrà sempre acceso nelle sezioni Podcast e The 105 zoo</string>
     <string name="screen_on_summary_off">Lo schermo si spegnerà regolarmente nelle sezioni Podcast e The 105 zoo</string>
+
+    <!-- WebView postVisual callback -->
+    <string name="post_callback_title">WebView postVisualStateCallback</string>
+    <string name="post_callback_summary_on">I WebView useranno una postVisualStateCallback per impostare la visibilità quando una pagina viene caricata nelle sezioni Podcast/Zoo. Questo metodo potrebbe NON essere compatibile con tutti i dispositivi, ma è più veloce e non soffre di glitch grafici</string>
+    <string name="post_callback_summary_off">I WebView useranno un metodo sicuro per impostare la visibilità quando una pagina viene caricata nelle sezioni Podcast/Zoo. Questo metodo è più lento e può causare sporadici glitch grafici, ma è compatibile con la maggior parte dei disposotivi</string>
 
     <!-- Browser alertdialog -->
     <string name="unsupported_title">Link non supportato</string>

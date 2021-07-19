@@ -19,6 +19,7 @@ package com.bb.radio105;
 import android.app.UiModeManager;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -85,18 +86,19 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             PreferenceScreen mPreferenceScreen = findPreference(getString(R.string.preference_key));
             // Preference Categories
             PreferenceCategory appNotificationPref = findPreference(getString(R.string.app_pref_key));
-            PreferenceCategory screenPref = findPreference(getString(R.string.screen_pref_key));
             PreferenceCategory streamingPref = findPreference(getString(R.string.streaming_pref_key));
             PreferenceCategory miUiEMUIPref = findPreference(getString(R.string.miui_emui_pref_key));
+            PreferenceCategory webViewPref = findPreference(getString(R.string.preferences_webviews));
             // Preferences
             SwitchPreferenceCompat mediaNotification = findPreference(getString(R.string.notification_type_key));
             SwitchPreferenceCompat serviceKill = findPreference(getString(R.string.service_kill_key));
+            SwitchPreferenceCompat webViewCallback = findPreference(getString(R.string.post_callback_key));
 
             // Android TV
             UiModeManager uiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);
             if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
                 if (mPreferenceScreen != null) {
-                    mPreferenceScreen.removePreference(screenPref);
+                    mPreferenceScreen.removePreference(webViewPref);
                 }
                 if (appNotificationPref != null) {
                     appNotificationPref.removePreference(mediaNotification);
@@ -114,6 +116,12 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                 // Remove dialog for non MiUi/EMUI devices
                 if (mPreferenceScreen != null) {
                     mPreferenceScreen.removePreference(miUiEMUIPref);
+                }
+            }
+            // Android API below M
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                if (webViewPref != null) {
+                    webViewPref.removePreference(webViewCallback);
                 }
             }
         }

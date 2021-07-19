@@ -25,6 +25,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -241,18 +242,16 @@ public class ZooFragment extends Fragment implements IPodcastService {
                 super.onPageStarted(webView, url, mBitmap);
             }
 
-            @SuppressLint("WebViewApiAvailability")
+            // Suppress lint warns as:
+            // 1 - WebViewCompat cannot be used with AdBlockWebView and postVisualStateCallback is used only if user enables it
+            // 2 - NewApi is a false positive, postCallbackKey is false and switch does not appear with API < M
+            @SuppressLint({"WebViewApiAvailability", "NewApi"})
             @Override
             public void onPageFinished (WebView webView, String url) {
+                SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
                 webView.evaluateJavascript(javaScript, null);
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                        if (mProgressBar != null) {
-                            mProgressBar.setVisibility(View.INVISIBLE);
-                        }
-                        webView.setVisibility(View.VISIBLE);
-                    }, 200);
-                } else {
+                if (postCallbackKey) {
                     webView.postVisualStateCallback(getId(), new WebView.VisualStateCallback() {
                         @Override
                         public void onComplete(long requestId) {
@@ -262,6 +261,13 @@ public class ZooFragment extends Fragment implements IPodcastService {
                             webView.setVisibility(View.VISIBLE);
                         }
                     });
+                } else {
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        if (mProgressBar != null) {
+                            mProgressBar.setVisibility(View.INVISIBLE);
+                        }
+                        webView.setVisibility(View.VISIBLE);
+                    }, 200);
                 }
                 super.onPageFinished(webView, url);
             }

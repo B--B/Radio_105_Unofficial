@@ -11,4 +11,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="zoo_background">#121212</color>
+    <color name="splash_screen">#FCDA01</color>
 </resources>

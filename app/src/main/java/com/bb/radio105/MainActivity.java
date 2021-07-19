@@ -32,6 +32,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -65,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
             Timber.plant(new Timber.DebugTree());
             AdblockWebView.setWebContentsDebuggingEnabled(true);
         }
+
+        // Splash Screen
+        SplashScreen.installSplashScreen(this);
 
         final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
         // The apps theme is decided depending upon the saved preferences on app startup

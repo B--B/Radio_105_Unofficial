@@ -247,7 +247,7 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
 
             @Override
             public void onPageStarted(WebView webView, String url, Bitmap mBitmap) {
-                webView.setVisibility(View.GONE);
+                webView.setVisibility(View.INVISIBLE);
                 mProgressBar.setVisibility(View.VISIBLE);
                 if (mWakeLock.isHeld()) {
                     mWakeLock.release();
@@ -261,18 +261,32 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
                     podcastSubtitle = null;
                     podcastImageUrl = null;
                 }
+
                 super.onPageStarted(webView, url, mBitmap);
             }
 
+            @SuppressLint("WebViewApiAvailability")
             @Override
             public void onPageFinished (WebView webView, String url) {
                 webView.evaluateJavascript(javaScript, null);
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    if (mProgressBar != null) {
-                        mProgressBar.setVisibility(View.GONE);
-                    }
-                    webView.setVisibility(View.VISIBLE);
-                }, 200);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        if (mProgressBar != null) {
+                            mProgressBar.setVisibility(View.INVISIBLE);
+                        }
+                        webView.setVisibility(View.VISIBLE);
+                    }, 200);
+                } else {
+                    webView.postVisualStateCallback(getId(), new WebView.VisualStateCallback() {
+                        @Override
+                        public void onComplete(long requestId) {
+                            if (mProgressBar != null) {
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                            }
+                            webView.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
                 super.onPageFinished(webView, url);
             }
 
@@ -338,7 +352,7 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
 
             private View fullScreenView;
             private ViewGroup mViewGroup;
-            private WebChromeClient.CustomViewCallback mViewCallback;
+            private CustomViewCallback mViewCallback;
 
             @Override
             public void onProgressChanged(final WebView view, final int newProgress) {
@@ -348,7 +362,7 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
             }
 
             @Override
-            public void onShowCustomView(View view, WebChromeClient.CustomViewCallback mCustomViewCallback) {
+            public void onShowCustomView(View view, CustomViewCallback mCustomViewCallback) {
                 if (fullScreenView != null) {
                     mCustomViewCallback.onCustomViewHidden();
                     return;

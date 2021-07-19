@@ -457,6 +457,10 @@ public class MusicService extends Service implements OnPreparedListener,
             djString = text;
         }
 
+        if (djString.contains("Marco Mazzoli")) {
+            placeHolder = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_zoo_logo);
+            mNotificationBuilder.setSmallIcon(R.drawable.ic_zoo_notification);
+        }
         Intent intent = getPackageManager()
                 .getLaunchIntentForPackage(getPackageName())
                 .setPackage(null)

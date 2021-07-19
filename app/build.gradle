@@ -27,7 +27,7 @@ android {
     defaultConfig {
         applicationId "com.bb.radio105"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 40
         versionName "1.7.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -50,7 +50,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-alpha02'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0-alpha02'
-    implementation 'androidx.media:media:1.4.0-rc01'
+    implementation 'androidx.media:media:1.3.0'
     implementation 'androidx.navigation:navigation-fragment:2.3.5'
     implementation 'androidx.navigation:navigation-ui:2.3.5'
     implementation 'androidx.preference:preference:1.1.1'

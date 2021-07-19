@@ -198,7 +198,11 @@ public class MusicService extends Service implements OnPreparedListener,
         mToken = mSession.getSessionToken();
 
         Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null, getApplicationContext(), MediaButtonReceiver.class);
-        mSession.setMediaButtonReceiver(PendingIntent.getBroadcast(getApplicationContext(), 0, mediaButtonIntent, 0));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mSession.setMediaButtonReceiver(PendingIntent.getBroadcast(getApplicationContext(), 0, mediaButtonIntent, PendingIntent.FLAG_IMMUTABLE));
+        } else {
+            mSession.setMediaButtonReceiver(PendingIntent.getBroadcast(getApplicationContext(), 0, mediaButtonIntent, 0));
+        }
 
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);

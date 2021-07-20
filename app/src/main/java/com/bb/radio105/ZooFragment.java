@@ -133,62 +133,9 @@ public class ZooFragment extends Fragment implements IPodcastService {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         mWebView = root.findViewById(R.id.webView_zoo);
+        mProgressBar = root.findViewById(R.id.loading_zoo);
+
         String url = "https://zoo.105.net";
-        final String javaScript = "javascript:(function() { " +
-                "document.body.style.backgroundColor = '#121212';" +
-                "var audio = document.querySelector('audio'); " +
-                "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload'); " +
-                "    audio.onplay = function() {" +
-                "        JSZOOOUT.mediaZooAction('true');" +
-                "    };" +
-                "    audio.onpause = function() {" +
-                "        JSZOOOUT.mediaZooAction('false');" +
-                "    };" +
-                "};" +
-                "var podcastText = document.getElementsByClassName('titolo_articolo titolo');" +
-                " if (podcastText.length) { var text = podcastText[0].textContent; " +
-                "JSZOOOUT.getPodcastTitle(text); " +
-                "var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
-                " if (document.body.contains(image)) { JSZOOOUT.getPodcastImage(image.src); };" +
-                "};" +
-                "var podcastSubText = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
-                " if (podcastSubText.length) { var text = podcastSubText[0].textContent; " +
-                "JSZOOOUT.getPodcastSubtitle(text); };" +
-                "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
-                " if (element.length) { element[0].style.width = '100%' }; " +
-                "var element = document.getElementsByClassName('container');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('clear');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('col-xs-12');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('tags vc_article_tag vc_theme_article_zoo');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('col-xs-12 vc_bg_white');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('spacer spacer t_20');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('container vc_bg_black');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('text_edit vc_textedit_box_previews vc_column vc_theme_zoo');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('vc_container_social_button vc_theme_zoo');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('bannervcms banner_rectangle_mobile_320x50_3 ');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('iubenda-cs-container');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('share vc_share_buttons null');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('bannervcms banner_masthead ');" +
-                " if (element.length) { element[0].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('spacer spacer t_40');" +
-                " if (element.length) { element[element.length -1].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('text_edit vc_textedit_box_previews vc_theme_zoo');" +
-                " if (element.length) { element[element.length -1].style.display = 'none' }; " +
-                "var element = document.getElementsByClassName('anteprima_articolo article_cont vc_preview_small_right_webradio vc_txt_xs vc_theme_default" +
-                " vc_theme_zoo Zoo di 105 vc_section_zoo-radio vc_macro_section_webradio vc_macro_section_canale-105 zooradio scheda cms_article ');" +
-                " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
         mWebView.getSettings().setLoadsImagesAutomatically(true);
         mWebView.getSettings().setJavaScriptEnabled(true);
@@ -204,171 +151,8 @@ public class ZooFragment extends Fragment implements IPodcastService {
             mWebView.restoreState(Constants.zooBundle.getBundle(Constants.ZOO_STATE));
         }
 
-        mProgressBar = root.findViewById(R.id.loading_zoo);
-
-        mWebView.setWebViewClient(new WebViewClient() {
-
-            @Override
-            public boolean shouldOverrideUrlLoading (WebView webView, WebResourceRequest request) {
-                if (Uri.parse(request.getUrl().toString()).getHost().contains("zoo.105.net")) {
-                    return false;
-                }
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle(R.string.unsupported_title);
-                builder.setMessage(R.string.unsupported_description);
-                builder.setNegativeButton(R.string.cancel, null);
-                builder.setPositiveButton(R.string.open_browser, (dialog, id) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.valueOf(Uri.parse(request.getUrl().toString()))))));
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-                return true;
-            }
-
-            @Override
-            public void onPageStarted(WebView webView, String url, Bitmap mBitmap) {
-                webView.setVisibility(View.INVISIBLE);
-                mProgressBar.setVisibility(View.VISIBLE);
-                if (mWakeLock.isHeld()) {
-                    mWakeLock.release();
-                }
-                if (mWifiLock.isHeld()) {
-                    mWifiLock.release();
-                }
-                if (mState !=  PlaybackStateCompat.STATE_STOPPED) {
-                    stopPodcast();
-                    podcastTitle = null;
-                    podcastSubtitle = null;
-                    podcastImageUrl = null;
-                }
-                super.onPageStarted(webView, url, mBitmap);
-            }
-
-            // Suppress lint warns as:
-            // 1 - WebViewCompat cannot be used with AdBlockWebView and postVisualStateCallback is used only if user enables it
-            // 2 - NewApi is a false positive, postCallbackKey is false and switch does not appear with API < M
-            @SuppressLint({"WebViewApiAvailability", "NewApi"})
-            @Override
-            public void onPageFinished (WebView webView, String url) {
-                SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
-                webView.evaluateJavascript(javaScript, null);
-                if (postCallbackKey) {
-                    webView.postVisualStateCallback(getId(), new WebView.VisualStateCallback() {
-                        @Override
-                        public void onComplete(long requestId) {
-                            if (mProgressBar != null) {
-                                mProgressBar.setVisibility(View.INVISIBLE);
-                            }
-                            webView.setVisibility(View.VISIBLE);
-                        }
-                    });
-                } else {
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                        if (mProgressBar != null) {
-                            mProgressBar.setVisibility(View.INVISIBLE);
-                        }
-                        webView.setVisibility(View.VISIBLE);
-                    }, 200);
-                }
-                super.onPageFinished(webView, url);
-            }
-
-            @RequiresApi(Build.VERSION_CODES.M)
-            @Override
-            public void onReceivedError(WebView webView, WebResourceRequest request, WebResourceError error) {
-                // Ignore some connection errors
-                // ERR_FAILED = -1
-                // ERR_ADDRESS_UNREACHABLE = -2
-                // ERR_CONNECTION_REFUSED = -6
-                switch (error.getErrorCode()) {
-                    case -1:
-                    case -2:
-                    case -6:
-                        break;
-                    default:
-                        webView.loadUrl(Constants.ErrorPagePath);
-                        break;
-                }
-            }
-
-            @Deprecated
-            @Override
-            public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
-                webView.loadUrl(Constants.ErrorPagePath);
-            }
-
-            @Nullable
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view,
-                                                              WebResourceRequest request) {
-
-                try {
-                    String url = request.getUrl().toString();
-                    ZooFragment mZooFragment = ZooFragment.this;
-                    Bitmap bitmap;
-                    if (url.endsWith("mediaelement-and-player.min.js")) {
-                        return new WebResourceResponse("text/javascript", "UTF-8", new ByteArrayInputStream("// Script Blocked".getBytes(StandardCharsets.UTF_8)));
-                    } else if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
-                        bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
-                        return new WebResourceResponse("image/jpg", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.JPEG));
-                    } else if (url.toLowerCase(Locale.ROOT).endsWith(".png")) {
-                        bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
-                        return new WebResourceResponse("image/png", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.PNG));
-                    } else if (url.toLowerCase(Locale.ROOT).endsWith(".webp")) {
-                        bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                            return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP_LOSSY));
-                        } else {
-                            return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP));
-                        }
-                    } else {
-                        return super.shouldInterceptRequest(view, request);
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    Timber.e("Image load failed with error %s", e);
-                    return super.shouldInterceptRequest(view, request);
-                }
-            }
-        });
-
-        mWebView.setWebChromeClient(new WebChromeClient() {
-
-            private View fullScreenView;
-            private ViewGroup mViewGroup;
-            private WebChromeClient.CustomViewCallback mViewCallback;
-
-            @Override
-            public void onProgressChanged(final WebView view, final int newProgress) {
-                if (mProgressBar != null) {
-                    mProgressBar.setProgress(newProgress);
-                }
-            }
-
-            @Override
-            public void onShowCustomView(View view, WebChromeClient.CustomViewCallback mCustomViewCallback) {
-                if (fullScreenView != null) {
-                    mCustomViewCallback.onCustomViewHidden();
-                    return;
-                }
-
-                ViewGroup.LayoutParams layoutParams =
-                        new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT);
-                mViewGroup = (ViewGroup) root.getRootView();
-                fullScreenView = view;
-
-                mViewCallback = mCustomViewCallback;
-                mViewGroup.addView(fullScreenView, layoutParams);
-            }
-
-            @Override
-            public void onHideCustomView() {
-                if (fullScreenView != null) {
-                    mViewGroup.removeView(fullScreenView);
-                    fullScreenView = null;
-                    mViewCallback.onCustomViewHidden();
-                }
-            }
-        });
+        mWebView.setWebViewClient(mWebViewClient);
+        mWebView.setWebChromeClient(mWebChromeClient);
 
         mWebView.setDownloadListener((url1, userAgent, contentDisposition, mimetype, contentLength) -> {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
@@ -586,4 +370,225 @@ public class ZooFragment extends Fragment implements IPodcastService {
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
     }
+
+    final WebViewClient mWebViewClient = new WebViewClient() {
+
+        @Override
+        public boolean shouldOverrideUrlLoading (WebView webView, WebResourceRequest request) {
+            if (Uri.parse(request.getUrl().toString()).getHost().contains("zoo.105.net")) {
+                return false;
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(R.string.unsupported_title);
+            builder.setMessage(R.string.unsupported_description);
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.setPositiveButton(R.string.open_browser, (dialog, id) -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.valueOf(Uri.parse(request.getUrl().toString()))))));
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+            return true;
+        }
+
+        @Override
+        public void onPageStarted(WebView webView, String url, Bitmap mBitmap) {
+            webView.setVisibility(View.INVISIBLE);
+            mProgressBar.setVisibility(View.VISIBLE);
+            if (mWakeLock.isHeld()) {
+                mWakeLock.release();
+            }
+            if (mWifiLock.isHeld()) {
+                mWifiLock.release();
+            }
+            if (mState !=  PlaybackStateCompat.STATE_STOPPED) {
+                stopPodcast();
+                podcastTitle = null;
+                podcastSubtitle = null;
+                podcastImageUrl = null;
+            }
+            super.onPageStarted(webView, url, mBitmap);
+        }
+
+        // Suppress lint warns as:
+        // 1 - WebViewCompat cannot be used with AdBlockWebView and postVisualStateCallback is used only if user enables it
+        // 2 - NewApi is a false positive, postCallbackKey is false and switch does not appear with API < M
+        @SuppressLint({"WebViewApiAvailability", "NewApi"})
+        @Override
+        public void onPageFinished (WebView webView, String url) {
+            SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+            boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
+
+            final String javaScript = "javascript:(function() { " +
+                    "document.body.style.backgroundColor = '#121212';" +
+                    "var audio = document.querySelector('audio'); " +
+                    "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload'); " +
+                    "    audio.onplay = function() {" +
+                    "        JSZOOOUT.mediaZooAction('true');" +
+                    "    };" +
+                    "    audio.onpause = function() {" +
+                    "        JSZOOOUT.mediaZooAction('false');" +
+                    "    };" +
+                    "};" +
+                    "var podcastText = document.getElementsByClassName('titolo_articolo titolo');" +
+                    " if (podcastText.length) { var text = podcastText[0].textContent; " +
+                    "JSZOOOUT.getPodcastTitle(text); " +
+                    "var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
+                    " if (document.body.contains(image)) { JSZOOOUT.getPodcastImage(image.src); };" +
+                    "};" +
+                    "var podcastSubText = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
+                    " if (podcastSubText.length) { var text = podcastSubText[0].textContent; " +
+                    "JSZOOOUT.getPodcastSubtitle(text); };" +
+                    "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
+                    " if (element.length) { element[0].style.width = '100%' }; " +
+                    "var element = document.getElementsByClassName('container');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('clear');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('col-xs-12');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('tags vc_article_tag vc_theme_article_zoo');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('col-xs-12 vc_bg_white');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('spacer spacer t_20');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('container vc_bg_black');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('text_edit vc_textedit_box_previews vc_column vc_theme_zoo');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('vc_container_social_button vc_theme_zoo');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('bannervcms banner_rectangle_mobile_320x50_3 ');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('iubenda-cs-container');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('share vc_share_buttons null');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('bannervcms banner_masthead ');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('spacer spacer t_40');" +
+                    " if (element.length) { element[element.length -1].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('text_edit vc_textedit_box_previews vc_theme_zoo');" +
+                    " if (element.length) { element[element.length -1].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('anteprima_articolo article_cont vc_preview_small_right_webradio vc_txt_xs vc_theme_default" +
+                    " vc_theme_zoo Zoo di 105 vc_section_zoo-radio vc_macro_section_webradio vc_macro_section_canale-105 zooradio scheda cms_article ');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " + "})()";
+
+            webView.evaluateJavascript(javaScript, null);
+            if (postCallbackKey) {
+                webView.postVisualStateCallback(getId(), new WebView.VisualStateCallback() {
+                    @Override
+                    public void onComplete(long requestId) {
+                        if (mProgressBar != null) {
+                            mProgressBar.setVisibility(View.INVISIBLE);
+                        }
+                        webView.setVisibility(View.VISIBLE);
+                    }
+                });
+            } else {
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    if (mProgressBar != null) {
+                        mProgressBar.setVisibility(View.INVISIBLE);
+                    }
+                    webView.setVisibility(View.VISIBLE);
+                }, 200);
+            }
+            super.onPageFinished(webView, url);
+        }
+
+        @RequiresApi(Build.VERSION_CODES.M)
+        @Override
+        public void onReceivedError(WebView webView, WebResourceRequest request, WebResourceError error) {
+            // Ignore some connection errors
+            // ERR_FAILED = -1
+            // ERR_ADDRESS_UNREACHABLE = -2
+            // ERR_CONNECTION_REFUSED = -6
+            switch (error.getErrorCode()) {
+                case -1:
+                case -2:
+                case -6:
+                    break;
+                default:
+                    webView.loadUrl(Constants.ErrorPagePath);
+                    break;
+            }
+        }
+
+        @Deprecated
+        @Override
+        public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
+            webView.loadUrl(Constants.ErrorPagePath);
+        }
+
+        @Nullable
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView view,
+                                                          WebResourceRequest request) {
+
+            try {
+                String url = request.getUrl().toString();
+                ZooFragment mZooFragment = ZooFragment.this;
+                Bitmap bitmap;
+                if (url.endsWith("mediaelement-and-player.min.js")) {
+                    return new WebResourceResponse("text/javascript", "UTF-8", new ByteArrayInputStream("// Script Blocked".getBytes(StandardCharsets.UTF_8)));
+                } else if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
+                    bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
+                    return new WebResourceResponse("image/jpg", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.JPEG));
+                } else if (url.toLowerCase(Locale.ROOT).endsWith(".png")) {
+                    bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
+                    return new WebResourceResponse("image/png", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.PNG));
+                } else if (url.toLowerCase(Locale.ROOT).endsWith(".webp")) {
+                    bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP_LOSSY));
+                    } else {
+                        return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP));
+                    }
+                } else {
+                    return super.shouldInterceptRequest(view, request);
+                }
+            } catch (ExecutionException | InterruptedException e) {
+                Timber.e("Image load failed with error %s", e);
+                return super.shouldInterceptRequest(view, request);
+            }
+        }
+    };
+
+    final WebChromeClient mWebChromeClient = new WebChromeClient() {
+
+        private View fullScreenView;
+        private ViewGroup mViewGroup;
+        private WebChromeClient.CustomViewCallback mViewCallback;
+
+        @Override
+        public void onProgressChanged(final WebView view, final int newProgress) {
+            if (mProgressBar != null) {
+                mProgressBar.setProgress(newProgress);
+            }
+        }
+
+        @Override
+        public void onShowCustomView(View view, WebChromeClient.CustomViewCallback mCustomViewCallback) {
+            if (fullScreenView != null) {
+                mCustomViewCallback.onCustomViewHidden();
+                return;
+            }
+
+            ViewGroup.LayoutParams layoutParams =
+                    new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT);
+            mViewGroup = (ViewGroup) root.getRootView();
+            fullScreenView = view;
+
+            mViewCallback = mCustomViewCallback;
+            mViewGroup.addView(fullScreenView, layoutParams);
+        }
+
+        @Override
+        public void onHideCustomView() {
+            if (fullScreenView != null) {
+                mViewGroup.removeView(fullScreenView);
+                fullScreenView = null;
+                mViewCallback.onCustomViewHidden();
+            }
+        }
+    };
 }

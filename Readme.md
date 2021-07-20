@@ -3,14 +3,16 @@
 <p align="center">
     <a href="https://github.com/B--B/Radio_105_Unofficial/releases" alt="Releases">
         <img src="https://badgen.net/github/releases/B--B/Radio_105_Unofficial" /></a>
-    <a href="#Download" alt="Latest Release">
+    <a href="#download" alt="Latest Release">
         <img src="https://badgen.net/github/release/B--B/Radio_105_Unofficial" /></a>
     <a href="https://github.com/B--B/Radio_105_Unofficial/tags" alt="Tags">
         <img src="https://badgen.net/github/tag/B--B/Radio_105_Unofficial" /></a>
     <a href="https://github.com/B--B/Radio_105_Unofficial/commits/main" alt="Commits">
         <img src="https://badgen.net/github/commits/B--B/Radio_105_Unofficial/main" /></a>
-    <a href="https://github.com/B--B/Radio_105_Unofficial/commits/main" alt="Last Commit">
+    <a href="https://github.com/B--B/Radio_105_Unofficial/pulse" alt="Last Commit">
         <img src="https://badgen.net/github/last-commit/B--B/Radio_105_Unofficial/main" /></a>
+    <a href="#license" alt="License">
+        <img src="https://badgen.net/github/license/B--B/Radio_105_Unofficial" /></a>
 </p>
 
 <br />
@@ -100,12 +102,15 @@
 
 <p align="center">
     <a href='https://github.com/B--B/Radio_105_Unofficial/releases/latest'>
-        <img alt='Get it on GitHub' src='https://badgen.net/badge/icon/Get%20it%20on%20GitHub?scale=2&icon=github&label'/></a>
+        <img alt='Get it on GitHub' src='https://badgen.net/badge/icon/Get%20it%20on%20GitHub/grey/?scale=2&icon=github&label'/></a>
     <a href='https://play.google.com/store/apps/details?id=com.bb.radio105'>
-        <img alt='Get it on Play Store' src='https://badgen.net/badge/icon/Get%20it%20on%20Play%20Store?scale=2&icon=googleplay&label'/></a>
+        <img alt='Get it on Play Store' src='https://badgen.net/badge/icon/Get%20it%20on%20Play%20Store/black/?scale=2&icon=googleplay&label'/></a>
 </p>
 
 Please note that signing keys are different, this means that you need to uninstall Play Store version if you want to install GitHub version. Usually updates on GitHub are pushed a couple of days before Play Store releases (this is due to Google app review times), but keep in mind that using GitHub version will stop updates from Play Store, and you have to update manually the app from GitHub everytime a new version is released.
+
+<br />
+<br />
 
 ## Build Instructions
 
@@ -126,3 +131,22 @@ Please note that signing keys are different, this means that you need to uninsta
 8. Select *debug* or *release* package and click **Finish**
 
 9. APK will be generated in folder `Radio_105_Unofficial/app/release/` for *release* APKs, and in `Radio_105_Unofficial/app/debug/` folder for *debug* APKs.
+
+<br />
+<br />
+
+## License
+
+    Copyright (C) 2021 B--B
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.

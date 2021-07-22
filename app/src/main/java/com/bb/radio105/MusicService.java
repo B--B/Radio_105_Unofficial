@@ -464,7 +464,7 @@ public class MusicService extends Service implements OnPreparedListener,
             placeHolder = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
             mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
         }
-        
+
         Intent intent = getPackageManager()
                 .getLaunchIntentForPackage(getPackageName())
                 .setPackage(null)

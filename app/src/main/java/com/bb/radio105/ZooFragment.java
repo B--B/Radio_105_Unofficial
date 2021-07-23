@@ -16,6 +16,9 @@
 
 package com.bb.radio105;
 
+import static com.bb.radio105.Constants.ACTION_PAUSE_ZOO;
+import static com.bb.radio105.Constants.ACTION_PLAY_ZOO;
+import static com.bb.radio105.Constants.ACTION_STOP_ZOO;
 import static com.bb.radio105.ZooService.mState;
 
 import android.Manifest;
@@ -352,21 +355,21 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
     private void playPodcast() {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.PLAY_ZOO");
+        mIntent.setAction(ACTION_PLAY_ZOO);
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
     }
 
     private void pausePodcast() {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.PAUSE_ZOO");
+        mIntent.setAction(ACTION_PAUSE_ZOO);
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
     }
 
     private void stopPodcast() {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.STOP_ZOO");
+        mIntent.setAction(ACTION_STOP_ZOO);
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
     }

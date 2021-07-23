@@ -63,7 +63,7 @@
     * All ad and banners completely removed
     * Podcast can be listened and downloaded (write on storage permission is required for download on Android versions < 10)
     * Starting from version 1.7.0 podcast can be listened even with the screen off or with the app in background, and a notification with play/pause button is displayed. The feature works fine, but there are some limitation at the moment:
-        * It' not a MediaSession, this means standard notification and no multimedia controls on wearable devices
+        * ~~It's not a MediaSession, this means standard notification and no multimedia controls on wearable devices~~ --> Added in v1.7.1
         * Streaming service will stop if app is removed from recent apps list
     * No cookies
     * If for some reason a link can't be opened, the app will prompt the user to open it in an external browser
@@ -72,7 +72,7 @@
     * All ad and banners completely removed
     * Podcast can be listened and downloaded (write on storage permission is required for download on Android versions < 10)
     * Starting from version 1.7.0 podcast can be listened even with the screen off or with the app in background, and a notification with play/pause button is displayed. The feature works fine, but there are some limitation at the moment:
-        * It's not a MediaSession, this means standard notification and no multimedia controls on wearable devices
+        * ~~It's not a MediaSession, this means standard notification and no multimedia controls on wearable devices~~ --> Added in v1.7.1
         * Streaming service will stop if app is removed from recent apps list
     * No cookies
     * If for some reason a link can't be opened, the app will prompt the user to open it in an external browser

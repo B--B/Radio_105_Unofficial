@@ -16,6 +16,9 @@
 
 package com.bb.radio105;
 
+import static com.bb.radio105.Constants.ACTION_PAUSE_PODCAST;
+import static com.bb.radio105.Constants.ACTION_PLAY_PODCAST;
+import static com.bb.radio105.Constants.ACTION_STOP_PODCAST;
 import static com.bb.radio105.PodcastService.mState;
 
 import android.Manifest;
@@ -368,21 +371,21 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
 
     private void playPodcast() {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.PLAY_PODCAST");
+        mIntent.setAction(ACTION_PLAY_PODCAST);
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
     }
 
     private void pausePodcast() {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.PAUSE_PODCAST");
+        mIntent.setAction(ACTION_PAUSE_PODCAST);
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
     }
 
     private void stopPodcast() {
         Intent mIntent = new Intent();
-        mIntent.setAction("com.bb.radio105.action.STOP_PODCAST");
+        mIntent.setAction(ACTION_STOP_PODCAST);
         mIntent.setPackage(requireContext().getPackageName());
         requireContext().startService(mIntent);
     }

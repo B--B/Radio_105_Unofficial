@@ -20,16 +20,16 @@ import android.os.Bundle;
 
 public class Constants {
     // Podcast Service Actions
-    static final String ACTION_PLAY_NOTIFICATION_PODCAST = "com.bb.radio105.action.PLAY_NOTIFICATION_PODCAST";
     static final String ACTION_PAUSE_NOTIFICATION_PODCAST = "com.bb.radio105.action.PAUSE_NOTIFICATION_PODCAST";
-    static final String ACTION_PLAY_PODCAST = "com.bb.radio105.action.PLAY_PODCAST";
     static final String ACTION_PAUSE_PODCAST = "com.bb.radio105.action.PAUSE_PODCAST";
+    static final String ACTION_PLAY_NOTIFICATION_PODCAST = "com.bb.radio105.action.PLAY_NOTIFICATION_PODCAST";
+    static final String ACTION_PLAY_PODCAST = "com.bb.radio105.action.PLAY_PODCAST";
     static final String ACTION_STOP_PODCAST = "com.bb.radio105.action.STOP_PODCAST";
     // Zoo Service Actions
-    static final String ACTION_PLAY_NOTIFICATION_ZOO = "com.bb.radio105.action.PLAY_NOTIFICATION_ZOO";
     static final String ACTION_PAUSE_NOTIFICATION_ZOO = "com.bb.radio105.action.PAUSE_NOTIFICATION_ZOO";
-    static final String ACTION_PLAY_ZOO = "com.bb.radio105.action.PLAY_ZOO";
     static final String ACTION_PAUSE_ZOO = "com.bb.radio105.action.PAUSE_ZOO";
+    static final String ACTION_PLAY_NOTIFICATION_ZOO = "com.bb.radio105.action.PLAY_NOTIFICATION_ZOO";
+    static final String ACTION_PLAY_ZOO = "com.bb.radio105.action.PLAY_ZOO";
     static final String ACTION_STOP_ZOO = "com.bb.radio105.action.STOP_ZOO";
     // 404 custom error page
     static final String ErrorPagePath = "file:///android_asset/index.html";

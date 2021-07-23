@@ -88,10 +88,8 @@ public class ZooService extends Service {
                 .setActions(
                         PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PAUSE);
         mSession.setPlaybackState(stateBuilder.build());
-        // mSession.setCallback(mCallback);
+        mSession.setCallback(mCallback);
         updatePlaybackState();
-
-        mSession.setActive(true);
 
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
@@ -148,7 +146,6 @@ public class ZooService extends Service {
         mNotificationManager = null;
         zooLogo = null;
         mSession.release();
-        mSession.setActive(false);
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
@@ -297,6 +294,7 @@ public class ZooService extends Service {
     private void processPlayRequest() {
         Timber.e("Processing play request");
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
+            mSession.setActive(true);
             mState = PlaybackStateCompat.STATE_PLAYING;
             art = AlbumArtCache.getInstance().getBigImage(ZooFragment.podcastImageUrl.substring(0, 45));
             if (art == null) {
@@ -321,6 +319,7 @@ public class ZooService extends Service {
             mState = PlaybackStateCompat.STATE_STOPPED;
             updatePlaybackState();
             stopForeground(true);
+            mSession.setActive(false);
         }
     }
 
@@ -377,4 +376,24 @@ public class ZooService extends Service {
         stateBuilder.setState(mState, 0, 1.0f, SystemClock.elapsedRealtime());
         mSession.setPlaybackState(stateBuilder.build());
     }
+
+    // *********  MediaSession.Callback implementation:
+    private final MediaSessionCompat.Callback mCallback = new MediaSessionCompat.Callback() {
+
+        @Override
+        public void onPlay() {
+            Intent mIntent = new Intent();
+            mIntent.setAction(ACTION_PLAY_NOTIFICATION_ZOO);
+            mIntent.setPackage(getPackageName());
+            startService(mIntent);
+        }
+
+        @Override
+        public void onPause() {
+            Intent mIntent = new Intent();
+            mIntent.setAction(ACTION_PAUSE_NOTIFICATION_ZOO);
+            mIntent.setPackage(getPackageName());
+            startService(mIntent);
+        }
+    };
 }

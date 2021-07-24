@@ -66,7 +66,7 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        startMusicService = new Intent(requireContext(), MusicService.class);
+        startMusicService = new Intent(requireContext(), RadioService.class);
         requireContext().startService(startMusicService);
 
         // Android TV
@@ -119,7 +119,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
+        requireContext().bindService(new Intent(getContext(), RadioService.class), mServiceConnection, 0);
         buildTransportControls();
     }
 
@@ -156,7 +156,7 @@ public class HomeFragment extends Fragment {
         djNameText = null;
         titleText = null;
         root = null;
-        if (MusicService.mState == PlaybackStateCompat.STATE_STOPPED) {
+        if (RadioService.mState == PlaybackStateCompat.STATE_STOPPED) {
             requireContext().stopService(startMusicService);
         }
         startMusicService = null;

@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
 
 import timber.log.Timber;
 
-public class HomeFragment extends Fragment {
+public class RadioFragment extends Fragment {
 
     private Button button1;
     private Button button2;
@@ -72,9 +72,9 @@ public class HomeFragment extends Fragment {
         // Android TV
         UiModeManager uiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);
         if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
-            root = inflater.inflate(R.layout.fragment_home_land_television, container, false);
+            root = inflater.inflate(R.layout.fragment_radio_land_television, container, false);
         } else {
-            root = inflater.inflate(R.layout.fragment_home, container, false);
+            root = inflater.inflate(R.layout.fragment_radio, container, false);
         }
 
         // Stock Colors

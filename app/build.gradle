@@ -47,10 +47,10 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.0-alpha03'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
     implementation "androidx.core:core-splashscreen:1.0.0-alpha01"
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-alpha02'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0-alpha02'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-alpha03'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0-alpha03'
     implementation fileTree(dir: 'androidx/media/media/1.4.0/', include: ['*.aar', '*.jar'], exclude: [])
     implementation 'androidx.navigation:navigation-fragment:2.3.5'
     implementation 'androidx.navigation:navigation-ui:2.3.5'

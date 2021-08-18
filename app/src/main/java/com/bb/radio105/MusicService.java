@@ -88,8 +88,6 @@ import com.android.volley.toolbox.StringRequest;
 public class MusicService extends Service implements OnPreparedListener,
         OnErrorListener, AudioManager.OnAudioFocusChangeListener {
 
-    private final AudioBecomingNoisyIntentReceiver mAudioBecomingNoisyIntentReceiver = new AudioBecomingNoisyIntentReceiver();
-
     // Notification metadata
     static String titleString = null;
     static String djString = null;
@@ -98,6 +96,7 @@ public class MusicService extends Service implements OnPreparedListener,
     static Bitmap art;
     private Bitmap smallIcon;
     private String artUrlResized;
+    private volatile boolean mAudioNoisyReceiverRegistered;
 
     // Binder given to clients
     private final IBinder mIBinder = new MusicServiceBinder();
@@ -147,6 +146,9 @@ public class MusicService extends Service implements OnPreparedListener,
     // Media Session
     private MediaSessionCompat mSession;
     private PlaybackStateCompat.Builder stateBuilder;
+
+    // AudioNoisy intent filter
+    private final IntentFilter mAudioNoisyIntentFilter = new IntentFilter(ACTION_AUDIO_BECOMING_NOISY);
 
     /**
      * Makes sure the media player exists and has been reset. This will create the media player
@@ -204,10 +206,6 @@ public class MusicService extends Service implements OnPreparedListener,
             mSession.setMediaButtonReceiver(PendingIntent.getBroadcast(getApplicationContext(), 0, mediaButtonIntent, 0));
         }
 
-        IntentFilter mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
-        registerReceiver(mAudioBecomingNoisyIntentReceiver, mIntentFilter);
-
         // Set the PlaceHolder when service starts
         placeHolder = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
 
@@ -241,6 +239,7 @@ public class MusicService extends Service implements OnPreparedListener,
     private void processPlayRequest() {
         mPlayOnFocusGain = true;
         tryToGetAudioFocus();
+        registerAudioNoisyReceiver();
 
         // Get streaming metadata
         getStreamingMetadata();
@@ -256,7 +255,7 @@ public class MusicService extends Service implements OnPreparedListener,
             // If we're stopped, just go ahead to the next song and start playing
             playNextSong();
         } else if (mState == PlaybackStateCompat.STATE_PAUSED) {
-            // If we're paused, just continue playback and restore the 'foreground service' state.
+            // If we're paused, just continue playback.
             mState = PlaybackStateCompat.STATE_PLAYING;
             updatePlaybackState(null);
             updateNotification(getString(R.string.playing));
@@ -278,7 +277,8 @@ public class MusicService extends Service implements OnPreparedListener,
             // we can release the Wifi lock, if we're holding it
             if (mWifiLock.isHeld()) mWifiLock.release();
             updateNotification(getString(R.string.in_pause));
-            // do not give up audio focus
+            // do not give up audio focus, but unregister AudioNoisyReceiver
+            unregisterAudioNoisyReceiver();
         }
     }
 
@@ -294,6 +294,7 @@ public class MusicService extends Service implements OnPreparedListener,
             relaxResources(true);
             giveUpAudioFocus();
             updatePlaybackState(null);
+            unregisterAudioNoisyReceiver();
         }
     }
 
@@ -628,7 +629,6 @@ public class MusicService extends Service implements OnPreparedListener,
         relaxResources(true);
         giveUpAudioFocus();
         NetworkUtil.unregisterNetworkCallback();
-        unregisterReceiver(mAudioBecomingNoisyIntentReceiver);
         titleString = null;
         placeHolder = null;
         scheduler = null;
@@ -883,6 +883,20 @@ public class MusicService extends Service implements OnPreparedListener,
         mSession.setPlaybackState(stateBuilder.build());
     }
 
+    private void registerAudioNoisyReceiver() {
+        if (!mAudioNoisyReceiverRegistered) {
+            registerReceiver(mAudioNoisyReceiver, mAudioNoisyIntentFilter);
+            mAudioNoisyReceiverRegistered = true;
+        }
+    }
+
+    private void unregisterAudioNoisyReceiver() {
+        if (mAudioNoisyReceiverRegistered) {
+            unregisterReceiver(mAudioNoisyReceiver);
+            mAudioNoisyReceiverRegistered = false;
+        }
+    }
+
     // *********  MediaSession.Callback implementation:
     private final MediaSessionCompat.Callback mCallback = new MediaSessionCompat.Callback() {
         @Override
@@ -908,7 +922,7 @@ public class MusicService extends Service implements OnPreparedListener,
     };
 
     // AudioBecomingNoisy broadcast receiver
-    class AudioBecomingNoisyIntentReceiver extends BroadcastReceiver {
+    private final BroadcastReceiver mAudioNoisyReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
@@ -921,5 +935,5 @@ public class MusicService extends Service implements OnPreparedListener,
                 }
             }
         }
-    }
+    };
 }

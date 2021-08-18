@@ -55,20 +55,22 @@ import timber.log.Timber;
 
 public class ZooService extends Service {
 
-    private final AudioBecomingNoisyIntentReceiver mAudioBecomingNoisyIntentReceiver = new AudioBecomingNoisyIntentReceiver();
-
     private static final String CHANNEL_ID = "ZooServiceChannel";
     private Bitmap zooLogo;
     private Bitmap art;
     final int NOTIFICATION_ID = 3;
     private NotificationManagerCompat mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder = null;
+    private volatile boolean mAudioNoisyReceiverRegistered;
     // Media Session
     private MediaSessionCompat mSession;
     private PlaybackStateCompat.Builder stateBuilder;
 
     // Current local media player state
     static int mState = PlaybackStateCompat.STATE_STOPPED;
+
+    // AudioNoisy intent filter
+    private final IntentFilter mAudioNoisyIntentFilter = new IntentFilter(ACTION_AUDIO_BECOMING_NOISY);
 
     @Override
     public void onCreate() {
@@ -90,10 +92,6 @@ public class ZooService extends Service {
         mSession.setPlaybackState(stateBuilder.build());
         mSession.setCallback(mCallback);
         updatePlaybackState();
-
-        IntentFilter mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(ACTION_AUDIO_BECOMING_NOISY);
-        registerReceiver(mAudioBecomingNoisyIntentReceiver, mIntentFilter);
     }
 
     @Override
@@ -141,7 +139,6 @@ public class ZooService extends Service {
         // Service is being killed, so make sure we release our resources
         processStopRequest();
         stopSelf();
-        unregisterReceiver(mAudioBecomingNoisyIntentReceiver);
         mNotificationBuilder = null;
         mNotificationManager = null;
         zooLogo = null;
@@ -279,6 +276,7 @@ public class ZooService extends Service {
 
     private void processPlayRequestNotification() {
         Timber.e("Processing play request from notification");
+        registerAudioNoisyReceiver();
         ZooFragment.mIPodcastService.playbackState("Play");
         mState = PlaybackStateCompat.STATE_PLAYING;
         updateNotification(getString(R.string.playing));
@@ -289,10 +287,12 @@ public class ZooService extends Service {
         ZooFragment.mIPodcastService.playbackState("Pause");
         mState = PlaybackStateCompat.STATE_PAUSED;
         updateNotification(getString(R.string.in_pause));
+        unregisterAudioNoisyReceiver();
     }
 
     private void processPlayRequest() {
         Timber.e("Processing play request");
+        registerAudioNoisyReceiver();
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
             mSession.setActive(true);
             mState = PlaybackStateCompat.STATE_PLAYING;
@@ -311,6 +311,7 @@ public class ZooService extends Service {
         Timber.e("Processing pause request");
         mState = PlaybackStateCompat.STATE_PAUSED;
         updateNotification(getString(R.string.in_pause));
+        unregisterAudioNoisyReceiver();
     }
 
     private void processStopRequest() {
@@ -321,6 +322,7 @@ public class ZooService extends Service {
             stopForeground(true);
             mSession.setActive(false);
         }
+        unregisterAudioNoisyReceiver();
     }
 
     private void createNotificationChannel() {
@@ -357,7 +359,7 @@ public class ZooService extends Service {
     }
 
     // AudioBecomingNoisy broadcast receiver
-    class AudioBecomingNoisyIntentReceiver extends BroadcastReceiver {
+    private final BroadcastReceiver mAudioNoisyReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
@@ -370,11 +372,25 @@ public class ZooService extends Service {
                 }
             }
         }
-    }
+    };
 
     private void updatePlaybackState() {
         stateBuilder.setState(mState, 0, 1.0f, SystemClock.elapsedRealtime());
         mSession.setPlaybackState(stateBuilder.build());
+    }
+
+    private void registerAudioNoisyReceiver() {
+        if (!mAudioNoisyReceiverRegistered) {
+            registerReceiver(mAudioNoisyReceiver, mAudioNoisyIntentFilter);
+            mAudioNoisyReceiverRegistered = true;
+        }
+    }
+
+    private void unregisterAudioNoisyReceiver() {
+        if (mAudioNoisyReceiverRegistered) {
+            unregisterReceiver(mAudioNoisyReceiver);
+            mAudioNoisyReceiverRegistered = false;
+        }
     }
 
     // *********  MediaSession.Callback implementation:

@@ -152,6 +152,19 @@
                 app:layout_constraintTop_toBottomOf="@id/mockup" />
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tester"
+                android:textSize="20sp"
+                android:id="@+id/tester"
+                android:padding="20dp" />
+
+            <View style="@style/separator"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tester" />
+
+            <TextView
                 android:id="@+id/bb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

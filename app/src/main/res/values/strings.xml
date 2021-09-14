@@ -61,6 +61,7 @@
     <string name="tinyPng"><a href="https://tinypng.com/">TinyPng</a> for shrinking my PNG drawables</string>
     <string name="social"><a href="https://github.com/saschpe/android-social-fragment">Sascha Peilicke</a> for his Android Social Fragment that inspired me</string>
     <string name="mockups"><a href="https://mockuphone.com/">MockUPhone</a> for device mockups in screenshots</string>
+    <string name="tester">All my friends that tested my app in these months, for their support, suggestions and bug reports :)</string>
     <string name="bb" tools:ignore="TypographyDashes">Created and Produced by \nB--B</string>
 
     <!-- Notification commands -->

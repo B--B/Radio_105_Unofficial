@@ -36,15 +36,13 @@
     <string name="service_kill_summary_on">Lo streaming verrà fermato quando l\' app viene rimossa dalla lista dalle app recenti</string>
     <string name="service_kill_summary_off">Lo streaming deve essere fermato manualmente cliccando il tasto "Ferma lo Streaming"</string>
 
-    <!-- Service Kill Preferences -->
-    <string name="special_thanks">Ringraziamenti</string>
-
     <!-- Headset Preferences -->
     <string name="noisy_key_summary_off">Lo streaming non si fermerà quando un dispositivo audio viene disconnesso</string>
     <string name="noisy_key_summary_on">Lo streaming si fermerà quando un dispositivo audio viene disconnesso</string>
     <string name="noisy_key_title">Dispositivi Audio</string>
 
     <!-- Special Thanks -->
+    <string name="special_thanks">Ringraziamenti</string>
     <string name="special_thanks_title">Un ringraziamento a:</string>
     <string name="icons"><a href="https://pngio.com/png">PngIO</a>, <a href="https://iconape.com/">Icon Ape</a> e <a href="https://www.iconninja.com/">Icon Ninja</a> per le icone</string>
     <string name="mediaset"><a href="https://www.mediasetplay.mediaset.it/">Mediaset Play</a> per lo streaming video</string>
@@ -56,6 +54,7 @@
     <string name="tinyPng"><a href="https://tinypng.com/">TinyPng</a> per la riduzione della dimensione delle immagini</string>
     <string name="social"><a href="https://github.com/saschpe/android-social-fragment">Sascha Peilicke</a> per il suo Android Social Fragment dal quale ho preso spunto</string>
     <string name="mockups"><a href="https://mockuphone.com/">MockUPhone</a> per i mockup dei dispositivi negli screenshot</string>
+    <string name="tester">Tutti gli amici che hanno testato la mia app in questi mesi, per il loro supporto, i suggerimenti e i bug report :)</string>
     <string name="bb" tools:ignore="TypographyDashes">Creato e Prodotto da \nB--B</string>
 
     <!-- Notification commands -->

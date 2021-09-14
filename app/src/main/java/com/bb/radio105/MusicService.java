@@ -37,7 +37,9 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.support.v4.media.MediaMetadataCompat;
@@ -106,6 +108,9 @@ public class MusicService extends Service implements OnPreparedListener,
 
     // Metadata scheduler
     private ScheduledExecutorService scheduler;
+
+    // Play error scheduler
+    private ScheduledExecutorService playErrorScheduler;
 
     // The service channel ID
     private static final String CHANNEL_ID = "Radio105ServiceChannel";
@@ -250,6 +255,13 @@ public class MusicService extends Service implements OnPreparedListener,
             scheduler.scheduleAtFixedRate(this::getStreamingMetadata, millisToNextHour(calendar), 60*60*1000, TimeUnit.MILLISECONDS);
         }
 
+        if (playErrorScheduler == null) {
+            // Ten seconds then if we are not playing stop the service, or user must force close the app because
+            // in this state buttons are NOT clickable
+            playErrorScheduler = Executors.newSingleThreadScheduledExecutor();
+            playErrorScheduler.schedule(this::stopServiceAfterError, 10000, TimeUnit.MILLISECONDS);
+        }
+
         // actually play the song
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
             // If we're stopped, just go ahead to the next song and start playing
@@ -280,6 +292,12 @@ public class MusicService extends Service implements OnPreparedListener,
             // do not give up audio focus, but unregister AudioNoisyReceiver
             unregisterAudioNoisyReceiver();
         }
+        // If pause button is clicked, then streaming works and playErrorScheduler can be removed if exists
+        if (playErrorScheduler != null) {
+            playErrorScheduler.shutdown();
+            playErrorScheduler = null;
+            Timber.e("Stopped play error scheduler");
+        }
     }
 
     private void processStopRequest() {
@@ -287,7 +305,12 @@ public class MusicService extends Service implements OnPreparedListener,
             scheduler.shutdown();
             Timber.e("Stopped metadata scheduler");
         }
-        if (mState == PlaybackStateCompat.STATE_PLAYING || mState == PlaybackStateCompat.STATE_PAUSED) {
+        if (playErrorScheduler != null) {
+            playErrorScheduler.shutdown();
+            playErrorScheduler = null;
+            Timber.e("Stopped play error scheduler");
+        }
+        if (mState == PlaybackStateCompat.STATE_PLAYING || mState == PlaybackStateCompat.STATE_PAUSED || mState == PlaybackStateCompat.STATE_BUFFERING) {
             mState = PlaybackStateCompat.STATE_STOPPED;
 
             // let go of all resources...
@@ -632,6 +655,7 @@ public class MusicService extends Service implements OnPreparedListener,
         titleString = null;
         placeHolder = null;
         scheduler = null;
+        playErrorScheduler = null;
         mToken = null;
         art = null;
         smallIcon = null;
@@ -894,6 +918,16 @@ public class MusicService extends Service implements OnPreparedListener,
         if (mAudioNoisyReceiverRegistered) {
             unregisterReceiver(mAudioNoisyReceiver);
             mAudioNoisyReceiverRegistered = false;
+        }
+    }
+
+    private void stopServiceAfterError() {
+        if (mState == PlaybackStateCompat.STATE_BUFFERING) {
+            Timber.e("ERROR: we are still buffering after 10 seconds, stop the service");
+            mCallback.onStop();
+            // Show a toast for users
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(() -> Toast.makeText(getApplicationContext(), R.string.cannot_stream, Toast.LENGTH_LONG).show());
         }
     }
 

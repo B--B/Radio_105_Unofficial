@@ -26,6 +26,7 @@
     <string name="important">Importante</string>
     <string name="podcast_service">105 Podcast e Repliche</string>
     <string name="zoo_service">The 105 Zoo</string>
+    <string name="cannot_stream">Impossibile iniziare lo streaming, controlla la tua connessione internet</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Seleziona Tema</string>

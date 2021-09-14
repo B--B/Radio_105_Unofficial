@@ -86,6 +86,7 @@
     * Theme: choose between light, dark or system theme *Default: system*
     * Notification type: allow user to choose between a standard or a multimedia notification during the audio streaming *Default: media notification* | **Removed in Android TV devices**
     * Screen on: keep the screen on when in podcast and the 105 zoo sections *Default: disabled* | **Removed in Android TV devices**
+    * WebView postVisualStateCallback: use a postVisualStateCallback for set visibility when page is loaded in Podcast/Zoo sections. According to Android Studio documentation this method may NOT be compatible with all devices, but is faster and do not cause graphical glitches *Default: disabled for potential incompatibility with some devices, but everyone should give it a try and keep it enabled if works properly*
     * Stop streaming setting: allow system to stop streaming when app is removed from recent tasks *Default: disabled* | **Removed in Android TV and in MiUi/EMUI devices**
     * Audio devices: pause streaming when an audio device (headset, BT, etc.) is disconnected *Default: enabled*
     * Reconnect stream: restart the radio stream after an error if internet is available  *Default: enabled*

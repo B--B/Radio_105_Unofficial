@@ -585,6 +585,7 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         return new WebResourceResponse("image/webp", "UTF-8", mPodcastFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP_LOSSY));
                     } else {
+                        //noinspection deprecation
                         return new WebResourceResponse("image/webp", "UTF-8", mPodcastFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP));
                     }
                 } else {

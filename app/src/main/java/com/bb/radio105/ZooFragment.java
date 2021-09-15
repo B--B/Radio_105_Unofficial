@@ -543,6 +543,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP_LOSSY));
                     } else {
+                        //noinspection deprecation
                         return new WebResourceResponse("image/webp", "UTF-8", mZooFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP));
                     }
                 } else {

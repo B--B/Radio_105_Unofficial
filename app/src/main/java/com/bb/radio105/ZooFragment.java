@@ -172,15 +172,15 @@ public class ZooFragment extends Fragment implements IPodcastService {
     public void onStart() {
         super.onStart();
         // Bind music service only if is already running
-        if (RadioService.mState != PlaybackStateCompat.STATE_STOPPED) {
-            requireContext().bindService(new Intent(getContext(), RadioService.class), mServiceConnection, 0);
+        if (MusicService.mState != PlaybackStateCompat.STATE_STOPPED) {
+            requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
         }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (RadioService.mState != PlaybackStateCompat.STATE_STOPPED) {
+        if (MusicService.mState != PlaybackStateCompat.STATE_STOPPED) {
             // Unbind music service
             requireContext().unbindService(mServiceConnection);
         }
@@ -312,7 +312,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                 if (!mWifiLock.isHeld()) {
                     mWifiLock.acquire();
                 }
-                if (RadioService.mState != PlaybackStateCompat.STATE_STOPPED) {
+                if (MusicService.mState != PlaybackStateCompat.STATE_STOPPED) {
                     mMediaControllerCompat.getTransportControls().stop();
                     requireContext().unbindService(mServiceConnection);
                 }

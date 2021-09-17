@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
 
 import timber.log.Timber;
 
-public class RadioFragment extends Fragment {
+public class HomeFragment extends Fragment {
 
     private Button button1;
     private Button button2;
@@ -66,15 +66,15 @@ public class RadioFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        startMusicService = new Intent(requireContext(), RadioService.class);
+        startMusicService = new Intent(requireContext(), MusicService.class);
         requireContext().startService(startMusicService);
 
         // Android TV
         UiModeManager uiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);
         if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
-            root = inflater.inflate(R.layout.fragment_radio_land_television, container, false);
+            root = inflater.inflate(R.layout.fragment_home_land_television, container, false);
         } else {
-            root = inflater.inflate(R.layout.fragment_radio, container, false);
+            root = inflater.inflate(R.layout.fragment_home, container, false);
         }
 
         // Stock Colors
@@ -119,7 +119,7 @@ public class RadioFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        requireContext().bindService(new Intent(getContext(), RadioService.class), mServiceConnection, 0);
+        requireContext().bindService(new Intent(getContext(), MusicService.class), mServiceConnection, 0);
         buildTransportControls();
     }
 
@@ -156,7 +156,7 @@ public class RadioFragment extends Fragment {
         djNameText = null;
         titleText = null;
         root = null;
-        if (RadioService.mState == PlaybackStateCompat.STATE_STOPPED) {
+        if (MusicService.mState == PlaybackStateCompat.STATE_STOPPED) {
             requireContext().stopService(startMusicService);
         }
         startMusicService = null;

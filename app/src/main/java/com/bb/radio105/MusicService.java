@@ -87,7 +87,7 @@ import com.android.volley.toolbox.StringRequest;
  * Service that handles media playback.
  */
 
-public class RadioService extends Service implements OnPreparedListener,
+public class MusicService extends Service implements OnPreparedListener,
         OnErrorListener, AudioManager.OnAudioFocusChangeListener {
 
     // Notification metadata
@@ -193,7 +193,7 @@ public class RadioService extends Service implements OnPreparedListener,
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         // Start a new MediaSession
-        mSession = new MediaSessionCompat(this, "RadioService");
+        mSession = new MediaSessionCompat(this, "MusicService");
         stateBuilder = new PlaybackStateCompat.Builder()
                 .setActions(
                         PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PAUSE | PlaybackStateCompat.ACTION_STOP);

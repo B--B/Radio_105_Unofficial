@@ -16,11 +16,11 @@
 
 package com.bb.radio105;
 
-import static com.bb.radio105.RadioService.art;
-import static com.bb.radio105.RadioService.djString;
-import static com.bb.radio105.RadioService.mState;
-import static com.bb.radio105.RadioService.mToken;
-import static com.bb.radio105.RadioService.titleString;
+import static com.bb.radio105.MusicService.art;
+import static com.bb.radio105.MusicService.djString;
+import static com.bb.radio105.MusicService.mState;
+import static com.bb.radio105.MusicService.mToken;
+import static com.bb.radio105.MusicService.titleString;
 
 import android.graphics.Bitmap;
 import android.os.Binder;

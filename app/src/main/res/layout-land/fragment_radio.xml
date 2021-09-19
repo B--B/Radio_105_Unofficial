@@ -8,75 +8,117 @@
 
     <Button
         android:id="@+id/button1"
-        android:layout_width="280dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:layout_marginEnd="25dp"
+        app:layout_constraintWidth_percent="0.5"
         android:text="@string/streaming"
         app:cornerRadius="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/buttonSeparator1"
+        app:layout_constraintEnd_toStartOf="@id/spaceLayoutRight" />
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="280dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="25dp"
+        app:layout_constraintWidth_percent="0.5"
         android:text="@string/pause_streaming"
         app:cornerRadius="20dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/spaceLayoutRight"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="280dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="25dp"
+        app:layout_constraintWidth_percent="0.5"
         android:text="@string/stop_streaming"
         app:cornerRadius="20dp"
+        app:layout_constraintEnd_toStartOf="@id/spaceLayoutRight"
+        app:layout_constraintTop_toBottomOf="@+id/buttonSeparator2" />
+
+    <RelativeLayout
+        android:id="@+id/buttonSeparator1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintWidth_percent="0.5"
+        app:layout_constraintBottom_toTopOf="@id/button2"
+        app:layout_constraintEnd_toStartOf="@id/spaceLayoutRight" />
+
+    <RelativeLayout
+        android:id="@+id/buttonSeparator2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintWidth_percent="0.5"
+        app:layout_constraintTop_toBottomOf="@id/button2"
+        app:layout_constraintEnd_toStartOf="@id/spaceLayoutRight" />
+
+    <RelativeLayout
+        android:id="@+id/imageTopSpacing"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/spaceLayoutLeft" />
+
+    <RelativeLayout
+        android:id="@+id/spaceLayoutLeft"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="1"
+        app:layout_constraintWidth_percent="0.1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/spaceLayoutRight"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="1"
+        app:layout_constraintWidth_percent="0.04"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageLogo"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.5"
         android:src="@drawable/ic_radio_105_logo"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="25dp"
+        app:layout_constraintStart_toEndOf="@id/spaceLayoutLeft"
+        app:layout_constraintTop_toBottomOf="@id/imageTopSpacing"
         android:contentDescription="@string/logo" />
 
     <ImageView
         android:id="@+id/imageArt"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.4"
+        app:layout_constraintStart_toEndOf="@id/spaceLayoutLeft"
+        app:layout_constraintTop_toBottomOf="@id/imageTopSpacing"
         android:contentDescription="@string/logo" />
 
     <TextView
         android:id="@+id/titleText"
-        android:layout_width="180dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:layout_marginStart="10dp"
-        android:gravity="center"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textAlignment="center"
+        app:layout_constraintStart_toEndOf="@id/spaceLayoutLeft"
+        app:layout_constraintEnd_toEndOf="@id/imageArt"
         app:layout_constraintTop_toBottomOf="@+id/imageArt" />
 
     <TextView
         android:id="@+id/djNameText"
-        android:layout_width="180dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:layout_marginStart="10dp"
-        android:gravity="center"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textAlignment="center"
+        app:layout_constraintStart_toEndOf="@id/spaceLayoutLeft"
+        app:layout_constraintEnd_toEndOf="@id/imageArt"
         app:layout_constraintTop_toBottomOf="@+id/titleText" />
 </androidx.constraintlayout.widget.ConstraintLayout>

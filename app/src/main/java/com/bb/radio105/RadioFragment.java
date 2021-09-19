@@ -16,9 +16,6 @@
 
 package com.bb.radio105;
 
-import static android.content.Context.UI_MODE_SERVICE;
-
-import android.app.UiModeManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -69,13 +66,7 @@ public class RadioFragment extends Fragment {
         startMusicService = new Intent(requireContext(), RadioService.class);
         requireContext().startService(startMusicService);
 
-        // Android TV
-        UiModeManager uiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);
-        if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
-            root = inflater.inflate(R.layout.fragment_radio_land_television, container, false);
-        } else {
-            root = inflater.inflate(R.layout.fragment_radio, container, false);
-        }
+        root = inflater.inflate(R.layout.fragment_radio, container, false);
 
         // Stock Colors
         MainActivity.updateColorsInterface.onUpdate(false);

@@ -21,6 +21,7 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -258,47 +259,91 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     }
 
     private void setStockLightColors() {
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.orange_900));
-        Objects.requireNonNull(this.getSupportActionBar())
-                .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.yellow_700)));
-        NavigationView mNavigationView = findViewById(R.id.nav_view);
-        View header = mNavigationView.getHeaderView(0);
-        LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
-        mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar);
-        ColorStateList mColorStateList = new ColorStateList(
-                new int[][] {
-                        new int[] {-android.R.attr.state_checked},
-                        new int[] { android.R.attr.state_checked}
-                },
-                new int[] {
-                        ContextCompat.getColor(this, R.color.black),
-                        ContextCompat.getColor(this, R.color.yellow_700),
-                }
-        );
-        mNavigationView.setItemIconTintList(mColorStateList);
-        mNavigationView.setItemTextColor(mColorStateList);
+        if (Build.VERSION.SDK_INT >= 31) {
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color.system_accent1_500));
+            Objects.requireNonNull(this.getSupportActionBar())
+                    .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, android.R.color.system_accent1_400)));
+            NavigationView mNavigationView = findViewById(R.id.nav_view);
+            View header = mNavigationView.getHeaderView(0);
+            LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
+            mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar);
+            ColorStateList mColorStateList = new ColorStateList(
+                    new int[][]{
+                            new int[]{-android.R.attr.state_checked},
+                            new int[]{android.R.attr.state_checked}
+                    },
+                    new int[]{
+                            ContextCompat.getColor(this, R.color.black),
+                            ContextCompat.getColor(this, android.R.color.system_accent1_400),
+                    }
+            );
+            mNavigationView.setItemIconTintList(mColorStateList);
+            mNavigationView.setItemTextColor(mColorStateList);
+        } else {
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.orange_900));
+            Objects.requireNonNull(this.getSupportActionBar())
+                    .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.yellow_700)));
+            NavigationView mNavigationView = findViewById(R.id.nav_view);
+            View header = mNavigationView.getHeaderView(0);
+            LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
+            mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar);
+            ColorStateList mColorStateList = new ColorStateList(
+                    new int[][]{
+                            new int[]{-android.R.attr.state_checked},
+                            new int[]{android.R.attr.state_checked}
+                    },
+                    new int[]{
+                            ContextCompat.getColor(this, R.color.black),
+                            ContextCompat.getColor(this, R.color.yellow_700),
+                    }
+            );
+            mNavigationView.setItemIconTintList(mColorStateList);
+            mNavigationView.setItemTextColor(mColorStateList);
+        }
     }
 
     private void setStockDarkColors() {
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.yellow_700));
-        Objects.requireNonNull(this.getSupportActionBar())
-                .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.yellow_200)));
-        NavigationView mNavigationView = findViewById(R.id.nav_view);
-        View header = mNavigationView.getHeaderView(0);
-        LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
-        mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar);
-        ColorStateList mColorStateList = new ColorStateList(
-                new int[][] {
-                        new int[] {-android.R.attr.state_checked},
-                        new int[] { android.R.attr.state_checked}
-                },
-                new int[] {
-                        ContextCompat.getColor(this, R.color.white),
-                        ContextCompat.getColor(this, R.color.yellow_200)
-                }
-        );
-        mNavigationView.setItemIconTintList(mColorStateList);
-        mNavigationView.setItemTextColor(mColorStateList);
+        if (Build.VERSION.SDK_INT >= 31) {
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color.system_accent1_400));
+            Objects.requireNonNull(this.getSupportActionBar())
+                    .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, android.R.color.system_accent1_200)));
+            NavigationView mNavigationView = findViewById(R.id.nav_view);
+            View header = mNavigationView.getHeaderView(0);
+            LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
+            mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar);
+            ColorStateList mColorStateList = new ColorStateList(
+                    new int[][]{
+                            new int[]{-android.R.attr.state_checked},
+                            new int[]{android.R.attr.state_checked}
+                    },
+                    new int[]{
+                            ContextCompat.getColor(this, R.color.white),
+                            ContextCompat.getColor(this, android.R.color.system_accent1_200)
+                    }
+            );
+            mNavigationView.setItemIconTintList(mColorStateList);
+            mNavigationView.setItemTextColor(mColorStateList);
+        } else {
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.yellow_700));
+            Objects.requireNonNull(this.getSupportActionBar())
+                    .setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.yellow_200)));
+            NavigationView mNavigationView = findViewById(R.id.nav_view);
+            View header = mNavigationView.getHeaderView(0);
+            LinearLayout mLinearLayout = header.findViewById(R.id.nav_header);
+            mLinearLayout.setBackgroundResource(R.drawable.side_nav_bar);
+            ColorStateList mColorStateList = new ColorStateList(
+                    new int[][]{
+                            new int[]{-android.R.attr.state_checked},
+                            new int[]{android.R.attr.state_checked}
+                    },
+                    new int[]{
+                            ContextCompat.getColor(this, R.color.white),
+                            ContextCompat.getColor(this, R.color.yellow_200)
+                    }
+            );
+            mNavigationView.setItemIconTintList(mColorStateList);
+            mNavigationView.setItemTextColor(mColorStateList);
+        }
     }
 
     private void setZooColors() {

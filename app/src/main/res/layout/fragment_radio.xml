@@ -10,48 +10,44 @@
         android:id="@+id/button1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="180dp"
         app:layout_constraintWidth_percent="0.8"
         android:text="@string/streaming"
         app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/buttonSeparator2" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         app:layout_constraintWidth_percent="0.8"
         android:text="@string/pause_streaming"
         app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button1" />
+        app:layout_constraintBottom_toTopOf="@+id/buttonSeparator1" />
 
     <Button
         android:id="@+id/button3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         app:layout_constraintWidth_percent="0.8"
         android:text="@string/stop_streaming"
         app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintBottom_toTopOf="@+id/bottomMargin" />
 
     <ImageView
         android:id="@+id/imageLogo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintWidth_percent="0.5"
-        android:layout_marginTop="25dp"
         android:src="@drawable/ic_radio_105_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topMargin"
         android:contentDescription="@string/logo" />
 
     <ImageView
@@ -59,10 +55,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintWidth_percent="0.4"
-        android:layout_marginTop="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topMargin"
         android:contentDescription="@string/logo" />
 
     <TextView
@@ -86,4 +81,41 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleText" />
+
+    <RelativeLayout
+        android:id="@+id/topMargin"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="1"
+        app:layout_constraintHeight_percent="0.05"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <RelativeLayout
+        android:id="@+id/buttonSeparator1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="1"
+        app:layout_constraintHeight_percent="0.03"
+        app:layout_constraintBottom_toTopOf="@id/button3"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <RelativeLayout
+        android:id="@+id/buttonSeparator2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="1"
+        app:layout_constraintHeight_percent="0.03"
+        app:layout_constraintBottom_toTopOf="@id/button2"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <RelativeLayout
+        android:id="@+id/bottomMargin"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="1"
+        app:layout_constraintHeight_percent="0.07"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

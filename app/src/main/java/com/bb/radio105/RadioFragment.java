@@ -104,7 +104,7 @@ public class RadioFragment extends Fragment {
         fragmentManager.
                 beginTransaction().
                 attach(this).
-                commitNowAllowingStateLoss();
+                commitAllowingStateLoss();
     }
 
     @Override

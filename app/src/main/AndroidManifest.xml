@@ -42,7 +42,7 @@
         </activity>
 
         <service
-            android:name="com.bb.radio105.MusicService"
+            android:name="com.bb.radio105.RadioService"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback">
             <intent-filter>

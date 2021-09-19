@@ -26,7 +26,7 @@ import android.graphics.Bitmap;
 import android.os.Binder;
 import android.support.v4.media.session.MediaSessionCompat;
 
-class MusicServiceBinder extends Binder {
+class RadioServiceBinder extends Binder {
     /** methods for clients */
     public MediaSessionCompat.Token getMediaSessionToken() {
         return mToken;

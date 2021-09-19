@@ -54,7 +54,7 @@ public class RadioFragment extends Fragment {
     private ImageView imageArt;
     private TextView titleText;
     private TextView djNameText;
-    private MusicServiceBinder mMusicServiceBinder;
+    private RadioServiceBinder mRadioServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
     boolean mBound = false;
     private Intent startMusicService;
@@ -124,7 +124,7 @@ public class RadioFragment extends Fragment {
     public void onStop() {
         super.onStop();
         requireContext().unbindService(mServiceConnection);
-        mMusicServiceBinder = null;
+        mRadioServiceBinder = null;
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat.unregisterCallback(mCallback);
             mMediaControllerCompat = null;
@@ -134,7 +134,7 @@ public class RadioFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mMusicServiceBinder = null;
+        mRadioServiceBinder = null;
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat.unregisterCallback(mCallback);
             mMediaControllerCompat = null;
@@ -173,19 +173,19 @@ public class RadioFragment extends Fragment {
     }
 
     private void setButtonState() {
-        if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
+        if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
             imageLogo.setVisibility(View.GONE);
-            Drawable imageResource = new BitmapDrawable(getResources(), mMusicServiceBinder.getArt());
+            Drawable imageResource = new BitmapDrawable(getResources(), mRadioServiceBinder.getArt());
             imageArt.setImageDrawable(imageResource);
             imageArt.setVisibility(View.VISIBLE);
-            titleText.setText(mMusicServiceBinder.getTitleString());
+            titleText.setText(mRadioServiceBinder.getTitleString());
             titleText.setVisibility(View.VISIBLE);
-            djNameText.setText(mMusicServiceBinder.getDjString());
+            djNameText.setText(mRadioServiceBinder.getDjString());
             djNameText.setVisibility(View.VISIBLE);
             button1.setEnabled(false);
             button2.setEnabled(true);
             button3.setEnabled(true);
-        } else if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PAUSED) {
+        } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PAUSED) {
             imageLogo.setVisibility(View.VISIBLE);
             imageArt.setVisibility(View.GONE);
             titleText.setVisibility(View.GONE);
@@ -193,7 +193,7 @@ public class RadioFragment extends Fragment {
             button1.setEnabled(true);
             button2.setEnabled(false);
             button3.setEnabled(true);
-        } else if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_STOPPED || mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_ERROR) {
+        } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_STOPPED || mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_ERROR) {
             imageLogo.setVisibility(View.VISIBLE);
             imageArt.setVisibility(View.GONE);
             titleText.setVisibility(View.GONE);
@@ -201,7 +201,7 @@ public class RadioFragment extends Fragment {
             button1.setEnabled(true);
             button2.setEnabled(false);
             button3.setEnabled(false);
-        } else if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_BUFFERING) {
+        } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_BUFFERING) {
             imageLogo.setVisibility(View.VISIBLE);
             imageArt.setVisibility(View.GONE);
             titleText.setVisibility(View.GONE);
@@ -216,8 +216,8 @@ public class RadioFragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
-            mMusicServiceBinder = (MusicServiceBinder) service;
-            mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
+            mRadioServiceBinder = (RadioServiceBinder) service;
+            mMediaControllerCompat = new MediaControllerCompat(getContext(), mRadioServiceBinder.getMediaSessionToken());
             mCallback.onPlaybackStateChanged(mMediaControllerCompat.getPlaybackState());
             mMediaControllerCompat.registerCallback(mCallback);
             mBound = true;
@@ -233,10 +233,10 @@ public class RadioFragment extends Fragment {
     private final MediaControllerCompat.Callback mCallback = new MediaControllerCompat.Callback() {
         @Override
         public void onMetadataChanged(MediaMetadataCompat metadata) {
-            Drawable imageResource = new BitmapDrawable(getResources(), mMusicServiceBinder.getArt());
+            Drawable imageResource = new BitmapDrawable(getResources(), mRadioServiceBinder.getArt());
             imageArt.setImageDrawable(imageResource);
-            titleText.setText(mMusicServiceBinder.getTitleString());
-            djNameText.setText(mMusicServiceBinder.getDjString());
+            titleText.setText(mRadioServiceBinder.getTitleString());
+            djNameText.setText(mRadioServiceBinder.getDjString());
         }
 
         @Override

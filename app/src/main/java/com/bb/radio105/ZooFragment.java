@@ -85,7 +85,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     private AdblockWebView mWebView;
     private View root;
     private ProgressBar mProgressBar;
-    private MusicServiceBinder mMusicServiceBinder;
+    private RadioServiceBinder mRadioServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingPodcast;
     static IPodcastService mIPodcastService;
@@ -244,7 +244,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
             podcastImageUrl = null;
         }
         mIPodcastService = null;
-        mMusicServiceBinder = null;
+        mRadioServiceBinder = null;
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
         }
@@ -272,8 +272,8 @@ public class ZooFragment extends Fragment implements IPodcastService {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
-            mMusicServiceBinder = (MusicServiceBinder) service;
-            mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
+            mRadioServiceBinder = (RadioServiceBinder) service;
+            mMediaControllerCompat = new MediaControllerCompat(getContext(), mRadioServiceBinder.getMediaSessionToken());
         }
 
         @Override

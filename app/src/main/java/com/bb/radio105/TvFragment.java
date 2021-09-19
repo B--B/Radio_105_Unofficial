@@ -53,7 +53,7 @@ public class TvFragment extends Fragment {
     private ProgressBar progressBar;
     private VideoView videoView;
     private String videoUrl;
-    private MusicServiceBinder mMusicServiceBinder;
+    private RadioServiceBinder mRadioServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -148,7 +148,7 @@ public class TvFragment extends Fragment {
             Utils.restoreScreen(requireActivity());
         }
         requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        mMusicServiceBinder = null;
+        mRadioServiceBinder = null;
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
         }
@@ -178,10 +178,10 @@ public class TvFragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Timber.e("Connection successful");
-            mMusicServiceBinder = (MusicServiceBinder) service;
-            mMediaControllerCompat = new MediaControllerCompat(getContext(), mMusicServiceBinder.getMediaSessionToken());
+            mRadioServiceBinder = (RadioServiceBinder) service;
+            mMediaControllerCompat = new MediaControllerCompat(getContext(), mRadioServiceBinder.getMediaSessionToken());
             // Stop radio streaming if running
-            if (mMusicServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
+            if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
                 mMediaControllerCompat.getTransportControls().pause();
             }
         }

@@ -101,7 +101,7 @@ public class RadioService extends Service implements OnPreparedListener,
     private volatile boolean mAudioNoisyReceiverRegistered;
 
     // Binder given to clients
-    private final IBinder mIBinder = new MusicServiceBinder();
+    private final IBinder mIBinder = new RadioServiceBinder();
 
     // MediaSession Token
     static MediaSessionCompat.Token mToken;

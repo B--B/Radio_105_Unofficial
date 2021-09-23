@@ -18,18 +18,21 @@ package com.bb.radio105;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.preference.PreferenceManager;
 
 public class DeveloperFragment extends Fragment {
 
@@ -44,6 +47,7 @@ public class DeveloperFragment extends Fragment {
     private TextView recommendToFriend;
     private TextView appVersion;
     private String versionNumber;
+    private int clickCount = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -118,6 +122,26 @@ public class DeveloperFragment extends Fragment {
         final String appVersionString;
         appVersionString = getString(R.string.app_version) + versionNumber;
         appVersion.setText(appVersionString);
+        appVersion.setOnClickListener(view6 -> {
+            clickCount ++;
+            if (clickCount == 7) {
+                SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                boolean experimentalOptions = mSharedPreferences.getBoolean("experimental", false);
+                SharedPreferences.Editor editor = mSharedPreferences.edit();
+                if (experimentalOptions) {
+                    editor.putBoolean("experimental", false);
+                    editor.apply();
+                    Toast.makeText(getActivity(), R.string.experimental_disabled,
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    editor.putBoolean("experimental", true);
+                    editor.apply();
+                    Toast.makeText(getActivity(), R.string.experimental_enabled,
+                            Toast.LENGTH_SHORT).show();
+                }
+                clickCount = 0;
+            }
+        });
     }
 
     @Override

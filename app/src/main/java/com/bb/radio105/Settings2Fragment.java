@@ -89,6 +89,7 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             PreferenceCategory streamingPref = findPreference(getString(R.string.streaming_pref_key));
             PreferenceCategory miUiEMUIPref = findPreference(getString(R.string.miui_emui_pref_key));
             PreferenceCategory webViewPref = findPreference(getString(R.string.preferences_webviews));
+            PreferenceCategory experimentalPref = findPreference(getString(R.string.experimental_key));
             // Preferences
             SwitchPreferenceCompat mediaNotification = findPreference(getString(R.string.notification_type_key));
             SwitchPreferenceCompat serviceKill = findPreference(getString(R.string.service_kill_key));
@@ -124,7 +125,16 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                     webViewPref.removePreference(webViewCallback);
                 }
             }
+            // Experimental Options
+            SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+            boolean experimentalOptions = mSharedPreferences.getBoolean("experimental", false);
+            if (!experimentalOptions) {
+                if (mPreferenceScreen != null) {
+                    mPreferenceScreen.removePreference(experimentalPref);
+                }
+            }
         }
+
         @Override
         public boolean onPreferenceTreeClick(Preference p) {
             if (p.getKey().equals(getString(R.string.thanks_key))) {

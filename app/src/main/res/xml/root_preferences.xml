@@ -82,6 +82,11 @@
             app:defaultValue="true"/>
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:title="@string/experimental"
+        app:key="@string/experimental_key">
+    </PreferenceCategory>
+
     <PreferenceCategory>
         <Preference
             app:key="@string/thanks_key"

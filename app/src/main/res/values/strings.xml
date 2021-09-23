@@ -135,7 +135,7 @@
     <string name="notification_type_on">The app will use multimedia notification when running the Radio Streaming</string>
     <string name="notification_type_title">Notification type</string>
 
-    <!-- Preference  Screen Keys -->
+    <!-- Preference Screen Keys -->
     <string name="app_pref_key" translatable="false">app_pref</string>
     <string name="webviews_pref_key" translatable="false">webviews_pref</string>
     <string name="preference_key" translatable="false">preference</string>
@@ -150,6 +150,12 @@
     <string name="miui_emui_dialog_text_part_1">If the radio streaming service stops when in background or clearing recent apps please read this before report a bug:</string>
     <string name="miui_emui_dialog_text_part_2">In MiUi and EMUI roms the streaming service can be killed from system (often from their custom battery service) or from user simply removing the app from recent (in stock AOSP the app gets closed, but the service is NOT killed). There\'s no way to work around this behaviour from the app side, if the app gets killed when in background <b><u>the user must manually disable the battery optimisation for the app.</u></b> Also, for keeping the service alive when a recent tasks cleaning is performed, <b><u>the app must be manually pinned in recent app list.</u></b></string>
     <string name="miui_emui_instructions">MiUi/EMUI Instructions</string>
+
+    <!-- Experimental Options and Toasts -->
+    <string name="experimental_key" translatable="false">experimental_options_key</string>
+    <string name="experimental">Experimental Options</string>
+    <string name="experimental_disabled">Experimental Settings Disabled</string>
+    <string name="experimental_enabled">Experimental Settings Enabled</string>
 
     <!-- Disclaimer -->
     <string name="disclaimer_title">Disclaimer</string>

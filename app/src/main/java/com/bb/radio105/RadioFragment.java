@@ -63,9 +63,6 @@ public class RadioFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        startMusicService = new Intent(requireContext(), RadioService.class);
-        requireContext().startService(startMusicService);
-
         root = inflater.inflate(R.layout.fragment_radio, container, false);
 
         // Stock Colors
@@ -109,6 +106,8 @@ public class RadioFragment extends Fragment {
 
     @Override
     public void onStart() {
+        startMusicService = new Intent(requireContext(), RadioService.class);
+        requireContext().startService(startMusicService);
         super.onStart();
         requireContext().bindService(new Intent(getContext(), RadioService.class), mServiceConnection, 0);
         buildTransportControls();
@@ -125,6 +124,10 @@ public class RadioFragment extends Fragment {
         super.onStop();
         requireContext().unbindService(mServiceConnection);
         mRadioServiceBinder = null;
+        if (RadioService.mState == PlaybackStateCompat.STATE_STOPPED) {
+            requireContext().stopService(startMusicService);
+        }
+        startMusicService = null;
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat.unregisterCallback(mCallback);
             mMediaControllerCompat = null;
@@ -134,11 +137,6 @@ public class RadioFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRadioServiceBinder = null;
-        if (mMediaControllerCompat != null) {
-            mMediaControllerCompat.unregisterCallback(mCallback);
-            mMediaControllerCompat = null;
-        }
         imageArt = null;
         imageLogo = null;
         button1 = null;
@@ -147,10 +145,6 @@ public class RadioFragment extends Fragment {
         djNameText = null;
         titleText = null;
         root = null;
-        if (RadioService.mState == PlaybackStateCompat.STATE_STOPPED) {
-            requireContext().stopService(startMusicService);
-        }
-        startMusicService = null;
     }
 
     void buildTransportControls() {

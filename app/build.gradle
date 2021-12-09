@@ -21,13 +21,13 @@ task downloadSubscriptionLists {
 }
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 31
     buildToolsVersion '32.0.0'
 
     defaultConfig {
         applicationId "com.bb.radio105"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 31
         versionCode 1040
         versionName "1.8.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

@@ -157,6 +157,12 @@
     <string name="experimental_disabled">Experimental Settings Disabled</string>
     <string name="experimental_enabled">Experimental Settings Enabled</string>
 
+    <!-- Hardware Acceleration -->
+    <string name="hardware_acceleration_key" translatable="false">hardware_acceleration</string>
+    <string name="hardware_acceleration_off">Hardware Acceleration is disabled in Podcast and The 105 Zoo sections</string>
+    <string name="hardware_acceleration_on">Hardware Acceleration is disabled in Podcast and The 105 Zoo sections</string>
+    <string name="hardware_acceleration_title">Hardware Acceleration</string>
+
     <!-- Disclaimer -->
     <string name="disclaimer_title">Disclaimer</string>
     <string name="disclaimer">This application is NOT official, and it\' s not supported in any way from Radio 105 or RadioMediaset SpA group.</string>

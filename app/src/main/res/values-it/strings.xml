@@ -126,6 +126,12 @@
     <string name="experimental_disabled">Opzioni Sperimentali Disabilitate</string>
     <string name="experimental_enabled">Opzioni Sperimentali Abilitate</string>
 
+    <!-- Hardware Acceleration -->
+    <string name="hardware_acceleration_key" translatable="false">hardware_acceleration</string>
+    <string name="hardware_acceleration_off">L\' accelerazione hardware è disabilitata nelle sezioni Podcast e The 105 Zoo</string>
+    <string name="hardware_acceleration_on">L\' accelerazione hardware è abilitata nelle sezioni Podcast e The 105 Zoo</string>
+    <string name="hardware_acceleration_title">Accelerazione Hardware</string>
+
     <!-- MiUi and EMUI dialog -->
     <string name="miui_emui_dialog">Dispositivi MiUi ed EMUI</string>
     <string name="miui_emui_dialog_text_part_1">Se lo streaming radio si blocca quando il telefono è in background oppure quando l\' app viene rimossa dalle applicazioni recenti leggi qui prima di riportare un bug dell\' applicazione:</string>

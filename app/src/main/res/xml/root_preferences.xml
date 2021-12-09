@@ -85,6 +85,12 @@
     <PreferenceCategory
         app:title="@string/experimental"
         app:key="@string/experimental_key">
+        <SwitchPreferenceCompat
+            app:key="@string/hardware_acceleration_key"
+            app:summaryOff="@string/hardware_acceleration_off"
+            app:summaryOn="@string/hardware_acceleration_on"
+            app:title="@string/hardware_acceleration_title"
+            app:defaultValue="false"/>
     </PreferenceCategory>
 
     <PreferenceCategory>

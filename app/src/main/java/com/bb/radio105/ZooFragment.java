@@ -141,6 +141,13 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
         String url = "https://zoo.105.net";
 
+        boolean hardwareAcceleration = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean(getString(R.string.hardware_acceleration_key), false);
+        if (!hardwareAcceleration) {
+            mWebView.setLayerType(WebView.LAYER_TYPE_NONE , null);
+        } else {
+            mWebView.setLayerType(WebView.LAYER_TYPE_HARDWARE , null);
+        }
         mWebView.getSettings().setLoadsImagesAutomatically(true);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);

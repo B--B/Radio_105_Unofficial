@@ -110,6 +110,17 @@ public class RadioFragment extends Fragment {
         requireContext().startService(startMusicService);
         super.onStart();
         requireContext().bindService(new Intent(getContext(), RadioService.class), mServiceConnection, 0);
+        if (RadioService.isPlaying) {
+            imageArt.setVisibility(View.VISIBLE);
+            imageLogo.setVisibility(View.INVISIBLE);
+            titleText.setVisibility(View.VISIBLE);
+            djNameText.setVisibility(View.VISIBLE);
+        } else {
+            imageArt.setVisibility(View.INVISIBLE);
+            imageLogo.setVisibility(View.VISIBLE);
+            titleText.setVisibility(View.INVISIBLE);
+            djNameText.setVisibility(View.INVISIBLE);
+        }
         buildTransportControls();
     }
 
@@ -152,55 +163,61 @@ public class RadioFragment extends Fragment {
         button1.setOnClickListener(v -> {
             if (mBound) {
                 mMediaControllerCompat.getTransportControls().play();
+                Utils.fadeOutAndInImageView(imageLogo, imageArt);
+                titleText.setText(mRadioServiceBinder.getTitleString());
+                Utils.fadeInTextView(titleText);
+                djNameText.setText(mRadioServiceBinder.getDjString());
+                Utils.fadeInTextView(djNameText);
             }
         });
         button2.setOnClickListener(v -> {
             if (mBound) {
                 mMediaControllerCompat.getTransportControls().pause();
+                Utils.fadeOutAndInImageView(imageArt, imageLogo);
+                Utils.fadeOutTextView(titleText);
+                Utils.fadeOutTextView(djNameText);
             }
         });
         button3.setOnClickListener(v -> {
             if (mBound) {
                 mMediaControllerCompat.getTransportControls().stop();
+                if (imageArt.getVisibility() == View.VISIBLE) {
+                    Utils.fadeOutAndInImageView(imageArt, imageLogo);
+                    Utils.fadeOutTextView(titleText);
+                    Utils.fadeOutTextView(djNameText);
+                }
             }
         });
     }
 
     private void setButtonState() {
         if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
-            imageLogo.setVisibility(View.GONE);
             Drawable imageResource = new BitmapDrawable(getResources(), mRadioServiceBinder.getArt());
             imageArt.setImageDrawable(imageResource);
-            imageArt.setVisibility(View.VISIBLE);
             titleText.setText(mRadioServiceBinder.getTitleString());
-            titleText.setVisibility(View.VISIBLE);
             djNameText.setText(mRadioServiceBinder.getDjString());
-            djNameText.setVisibility(View.VISIBLE);
             button1.setEnabled(false);
             button2.setEnabled(true);
             button3.setEnabled(true);
         } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PAUSED) {
-            imageLogo.setVisibility(View.VISIBLE);
-            imageArt.setVisibility(View.GONE);
-            titleText.setVisibility(View.GONE);
-            djNameText.setVisibility(View.GONE);
             button1.setEnabled(true);
             button2.setEnabled(false);
             button3.setEnabled(true);
-        } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_STOPPED || mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_ERROR) {
-            imageLogo.setVisibility(View.VISIBLE);
-            imageArt.setVisibility(View.GONE);
-            titleText.setVisibility(View.GONE);
-            djNameText.setVisibility(View.GONE);
+        } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_BUFFERING) {
+            button1.setEnabled(false);
+            button2.setEnabled(false);
+            button3.setEnabled(false);
+        } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_STOPPED) {
             button1.setEnabled(true);
             button2.setEnabled(false);
             button3.setEnabled(false);
-        } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_BUFFERING) {
-            imageLogo.setVisibility(View.VISIBLE);
-            imageArt.setVisibility(View.GONE);
-            titleText.setVisibility(View.GONE);
-            djNameText.setVisibility(View.GONE);
-            button1.setEnabled(false);
+        } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_ERROR) {
+            if (imageArt.getVisibility() == View.VISIBLE) {
+                Utils.fadeOutAndInImageView(imageArt, imageLogo);
+                Utils.fadeOutTextView(titleText);
+                Utils.fadeOutTextView(djNameText);
+            }
+            button1.setEnabled(true);
             button2.setEnabled(false);
             button3.setEnabled(false);
         }

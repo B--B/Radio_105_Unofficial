@@ -99,6 +99,7 @@ public class RadioService extends Service implements OnPreparedListener,
     private Bitmap smallIcon;
     private String artUrlResized;
     private volatile boolean mAudioNoisyReceiverRegistered;
+    static boolean isPlaying = false;
 
     // Binder given to clients
     private final IBinder mIBinder = new RadioServiceBinder();
@@ -277,6 +278,7 @@ public class RadioService extends Service implements OnPreparedListener,
         if (!mSession.isActive()) {
             mSession.setActive(true);
         }
+        isPlaying = true;
     }
 
     private void processPauseRequest() {
@@ -297,6 +299,7 @@ public class RadioService extends Service implements OnPreparedListener,
             playErrorScheduler = null;
             Timber.e("Stopped play error scheduler");
         }
+        isPlaying = false;
     }
 
     private void processStopRequest() {
@@ -319,6 +322,7 @@ public class RadioService extends Service implements OnPreparedListener,
             unregisterAudioNoisyReceiver();
             NetworkUtil.unregisterNetworkCallback();
         }
+        isPlaying = false;
     }
 
     /**

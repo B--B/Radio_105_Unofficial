@@ -213,21 +213,6 @@ public class RadioService extends Service implements OnPreparedListener,
 
         // Set the PlaceHolder when service starts
         placeHolder = BitmapFactory.decodeResource(getResources(), R.drawable.ic_radio_105_logo);
-
-        NetworkUtil.checkNetworkInfo(this, type -> {
-            boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
-                    .getBoolean(getString(R.string.network_change_key), true);
-            if (pref1) {
-                if (mState == PlaybackStateCompat.STATE_PLAYING) {
-                    if (type) {
-                        // Restart the stream. Don't use MediaSession callback as we are
-                        // already onPlay and the stream will restart in a few moments
-                        if (mWifiLock.isHeld()) mWifiLock.release();
-                        recoverStream();
-                    }
-                }
-            }
-        });
     }
 
     /**
@@ -264,6 +249,20 @@ public class RadioService extends Service implements OnPreparedListener,
 
         // actually play the song
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
+            NetworkUtil.checkNetworkInfo(this, type -> {
+                boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
+                        .getBoolean(getString(R.string.network_change_key), true);
+                if (pref1) {
+                    if (mState == PlaybackStateCompat.STATE_PLAYING) {
+                        if (type) {
+                            // Restart the stream. Don't use MediaSession callback as we are
+                            // already onPlay and the stream will restart in a few moments
+                            if (mWifiLock.isHeld()) mWifiLock.release();
+                            recoverStream();
+                        }
+                    }
+                }
+            });
             // If we're stopped, just go ahead to the next song and start playing
             playNextSong();
         } else if (mState == PlaybackStateCompat.STATE_PAUSED) {
@@ -318,6 +317,7 @@ public class RadioService extends Service implements OnPreparedListener,
             giveUpAudioFocus();
             updatePlaybackState(null);
             unregisterAudioNoisyReceiver();
+            NetworkUtil.unregisterNetworkCallback();
         }
     }
 
@@ -651,7 +651,6 @@ public class RadioService extends Service implements OnPreparedListener,
         mState = PlaybackStateCompat.STATE_STOPPED;
         relaxResources(true);
         giveUpAudioFocus();
-        NetworkUtil.unregisterNetworkCallback();
         titleString = null;
         placeHolder = null;
         scheduler = null;

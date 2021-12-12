@@ -449,6 +449,11 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
             boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
 
             String javaScript = "javascript:(function() { " +
+                    "document.body.style.backgroundColor = 'transparent';" +
+                    "var element = document.getElementsByClassName('container vc_bg_white');" +
+                    " if (element.length) { element[0].style.backgroundColor = 'transparent' }; " +
+                    "var element = document.getElementsByClassName('container vc_bg_white');" +
+                    " if (element.length) { element[1].style.backgroundColor = 'transparent' }; " +
                     "var home = document.createElement('IMG'); " +
                     "home.src = 'images/logos/3/logo_colored.jpg?v=1500902417000'; " +
                     "home.style.marginLeft = '20px';" +

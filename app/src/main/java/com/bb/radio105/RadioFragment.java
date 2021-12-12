@@ -206,7 +206,7 @@ public class RadioFragment extends Fragment {
         } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_BUFFERING) {
             button1.setEnabled(false);
             button2.setEnabled(false);
-            button3.setEnabled(false);
+            button3.setEnabled(true);
         } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_STOPPED) {
             button1.setEnabled(true);
             button2.setEnabled(false);

@@ -448,7 +448,7 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
             SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
             boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
 
-            String javaScript = "javascript:(function() { " +
+            final String javaScript = "javascript:(function() { " +
                     "document.body.style.backgroundColor = 'transparent';" +
                     "var element = document.getElementsByClassName('container vc_bg_white');" +
                     " if (element.length) { " +

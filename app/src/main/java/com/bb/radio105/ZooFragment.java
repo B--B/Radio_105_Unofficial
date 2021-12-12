@@ -30,6 +30,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
@@ -427,8 +428,150 @@ public class ZooFragment extends Fragment implements IPodcastService {
             SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
             boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
 
-            final String javaScript = "javascript:(function() { " +
+            final String lightModeEnabled = "javascript:(function() { " +
+                    "document.body.style.backgroundColor = 'transparent';" +
+                    "var element = document.getElementsByClassName('row vc_bg_black');" +
+                    " if (element.length) { element[0].style.backgroundColor = 'transparent' }; " +
+                    "var element = document.getElementsByClassName('row vc_bg_black');" +
+                    " if (element.length) { " +
+                    "     var element2 = element[0].getElementsByClassName('titolo vc_title');" +
+                    "     if (element2.length) { " +
+                    "         for (var i = 0; i < element2.length; i++) { " +
+                    "             element2[i].style.color = '#121212'; " +
+                    "         }" +
+                    "     }; " +
+                    " }; " +
+                    "var element = document.getElementsByClassName('anteprima_slider vc_preview_slider_big_bt vc_txt_m vc_theme_default vc_theme_zoo ');" +
+                    " if (element.length) { " +
+                    "     for (var i = 0; i < element.length; i++) { " +
+                    "         var element2 = element[i].getElementsByClassName('titolo');" +
+                    "         if (element2.length) { " +
+                    "             for (var i2 = 0; i2 < element2.length; i2++) { " +
+                    "                 element2[i2].style.color = '#121212'; " +
+                    "             }" +
+                    "         }; " +
+                    "     }; " +
+                    " }; " +
+                    "var element = document.getElementsByClassName('anteprima_ipiu anteprima_ipiu_counter_1 vc_box_scenette vc_txt_xs vc_theme_default vc_theme_zoo');" +
+                    " if (element.length) { " +
+                    "     var element2 = element[0].getElementsByClassName('titolo');" +
+                    "     if (element2.length) { " +
+                    "         for (var i = 0; i < element2.length; i++) { " +
+                    "             element2[i].style.color = '#121212'; " +
+                    "         }" +
+                    "     }; " +
+                    " }; " +
+                    "var element = document.getElementsByClassName('anteprima_ipiu anteprima_ipiu_counter_1 vc_box_trends vc_txt_xs vc_theme_default vc_theme_zoo');" +
+                    " if (element.length) { " +
+                    "     var element2 = element[0].getElementsByClassName('titolo');" +
+                    "     if (element2.length) { " +
+                    "         for (var i = 0; i < element2.length; i++) { " +
+                    "             element2[i].style.color = '#121212'; " +
+                    "         }" +
+                    "     }; " +
+                    " }; " +
+                    "var element = document.getElementsByClassName('anteprima_ipiu anteprima_ipiu_counter_1 vc_box_repliche vc_txt_xs vc_theme_default vc_theme_zoo null');" +
+                    " if (element.length) { " +
+                    "     var element2 = element[0].getElementsByClassName('titolo');" +
+                    "     if (element2.length) { " +
+                    "         for (var i = 0; i < element2.length; i++) { " +
+                    "             element2[i].style.color = '#121212'; " +
+                    "         }" +
+                    "     }; " +
+                    " }; " +
+                    "var element = document.getElementsByClassName('articoli_correlati');" +
+                    " if (element.length) { " +
+                    "     var element2 = element[0].getElementsByClassName('titolo');" +
+                    "     if (element2.length) { " +
+                    "         for (var i = 0; i < element2.length; i++) { " +
+                    "             element2[i].style.color = '#121212'; " +
+                    "         }" +
+                    "     }; " +
+                    " }; " +
+                    "var element = document.getElementsByClassName('anteprima_articolo');" +
+                    " if (element.length) { " +
+                    "     for (var i = 0; i < element.length; i++) { " +
+                    "         var element2 = element[i].getElementsByClassName('titolo');" +
+                    "         if (element2.length) { " +
+                    "             for (var i2 = 0; i2 < element2.length; i2++) { " +
+                    "                 element2[i2].style.color = '#121212'; " +
+                    "             }" +
+                    "         }; " +
+                    "     }; " +
+                    " }; " +
+                    "var element = document.getElementsByClassName('anteprima_ricerca_archivio');" +
+                    " if (element.length) { " +
+                    "     for (var i = 0; i < element.length; i++) { " +
+                    "         var element2 = element[i].getElementsByTagName('a');" +
+                    "         if (element2.length) { " +
+                    "             for (var i2 = 0; i2 < element2.length; i2++) { " +
+                    "                 element2[i2].style.color = '#121212'; " +
+                    "             }" +
+                    "         }; " +
+                    "     }; " +
+                    " }; " +
+                    "var element = document.getElementsByClassName('intestazione_ricerca_archivio vc_results_found');" +
+                    " if (element.length) { " +
+                    "     var element2 = element[0].getElementsByTagName('p');" +
+                    "     if (element2.length) { " +
+                    "         for (var i2 = 0; i2 < element2.length; i2++) { " +
+                    "             element2[i2].style.color = '#121212'; " +
+                    "         }" +
+                    "     }; " +
+                    " }; " +
+                    "var element = document.getElementsByClassName('sortElementBox');" +
+                    " if (element.length) { " +
+                    "     var element2 = element[0].getElementsByTagName('a');" +
+                    "     if (element2.length) { " +
+                    "         for (var i2 = 0; i2 < element2.length; i2++) { " +
+                    "             element2[i2].style.color = '#121212'; " +
+                    "         }" +
+                    "     }; " +
+                    " }; " +
+                    "var element = document.getElementsByClassName('pagination');" +
+                    " if (element.length) { " +
+                    "     var element2 = element[0].getElementsByTagName('a');" +
+                    "     if (element2.length) { " +
+                    "         for (var i2 = 0; i2 < element2.length; i2++) { " +
+                    "             element2[i2].style.color = '#121212'; " +
+                    "         }" +
+                    "     }; " +
+                    " }; " +
+                    "var element = document.getElementsByClassName('sommario_articolo testoResize');" +
+                    " if (element.length) { " +
+                    "     var element2 = element[0].getElementsByTagName('p');" +
+                    "     if (element2.length) { " +
+                    "         for (var i2 = 0; i2 < element2.length; i2++) { " +
+                    "             element2[i2].style.color = '#121212'; " +
+                    "         }" +
+                    "     }; " +
+                    " }; " +
+                    "var element = document.getElementsByClassName(' link');" +
+                    " if (element.length) { " +
+                    "     var element2 = element[0].getElementsByTagName('a');" +
+                    "     if (element2.length) { " +
+                    "         element2[0].style.color = '#121212'; " +
+                    "     }; " +
+                    " }; " +
+                    "var element = document.getElementsByClassName('container vc_bg_dark_grey');" +
+                    " if (element.length) { " +
+                    "    for (var i = 0; i < element.length; i++) { " +
+                    "        element[i].style.backgroundColor = 'transparent'; " +
+                    "    }" +
+                    "}; " +
+                    "var element = document.getElementsByClassName('titolo_articolo titolo');" +
+                    " if (element.length) { element[0].style.color = '#121212' }; " +
+                    "var element = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
+                    " if (element.length) { element[0].style.color = '#121212' }; " +
+                    "var element = document.getElementsByClassName('data_articolo data');" +
+                    " if (element.length) { element[0].style.color = '#121212' }; " +
+                    "})()";
+
+            final String darkModeEnabled = "javascript:(function() { " +
                     "document.body.style.backgroundColor = '#121212';" +
+                    "})()";
+
+            final String javaScript = "javascript:(function() { " +
                     "var audio = document.querySelector('audio'); " +
                     "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload'); " +
                     "    audio.onplay = function() {" +
@@ -475,6 +618,8 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     " if (element.length) { element[0].style.display = 'none' }; " +
                     "var element = document.getElementsByClassName('bannervcms banner_masthead ');" +
                     " if (element.length) { element[0].style.display = 'none' }; " +
+                    "var element = document.getElementsByClassName('cerca vc_search_bar');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
                     "var element = document.getElementsByClassName('spacer spacer t_40');" +
                     " if (element.length) { element[element.length -1].style.display = 'none' }; " +
                     "var element = document.getElementsByClassName('text_edit vc_textedit_box_previews vc_theme_zoo');" +
@@ -482,6 +627,32 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     "var element = document.getElementsByClassName('anteprima_articolo article_cont vc_preview_small_right_webradio vc_txt_xs vc_theme_default" +
                     " vc_theme_zoo Zoo di 105 vc_section_zoo-radio vc_macro_section_webradio vc_macro_section_canale-105 zooradio scheda cms_article ');" +
                     " if (element.length) { element[0].style.display = 'none' }; " + "})()";
+
+            final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
+            // The apps theme is decided depending upon the saved preferences on app startup
+            String themePref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                    .getString(getString(R.string.theme_key), getString(R.string.theme_default_value));
+            // Comparing to see which preference is selected and applying those theme settings
+            if (themePref.equals(darkModeValues[0])) {
+                // Check system status and apply colors
+                int nightModeOn = getResources().getConfiguration().uiMode &
+                        Configuration.UI_MODE_NIGHT_MASK;
+                switch (nightModeOn) {
+                    case Configuration.UI_MODE_NIGHT_YES:
+                        webView.evaluateJavascript(darkModeEnabled, null);
+                        break;
+                    case Configuration.UI_MODE_NIGHT_NO:
+                    case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                        webView.evaluateJavascript(lightModeEnabled, null);
+                        break;
+                }
+            }
+            if (themePref.equals(darkModeValues[1])) {
+                webView.evaluateJavascript(lightModeEnabled, null);
+            }
+            if (themePref.equals(darkModeValues[2])) {
+                webView.evaluateJavascript(darkModeEnabled, null);
+            }
 
             webView.evaluateJavascript(javaScript, null);
             if (postCallbackKey) {

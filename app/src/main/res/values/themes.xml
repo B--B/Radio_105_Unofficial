@@ -20,14 +20,6 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.Podcast" parent="Theme.Radio105">
-        <item name="android:background">@color/white</item>
-    </style>
-
-    <style name="Theme.The105Zoo" parent="Theme.Radio105">
-        <item name="android:background">@color/zoo_background</item>
-    </style>
-
     <style name="Theme.Radio105.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

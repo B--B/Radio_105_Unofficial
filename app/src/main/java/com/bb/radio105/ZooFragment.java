@@ -555,10 +555,10 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     " }; " +
                     "var element = document.getElementsByClassName('container vc_bg_dark_grey');" +
                     " if (element.length) { " +
-                    "    for (var i = 0; i < element.length; i++) { " +
-                    "        element[i].style.backgroundColor = 'transparent'; " +
-                    "    }" +
-                    "}; " +
+                    "     for (var i = 0; i < element.length; i++) { " +
+                    "         element[i].style.backgroundColor = 'transparent'; " +
+                    "     }" +
+                    " }; " +
                     "var element = document.getElementsByClassName('titolo_articolo titolo');" +
                     " if (element.length) { element[0].style.color = '#121212' }; " +
                     "var element = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
@@ -569,7 +569,17 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
             final String darkModeEnabled = "javascript:(function() { " +
                     "document.body.style.backgroundColor = '#121212';" +
-                    "})()";
+                    "var element = document.getElementsByClassName('container vc_bg_white');" +
+                    " if (element.length) { element[0].style.backgroundColor = '#121212' }; " +
+                    "var element = document.getElementsByClassName('testo_articolo testo testoResize');" +
+                    " if (element.length) { " +
+                    "     var element2 = element[0].getElementsByTagName('p');" +
+                    "     if (element2.length) { " +
+                    "         for (var i = 0; i < element.length; i++) { " +
+                    "             element[i].style.color = 'white'; " +
+                    "         }" +
+                    "     }; " +
+                    " }; " + "})()";
 
             final String javaScript = "javascript:(function() { " +
                     "var audio = document.querySelector('audio'); " +

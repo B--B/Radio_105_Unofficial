@@ -249,7 +249,7 @@ public class RadioService extends Service implements OnPreparedListener,
         }
 
         // actually play the song
-        if (mState == PlaybackStateCompat.STATE_STOPPED) {
+        if (mState == PlaybackStateCompat.STATE_STOPPED || mState == PlaybackStateCompat.STATE_ERROR) {
             NetworkUtil.checkNetworkInfo(this, type -> {
                 boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
                         .getBoolean(getString(R.string.network_change_key), true);
@@ -628,13 +628,13 @@ public class RadioService extends Service implements OnPreparedListener,
                 Toast.LENGTH_SHORT).show();
         Timber.e("Error: what =  %s, extra = %s", what, extra);
 
-        mState = PlaybackStateCompat.STATE_STOPPED;
         relaxResources(true);
         giveUpAudioFocus();
 
         if (pref) {
             // Try to restart the service immediately if we have a working internet connection
             if (isDeviceOnline()) {
+                mState = PlaybackStateCompat.STATE_STOPPED;
                 Toast.makeText(getApplicationContext(), getString(R.string.reconnect),
                         Toast.LENGTH_SHORT).show();
                 // Start the streaming
@@ -643,7 +643,10 @@ public class RadioService extends Service implements OnPreparedListener,
                 // Tell the user that streaming service cannot be recovered
                 Toast.makeText(getApplicationContext(), getString(R.string.no_reconnect),
                         Toast.LENGTH_SHORT).show();
+                updatePlaybackState(getString(R.string.error_cannot_recover));
             }
+        } else {
+            updatePlaybackState(getString(R.string.error_no_recover));
         }
         return true; // true indicates we handled the error
     }

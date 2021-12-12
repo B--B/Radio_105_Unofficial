@@ -180,4 +180,8 @@
     <string name="sources_bugs">Sources and bug reports</string>
     <string name="app_info">App info</string>
     <string name="app_version">App Version: &#160;</string>
+
+    <!-- Player Errors -->
+    <string name="error_cannot_recover" translatable="false">Unable to recover the streaming service</string>
+    <string name="error_no_recover" translatable="false">An error occurred and streaming recovery is disabled</string>
 </resources>

@@ -26,7 +26,6 @@
     <string name="important">Importante</string>
     <string name="podcast_service">105 Podcast e Repliche</string>
     <string name="zoo_service">The 105 Zoo</string>
-    <string name="cannot_stream">Impossibile iniziare lo streaming, controlla la tua connessione internet</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Seleziona Tema</string>
@@ -127,7 +126,6 @@
     <string name="experimental_enabled">Opzioni Sperimentali Abilitate</string>
 
     <!-- Hardware Acceleration -->
-    <string name="hardware_acceleration_key" translatable="false">hardware_acceleration</string>
     <string name="hardware_acceleration_off">L\' accelerazione hardware è disabilitata nelle sezioni Podcast e The 105 Zoo</string>
     <string name="hardware_acceleration_on">L\' accelerazione hardware è abilitata nelle sezioni Podcast e The 105 Zoo</string>
     <string name="hardware_acceleration_title">Accelerazione Hardware</string>

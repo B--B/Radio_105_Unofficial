@@ -470,6 +470,15 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     "         }" +
                     "     }; " +
                     " }; " +
+                    "var element = document.getElementsByClassName('anteprima_ipiu anteprima_ipiu_counter_1 vc_box_repliche_video vc_txt_xs vc_theme_default vc_theme_zoo null');" +
+                    " if (element.length) { " +
+                    "     var element2 = element[0].getElementsByClassName('titolo');" +
+                    "     if (element2.length) { " +
+                    "         for (var i = 0; i < element2.length; i++) { " +
+                    "             element2[i].style.color = '#121212'; " +
+                    "         }" +
+                    "     }; " +
+                    " }; " +
                     "var element = document.getElementsByClassName('anteprima_ipiu anteprima_ipiu_counter_1 vc_box_repliche vc_txt_xs vc_theme_default vc_theme_zoo null');" +
                     " if (element.length) { " +
                     "     var element2 = element[0].getElementsByClassName('titolo');" +

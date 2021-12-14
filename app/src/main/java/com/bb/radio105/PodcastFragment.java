@@ -581,7 +581,8 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
                 String url = request.getUrl().toString();
                 PodcastFragment mPodcastFragment = PodcastFragment.this;
                 Bitmap bitmap;
-                if (url.endsWith("mediaelement-and-player.min.js")) {
+                if (url.startsWith("https://adv.mediamond.it") || url.endsWith("mediaelement-and-player.min.js")) {
+                    Timber.e("Intercepted javascript: %s", url);
                     return new WebResourceResponse("text/javascript", "UTF-8", new ByteArrayInputStream("// Script Blocked".getBytes(StandardCharsets.UTF_8)));
                 } else if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
                     bitmap = GlideApp.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();

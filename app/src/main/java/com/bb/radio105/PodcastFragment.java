@@ -140,15 +140,19 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
         mWebView = root.findViewById(R.id.webView_podcast);
         mProgressBar = root.findViewById(R.id.loading_podcast);
 
+        final String[] hardwareAcceleration = getResources().getStringArray(R.array.theme_values);
+        // The apps theme is decided depending upon the saved preferences on app startup
+        String hardwareAccelerationPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getString(getString(R.string.theme_key), getString(R.string.theme_default_value));
+        if (hardwareAccelerationPref.equals(hardwareAcceleration[0]))
+            mWebView.setLayerType(View.LAYER_TYPE_NONE , null);
+        if (hardwareAccelerationPref.equals(hardwareAcceleration[1]))
+            mWebView.setLayerType(View.LAYER_TYPE_HARDWARE , null);
+        if (hardwareAccelerationPref.equals(hardwareAcceleration[2]))
+            mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE , null);
+
         String url = "https://www.105.net/sezioni/648/programmi";
 
-        boolean hardwareAcceleration = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getBoolean(getString(R.string.hardware_acceleration_key), false);
-        if (!hardwareAcceleration) {
-            mWebView.setLayerType(WebView.LAYER_TYPE_NONE , null);
-        } else {
-            mWebView.setLayerType(WebView.LAYER_TYPE_HARDWARE , null);
-        }
         mWebView.getSettings().setLoadsImagesAutomatically(true);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);

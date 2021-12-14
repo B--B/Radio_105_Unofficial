@@ -92,12 +92,13 @@
     <PreferenceCategory
         app:title="@string/experimental"
         app:key="@string/experimental_key">
-        <SwitchPreferenceCompat
+        <ListPreference
+            app:defaultValue="@string/hardware_acceleration_default_value"
+            app:entries="@array/hardware_acceleration_entries"
+            app:entryValues="@array/hardware_acceleration_values"
             app:key="@string/hardware_acceleration_key"
-            app:summaryOff="@string/hardware_acceleration_off"
-            app:summaryOn="@string/hardware_acceleration_on"
             app:title="@string/hardware_acceleration_title"
-            app:defaultValue="false"/>
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory>

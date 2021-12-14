@@ -131,8 +131,6 @@
     <string name="experimental_enabled">Opzioni Sperimentali Abilitate</string>
 
     <!-- Hardware Acceleration -->
-    <string name="hardware_acceleration_off">L\' accelerazione hardware è disabilitata nelle sezioni Podcast e The 105 Zoo</string>
-    <string name="hardware_acceleration_on">L\' accelerazione hardware è abilitata nelle sezioni Podcast e The 105 Zoo</string>
     <string name="hardware_acceleration_title">Accelerazione Hardware</string>
 
     <!-- MiUi and EMUI dialog -->

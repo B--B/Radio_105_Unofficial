@@ -5,4 +5,11 @@
         <item>Tema Chiaro</item>
         <item>Tema Scuro</item>
     </string-array>
+
+    <!-- Hardware Acceleration Preference -->
+    <string-array name="hardware_acceleration_entries">
+        <item>LAYER_TYPE_NONE</item>
+        <item>LAYER_TYPE_HARDWARE</item>
+        <item>LAYER_TYPE_SOFTWARE</item>
+    </string-array>
 </resources>

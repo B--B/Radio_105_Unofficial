@@ -65,7 +65,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -108,7 +107,7 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
         }
 
         // Allow Glide to use more memory
-        Glide.get(requireContext()).setMemoryCategory(MemoryCategory.HIGH);
+        GlideApp.get(requireContext()).setMemoryCategory(MemoryCategory.HIGH);
 
         // Stock Colors
         MainActivity.updateColorsInterface.onUpdate(false);
@@ -281,7 +280,7 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
         mProgressBar = null;
         root = null;
         // Restore Glide memory values
-        Glide.get(requireContext()).setMemoryCategory(MemoryCategory.NORMAL);
+        GlideApp.get(requireContext()).setMemoryCategory(MemoryCategory.NORMAL);
         super.onDestroyView();
         mWebView = null;
     }
@@ -591,13 +590,13 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
                 if (url.endsWith("mediaelement-and-player.min.js")) {
                     return new WebResourceResponse("text/javascript", "UTF-8", new ByteArrayInputStream("// Script Blocked".getBytes(StandardCharsets.UTF_8)));
                 } else if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
-                    bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
+                    bitmap = GlideApp.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                     return new WebResourceResponse("image/jpg", "UTF-8", mPodcastFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.JPEG));
                 } else if (url.toLowerCase(Locale.ROOT).endsWith(".png")) {
-                    bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
+                    bitmap = GlideApp.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                     return new WebResourceResponse("image/png", "UTF-8", mPodcastFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.PNG));
                 } else if (url.toLowerCase(Locale.ROOT).endsWith(".webp")) {
-                    bitmap = Glide.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
+                    bitmap = GlideApp.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         return new WebResourceResponse("image/webp", "UTF-8", mPodcastFragment.getBitmapInputStream(bitmap, Bitmap.CompressFormat.WEBP_LOSSY));
                     } else {

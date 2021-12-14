@@ -28,7 +28,7 @@
 * Completely open source
 * Compatible with all devices running android Lollipop and above
 * No Ads
-* No external libraries except [AdBlockPlus](https://gitlab.com/eyeo/distpartners/libadblockplus-android) for Podcast and The 105 Zoo sections, [jsoup](https://jsoup.org/) for parsing radio streaming metadata, [Glide](https://github.com/bumptech/glide) for WebView image caching, [LeakCanary](https://github.com/square/leakcanary) (only in Debug builds) for memory leaks detection and [Timber](https://github.com/JakeWharton/timber) (only in Debug builds) for logging
+* No external libraries except [jsoup](https://jsoup.org/) for parsing radio streaming metadata, [Glide](https://github.com/bumptech/glide) for WebView image caching, [LeakCanary](https://github.com/square/leakcanary) (only in Debug builds) for memory leaks detection and [Timber](https://github.com/JakeWharton/timber) (only in Debug builds) for logging
 * The radio streaming can be controlled with wearable devices or Android Auto
 * Can be installed on android TV --> Tested with Android TV emulator
 * Compatible with wearable devices --> Tested with Wear OS emulator and with Xiaomi Band 4 and 5

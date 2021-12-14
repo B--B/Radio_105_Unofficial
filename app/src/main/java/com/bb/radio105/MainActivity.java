@@ -45,10 +45,6 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
-import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
-import org.adblockplus.libadblockplus.android.webview.BuildConfig;
-
 import java.util.Objects;
 
 import timber.log.Timber;
@@ -65,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
-            AdblockWebView.setWebContentsDebuggingEnabled(true);
         }
 
         // Splash Screen
@@ -101,16 +96,6 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         updateColorsInterface = this;
-
-        if (!AdblockHelper.get().isInit()) {
-            AdblockHelper.get()
-                    .init(this, null /*use default value*/, AdblockHelper.PREFERENCE_NAME)
-                    .preloadSubscriptions(
-                            R.raw.easylist_minified,
-                            R.raw.exceptionrules_minimal)
-                    .getSiteKeysConfiguration().setForceChecks(true);
-            registerComponentCallbacks(this);
-        }
 
         SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean isFirstStart = mSharedPreferences.getBoolean("firstStart", true);
@@ -165,17 +150,6 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     }
 
     @Override
-    public void onTrimMemory(final int level) {
-        // if a system demands more memory, call the GC of the adblock engine to release some
-        // this can free up to ~60-70% of memory occupied by the engine
-        if (level == TRIM_MEMORY_RUNNING_CRITICAL && AdblockHelper.get().isInit())
-        {
-            AdblockHelper.get().getProvider().onLowMemory();
-            Timber.w("Lacking memory! Notifying AdBlock about memory constraint");
-        }
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
     }
@@ -188,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     public void onDestroy() {
         super.onDestroy();
         unregisterComponentCallbacks(this);
-        AdblockHelper.deinit();
         updateColorsInterface = null;
     }
 

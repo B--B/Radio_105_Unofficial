@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".PodcastFragment">
 
-    <org.adblockplus.libadblockplus.android.webview.AdblockWebView
+    <WebView
         android:id="@+id/webView_podcast"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

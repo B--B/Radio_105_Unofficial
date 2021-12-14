@@ -69,9 +69,6 @@ import androidx.preference.PreferenceManager;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import org.adblockplus.libadblockplus.android.settings.AdblockHelper;
-import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -83,7 +80,7 @@ import timber.log.Timber;
 
 public class ZooFragment extends Fragment implements IPodcastService {
 
-    private AdblockWebView mWebView;
+    private WebView mWebView;
     private View root;
     private ProgressBar mProgressBar;
     private RadioServiceBinder mRadioServiceBinder;
@@ -154,8 +151,6 @@ public class ZooFragment extends Fragment implements IPodcastService {
         mWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        mWebView.setProvider(AdblockHelper.get().getProvider());
-        mWebView.setSiteKeysConfiguration(AdblockHelper.get().getSiteKeysConfiguration());
         mWebView.addJavascriptInterface(new JSInterfaceZoo(),"JSZOOOUT");
         if (Constants.zooBundle == null) {
             mWebView.loadUrl(url);
@@ -259,7 +254,6 @@ public class ZooFragment extends Fragment implements IPodcastService {
         }
         if (mWebView != null) {
             mWebView.removeAllViews();
-            mWebView.dispose(null);
             mWebView.destroy();
         }
         mProgressBar = null;

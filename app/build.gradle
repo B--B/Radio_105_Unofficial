@@ -1,23 +1,5 @@
 plugins {
     id 'com.android.application'
-    id "de.undercouch.download" version "4.1.1"
-}
-
-// using download file task plugin more info at https://github.com/michel-kraemer/gradle-download-task
-task downloadEasylistMinified(type: Download) {
-    src(['https://easylist-downloads.adblockplus.org/easylist-minified.txt'])
-    dest "./src/main/res/raw/easylist_minified.txt"
-    overwrite true
-}
-
-task downloadMinExceptionrulesMinimal(type: Download) {
-    src(['https://easylist-downloads.adblockplus.org/exceptionrules-minimal.txt'])
-    dest "./src/main/res/raw/exceptionrules_minimal.txt"
-    overwrite true
-}
-
-task downloadSubscriptionLists {
-    dependsOn(downloadEasylistMinified, downloadMinExceptionrulesMinimal)
 }
 
 android {
@@ -65,10 +47,4 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    debugImplementation files('libs/adblock-android-abi_all-debug.aar')
-    debugImplementation files('libs/adblock-android-webview-debug.aar')
-    debugImplementation files('libs/adblock-android-settings-debug.aar')
-    releaseImplementation files('libs/adblock-android-abi_all-release.aar')
-    releaseImplementation files('libs/adblock-android-webview-release.aar')
-    releaseImplementation files('libs/adblock-android-settings-release.aar')
 }

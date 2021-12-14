@@ -165,7 +165,7 @@
     <!-- Hardware Acceleration -->
     <string name="hardware_acceleration_key" translatable="false">hardware_acceleration</string>
     <string name="hardware_acceleration_off">Hardware Acceleration is disabled in Podcast and The 105 Zoo sections</string>
-    <string name="hardware_acceleration_on">Hardware Acceleration is disabled in Podcast and The 105 Zoo sections</string>
+    <string name="hardware_acceleration_on">Hardware Acceleration is enabled in Podcast and The 105 Zoo sections</string>
     <string name="hardware_acceleration_title">Hardware Acceleration</string>
 
     <!-- Disclaimer -->

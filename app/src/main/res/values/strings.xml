@@ -7,7 +7,8 @@
     <!-- Misc -->
     <string name="menu_home">Radio 105</string>
     <string name="menu_podcast">Podcast</string>
-    <string name="menu_tv">105 TV</string>
+    <string name="menu_tv">105 TV</string>false
+    <string name="menu_zoo">The 105 Zoo</string>
     <string name="streaming">Start Streaming</string>
     <string name="pause_streaming">Pause Streaming</string>
     <string name="stop_streaming">Stop Streaming</string>
@@ -72,9 +73,14 @@
     <string name="pause">Pause</string>
     <string name="stop">Stop</string>
 
+    <!-- WebViews Themes -->
+    <string name="webviews_themes_key" translatable="false">webviews_themes</string>
+    <string name="webviews_themes_title">Themes</string>
+    <string name="webviews_themes_summary_on">Podcast and The 105 Zoo sections will be themed according to app/phone theme</string>
+    <string name="webviews_themes_summary_off">Podcast and The 105 Zoo sections will use the standard theme from official web sites</string>
+
     <!-- Screen always on -->
     <string name="screen_on_key" translatable="false">screen_on</string>
-    <string name="menu_zoo">The 105 Zoo</string>
     <string name="screen_on_title">Screen Always On</string>
     <string name="screen_on_summary_on">Screen will stay always on in Podcast/The 105 Zoo section</string>
     <string name="screen_on_summary_off">Screen will regularly turns off in Podcast and The 105 Zoo sections</string>

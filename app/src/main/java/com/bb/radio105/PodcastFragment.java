@@ -103,6 +103,13 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
             requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
+        boolean theme = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean(getString(R.string.webviews_themes_key), true);
+        if (!theme) {
+            root.setBackgroundColor(Color.WHITE);
+        }
+
+
         // Allow Glide to use more memory
         GlideApp.get(requireContext()).setMemoryCategory(MemoryCategory.HIGH);
 

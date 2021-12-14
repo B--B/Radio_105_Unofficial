@@ -33,6 +33,13 @@
         app:title="@string/preferences_webviews"
         app:key="@string/webviews_pref_key">
         <SwitchPreferenceCompat
+            app:key="@string/webviews_themes_key"
+            app:summaryOff="@string/webviews_themes_summary_off"
+            app:summaryOn="@string/webviews_themes_summary_on"
+            app:title="@string/webviews_themes_title"
+            app:defaultValue="true"/>
+
+        <SwitchPreferenceCompat
             app:key="@string/screen_on_key"
             app:summaryOff="@string/screen_on_summary_off"
             app:summaryOn="@string/screen_on_summary_on"

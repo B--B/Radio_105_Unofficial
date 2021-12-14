@@ -104,6 +104,12 @@ public class ZooFragment extends Fragment implements IPodcastService {
             requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
+        boolean theme = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean(getString(R.string.webviews_themes_key), true);
+        if (!theme) {
+            root.setBackgroundColor(getResources().getColor(R.color.zoo_background));
+        }
+
         // Allow Glide to use more memory
         GlideApp.get(requireContext()).setMemoryCategory(MemoryCategory.HIGH);
 
@@ -641,30 +647,36 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     " vc_theme_zoo Zoo di 105 vc_section_zoo-radio vc_macro_section_webradio vc_macro_section_canale-105 zooradio scheda cms_article ');" +
                     " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
-            final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
-            // The apps theme is decided depending upon the saved preferences on app startup
-            String themePref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                    .getString(getString(R.string.theme_key), getString(R.string.theme_default_value));
-            // Comparing to see which preference is selected and applying those theme settings
-            if (themePref.equals(darkModeValues[0])) {
-                // Check system status and apply colors
-                int nightModeOn = getResources().getConfiguration().uiMode &
-                        Configuration.UI_MODE_NIGHT_MASK;
-                switch (nightModeOn) {
-                    case Configuration.UI_MODE_NIGHT_YES:
-                        webView.evaluateJavascript(darkModeEnabled, null);
-                        break;
-                    case Configuration.UI_MODE_NIGHT_NO:
-                    case Configuration.UI_MODE_NIGHT_UNDEFINED:
-                        webView.evaluateJavascript(lightModeEnabled, null);
-                        break;
+
+
+            boolean theme = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                    .getBoolean(getString(R.string.webviews_themes_key), true);
+            if (theme) {
+                final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
+                // The apps theme is decided depending upon the saved preferences on app startup
+                String themePref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                        .getString(getString(R.string.theme_key), getString(R.string.theme_default_value));
+                // Comparing to see which preference is selected and applying those theme settings
+                if (themePref.equals(darkModeValues[0])) {
+                    // Check system status and apply colors
+                    int nightModeOn = getResources().getConfiguration().uiMode &
+                            Configuration.UI_MODE_NIGHT_MASK;
+                    switch (nightModeOn) {
+                        case Configuration.UI_MODE_NIGHT_YES:
+                            webView.evaluateJavascript(darkModeEnabled, null);
+                            break;
+                        case Configuration.UI_MODE_NIGHT_NO:
+                        case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                            webView.evaluateJavascript(lightModeEnabled, null);
+                            break;
+                    }
                 }
-            }
-            if (themePref.equals(darkModeValues[1])) {
-                webView.evaluateJavascript(lightModeEnabled, null);
-            }
-            if (themePref.equals(darkModeValues[2])) {
-                webView.evaluateJavascript(darkModeEnabled, null);
+                if (themePref.equals(darkModeValues[1])) {
+                    webView.evaluateJavascript(lightModeEnabled, null);
+                }
+                if (themePref.equals(darkModeValues[2])) {
+                    webView.evaluateJavascript(darkModeEnabled, null);
+                }
             }
 
             webView.evaluateJavascript(javaScript, null);

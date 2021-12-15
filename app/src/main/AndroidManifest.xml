@@ -31,8 +31,10 @@
         tools:targetApi="m">
         <activity
             android:name="com.bb.radio105.MainActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|mcc|mnc|screenLayout|smallestScreenSize|uiMode|density"
             android:theme="@style/Theme.105Splash"
+            android:supportsPictureInPicture="true"
+            tools:targetApi="o"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

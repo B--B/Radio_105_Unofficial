@@ -28,7 +28,7 @@
 * Completely open source
 * Compatible with all devices running android Lollipop and above
 * No Ads
-* No external libraries except [jsoup](https://jsoup.org/) for parsing radio streaming metadata, [Glide](https://github.com/bumptech/glide) for WebView image caching, [LeakCanary](https://github.com/square/leakcanary) (only in Debug builds) for memory leaks detection and [Timber](https://github.com/JakeWharton/timber) (only in Debug builds) for logging
+* No external libraries except ~~[AdBlockPlus](https://gitlab.com/eyeo/distpartners/libadblockplus-android) for Podcast and The 105 Zoo sections,~~ [jsoup](https://jsoup.org/) for parsing radio streaming metadata, [Glide](https://github.com/bumptech/glide) for WebView image caching, [LeakCanary](https://github.com/square/leakcanary) (only in Debug builds) for memory leaks detection and [Timber](https://github.com/JakeWharton/timber) (only in Debug builds) for logging
 * The radio streaming can be controlled with wearable devices or Android Auto
 * Can be installed on android TV --> Tested with Android TV emulator
 * Compatible with wearable devices --> Tested with Wear OS emulator and with Xiaomi Band 4 and 5
@@ -85,16 +85,19 @@
     * Instructions for properly run the radio streaming service on devices with MiUi/EMUI roms | **Only in MiUi and EMUI devices**
     * Theme: choose between light, dark or system theme *Default: system*
     * Notification type: allow user to choose between a standard or a multimedia notification during the audio streaming *Default: media notification* | **Removed in Android TV devices**
+    * WebView Themes: allow users to enable or disable Podcast and The 105 Zoo sections theming *Default: enabled*
     * Screen on: keep the screen on when in podcast and the 105 zoo sections *Default: disabled* | **Removed in Android TV devices**
     * WebView postVisualStateCallback: use a postVisualStateCallback for set visibility when page is loaded in Podcast/Zoo sections. According to Android Studio documentation this method may NOT be compatible with all devices, but is faster and do not cause graphical glitches *Default: disabled for potential incompatibility with some devices, but everyone should give it a try and keep it enabled if works properly*
     * Stop streaming setting: allow system to stop streaming when app is removed from recent tasks *Default: disabled* | **Removed in Android TV and in MiUi/EMUI devices**
     * Audio devices: pause streaming when an audio device (headset, BT, etc.) is disconnected *Default: enabled*
     * Reconnect stream: restart the radio stream after an error if internet is available  *Default: enabled*
-    * Network change: restart the radio stream immediately when the device switch from mobile network to WiFi and vice versa  *Default: enabled*
+    * Network change: restart the radio stream immediately when the device switch from mobile network to WiFi and vice versa *Default: enabled*
+    * Experimental Options: this section may contain option in unsafe/not working/testing phase **Hidden by default --> On <ins>Developer Fragment</ins> tap 7 times on app version TextView**
 
 7. Developer Info <img src="images/Screenshot_10.png" align="right" height="75" >
     * Provide developer contact, bug report and sources link on GitHub
     * Provide link to Play Store page and share/vote app buttons
+    * Show the version number of the installed app
 
 <br />
 <br />

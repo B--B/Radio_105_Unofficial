@@ -86,6 +86,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     private RadioServiceBinder mRadioServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingPodcast;
+    static boolean isVideoPlayingPodcast;
     static IPodcastService mIPodcastService;
     static String podcastTitle;
     static String podcastSubtitle;
@@ -216,7 +217,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     @Override
     public void onPause() {
         super.onPause();
-        if (mState ==  PlaybackStateCompat.STATE_STOPPED) {
+        if (mState ==  PlaybackStateCompat.STATE_STOPPED || !isVideoPlayingPodcast) {
             if (mWebView != null) {
                 mWebView.onPause();
                 mWebView.pauseTimers();
@@ -227,7 +228,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     @Override
     public void onResume() {
         super.onResume();
-        if (mState ==  PlaybackStateCompat.STATE_STOPPED) {
+        if (mState ==  PlaybackStateCompat.STATE_STOPPED || !isVideoPlayingPodcast) {
             if (mWebView != null) {
                 mWebView.onResume();
                 mWebView.resumeTimers();
@@ -364,6 +365,12 @@ public class ZooFragment extends Fragment implements IPodcastService {
         public void getPodcastImage(String mString) {
             podcastImageUrl = mString.replaceAll("(resizer/)[^&]*(/true)", "$1480/480$2");
             Timber.e("artUrl changed, new URL is %s", podcastImageUrl);
+        }
+
+        @JavascriptInterface
+        public void getVideoState(String mString) {
+            Timber.e("isVideoPlayingPodcast is %s", mString);
+            isVideoPlayingPodcast = Boolean.parseBoolean(mString);
         }
     }
 

@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onUserLeaveHint(){
-        if(!isInPictureInPictureMode()) {
+        if(!isInPictureInPictureMode() && ZooFragment.isVideoPlayingPodcast) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 setPictureInPictureParams(new PictureInPictureParams.Builder()
                         .setAspectRatio(new Rational(16, 9))

@@ -217,7 +217,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     @Override
     public void onPause() {
         super.onPause();
-        if (mState ==  PlaybackStateCompat.STATE_STOPPED || !isVideoPlayingPodcast) {
+        if (mState ==  PlaybackStateCompat.STATE_STOPPED && !isVideoPlayingPodcast) {
             if (mWebView != null) {
                 mWebView.onPause();
                 mWebView.pauseTimers();
@@ -228,7 +228,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     @Override
     public void onResume() {
         super.onResume();
-        if (mState ==  PlaybackStateCompat.STATE_STOPPED || !isVideoPlayingPodcast) {
+        if (mState ==  PlaybackStateCompat.STATE_STOPPED && !isVideoPlayingPodcast) {
             if (mWebView != null) {
                 mWebView.onResume();
                 mWebView.resumeTimers();
@@ -610,6 +610,15 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     "    };" +
                     "    audio.onpause = function() {" +
                     "        JSZOOOUT.mediaZooAction('false');" +
+                    "    };" +
+                    "};" +
+                    "var video = document.querySelector('video'); " +
+                    "if (document.body.contains(video)) { " +
+                    "    video.onplay = function() {" +
+                    "        JSZOOOUT.getVideoState('true');" +
+                    "    };" +
+                    "    video.onpause = function() {" +
+                    "        JSZOOOUT.getVideoState('false');" +
                     "    };" +
                     "};" +
                     "var podcastText = document.getElementsByClassName('titolo_articolo titolo');" +

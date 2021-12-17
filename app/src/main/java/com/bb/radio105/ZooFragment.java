@@ -87,6 +87,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingPodcast;
     static boolean isVideoPlayingPodcast;
+    static boolean isVideoInFullscreen;
     static IPodcastService mIPodcastService;
     static String podcastTitle;
     static String podcastSubtitle;
@@ -236,6 +237,10 @@ public class ZooFragment extends Fragment implements IPodcastService {
         }
     }
 
+    // @Override
+    // public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+    // }
+
     @Override
     public void onDestroyView() {
         boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -372,6 +377,12 @@ public class ZooFragment extends Fragment implements IPodcastService {
             Timber.e("isVideoPlayingPodcast is %s", mString);
             isVideoPlayingPodcast = Boolean.parseBoolean(mString);
         }
+
+        @JavascriptInterface
+        public void getVideoFullscreenState(String mString) {
+            Timber.e("isVideoInFullscreen is %s", mString);
+            isVideoInFullscreen = Boolean.parseBoolean(mString);
+        }
     }
 
     private void playPodcast() {
@@ -439,6 +450,24 @@ public class ZooFragment extends Fragment implements IPodcastService {
         public void onPageFinished (WebView webView, String url) {
             SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
             boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
+
+            final String pipModeEnabled = "javascript:(function() { " +
+                    "    var video = document.querySelector('video'); " +
+                    "    if (document.body.contains(video)) { " +
+                    "        video.onplay = function() {" +
+                    "            JSZOOOUT.getVideoState('true');" +
+                    "        };" +
+                    "        video.onpause = function() {" +
+                    "            JSZOOOUT.getVideoState('false');" +
+                    "        };" +
+                    "        function onFullScreen(e) {" +
+                    "            var isFullscreenNow = document.webkitFullscreenElement !== null;" +
+                    "            JSZOOOUT.getVideoFullscreenState(isFullscreenNow);" +
+                    "        }" +
+                    "        video.addEventListener('webkitfullscreenchange', onFullScreen);" +
+                    "    }" +
+                    "})()";
+
 
             final String lightModeEnabled = "javascript:(function() { " +
                     "document.body.style.backgroundColor = 'transparent';" +
@@ -612,15 +641,6 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     "        JSZOOOUT.mediaZooAction('false');" +
                     "    };" +
                     "};" +
-                    "var video = document.querySelector('video'); " +
-                    "if (document.body.contains(video)) { " +
-                    "    video.onplay = function() {" +
-                    "        JSZOOOUT.getVideoState('true');" +
-                    "    };" +
-                    "    video.onpause = function() {" +
-                    "        JSZOOOUT.getVideoState('false');" +
-                    "    };" +
-                    "};" +
                     "var podcastText = document.getElementsByClassName('titolo_articolo titolo');" +
                     " if (podcastText.length) { var text = podcastText[0].textContent; " +
                     "JSZOOOUT.getPodcastTitle(text); " +
@@ -700,6 +720,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                 }
             }
 
+            webView.evaluateJavascript(pipModeEnabled, null);
             webView.evaluateJavascript(javaScript, null);
             if (postCallbackKey) {
                 webView.postVisualStateCallback(getId(), new WebView.VisualStateCallback() {

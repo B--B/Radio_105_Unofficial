@@ -86,7 +86,6 @@ public class ZooFragment extends Fragment implements IPodcastService {
     private RadioServiceBinder mRadioServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingPodcast;
-    static boolean isVideoPlayingPodcast;
     static boolean isVideoInFullscreen;
     static IPodcastService mIPodcastService;
     static String podcastTitle;
@@ -218,7 +217,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     @Override
     public void onPause() {
         super.onPause();
-        if (mState ==  PlaybackStateCompat.STATE_STOPPED && !isVideoPlayingPodcast) {
+        if (mState ==  PlaybackStateCompat.STATE_STOPPED && !isVideoInFullscreen) {
             if (mWebView != null) {
                 mWebView.onPause();
                 mWebView.pauseTimers();
@@ -229,7 +228,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     @Override
     public void onResume() {
         super.onResume();
-        if (mState ==  PlaybackStateCompat.STATE_STOPPED && !isVideoPlayingPodcast) {
+        if (mState ==  PlaybackStateCompat.STATE_STOPPED && !isVideoInFullscreen) {
             if (mWebView != null) {
                 mWebView.onResume();
                 mWebView.resumeTimers();
@@ -373,12 +372,6 @@ public class ZooFragment extends Fragment implements IPodcastService {
         }
 
         @JavascriptInterface
-        public void getVideoState(String mString) {
-            Timber.e("isVideoPlayingPodcast is %s", mString);
-            isVideoPlayingPodcast = Boolean.parseBoolean(mString);
-        }
-
-        @JavascriptInterface
         public void getVideoFullscreenState(String mString) {
             Timber.e("isVideoInFullscreen is %s", mString);
             isVideoInFullscreen = Boolean.parseBoolean(mString);
@@ -452,20 +445,11 @@ public class ZooFragment extends Fragment implements IPodcastService {
             boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
 
             final String pipModeEnabled = "javascript:(function() { " +
-                    "    var video = document.querySelector('video'); " +
-                    "    if (document.body.contains(video)) { " +
-                    "        video.onplay = function() {" +
-                    "            JSZOOOUT.getVideoState('true');" +
-                    "        };" +
-                    "        video.onpause = function() {" +
-                    "            JSZOOOUT.getVideoState('false');" +
-                    "        };" +
-                    "        function onFullScreen(e) {" +
-                    "            var isFullscreenNow = document.webkitFullscreenElement !== null;" +
-                    "            JSZOOOUT.getVideoFullscreenState(isFullscreenNow);" +
-                    "        }" +
-                    "        video.addEventListener('webkitfullscreenchange', onFullScreen);" +
+                    "    function onFullScreen(e) {" +
+                    "        var isFullscreenNow = document.webkitFullscreenElement !== null;" +
+                    "        JSZOOOUT.getVideoFullscreenState(isFullscreenNow);" +
                     "    }" +
+                    "    document.addEventListener('webkitfullscreenchange', onFullScreen);" +
                     "})()";
 
 

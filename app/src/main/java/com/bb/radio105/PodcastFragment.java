@@ -54,6 +54,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import androidx.activity.OnBackPressedCallback;
@@ -622,7 +623,6 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
     final WebChromeClient mWebChromeClient = new WebChromeClient() {
 
         private View fullScreenView;
-        private ViewGroup mViewGroup;
         private CustomViewCallback mViewCallback;
 
         @Override
@@ -635,27 +635,22 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
         @Override
         public void onShowCustomView(View view, CustomViewCallback mCustomViewCallback) {
             if (fullScreenView != null) {
-                mCustomViewCallback.onCustomViewHidden();
+                onHideCustomView();
                 return;
             }
-
-            ViewGroup.LayoutParams layoutParams =
-                    new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT);
-            mViewGroup = (ViewGroup) root.getRootView();
             fullScreenView = view;
-
             mViewCallback = mCustomViewCallback;
-            mViewGroup.addView(fullScreenView, layoutParams);
+            ((FrameLayout) requireActivity().getWindow().getDecorView()).addView(fullScreenView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+            Utils.setUpFullScreen(requireActivity());
         }
 
         @Override
         public void onHideCustomView() {
-            if (fullScreenView != null) {
-                mViewGroup.removeView(fullScreenView);
-                fullScreenView = null;
-                mViewCallback.onCustomViewHidden();
-            }
+            ((FrameLayout) requireActivity().getWindow().getDecorView()).removeView(fullScreenView);
+            fullScreenView = null;
+            Utils.restoreScreen(requireActivity());
+            mViewCallback.onCustomViewHidden();
+            mViewCallback = null;
         }
     };
 }

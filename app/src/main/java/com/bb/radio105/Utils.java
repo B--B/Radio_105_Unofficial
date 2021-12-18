@@ -16,6 +16,8 @@
 
 package com.bb.radio105;
 
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.DownloadManager;
@@ -25,8 +27,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -35,6 +35,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -42,8 +44,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Objects;
-
-import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
 
 public class Utils {
     /**
@@ -86,27 +86,25 @@ public class Utils {
     }
 
     static void setUpFullScreen(Activity mActivity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            final WindowInsetsController controller = mActivity.getWindow().getInsetsController();
-
-            if (controller != null)
-                controller.hide(WindowInsets.Type.statusBars());
-        } else {
-            mActivity.getWindow().addFlags(FLAG_FULLSCREEN);
-        }
+        mActivity.getWindow().addFlags(SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        WindowInsetsControllerCompat controllerCompat = new WindowInsetsControllerCompat(mActivity.getWindow(), mActivity.getWindow().getDecorView());
+        controllerCompat.hide(WindowInsetsCompat.Type.systemBars());
+        controllerCompat.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
         Objects.requireNonNull(((AppCompatActivity) mActivity).getSupportActionBar()).hide();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            mActivity.getWindow().setDecorFitsSystemWindows(false);
+        }
     }
 
     static void restoreScreen(Activity mActivity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            final WindowInsetsController controller = mActivity.getWindow().getInsetsController();
-
-            if (controller != null)
-                controller.show(WindowInsets.Type.statusBars());
-        } else {
-            mActivity.getWindow().clearFlags(FLAG_FULLSCREEN);
-        }
+        mActivity.getWindow().clearFlags(SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        WindowInsetsControllerCompat controllerCompat = new WindowInsetsControllerCompat(mActivity.getWindow(), mActivity.getWindow().getDecorView());
+        controllerCompat.show(WindowInsetsCompat.Type.systemBars());
+        controllerCompat.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_SWIPE);
         Objects.requireNonNull(((AppCompatActivity) mActivity).getSupportActionBar()).show();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            mActivity.getWindow().setDecorFitsSystemWindows(true);
+        }
     }
 
     static boolean isMiUi() {

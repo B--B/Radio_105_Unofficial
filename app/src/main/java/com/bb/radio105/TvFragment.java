@@ -55,6 +55,7 @@ public class TvFragment extends Fragment {
     private String videoUrl;
     private RadioServiceBinder mRadioServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
+    static boolean isTvPlaying;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -117,6 +118,7 @@ public class TvFragment extends Fragment {
         } else {
             videoView.start();
         }
+        isTvPlaying = true;
     }
 
     @Override
@@ -129,6 +131,7 @@ public class TvFragment extends Fragment {
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
         }
+        isTvPlaying = false;
     }
 
     @Override
@@ -138,6 +141,19 @@ public class TvFragment extends Fragment {
             Utils.setUpFullScreen(requireActivity());
         } else {
             Utils.restoreScreen(requireActivity());
+        }
+    }
+
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        if (isInPictureInPictureMode) {
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                Utils.setUpFullScreen(requireActivity());
+            }
+        } else {
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                Utils.restoreScreen(requireActivity());
+            }
         }
     }
 

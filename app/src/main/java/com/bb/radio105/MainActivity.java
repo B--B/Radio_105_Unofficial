@@ -172,10 +172,12 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onUserLeaveHint(){
-        if(!isInPictureInPictureMode() && ZooFragment.isVideoInFullscreen) {
-            enterPictureInPictureMode(new PictureInPictureParams.Builder()
-                    .setAspectRatio(new Rational(16, 9))
-                    .build());
+        if (!isInPictureInPictureMode()) {
+            if (ZooFragment.isVideoInFullscreen || TvFragment.isTvPlaying) {
+                enterPictureInPictureMode(new PictureInPictureParams.Builder()
+                        .setAspectRatio(new Rational(16, 9))
+                        .build());
+            }
         }
     }
 

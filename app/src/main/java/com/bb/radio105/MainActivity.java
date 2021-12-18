@@ -173,16 +173,9 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     @Override
     public void onUserLeaveHint(){
         if(!isInPictureInPictureMode() && ZooFragment.isVideoInFullscreen) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                setPictureInPictureParams(new PictureInPictureParams.Builder()
-                        .setAspectRatio(new Rational(16, 9))
-                        .setAutoEnterEnabled(true)
-                        .build());
-            } else {
-                enterPictureInPictureMode(new PictureInPictureParams.Builder()
-                        .setAspectRatio(new Rational(16, 9))
-                        .build());
-            }
+            enterPictureInPictureMode(new PictureInPictureParams.Builder()
+                    .setAspectRatio(new Rational(16, 9))
+                    .build());
         }
     }
 

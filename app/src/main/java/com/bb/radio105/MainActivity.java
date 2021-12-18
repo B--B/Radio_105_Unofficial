@@ -16,6 +16,7 @@
 
 package com.bb.radio105;
 
+import android.app.PictureInPictureParams;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -23,10 +24,12 @@ import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Rational;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -158,11 +161,29 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     public void onStop() {
         super.onStop();
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         unregisterComponentCallbacks(this);
         updateColorsInterface = null;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onUserLeaveHint(){
+        if(!isInPictureInPictureMode() && ZooFragment.isVideoInFullscreen) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                setPictureInPictureParams(new PictureInPictureParams.Builder()
+                        .setAspectRatio(new Rational(16, 9))
+                        .setAutoEnterEnabled(true)
+                        .build());
+            } else {
+                enterPictureInPictureMode(new PictureInPictureParams.Builder()
+                        .setAspectRatio(new Rational(16, 9))
+                        .build());
+            }
+        }
     }
 
     @Override

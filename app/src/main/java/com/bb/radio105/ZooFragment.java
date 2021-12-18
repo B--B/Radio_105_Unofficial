@@ -86,6 +86,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     private RadioServiceBinder mRadioServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingPodcast;
+    static boolean isVideoInFullscreen;
     static IPodcastService mIPodcastService;
     static String podcastTitle;
     static String podcastSubtitle;
@@ -216,7 +217,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     @Override
     public void onPause() {
         super.onPause();
-        if (mState ==  PlaybackStateCompat.STATE_STOPPED) {
+        if (mState ==  PlaybackStateCompat.STATE_STOPPED && !isVideoInFullscreen) {
             if (mWebView != null) {
                 mWebView.onPause();
                 mWebView.pauseTimers();
@@ -227,7 +228,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     @Override
     public void onResume() {
         super.onResume();
-        if (mState ==  PlaybackStateCompat.STATE_STOPPED) {
+        if (mState ==  PlaybackStateCompat.STATE_STOPPED && !isVideoInFullscreen) {
             if (mWebView != null) {
                 mWebView.onResume();
                 mWebView.resumeTimers();
@@ -365,6 +366,12 @@ public class ZooFragment extends Fragment implements IPodcastService {
             podcastImageUrl = mString.replaceAll("(resizer/)[^&]*(/true)", "$1480/480$2");
             Timber.e("artUrl changed, new URL is %s", podcastImageUrl);
         }
+
+        @JavascriptInterface
+        public void getVideoFullscreenState(String mString) {
+            Timber.e("isVideoInFullscreen is %s", mString);
+            isVideoInFullscreen = Boolean.parseBoolean(mString);
+        }
     }
 
     private void playPodcast() {
@@ -432,6 +439,15 @@ public class ZooFragment extends Fragment implements IPodcastService {
         public void onPageFinished (WebView webView, String url) {
             SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
             boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
+
+            final String pipModeEnabled = "javascript:(function() { " +
+                    "    function onFullScreen(e) {" +
+                    "        var isFullscreenNow = document.webkitFullscreenElement !== null;" +
+                    "        JSZOOOUT.getVideoFullscreenState(isFullscreenNow);" +
+                    "    }" +
+                    "    document.addEventListener('webkitfullscreenchange', onFullScreen);" +
+                    "})()";
+
 
             final String lightModeEnabled = "javascript:(function() { " +
                     "document.body.style.backgroundColor = 'transparent';" +
@@ -684,6 +700,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                 }
             }
 
+            webView.evaluateJavascript(pipModeEnabled, null);
             webView.evaluateJavascript(javaScript, null);
             if (postCallbackKey) {
                 webView.postVisualStateCallback(getId(), new WebView.VisualStateCallback() {

@@ -160,6 +160,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
         mWebView.getSettings().setLoadsImagesAutomatically(true);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);
+        mWebView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36");
         mWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);

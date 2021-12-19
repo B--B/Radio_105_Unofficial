@@ -40,6 +40,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -89,6 +90,8 @@ public class Utils {
     }
 
     static void setUpFullScreen(Activity mActivity) {
+        DrawerLayout drawer = mActivity.findViewById(R.id.drawer_layout);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         mActivity.getWindow().addFlags(SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         final WindowInsetsControllerCompat controllerCompat = new WindowInsetsControllerCompat(mActivity.getWindow(), mActivity.getWindow().getDecorView());
         controllerCompat.hide(WindowInsetsCompat.Type.systemBars());
@@ -100,6 +103,8 @@ public class Utils {
     }
 
     static void restoreScreen(Activity mActivity) {
+        DrawerLayout drawer = mActivity.findViewById(R.id.drawer_layout);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         mActivity.getWindow().clearFlags(SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         final WindowInsetsControllerCompat controllerCompat = new WindowInsetsControllerCompat(mActivity.getWindow(), mActivity.getWindow().getDecorView());
         controllerCompat.show(WindowInsetsCompat.Type.systemBars());

@@ -1,7 +1,7 @@
 <resources>
     <!-- Splash screen theme -->
     <style name="Theme.105Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/splash_screen</item>
+        <item name="windowSplashScreenBackground">@android:color/system_accent1_100</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_splash_screen_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.Radio105.NoActionBar</item>
     </style>
@@ -16,7 +16,7 @@
         <item name="colorSecondaryVariant">@android:color/system_accent2_500</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
 

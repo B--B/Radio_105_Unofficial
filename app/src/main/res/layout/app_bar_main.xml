@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            android:elevation="4dp"
             app:popupTheme="@style/Theme.Radio105.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>

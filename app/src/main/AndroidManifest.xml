@@ -31,7 +31,7 @@
         tools:targetApi="m">
         <activity
             android:name="com.bb.radio105.MainActivity"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|mcc|mnc|screenLayout|smallestScreenSize|uiMode|density"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|mcc|mnc|screenLayout|smallestScreenSize|density"
             android:theme="@style/Theme.105Splash"
             android:supportsPictureInPicture="true"
             tools:targetApi="o"

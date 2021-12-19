@@ -2,4 +2,7 @@
     android:height="24dp"
     android:viewportHeight="24"
     android:viewportWidth="24"
-    android:width="24dp"/>
+    android:width="24dp">
+    <path
+        android:pathData="M0,0Z"/>
+</vector>

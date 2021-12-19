@@ -32,7 +32,7 @@
 * The radio streaming can be controlled with wearable devices or Android Auto
 * Can be installed on android TV --> Tested with Android TV emulator
 * Compatible with wearable devices --> Tested with Wear OS emulator and with Xiaomi Band 4 and 5
-* Fully compatible with Android 12
+* Fully compatible with Android 12 and Material you
 * The version downloadable from Play Store use the new [Android App Bundle](https://developer.android.com/platform/technology/app-bundle) format
 
 <br />
@@ -58,6 +58,7 @@
 2. 105 TV: a simple fragment that stream 105 Tv channel from [Mediaset Play](https://www.mediasetplay.mediaset.it/) <img src="images/Screenshot_3.png" align="right" height="75" >
     * Automatically enable fullscreen when in landscape mode
     * Screen does not turns off when the user is in this section
+    * PiP mode is supported for devices running at least android Oreo
 
 3. Podcast: the [105.net](https://105.net) programs section <img src="images/Screenshot_4.png" align="right" height="75" >
     * All ad and banners completely removed
@@ -76,6 +77,7 @@
         * Streaming service will stop if app is removed from recent apps list
     * No cookies
     * If for some reason a link can't be opened, the app will prompt the user to open it in an external browser
+    * PiP mode is supported for fullscreen videos in devices running at least android Oreo
 
 5. Social <img src="images/Screenshot_6.png" align="right" height="75" >
     * Provide links for all Radio 105 social accounts
@@ -109,6 +111,11 @@
         <img alt='Get it on GitHub' src='https://badgen.net/badge/icon/Get%20it%20on%20GitHub/grey/?scale=2&icon=github&label'/></a>
     <a href='https://play.google.com/store/apps/details?id=com.bb.radio105'>
         <img alt='Get it on Play Store' src='https://badgen.net/badge/icon/Get%20it%20on%20Play%20Store/black/?scale=2&icon=googleplay&label'/></a>
+
+<br />
+<br />
+<b>Packages Size</b><br>
+<a>APK: ~5.9Mb</a> <b>|</b> <a>AAB: ~5.4Mb</a>
 </p>
 
 Please note that signing keys are different, this means that you need to uninstall Play Store version if you want to install GitHub version. Usually updates on GitHub are pushed a couple of days before Play Store releases (this is due to Google app review times), but keep in mind that using GitHub version will stop updates from Play Store, and you have to update manually the app from GitHub everytime a new version is released.

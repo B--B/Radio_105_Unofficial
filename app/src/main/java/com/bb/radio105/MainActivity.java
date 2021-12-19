@@ -160,16 +160,6 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         unregisterComponentCallbacks(this);

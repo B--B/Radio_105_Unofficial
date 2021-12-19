@@ -442,6 +442,26 @@ public class ZooFragment extends Fragment implements IPodcastService {
             SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
             boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
 
+            final String podcastService = "javascript:(function() { " +
+                    "var audio = document.querySelector('audio'); " +
+                    "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload'); " +
+                    "    audio.onplay = function() {" +
+                    "        JSZOOOUT.mediaZooAction('true');" +
+                    "    };" +
+                    "    audio.onpause = function() {" +
+                    "        JSZOOOUT.mediaZooAction('false');" +
+                    "    };" +
+                    "};" +
+                    "var podcastText = document.getElementsByClassName('titolo_articolo titolo');" +
+                    " if (podcastText.length) { var text = podcastText[0].textContent; " +
+                    "JSZOOOUT.getPodcastTitle(text); " +
+                    "var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
+                    " if (document.body.contains(image)) { JSZOOOUT.getPodcastImage(image.src); };" +
+                    "};" +
+                    "var podcastSubText = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
+                    " if (podcastSubText.length) { var text = podcastSubText[0].textContent; " +
+                    "JSZOOOUT.getPodcastSubtitle(text); };" + "})()";
+
             final String pipModeEnabled = "javascript:(function() { " +
                     "    function onFullScreen(e) {" +
                     "        var isFullscreenNow = document.webkitFullscreenElement !== null;" +
@@ -614,24 +634,6 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     " }; " + "})()";
 
             final String javaScript = "javascript:(function() { " +
-                    "var audio = document.querySelector('audio'); " +
-                    "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload'); " +
-                    "    audio.onplay = function() {" +
-                    "        JSZOOOUT.mediaZooAction('true');" +
-                    "    };" +
-                    "    audio.onpause = function() {" +
-                    "        JSZOOOUT.mediaZooAction('false');" +
-                    "    };" +
-                    "};" +
-                    "var podcastText = document.getElementsByClassName('titolo_articolo titolo');" +
-                    " if (podcastText.length) { var text = podcastText[0].textContent; " +
-                    "JSZOOOUT.getPodcastTitle(text); " +
-                    "var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
-                    " if (document.body.contains(image)) { JSZOOOUT.getPodcastImage(image.src); };" +
-                    "};" +
-                    "var podcastSubText = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
-                    " if (podcastSubText.length) { var text = podcastSubText[0].textContent; " +
-                    "JSZOOOUT.getPodcastSubtitle(text); };" +
                     "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
                     " if (element.length) { element[0].style.width = '100%' }; " +
                     "var element = document.getElementsByClassName('container');" +
@@ -702,7 +704,12 @@ public class ZooFragment extends Fragment implements IPodcastService {
                 }
             }
 
-            webView.evaluateJavascript(pipModeEnabled, null);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                webView.evaluateJavascript(podcastService, null);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                webView.evaluateJavascript(pipModeEnabled, null);
+            }
             webView.evaluateJavascript(javaScript, null);
             if (postCallbackKey) {
                 webView.postVisualStateCallback(getId(), new WebView.VisualStateCallback() {

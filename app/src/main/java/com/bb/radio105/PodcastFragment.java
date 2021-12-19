@@ -454,6 +454,29 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
             SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
             boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
 
+            final String podcastService = "javascript:(function() { " +
+                    "var audio = document.querySelector('audio'); " +
+                    "if (document.body.contains(audio)) { " +
+                    "    audio.style.minWidth = '90%'; " +
+                    "    audio.style.margin= '0 auto'; " +
+                    "    audio.controlsList.remove('nodownload');" +
+                    "    audio.onplay = function() {" +
+                    "        JSPODCASTOUT.mediaPodcastAction('true');" +
+                    "    };" +
+                    "    audio.onpause = function() {" +
+                    "        JSPODCASTOUT.mediaPodcastAction('false');" +
+                    "    };" +
+                    "};" +
+                    "var podcastText = document.getElementsByClassName('occhiello_articolo');" +
+                    " if (podcastText.length) { var text = podcastText[0].textContent; " +
+                    "JSPODCASTOUT.getPodcastTitle(text); };" +
+                    "var podcastSubText = document.getElementsByClassName('titolo_articolo titolo');" +
+                    " if (podcastSubText.length) { var text = podcastSubText[0].textContent; " +
+                    "JSPODCASTOUT.getPodcastSubtitle(text); " +
+                    "var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
+                    " if (document.body.contains(image)) { JSPODCASTOUT.getPodcastImage(image.src); };" +
+                    "};" + "})()";
+
             final String javaScript = "javascript:(function() { " +
                     "document.body.style.backgroundColor = 'transparent';" +
                     "var element = document.getElementsByClassName('container vc_bg_white');" +
@@ -471,24 +494,6 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
                     "home.addEventListener('click', function() { " +
                     "location.href = 'https://www.105.net/sezioni/648/programmi'; });" +
                     "document.body.appendChild(home); " +
-                    "var audio = document.querySelector('audio'); " +
-                    "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload');" +
-                    "    audio.onplay = function() {" +
-                    "        JSPODCASTOUT.mediaPodcastAction('true');" +
-                    "    };" +
-                    "    audio.onpause = function() {" +
-                    "        JSPODCASTOUT.mediaPodcastAction('false');" +
-                    "    };" +
-                    "};" +
-                    "var podcastText = document.getElementsByClassName('occhiello_articolo');" +
-                    " if (podcastText.length) { var text = podcastText[0].textContent; " +
-                    "JSPODCASTOUT.getPodcastTitle(text); };" +
-                    "var podcastSubText = document.getElementsByClassName('titolo_articolo titolo');" +
-                    " if (podcastSubText.length) { var text = podcastSubText[0].textContent; " +
-                    "JSPODCASTOUT.getPodcastSubtitle(text); " +
-                    "var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
-                    " if (document.body.contains(image)) { JSPODCASTOUT.getPodcastImage(image.src); };" +
-                    "};" +
                     "var element = document.getElementsByClassName('breadcrumbs_orizzontale vc_breadcrumbs null');" +
                     " if (element.length) { element[0].innerHTML = '' }; " +
                     "var x = window.matchMedia('(max-width: 767px)');" +
@@ -539,6 +544,9 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
                     " if (element.length) { element[0].style.display = 'none' }; " + "})()";
 
             webView.evaluateJavascript(javaScript, null);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                webView.evaluateJavascript(podcastService, null);
+            }
             if (postCallbackKey) {
                 webView.postVisualStateCallback(getId(), new WebView.VisualStateCallback() {
                     @Override

@@ -19,6 +19,7 @@ package com.bb.radio105;
 import android.app.PendingIntent;
 import android.app.PictureInPictureParams;
 import android.app.RemoteAction;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -178,16 +179,20 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onUserLeaveHint(){
-        if (!isInPictureInPictureMode()) {
-            if (ZooFragment.isVideoInFullscreen || TvFragment.isTvPlaying) {
-                Intent intent = new Intent();
-                final List<RemoteAction> dummyRemoteActions = new ArrayList<>();
-                final RemoteAction dummyAction = new RemoteAction(Icon.createWithResource(this, R.drawable.ic_blank), getString(R.string.blank_line), getString(R.string.blank_line), PendingIntent.getBroadcast(this, 234, intent, PendingIntent.FLAG_IMMUTABLE));
-                dummyRemoteActions.add(dummyAction);
-                enterPictureInPictureMode(new PictureInPictureParams.Builder()
-                        .setActions(dummyRemoteActions)
-                        .setAspectRatio(new Rational(16, 9))
-                        .build());
+        Context mContext = this;
+        PackageManager mPackageManager = mContext.getPackageManager();
+        if (ZooFragment.isVideoInFullscreen || TvFragment.isTvPlaying) {
+            if (mPackageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
+                if (!isInPictureInPictureMode()) {
+                    Intent intent = new Intent();
+                    final List<RemoteAction> dummyRemoteActions = new ArrayList<>();
+                    final RemoteAction dummyAction = new RemoteAction(Icon.createWithResource(this, R.drawable.ic_blank), getString(R.string.blank_line), getString(R.string.blank_line), PendingIntent.getBroadcast(this, 234, intent, PendingIntent.FLAG_IMMUTABLE));
+                    dummyRemoteActions.add(dummyAction);
+                    enterPictureInPictureMode(new PictureInPictureParams.Builder()
+                            .setActions(dummyRemoteActions)
+                            .setAspectRatio(new Rational(16, 9))
+                            .build());
+                }
             }
         }
     }

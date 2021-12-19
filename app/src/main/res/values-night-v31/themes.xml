@@ -18,6 +18,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
 
     <style name="Theme.Radio105.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">

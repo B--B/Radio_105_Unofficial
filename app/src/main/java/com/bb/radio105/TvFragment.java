@@ -146,6 +146,7 @@ public class TvFragment extends Fragment {
 
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode);
         if (isInPictureInPictureMode) {
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 Utils.setUpFullScreen(requireActivity());

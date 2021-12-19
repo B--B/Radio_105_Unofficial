@@ -179,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onUserLeaveHint(){
+        super.onUserLeaveHint();
         Context mContext = this;
         PackageManager mPackageManager = mContext.getPackageManager();
         if (ZooFragment.isVideoInFullscreen || TvFragment.isTvPlaying) {

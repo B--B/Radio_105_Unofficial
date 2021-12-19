@@ -16,12 +16,16 @@
 
 package com.bb.radio105;
 
+import android.app.PendingIntent;
 import android.app.PictureInPictureParams;
+import android.app.RemoteAction;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Rational;
@@ -48,6 +52,8 @@ import androidx.preference.PreferenceManager;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import timber.log.Timber;
@@ -174,7 +180,12 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
     public void onUserLeaveHint(){
         if (!isInPictureInPictureMode()) {
             if (ZooFragment.isVideoInFullscreen || TvFragment.isTvPlaying) {
+                Intent intent = new Intent();
+                final List<RemoteAction> dummyRemoteActions = new ArrayList<>();
+                final RemoteAction dummyAction = new RemoteAction(Icon.createWithResource(this, R.drawable.ic_blank), getString(R.string.blank_line), getString(R.string.blank_line), PendingIntent.getBroadcast(this, 234, intent, PendingIntent.FLAG_IMMUTABLE));
+                dummyRemoteActions.add(dummyAction);
                 enterPictureInPictureMode(new PictureInPictureParams.Builder()
+                        .setActions(dummyRemoteActions)
                         .setAspectRatio(new Rational(16, 9))
                         .build());
             }

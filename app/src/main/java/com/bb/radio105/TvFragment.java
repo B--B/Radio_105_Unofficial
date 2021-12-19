@@ -40,7 +40,6 @@ import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 

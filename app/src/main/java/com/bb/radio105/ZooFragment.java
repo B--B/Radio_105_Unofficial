@@ -442,25 +442,60 @@ public class ZooFragment extends Fragment implements IPodcastService {
             SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
             boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
 
+            final String legacyPodcastService = "javascript:(function() { " +
+                    "var audio = document.querySelector('audio'); " +
+                    "if (document.body.contains(audio)) { " +
+                    "    audio.style.minWidth = '90%';" +
+                    "    audio.style.margin= '0 auto';" +
+                    "    audio.onplay = function() {" +
+                    "            JSZOOOUT.mediaZooAction('true');" +
+                    "        };" +
+                    "        audio.onpause = function() {" +
+                    "            JSZOOOUT.mediaZooAction('false');" +
+                    "        };" +
+                    "    }" +
+                    "    var podcastText = document.getElementsByClassName('titolo_articolo titolo');" +
+                    "    if (podcastText.length) {" +
+                    "        var text = podcastText[0].textContent;" +
+                    "        JSZOOOUT.getPodcastTitle(text);" +
+                    "    }" +
+                    "    var podcastSubText = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
+                    "    if (podcastSubText.length) {" +
+                    "        var text = podcastSubText[0].textContent;" +
+                    "        JSZOOOUT.getPodcastSubtitle(text);" +
+                    "    }" +
+                    "    console.log('legacyPodcastService javascript executed');" +
+                    "})()";
+
             final String podcastService = "javascript:(function() { " +
                     "var audio = document.querySelector('audio'); " +
-                    "if (document.body.contains(audio)) { audio.style.minWidth = '90%'; audio.style.margin= '0 auto'; audio.controlsList.remove('nodownload'); " +
+                    "if (document.body.contains(audio)) { " +
+                    "    audio.style.minWidth = '90%';" +
+                    "    audio.style.margin= '0 auto';" +
+                    "    audio.controlsList.remove('nodownload');" +
                     "    audio.onplay = function() {" +
-                    "        JSZOOOUT.mediaZooAction('true');" +
-                    "    };" +
-                    "    audio.onpause = function() {" +
-                    "        JSZOOOUT.mediaZooAction('false');" +
-                    "    };" +
-                    "};" +
-                    "var podcastText = document.getElementsByClassName('titolo_articolo titolo');" +
-                    " if (podcastText.length) { var text = podcastText[0].textContent; " +
-                    "JSZOOOUT.getPodcastTitle(text); " +
-                    "var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
-                    " if (document.body.contains(image)) { JSZOOOUT.getPodcastImage(image.src); };" +
-                    "};" +
-                    "var podcastSubText = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
-                    " if (podcastSubText.length) { var text = podcastSubText[0].textContent; " +
-                    "JSZOOOUT.getPodcastSubtitle(text); };" + "})()";
+                    "            JSZOOOUT.mediaZooAction('true');" +
+                    "        };" +
+                    "        audio.onpause = function() {" +
+                    "            JSZOOOUT.mediaZooAction('false');" +
+                    "        };" +
+                    "    }" +
+                    "    var podcastText = document.getElementsByClassName('titolo_articolo titolo');" +
+                    "    if (podcastText.length) {" +
+                    "        var text = podcastText[0].textContent;" +
+                    "        JSZOOOUT.getPodcastTitle(text);" +
+                    "    }" +
+                    "    var podcastSubText = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
+                    "    if (podcastSubText.length) {" +
+                    "        var text = podcastSubText[0].textContent;" +
+                    "        JSZOOOUT.getPodcastSubtitle(text);" +
+                    "    }" +
+                    "    var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
+                    "    if (document.body.contains(image)) {" +
+                    "         JSZOOOUT.getPodcastImage(image.src);" +
+                    "    }" +
+                    "    console.log('podcastService javascript executed');" +
+                    "})()";
 
             final String pipModeEnabled = "javascript:(function() { " +
                     "    function onFullScreen(e) {" +
@@ -468,6 +503,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     "        JSZOOOUT.getVideoFullscreenState(isFullscreenNow);" +
                     "    }" +
                     "    document.addEventListener('webkitfullscreenchange', onFullScreen);" +
+                    "    console.log('pipModeEnabled javascript executed');" +
                     "})()";
 
 
@@ -617,6 +653,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     " if (element.length) { element[0].style.color = '#121212' }; " +
                     "var element = document.getElementsByClassName('data_articolo data');" +
                     " if (element.length) { element[0].style.color = '#121212' }; " +
+                    "console.log('lightModeEnabled javascript executed');" +
                     "})()";
 
             final String darkModeEnabled = "javascript:(function() { " +
@@ -631,7 +668,9 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     "             element[i].style.color = 'white'; " +
                     "         }" +
                     "     }; " +
-                    " }; " + "})()";
+                    " }; " +
+                    "console.log('darkModeEnabled javascript executed');" +
+                    "})()";
 
             final String javaScript = "javascript:(function() { " +
                     "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
@@ -670,7 +709,9 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     " if (element.length) { element[element.length -1].style.display = 'none' }; " +
                     "var element = document.getElementsByClassName('anteprima_articolo article_cont vc_preview_small_right_webradio vc_txt_xs vc_theme_default" +
                     " vc_theme_zoo Zoo di 105 vc_section_zoo-radio vc_macro_section_webradio vc_macro_section_canale-105 zooradio scheda cms_article ');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " + "})()";
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "console.log('Common javascript executed');" +
+                    "})()";
 
 
 
@@ -706,6 +747,8 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 webView.evaluateJavascript(podcastService, null);
+            } else {
+                webView.evaluateJavascript(legacyPodcastService, null);
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 webView.evaluateJavascript(pipModeEnabled, null);

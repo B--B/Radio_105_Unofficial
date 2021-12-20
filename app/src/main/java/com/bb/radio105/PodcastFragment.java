@@ -454,28 +454,60 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
             SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
             boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
 
+            final String legacyPodcastService = "javascript:(function() { " +
+                    "var audio = document.querySelector('audio'); " +
+                    "if (document.body.contains(audio)) { " +
+                    "    audio.style.minWidth = '90%';" +
+                    "    audio.style.margin= '0 auto';" +
+                    "    audio.onplay = function() {" +
+                    "            JSPODCASTOUT.mediaPodcastAction('true');" +
+                    "        };" +
+                    "        audio.onpause = function() {" +
+                    "            JSPODCASTOUT.mediaPodcastAction('false');" +
+                    "        };" +
+                    "    }" +
+                    "    var podcastText = document.getElementsByClassName('occhiello_articolo');" +
+                    "    if (podcastText.length) {" +
+                    "        var text = podcastText[0].textContent;" +
+                    "        JSPODCASTOUT.getPodcastTitle(text);" +
+                    "    }" +
+                    "    var podcastSubText = document.getElementsByClassName('titolo_articolo titolo');" +
+                    "    if (podcastSubText.length) {" +
+                    "        var text = podcastSubText[0].textContent;" +
+                    "        JSPODCASTOUT.getPodcastSubtitle(text);" +
+                    "    }" +
+                    "    console.log('legacyPodcastService javascript executed');" +
+                    "})()";
+
             final String podcastService = "javascript:(function() { " +
                     "var audio = document.querySelector('audio'); " +
                     "if (document.body.contains(audio)) { " +
-                    "    audio.style.minWidth = '90%'; " +
-                    "    audio.style.margin= '0 auto'; " +
+                    "    audio.style.minWidth = '90%';" +
+                    "    audio.style.margin= '0 auto';" +
                     "    audio.controlsList.remove('nodownload');" +
                     "    audio.onplay = function() {" +
-                    "        JSPODCASTOUT.mediaPodcastAction('true');" +
-                    "    };" +
-                    "    audio.onpause = function() {" +
-                    "        JSPODCASTOUT.mediaPodcastAction('false');" +
-                    "    };" +
-                    "};" +
-                    "var podcastText = document.getElementsByClassName('occhiello_articolo');" +
-                    " if (podcastText.length) { var text = podcastText[0].textContent; " +
-                    "JSPODCASTOUT.getPodcastTitle(text); };" +
-                    "var podcastSubText = document.getElementsByClassName('titolo_articolo titolo');" +
-                    " if (podcastSubText.length) { var text = podcastSubText[0].textContent; " +
-                    "JSPODCASTOUT.getPodcastSubtitle(text); " +
-                    "var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
-                    " if (document.body.contains(image)) { JSPODCASTOUT.getPodcastImage(image.src); };" +
-                    "};" + "})()";
+                    "            JSPODCASTOUT.mediaPodcastAction('true');" +
+                    "        };" +
+                    "        audio.onpause = function() {" +
+                    "            JSPODCASTOUT.mediaPodcastAction('false');" +
+                    "        };" +
+                    "    }" +
+                    "    var podcastText = document.getElementsByClassName('occhiello_articolo');" +
+                    "    if (podcastText.length) {" +
+                    "        var text = podcastText[0].textContent;" +
+                    "        JSPODCASTOUT.getPodcastTitle(text);" +
+                    "    }" +
+                    "    var podcastSubText = document.getElementsByClassName('titolo_articolo titolo');" +
+                    "    if (podcastSubText.length) {" +
+                    "        var text = podcastSubText[0].textContent;" +
+                    "        JSPODCASTOUT.getPodcastSubtitle(text);" +
+                    "    }" +
+                    "    var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
+                    "    if (document.body.contains(image)) {" +
+                    "         JSPODCASTOUT.getPodcastImage(image.src);" +
+                    "    }" +
+                    "    console.log('podcastService javascript executed');" +
+                    "})()";
 
             final String javaScript = "javascript:(function() { " +
                     "document.body.style.backgroundColor = 'transparent';" +
@@ -541,11 +573,15 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
                     "var element = document.getElementsByClassName('vc_hidden_print vc_cont_menu_bar');" +
                     " if (element.length) { element[0].style.display = 'none' }; " +
                     "var element = document.getElementsByClassName('container-fluid vc_bg_grad_green-blu-tone ghost_container');" +
-                    " if (element.length) { element[0].style.display = 'none' }; " + "})()";
+                    " if (element.length) { element[0].style.display = 'none' }; " +
+                    "    console.log('Common javascript executed');" +
+                    "})()";
 
             webView.evaluateJavascript(javaScript, null);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 webView.evaluateJavascript(podcastService, null);
+            } else {
+                webView.evaluateJavascript(legacyPodcastService, null);
             }
             if (postCallbackKey) {
                 webView.postVisualStateCallback(getId(), new WebView.VisualStateCallback() {

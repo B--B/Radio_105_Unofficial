@@ -25,6 +25,7 @@ import static com.bb.radio105.Constants.ACTION_PLAY_PODCAST;
 import static com.bb.radio105.Constants.ACTION_STOP_PODCAST;
 import static com.bb.radio105.Constants.podcastBundle;
 import static com.bb.radio105.Constants.zooBundle;
+import static com.bb.radio105.PodcastFragment.podcastImageUrl;
 import static com.bb.radio105.PodcastFragment.podcastSubtitle;
 import static com.bb.radio105.PodcastFragment.podcastTitle;
 
@@ -296,9 +297,11 @@ public class PodcastService extends Service {
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
             mSession.setActive(true);
             mState = PlaybackStateCompat.STATE_PLAYING;
-            art = AlbumArtCache.getInstance().getBigImage(PodcastFragment.podcastImageUrl.substring(0, 45));
-            if (art == null) {
-                fetchBitmapFromURL(PodcastFragment.podcastImageUrl);
+            if (podcastImageUrl != null) {
+                art = AlbumArtCache.getInstance().getBigImage(PodcastFragment.podcastImageUrl.substring(0, 45));
+                if (art == null) {
+                    fetchBitmapFromURL(PodcastFragment.podcastImageUrl);
+                }
             }
             setUpAsForeground(getString(R.string.playing));
         } else {

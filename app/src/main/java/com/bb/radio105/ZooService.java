@@ -25,6 +25,7 @@ import static com.bb.radio105.Constants.ACTION_PLAY_ZOO;
 import static com.bb.radio105.Constants.ACTION_STOP_ZOO;
 import static com.bb.radio105.Constants.podcastBundle;
 import static com.bb.radio105.Constants.zooBundle;
+import static com.bb.radio105.ZooFragment.podcastImageUrl;
 import static com.bb.radio105.ZooFragment.podcastSubtitle;
 import static com.bb.radio105.ZooFragment.podcastTitle;
 
@@ -296,9 +297,11 @@ public class ZooService extends Service {
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
             mSession.setActive(true);
             mState = PlaybackStateCompat.STATE_PLAYING;
-            art = AlbumArtCache.getInstance().getBigImage(ZooFragment.podcastImageUrl.substring(0, 45));
-            if (art == null) {
-                fetchBitmapFromURL(ZooFragment.podcastImageUrl);
+            if (podcastImageUrl != null) {
+                art = AlbumArtCache.getInstance().getBigImage(ZooFragment.podcastImageUrl.substring(0, 45));
+                if (art == null) {
+                    fetchBitmapFromURL(ZooFragment.podcastImageUrl);
+                }
             }
             setUpAsForeground(getString(R.string.playing));
         } else {

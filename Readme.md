@@ -68,6 +68,7 @@
         * Streaming service will stop if app is removed from recent apps list
     * No cookies
     * If for some reason a link can't be opened, the app will prompt the user to open it in an external browser
+    * PiP mode is supported for fullscreen videos in devices running at least android Oreo
     * For devices running android L and M there are some limitations due to the really old WebView version:
         * Download feature in not available
         * Some videos may not work well, or not work at all

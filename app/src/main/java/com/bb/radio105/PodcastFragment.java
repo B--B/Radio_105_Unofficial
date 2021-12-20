@@ -86,6 +86,7 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
     private RadioServiceBinder mRadioServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isMediaPlayingPodcast;
+    static boolean isVideoInFullscreen;
     static IPodcastService mIPodcastService;
     static String podcastTitle;
     static String podcastSubtitle;
@@ -215,7 +216,7 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
     @Override
     public void onPause() {
         super.onPause();
-        if (mState == PlaybackStateCompat.STATE_STOPPED) {
+        if (mState == PlaybackStateCompat.STATE_STOPPED && !isVideoInFullscreen) {
             if (mWebView != null) {
                 mWebView.onPause();
                 mWebView.pauseTimers();
@@ -226,7 +227,7 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
     @Override
     public void onResume() {
         super.onResume();
-        if (mState == PlaybackStateCompat.STATE_STOPPED) {
+        if (mState == PlaybackStateCompat.STATE_STOPPED && !isVideoInFullscreen) {
             if (mWebView != null) {
                 mWebView.onResume();
                 mWebView.resumeTimers();
@@ -363,6 +364,12 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
         public void getPodcastImage(String mString) {
             podcastImageUrl = mString.replaceAll("(resizer/)[^&]*(/true)", "$1480/480$2");
             Timber.e("artUrl changed, new URL is %s", podcastImageUrl);
+        }
+
+        @JavascriptInterface
+        public void getVideoFullscreenState(String mString) {
+            Timber.e("isVideoInFullscreen is %s", mString);
+            isVideoInFullscreen = Boolean.parseBoolean(mString);
         }
     }
 
@@ -509,6 +516,15 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
                     "    console.log('podcastService javascript executed');" +
                     "})()";
 
+            final String pipModeEnabled = "javascript:(function() { " +
+                    "    function onFullScreen(e) {" +
+                    "        var isFullscreenNow = document.webkitFullscreenElement !== null;" +
+                    "        JSPODCASTOUT.getVideoFullscreenState(isFullscreenNow);" +
+                    "    }" +
+                    "    document.addEventListener('webkitfullscreenchange', onFullScreen);" +
+                    "    console.log('pipModeEnabled javascript executed');" +
+                    "})()";
+
             final String javaScript = "javascript:(function() { " +
                     "document.body.style.backgroundColor = 'transparent';" +
                     "var element = document.getElementsByClassName('container vc_bg_white');" +
@@ -582,6 +598,9 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
                 webView.evaluateJavascript(podcastService, null);
             } else {
                 webView.evaluateJavascript(legacyPodcastService, null);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                webView.evaluateJavascript(pipModeEnabled, null);
             }
             if (postCallbackKey) {
                 webView.postVisualStateCallback(getId(), new WebView.VisualStateCallback() {

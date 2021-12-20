@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements  UpdateColorsInte
         super.onUserLeaveHint();
         Context mContext = this;
         PackageManager mPackageManager = mContext.getPackageManager();
-        if (ZooFragment.isVideoInFullscreen || TvFragment.isTvPlaying) {
+        if (PodcastFragment.isVideoInFullscreen || ZooFragment.isVideoInFullscreen || TvFragment.isTvPlaying) {
             if (mPackageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
                 if (!isInPictureInPictureMode()) {
                     Intent intent = new Intent();

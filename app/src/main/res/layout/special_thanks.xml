@@ -186,7 +186,7 @@
                 app:shapeAppearanceOverlay="@style/imageViewRounded"
                 android:padding="2dp"
                 app:strokeWidth="2dp"
-                app:strokeColor="@color/orange_900" />
+                app:strokeColor="@color/error" />
 
             <View style="@style/separator"
                 app:layout_constraintEnd_toEndOf="parent"

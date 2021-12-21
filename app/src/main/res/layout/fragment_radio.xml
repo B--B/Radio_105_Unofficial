@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintWidth_percent="0.8"
         android:text="@string/streaming"
-        app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/buttonSeparator2" />
@@ -23,7 +22,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintWidth_percent="0.8"
         android:text="@string/pause_streaming"
-        app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/buttonSeparator1" />
@@ -34,7 +32,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintWidth_percent="0.8"
         android:text="@string/stop_streaming"
-        app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/bottomMargin" />

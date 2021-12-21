@@ -44,6 +44,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.color.DynamicColors;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -67,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         // Splash Screen
         SplashScreen.installSplashScreen(this);
+
+        // Enable dynamic colors
+        DynamicColors.applyIfAvailable(this);
 
         final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
         // The apps theme is decided depending upon the saved preferences on app startup

@@ -96,29 +96,35 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             UiModeManager uiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);
             if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
                 if (mPreferenceScreen != null) {
+                    assert webViewPref != null;
                     mPreferenceScreen.removePreference(webViewPref);
                 }
                 if (appNotificationPref != null) {
+                    assert mediaNotification != null;
                     appNotificationPref.removePreference(mediaNotification);
                 }
                 if (streamingPref != null) {
+                    assert serviceKill != null;
                     streamingPref.removePreference(serviceKill);
                 }
             }
             // MiUi - EMUI
             if (Utils.isEMUI() || Utils.isMiUi()) {
                 if (streamingPref != null) {
+                    assert serviceKill != null;
                     streamingPref.removePreference(serviceKill);
                 }
             } else {
                 // Remove dialog for non MiUi/EMUI devices
                 if (mPreferenceScreen != null) {
+                    assert miUiEMUIPref != null;
                     mPreferenceScreen.removePreference(miUiEMUIPref);
                 }
             }
             // Android API below M
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 if (webViewPref != null) {
+                    assert webViewCallback != null;
                     webViewPref.removePreference(webViewCallback);
                 }
             }
@@ -127,6 +133,7 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             boolean experimentalOptions = mSharedPreferences.getBoolean("experimental", false);
             if (!experimentalOptions) {
                 if (mPreferenceScreen != null) {
+                    assert experimentalPref != null;
                     mPreferenceScreen.removePreference(experimentalPref);
                 }
             }

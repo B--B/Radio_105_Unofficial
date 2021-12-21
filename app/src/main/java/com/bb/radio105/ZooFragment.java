@@ -115,10 +115,6 @@ public class ZooFragment extends Fragment implements IPodcastService {
         // Allow Glide to use more memory
         GlideApp.get(requireContext()).setMemoryCategory(MemoryCategory.HIGH);
 
-        // Custom Colors
-        MainActivity.updateColorsInterface.onUpdate(true);
-        MainActivity.isZooColor = true;
-
         // Playback state interface
         mIPodcastService = this;
 

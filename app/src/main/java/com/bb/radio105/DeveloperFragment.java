@@ -53,9 +53,6 @@ public class DeveloperFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_developer, container, false);
 
-        // Stock Colors
-        MainActivity.updateColorsInterface.onUpdate(false);
-
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {

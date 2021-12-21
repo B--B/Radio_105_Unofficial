@@ -67,9 +67,6 @@ public class TvFragment extends Fragment {
         progressBar = root.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
 
-        // Stock Colors
-        MainActivity.updateColorsInterface.onUpdate(false);
-
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Utils.setUpFullScreen(requireActivity());
         } else {

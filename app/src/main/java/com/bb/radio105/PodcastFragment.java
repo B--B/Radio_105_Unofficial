@@ -115,9 +115,6 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
         // Allow Glide to use more memory
         GlideApp.get(requireContext()).setMemoryCategory(MemoryCategory.HIGH);
 
-        // Stock Colors
-        MainActivity.updateColorsInterface.onUpdate(false);
-
         // Playback state interface
         mIPodcastService = this;
 

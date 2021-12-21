@@ -55,9 +55,6 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        // Stock Colors
-        MainActivity.updateColorsInterface.onUpdate(false);
-
         mSettingsFragment = new SettingsFragment();
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()

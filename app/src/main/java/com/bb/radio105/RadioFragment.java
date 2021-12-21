@@ -65,9 +65,6 @@ public class RadioFragment extends Fragment {
 
         root = inflater.inflate(R.layout.fragment_radio, container, false);
 
-        // Stock Colors
-        MainActivity.updateColorsInterface.onUpdate(false);
-
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {

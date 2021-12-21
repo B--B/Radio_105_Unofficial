@@ -101,9 +101,6 @@ public class SocialFragment extends Fragment {
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_social, container, false);
 
-        // Stock Colors
-        MainActivity.updateColorsInterface.onUpdate(false);
-
         followTwitter = root.findViewById(R.id.follow_twitter);
         openFacebookGroup = root.findViewById(R.id.open_facebook_group);
         followInstagram = root.findViewById(R.id.follow_instagram);

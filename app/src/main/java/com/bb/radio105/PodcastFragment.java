@@ -519,6 +519,7 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
                     "        JSPODCASTOUT.getVideoFullscreenState(isFullscreenNow);" +
                     "    }" +
                     "    document.addEventListener('webkitfullscreenchange', onFullScreen);" +
+                    "    document.addEventListener('fullscreenchange', onFullScreen);" +
                     "    console.log('pipModeEnabled javascript executed');" +
                     "})()";
 

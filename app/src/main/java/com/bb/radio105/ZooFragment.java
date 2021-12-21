@@ -499,6 +499,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     "        JSZOOOUT.getVideoFullscreenState(isFullscreenNow);" +
                     "    }" +
                     "    document.addEventListener('webkitfullscreenchange', onFullScreen);" +
+                    "    document.addEventListener('fullscreenchange', onFullScreen);" +
                     "    console.log('pipModeEnabled javascript executed');" +
                     "})()";
 

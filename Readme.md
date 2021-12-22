@@ -18,10 +18,28 @@
 <br />
 <br />
 
-<p align="center"><img src="images/Screenshot_1.png" width="200"> <img src="images/Screenshot_8.png" width="200"> <img src="images/Screenshot_9.png" width="200"></p>
+#### Screenshots
+
+<p align="center">
+<img src="images/Screenshot_1.png" width="180">
+<img src="images/Screenshot_8.png" width="180">
+<img src="images/Screenshot_9.png" width="180">
+<img src="images/Screenshot_11.png" width="180">
+</p>
 
 <br />
 <br />
+
+#### Material You on Android 12
+
+<p align="center">
+<img src="images/Material_you_1.png" height="125" >
+<img src="images/Material_you_2.png" height="125" >
+<img src="images/Material_you_3.png" height="125" >
+<img src="images/Material_you_4.png" height="125" >
+<img src="images/Material_you_5.png" height="125" >
+<img src="images/Material_you_6.png" height="125" >
+</p>
 
 ### Features:
 
@@ -32,7 +50,7 @@
 * The radio streaming can be controlled with wearable devices or Android Auto
 * Can be installed on android TV --> Tested with Android TV emulator
 * Compatible with wearable devices --> Tested with Wear OS emulator and with Xiaomi Band 4 and 5
-* Fully compatible with Android 12 and Material you
+* Fully compatible with Android 12 and [Material you](https://material.io/blog/announcing-material-you)
 * The version downloadable from Play Store use the new [Android App Bundle](https://developer.android.com/platform/technology/app-bundle) format
 
 <br />

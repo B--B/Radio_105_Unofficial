@@ -63,6 +63,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
@@ -109,7 +110,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
         boolean theme = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.webviews_themes_key), true);
         if (!theme) {
-            root.setBackgroundColor(getResources().getColor(R.color.zoo_background));
+            root.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.zoo_background));
         }
 
         // Allow Glide to use more memory

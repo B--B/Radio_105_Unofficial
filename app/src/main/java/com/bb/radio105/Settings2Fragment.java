@@ -129,8 +129,7 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                 }
             }
             // Experimental Options
-            SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-            boolean experimentalOptions = mSharedPreferences.getBoolean("experimental", false);
+            boolean experimentalOptions = Utils.getUserPreferenceBoolean(requireContext(), getString(R.string.experimental_options_key), false);
             if (!experimentalOptions) {
                 if (mPreferenceScreen != null) {
                     assert experimentalPref != null;
@@ -256,14 +255,13 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             if (key.equals(darkModeString)) {
                 final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
                 // The apps theme is decided depending upon the saved preferences on app startup
-                String pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                        .getString(getString(R.string.theme_key), getString(R.string.theme_default_value));
+                String darkMode = Utils.getUserPreferenceString(requireContext(), getString(R.string.theme_key), getString(R.string.theme_default_value));
                 // Comparing to see which preference is selected and applying those theme settings
-                if (pref.equals(darkModeValues[0]))
+                if (darkMode.equals(darkModeValues[0]))
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-                if (pref.equals(darkModeValues[1]))
+                if (darkMode.equals(darkModeValues[1]))
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                if (pref.equals(darkModeValues[2]))
+                if (darkMode.equals(darkModeValues[2]))
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
     }

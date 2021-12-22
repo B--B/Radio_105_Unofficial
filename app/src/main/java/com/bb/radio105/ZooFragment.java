@@ -28,7 +28,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -101,14 +100,12 @@ public class ZooFragment extends Fragment implements IPodcastService {
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_zoo, container, false);
 
-        boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getBoolean(getString(R.string.screen_on_key), false);
-        if (pref) {
+        boolean screenOn = Utils.getUserPreferenceBoolean(requireContext(), getString(R.string.screen_on_key), false);
+        boolean theme = Utils.getUserPreferenceBoolean(requireContext(), getString(R.string.webviews_themes_key), true);
+
+        if (screenOn) {
             requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-
-        boolean theme = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getBoolean(getString(R.string.webviews_themes_key), true);
         if (!theme) {
             root.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.zoo_background));
         }
@@ -141,10 +138,9 @@ public class ZooFragment extends Fragment implements IPodcastService {
         mWebView = root.findViewById(R.id.webView_zoo);
         mProgressBar = root.findViewById(R.id.loading_zoo);
 
-        final String[] hardwareAcceleration = getResources().getStringArray(R.array.theme_values);
+        final String[] hardwareAcceleration = getResources().getStringArray(R.array.hardware_acceleration_values);
         // The apps theme is decided depending upon the saved preferences on app startup
-        String hardwareAccelerationPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getString(getString(R.string.theme_key), getString(R.string.theme_default_value));
+        String hardwareAccelerationPref = Utils.getUserPreferenceString(requireContext(), getString(R.string.hardware_acceleration_key), getString(R.string.hardware_acceleration_default_value));
         if (hardwareAccelerationPref.equals(hardwareAcceleration[0]))
             mWebView.setLayerType(View.LAYER_TYPE_NONE , null);
         if (hardwareAccelerationPref.equals(hardwareAcceleration[1]))
@@ -237,9 +233,9 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
     @Override
     public void onDestroyView() {
-        boolean pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getBoolean(getString(R.string.screen_on_key), false);
-        if (pref) {
+
+        boolean screenOn = Utils.getUserPreferenceBoolean(requireContext(), getString(R.string.screen_on_key), false);
+        if (screenOn) {
             requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
         if (mWakeLock.isHeld()) {
@@ -436,8 +432,8 @@ public class ZooFragment extends Fragment implements IPodcastService {
         @SuppressLint({"WebViewApiAvailability", "NewApi"})
         @Override
         public void onPageFinished (WebView webView, String url) {
-            SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-            boolean postCallbackKey = mSharedPreferences.getBoolean("post_callback_key", false);
+
+            boolean postCallbackKey = Utils.getUserPreferenceBoolean(requireContext(), getString(R.string.post_callback_key), false);
 
             final String legacyPodcastService = "javascript:(function() { " +
                     "var audio = document.querySelector('audio'); " +
@@ -713,8 +709,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
 
 
-            boolean theme = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                    .getBoolean(getString(R.string.webviews_themes_key), true);
+            boolean theme = Utils.getUserPreferenceBoolean(requireContext(), getString(R.string.webviews_themes_key), true);
             if (theme) {
                 final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
                 // The apps theme is decided depending upon the saved preferences on app startup

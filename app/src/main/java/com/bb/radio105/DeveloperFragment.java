@@ -18,7 +18,7 @@ package com.bb.radio105;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -122,16 +122,15 @@ public class DeveloperFragment extends Fragment {
         appVersion.setOnClickListener(view6 -> {
             clickCount ++;
             if (clickCount == 7) {
-                SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                boolean experimentalOptions = mSharedPreferences.getBoolean("experimental", false);
-                SharedPreferences.Editor editor = mSharedPreferences.edit();
+                boolean experimentalOptions = Utils.getUserPreferenceBoolean(requireContext(), getString(R.string.experimental_options_key), false);
+                Editor editor = PreferenceManager.getDefaultSharedPreferences(requireContext()).edit();
                 if (experimentalOptions) {
-                    editor.putBoolean("experimental", false);
+                    editor.putBoolean(getString(R.string.experimental_options_key), false);
                     editor.apply();
                     Toast.makeText(getActivity(), R.string.experimental_disabled,
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    editor.putBoolean("experimental", true);
+                    editor.putBoolean(getString(R.string.experimental_options_key), true);
                     editor.apply();
                     Toast.makeText(getActivity(), R.string.experimental_enabled,
                             Toast.LENGTH_SHORT).show();

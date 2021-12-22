@@ -50,7 +50,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.preference.PreferenceManager;
 
 import timber.log.Timber;
 
@@ -148,8 +147,7 @@ public class PodcastService extends Service {
 
     @SuppressLint("UnspecifiedImmutableFlag")
     private void setUpAsForeground(String text) {
-        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.notification_type_key), true);
+        boolean notificationType = Utils.getUserPreferenceBoolean(this, getString(R.string.notification_type_key), true);
 
         // Creating notification channel
         createNotificationChannel();
@@ -178,7 +176,7 @@ public class PodcastService extends Service {
 
         // Building notification here
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
-        if (pref) {
+        if (notificationType) {
             mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0)
                     .setMediaSession(mSession.getSessionToken()));
@@ -366,9 +364,8 @@ public class PodcastService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
-                boolean pref = PreferenceManager.getDefaultSharedPreferences(context)
-                        .getBoolean(context.getString(R.string.noisy_key), true);
-                if (pref) {
+                boolean noisy = Utils.getUserPreferenceBoolean(context, getString(R.string.noisy_key), true);
+                if (noisy) {
                     if (mState == PlaybackStateCompat.STATE_PLAYING) {
                         processPauseRequestNotification();
                     }

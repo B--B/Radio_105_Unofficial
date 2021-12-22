@@ -92,8 +92,7 @@ public class TvFragment extends Fragment {
         videoView.setVideoURI(Uri.parse(videoUrl));
 
         UiModeManager mUiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);
-        SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        boolean doNotAskAgain = mSharedPreferences.getBoolean("doNotAskAgain", false);
+        boolean doNotAskAgain = Utils.getUserPreferenceBoolean(requireContext(), getString(R.string.do_not_show_again_key), false);
 
         if ((mUiModeManager.getCurrentModeType() != Configuration.UI_MODE_TYPE_TELEVISION) && !doNotAskAgain) {
             LayoutInflater mLayoutInflater = LayoutInflater.from(requireContext());
@@ -105,8 +104,8 @@ public class TvFragment extends Fragment {
                     .setView(tvDialogLayout)
                     .setNeutralButton(R.string.ok, (arg0, arg1) -> {
                         if (dialogCheckBox.isChecked()) {
-                            SharedPreferences.Editor editor = mSharedPreferences.edit();
-                            editor.putBoolean("doNotAskAgain", true);
+                            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(requireContext()).edit();
+                            editor.putBoolean(getString(R.string.do_not_show_again_key), true);
                             editor.apply();
                         }
                         videoView.start();

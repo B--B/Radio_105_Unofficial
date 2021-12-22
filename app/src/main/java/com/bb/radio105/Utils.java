@@ -41,6 +41,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -231,5 +232,15 @@ public class Utils {
         });
 
         mTextView.startAnimation(fadeIn);
+    }
+
+    static Boolean getUserPreferenceBoolean(Context mContext, String preference, boolean defaultValue) {
+        return PreferenceManager.getDefaultSharedPreferences(mContext)
+                .getBoolean(preference, defaultValue);
+    }
+
+    static String getUserPreferenceString(Context mContext, String preference, String defaultValue) {
+        return PreferenceManager.getDefaultSharedPreferences(mContext)
+                .getString(preference, defaultValue);
     }
 }

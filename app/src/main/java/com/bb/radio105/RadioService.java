@@ -49,7 +49,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.media.session.MediaButtonReceiver;
-import androidx.preference.PreferenceManager;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -239,9 +238,8 @@ public class RadioService extends Service implements OnPreparedListener,
         // actually play the song
         if (mState == PlaybackStateCompat.STATE_STOPPED || mState == PlaybackStateCompat.STATE_ERROR) {
             NetworkUtil.checkNetworkInfo(this, type -> {
-                boolean pref1 = PreferenceManager.getDefaultSharedPreferences(this)
-                        .getBoolean(getString(R.string.network_change_key), true);
-                if (pref1) {
+                boolean networkInfo = Utils.getUserPreferenceBoolean(this, getString(R.string.network_change_key), true);
+                if (networkInfo) {
                     if (mState == PlaybackStateCompat.STATE_PLAYING) {
                         if (type) {
                             // Restart the stream. Don't use MediaSession callback as we are
@@ -543,8 +541,7 @@ public class RadioService extends Service implements OnPreparedListener,
      */
     @SuppressLint("UnspecifiedImmutableFlag")
     private void setUpAsForeground(String text) {
-        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.notification_type_key), true);
+        boolean notificationType = Utils.getUserPreferenceBoolean(this, getString(R.string.notification_type_key), true);
 
         // Creating notification channel
         createNotificationChannel();
@@ -563,7 +560,7 @@ public class RadioService extends Service implements OnPreparedListener,
 
         // Building notification here
         mNotificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
-        if (pref) {
+        if (notificationType) {
             mNotificationBuilder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(0, 1)
                     .setMediaSession(mToken));
@@ -598,8 +595,8 @@ public class RadioService extends Service implements OnPreparedListener,
      * the Error state. We warn the user about the error and reset the media player.
      */
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.reconnect_key), true);
+
+        boolean reconnect = Utils.getUserPreferenceBoolean(this, getString(R.string.reconnect_key), true);
 
         Toast.makeText(getApplicationContext(), getString(R.string.error),
                 Toast.LENGTH_SHORT).show();
@@ -608,7 +605,7 @@ public class RadioService extends Service implements OnPreparedListener,
         relaxResources(true);
         giveUpAudioFocus();
 
-        if (pref) {
+        if (reconnect) {
             // Try to restart the service immediately if we have a working internet connection
             if (isDeviceOnline()) {
                 mState = PlaybackStateCompat.STATE_STOPPED;
@@ -667,10 +664,9 @@ public class RadioService extends Service implements OnPreparedListener,
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        boolean pref = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.service_kill_key), false);
-        if (pref) {
-            // Stop music service when the user enabled the option
+        boolean killService = Utils.getUserPreferenceBoolean(this, getString(R.string.service_kill_key), false);
+        if (killService) {
+            // Stop music service when the option is enabled
             mCallback.onStop();
         }
         super.onTaskRemoved(rootIntent);
@@ -932,9 +928,8 @@ public class RadioService extends Service implements OnPreparedListener,
         @Override
         public void onReceive(Context context, Intent intent) {
             if (ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
-                boolean pref = PreferenceManager.getDefaultSharedPreferences(context)
-                        .getBoolean(context.getString(R.string.noisy_key), true);
-                if (pref) {
+                boolean noisy = Utils.getUserPreferenceBoolean(context, getString(R.string.noisy_key), true);
+                if (noisy) {
                     if (mState == PlaybackStateCompat.STATE_PLAYING) {
                         mCallback.onPause();
                     }

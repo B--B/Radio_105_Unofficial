@@ -21,7 +21,7 @@ import android.app.PictureInPictureParams;
 import android.app.RemoteAction;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Icon;
 import android.os.Build;
@@ -74,14 +74,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
         // The apps theme is decided depending upon the saved preferences on app startup
-        String pref = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(getString(R.string.theme_key), getString(R.string.theme_default_value));
+        String darkMode = Utils.getUserPreferenceString(this, getString(R.string.theme_key), getString(R.string.theme_default_value));
         // Comparing to see which preference is selected and applying those theme settings
-        if (pref.equals(darkModeValues[0]))
+        if (darkMode.equals(darkModeValues[0]))
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-        if (pref.equals(darkModeValues[1]))
+        if (darkMode.equals(darkModeValues[1]))
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        if (pref.equals(darkModeValues[2]))
+        if (darkMode.equals(darkModeValues[2]))
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
         setContentView(R.layout.activity_main);
@@ -102,8 +101,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        boolean isFirstStart = mSharedPreferences.getBoolean("firstStart", true);
+        boolean isFirstStart = Utils.getUserPreferenceBoolean(getBaseContext(), getString(R.string.is_first_start_key), true);
 
         if (isFirstStart) {
             new AlertDialog.Builder(MainActivity.this)
@@ -111,8 +109,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     .setTitle(R.string.disclaimer_title)
                     .setMessage(R.string.disclaimer)
                     .setNeutralButton(R.string.ok, (arg0, arg1) -> {
-                        SharedPreferences.Editor editor = mSharedPreferences.edit();
-                        editor.putBoolean("firstStart", false);
+                        Editor editor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+                        editor.putBoolean(getString(R.string.is_first_start_key), false);
                         editor.apply();
                     })
                     .show();

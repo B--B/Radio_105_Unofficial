@@ -1,4 +1,9 @@
-# Radio 105 Unofficial App
+<p align="center">
+    <a href="https://play.google.com/store/apps/details?id=com.bb.radio105" alt="Radio 105 Unofficial App">
+        <img src="images/Logo.png" width="300"/></a>
+</p>
+
+<br />
 
 <p align="center">
     <a href="https://github.com/B--B/Radio_105_Unofficial/releases" alt="Releases">
@@ -33,12 +38,12 @@
 #### Material You on Android 12
 
 <p align="center">
-<img src="images/Material_you_1.png" height="125" >
-<img src="images/Material_you_2.png" height="125" >
-<img src="images/Material_you_3.png" height="125" >
-<img src="images/Material_you_4.png" height="125" >
-<img src="images/Material_you_5.png" height="125" >
-<img src="images/Material_you_6.png" height="125" >
+<img src="images/Material_you_1.png" height="125">
+<img src="images/Material_you_2.png" height="125">
+<img src="images/Material_you_3.png" height="125">
+<img src="images/Material_you_4.png" height="125">
+<img src="images/Material_you_5.png" height="125">
+<img src="images/Material_you_6.png" height="125">
 </p>
 
 ### Features:

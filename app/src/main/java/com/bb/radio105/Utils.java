@@ -93,26 +93,30 @@ public class Utils {
     static void setUpFullScreen(Activity mActivity) {
         DrawerLayout drawer = mActivity.findViewById(R.id.drawer_layout);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        mActivity.getWindow().addFlags(SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         final WindowInsetsControllerCompat controllerCompat = new WindowInsetsControllerCompat(mActivity.getWindow(), mActivity.getWindow().getDecorView());
         controllerCompat.hide(WindowInsetsCompat.Type.systemBars());
         controllerCompat.setSystemBarsBehavior(BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
         Objects.requireNonNull(((AppCompatActivity) mActivity).getSupportActionBar()).hide();
+        drawer.setFitsSystemWindows(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             mActivity.getWindow().setDecorFitsSystemWindows(false);
+        } else {
+            mActivity.getWindow().addFlags(SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         }
     }
 
     static void restoreScreen(Activity mActivity) {
         DrawerLayout drawer = mActivity.findViewById(R.id.drawer_layout);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        mActivity.getWindow().clearFlags(SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         final WindowInsetsControllerCompat controllerCompat = new WindowInsetsControllerCompat(mActivity.getWindow(), mActivity.getWindow().getDecorView());
         controllerCompat.show(WindowInsetsCompat.Type.systemBars());
         controllerCompat.setSystemBarsBehavior(BEHAVIOR_SHOW_BARS_BY_SWIPE);
         Objects.requireNonNull(((AppCompatActivity) mActivity).getSupportActionBar()).show();
+        drawer.setFitsSystemWindows(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             mActivity.getWindow().setDecorFitsSystemWindows(true);
+        } else {
+            mActivity.getWindow().clearFlags(SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         }
     }
 

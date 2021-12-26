@@ -16,13 +16,14 @@
 
 package com.bb.radio105;
 
+import static android.support.v4.media.session.PlaybackStateCompat.*;
+
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.media.MediaMetadataCompat;
@@ -41,6 +42,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -107,33 +110,19 @@ public class RadioFragment extends Fragment {
         requireContext().startService(startMusicService);
         super.onStart();
         requireContext().bindService(new Intent(getContext(), RadioService.class), mServiceConnection, 0);
-        if (RadioService.isPlaying) {
-            imageArt.setVisibility(View.VISIBLE);
-            imageLogo.setVisibility(View.INVISIBLE);
-            titleText.setVisibility(View.VISIBLE);
-            djNameText.setVisibility(View.VISIBLE);
-        } else {
-            imageArt.setVisibility(View.INVISIBLE);
-            imageLogo.setVisibility(View.VISIBLE);
-            titleText.setVisibility(View.INVISIBLE);
-            djNameText.setVisibility(View.INVISIBLE);
-        }
         buildTransportControls();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        requireActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        requireContext().unbindService(mServiceConnection);
-        mRadioServiceBinder = null;
-        if (RadioService.mState == PlaybackStateCompat.STATE_STOPPED) {
+        if (mRadioServiceBinder.getPlaybackState() == STATE_STOPPED) {
+            requireContext().unbindService(mServiceConnection);
+            mRadioServiceBinder = null;
             requireContext().stopService(startMusicService);
+        } else {
+            requireContext().unbindService(mServiceConnection);
+            mRadioServiceBinder = null;
         }
         startMusicService = null;
         if (mMediaControllerCompat != null) {
@@ -160,17 +149,14 @@ public class RadioFragment extends Fragment {
         button1.setOnClickListener(v -> {
             if (mBound) {
                 mMediaControllerCompat.getTransportControls().play();
-                Utils.fadeOutAndInImageView(imageLogo, imageArt);
-                titleText.setText(mRadioServiceBinder.getTitleString());
-                Utils.fadeInTextView(titleText);
-                djNameText.setText(mRadioServiceBinder.getDjString());
-                Utils.fadeInTextView(djNameText);
+                Utils.fadeOutImageView(imageLogo);
             }
         });
         button2.setOnClickListener(v -> {
             if (mBound) {
                 mMediaControllerCompat.getTransportControls().pause();
-                Utils.fadeOutAndInImageView(imageArt, imageLogo);
+                Utils.fadeOutImageView(imageArt);
+                Utils.fadeInImageView(imageLogo, 500);
                 Utils.fadeOutTextView(titleText);
                 Utils.fadeOutTextView(djNameText);
             }
@@ -179,45 +165,13 @@ public class RadioFragment extends Fragment {
             if (mBound) {
                 mMediaControllerCompat.getTransportControls().stop();
                 if (imageArt.getVisibility() == View.VISIBLE) {
-                    Utils.fadeOutAndInImageView(imageArt, imageLogo);
+                    Utils.fadeOutImageView(imageArt);
                     Utils.fadeOutTextView(titleText);
                     Utils.fadeOutTextView(djNameText);
                 }
+                Utils.fadeInImageView(imageLogo, 500);
             }
         });
-    }
-
-    private void setButtonState() {
-        if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
-            Drawable imageResource = new BitmapDrawable(getResources(), mRadioServiceBinder.getArt());
-            imageArt.setImageDrawable(imageResource);
-            titleText.setText(mRadioServiceBinder.getTitleString());
-            djNameText.setText(mRadioServiceBinder.getDjString());
-            button1.setEnabled(false);
-            button2.setEnabled(true);
-            button3.setEnabled(true);
-        } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PAUSED) {
-            button1.setEnabled(true);
-            button2.setEnabled(false);
-            button3.setEnabled(true);
-        } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_BUFFERING) {
-            button1.setEnabled(false);
-            button2.setEnabled(false);
-            button3.setEnabled(true);
-        } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_STOPPED) {
-            button1.setEnabled(true);
-            button2.setEnabled(false);
-            button3.setEnabled(false);
-        } else if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_ERROR) {
-            if (imageArt.getVisibility() == View.VISIBLE) {
-                Utils.fadeOutAndInImageView(imageArt, imageLogo);
-                Utils.fadeOutTextView(titleText);
-                Utils.fadeOutTextView(djNameText);
-            }
-            button1.setEnabled(true);
-            button2.setEnabled(false);
-            button3.setEnabled(false);
-        }
     }
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -229,6 +183,21 @@ public class RadioFragment extends Fragment {
             mCallback.onPlaybackStateChanged(mMediaControllerCompat.getPlaybackState());
             mMediaControllerCompat.registerCallback(mCallback);
             mBound = true;
+            if (mRadioServiceBinder.getPlaybackState() == STATE_PLAYING) {
+                Drawable imageResource = new BitmapDrawable(getResources(), mRadioServiceBinder.getArt());
+                imageArt.setImageDrawable(imageResource);
+                titleText.setText(mRadioServiceBinder.getTitleString());
+                djNameText.setText(mRadioServiceBinder.getDjString());
+                imageArt.setVisibility(View.VISIBLE);
+                imageLogo.setVisibility(View.INVISIBLE);
+                titleText.setVisibility(View.VISIBLE);
+                djNameText.setVisibility(View.VISIBLE);
+            } else {
+                imageArt.setVisibility(View.INVISIBLE);
+                imageLogo.setVisibility(View.VISIBLE);
+                titleText.setVisibility(View.INVISIBLE);
+                djNameText.setVisibility(View.INVISIBLE);
+            }
         }
 
         @Override
@@ -241,15 +210,73 @@ public class RadioFragment extends Fragment {
     private final MediaControllerCompat.Callback mCallback = new MediaControllerCompat.Callback() {
         @Override
         public void onMetadataChanged(MediaMetadataCompat metadata) {
-            Drawable imageResource = new BitmapDrawable(getResources(), mRadioServiceBinder.getArt());
-            imageArt.setImageDrawable(imageResource);
-            titleText.setText(mRadioServiceBinder.getTitleString());
-            djNameText.setText(mRadioServiceBinder.getDjString());
+            if (mRadioServiceBinder.getPlaybackState() == STATE_PLAYING) {
+                Timber.e("Metadata changed during play state, check if the Radio fragment must be updated");
+                if (!Objects.equals(metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE), titleText.getText().toString())) {
+                    Timber.e("Title changed, update metadata. Old title: %s%s%s", titleText.getText().toString(), " new title: ", metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
+                    Drawable imageResource = new BitmapDrawable(getResources(), metadata.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART));
+                    imageArt.setImageDrawable(imageResource);
+                    titleText.setText(metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
+                    djNameText.setText(metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
+                }
+            } else {
+                Timber.e("Metadata changed, but we are not in play state");
+            }
         }
 
         @Override
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
-            setButtonState();
+            Timber.e("Playback state changed, new state is: %s", state.getState());
+            switch (state.getState()) {
+                case STATE_PLAYING:
+                    if (RadioService.fromPauseState) {
+                        Utils.fadeInImageView(imageArt, 500);
+                        Utils.fadeInTextView(titleText, 500);
+                        Utils.fadeInTextView(djNameText, 500);
+                    } else {
+                        Utils.fadeInImageView(imageArt, 0);
+                        Utils.fadeInTextView(titleText, 0);
+                        Utils.fadeInTextView(djNameText, 0);
+                    }
+                    button1.setEnabled(false);
+                    button2.setEnabled(true);
+                    button3.setEnabled(true);
+                    break;
+                case STATE_PAUSED:
+                    button1.setEnabled(true);
+                    button2.setEnabled(false);
+                    button3.setEnabled(true);
+                    break;
+                case STATE_BUFFERING:
+                    button1.setEnabled(false);
+                    button2.setEnabled(false);
+                    button3.setEnabled(true);
+                    break;
+                case STATE_STOPPED:
+                    button1.setEnabled(true);
+                    button2.setEnabled(false);
+                    button3.setEnabled(false);
+                    break;
+                case STATE_ERROR:
+                    if (imageLogo.getVisibility() != View.VISIBLE) {
+                        Utils.fadeOutImageView(imageArt);
+                        Utils.fadeInImageView(imageLogo, 500);
+                        Utils.fadeOutTextView(titleText);
+                        Utils.fadeOutTextView(djNameText);
+                    }
+                    button1.setEnabled(true);
+                    button2.setEnabled(false);
+                    button3.setEnabled(false);
+                    break;
+                case STATE_CONNECTING:
+                case STATE_FAST_FORWARDING:
+                case STATE_NONE:
+                case STATE_REWINDING:
+                case STATE_SKIPPING_TO_NEXT:
+                case STATE_SKIPPING_TO_PREVIOUS:
+                case STATE_SKIPPING_TO_QUEUE_ITEM:
+                    break;
+            }
         }
     };
 }

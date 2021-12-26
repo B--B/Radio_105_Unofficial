@@ -150,33 +150,33 @@ public class Utils {
         return line;
     }
 
-    static void fadeOutAndInImageView(final ImageView fadeOutImageView, final ImageView fadeInImageView)
-    {
+    static void fadeOutImageView(final ImageView fadeOutImageView) {
         Animation fadeOut = new AlphaAnimation(1, 0);
         fadeOut.setInterpolator(new AccelerateInterpolator());
         fadeOut.setDuration(500);
 
-        Animation fadeIn = new AlphaAnimation(0, 1);
-        fadeIn.setInterpolator(new AccelerateInterpolator());
-        fadeIn.setDuration(500);
-
-        fadeOut.setAnimationListener(new Animation.AnimationListener()
-        {
+        fadeOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {}
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 fadeOutImageView.setVisibility(View.INVISIBLE);
-                fadeInImageView.startAnimation(fadeIn);
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {}
         });
+        fadeOutImageView.startAnimation(fadeOut);
+    }
 
-        fadeIn.setAnimationListener(new Animation.AnimationListener()
-        {
+    static void fadeInImageView(final ImageView fadeInImageView, long delay) {
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new AccelerateInterpolator());
+        fadeIn.setDuration(500);
+        fadeIn.setStartOffset(delay);
+
+        fadeIn.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
                 fadeInImageView.setVisibility(View.VISIBLE);}
@@ -187,19 +187,15 @@ public class Utils {
             @Override
             public void onAnimationRepeat(Animation animation) {}
         });
-
-        fadeOutImageView.startAnimation(fadeOut);
+        fadeInImageView.startAnimation(fadeIn);
     }
 
-
-    static void fadeOutTextView(final TextView mTextView)
-    {
+    static void fadeOutTextView(final TextView mTextView) {
         Animation fadeOut = new AlphaAnimation(1, 0);
         fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setDuration(1000);
+        fadeOut.setDuration(500);
 
-        fadeOut.setAnimationListener(new Animation.AnimationListener()
-        {
+        fadeOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {}
 
@@ -211,18 +207,16 @@ public class Utils {
             @Override
             public void onAnimationRepeat(Animation animation) {}
         });
-
         mTextView.startAnimation(fadeOut);
     }
 
-    static void fadeInTextView(final TextView mTextView)
-    {
+    static void fadeInTextView(final TextView mTextView, final long delay) {
         Animation fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setInterpolator(new AccelerateInterpolator());
-        fadeIn.setDuration(1000);
+        fadeIn.setDuration(500);
+        fadeIn.setStartOffset(delay);
 
-        fadeIn.setAnimationListener(new Animation.AnimationListener()
-        {
+        fadeIn.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
                 mTextView.setVisibility(View.VISIBLE);
@@ -234,7 +228,6 @@ public class Utils {
             @Override
             public void onAnimationRepeat(Animation animation) {}
         });
-
         mTextView.startAnimation(fadeIn);
     }
 

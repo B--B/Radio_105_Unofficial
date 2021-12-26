@@ -96,7 +96,7 @@ public class RadioService extends Service implements OnPreparedListener,
     private Bitmap smallIcon;
     private String artUrlResized;
     private volatile boolean mAudioNoisyReceiverRegistered;
-    static boolean isPlaying = false;
+    static boolean fromPauseState = false;
 
     // Binder given to clients
     private final IBinder mIBinder = new RadioServiceBinder();
@@ -264,7 +264,6 @@ public class RadioService extends Service implements OnPreparedListener,
         if (!mSession.isActive()) {
             mSession.setActive(true);
         }
-        isPlaying = true;
     }
 
     private void processPauseRequest() {
@@ -279,7 +278,7 @@ public class RadioService extends Service implements OnPreparedListener,
             // do not give up audio focus, but unregister AudioNoisyReceiver
             unregisterAudioNoisyReceiver();
         }
-        isPlaying = false;
+        fromPauseState = true;
     }
 
     private void processStopRequest() {
@@ -297,7 +296,7 @@ public class RadioService extends Service implements OnPreparedListener,
             unregisterAudioNoisyReceiver();
             NetworkUtil.unregisterNetworkCallback();
         }
-        isPlaying = false;
+        fromPauseState = false;
     }
 
     /**

@@ -111,7 +111,7 @@ public class RadioService extends Service implements OnPreparedListener,
     private static final String CHANNEL_ID = "Radio105ServiceChannel";
 
     // our media player
-    static MediaPlayer mPlayer = null;
+    private MediaPlayer mPlayer = null;
 
     // Current local media player state
     static int mState = PlaybackStateCompat.STATE_STOPPED;

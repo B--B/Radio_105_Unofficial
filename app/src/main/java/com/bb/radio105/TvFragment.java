@@ -52,7 +52,6 @@ public class TvFragment extends Fragment {
     private View root;
     private ProgressBar progressBar;
     private VideoView videoView;
-    private String videoUrl;
     private RadioServiceBinder mRadioServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
     static boolean isTvPlaying;
@@ -86,7 +85,7 @@ public class TvFragment extends Fragment {
             requireContext().bindService(new Intent(getContext(), RadioService.class), mServiceConnection, 0);
         }
         // Start video streaming
-        videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
+        final String videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
         videoView.requestFocus();
         videoView.setOnInfoListener(onInfoToPlayStateListener);
         videoView.setVideoURI(Uri.parse(videoUrl));
@@ -167,7 +166,6 @@ public class TvFragment extends Fragment {
         }
         videoView = null;
         progressBar = null;
-        videoUrl = null;
         root = null;
     }
 

@@ -227,23 +227,6 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
         }
     }
 
-    /*
-    @Override
-    public void onConfigurationChanged(@NotNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        String javaScript = "javascript:(function() { " +
-                "var x = window.matchMedia('(max-width: 767px)');" +
-                "if (x.matches) {" +
-                "var element = document.getElementsByClassName('breadcrumbs_orizzontale vc_breadcrumbs null');" +
-                " if (element.length) { element[0].style.display = 'hide' }; } else {" +
-                "var element = document.getElementsByClassName('breadcrumbs_orizzontale vc_breadcrumbs null');" +
-                " if (element.length) { element[0].style.display = 'show' }; } " +
-                "})()";
-        mWebView.evaluateJavascript(javaScript, null);
-        Timber.e("Triggered configuration change");
-    }
-    */
-
     @Override
     public void onDestroyView() {
         boolean pref = Utils.getUserPreferenceBoolean(requireContext(), getString(R.string.screen_on_key), false);

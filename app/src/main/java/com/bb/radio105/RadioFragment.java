@@ -168,8 +168,10 @@ public class RadioFragment extends Fragment {
                     Utils.fadeOutImageView(imageArt);
                     Utils.fadeOutTextView(titleText);
                     Utils.fadeOutTextView(djNameText);
+                    Utils.fadeInImageView(imageLogo, 500);
+                } else if (imageArt.getVisibility() != View.VISIBLE && imageLogo.getVisibility() != View.VISIBLE) {
+                    Utils.fadeInImageView(imageLogo, 500);
                 }
-                Utils.fadeInImageView(imageLogo, 500);
             }
         });
     }
@@ -229,14 +231,16 @@ public class RadioFragment extends Fragment {
             Timber.e("Playback state changed, new state is: %s", state.getState());
             switch (state.getState()) {
                 case STATE_PLAYING:
-                    if (RadioService.fromPauseState) {
-                        Utils.fadeInImageView(imageArt, 500);
-                        Utils.fadeInTextView(titleText, 500);
-                        Utils.fadeInTextView(djNameText, 500);
-                    } else {
-                        Utils.fadeInImageView(imageArt, 0);
-                        Utils.fadeInTextView(titleText, 0);
-                        Utils.fadeInTextView(djNameText, 0);
+                    if (imageLogo.getVisibility() != View.INVISIBLE || imageArt.getVisibility() != View.VISIBLE) {
+                        if (RadioService.fromPauseState) {
+                            Utils.fadeInImageView(imageArt, 500);
+                            Utils.fadeInTextView(titleText, 500);
+                            Utils.fadeInTextView(djNameText, 500);
+                        } else {
+                            Utils.fadeInImageView(imageArt, 0);
+                            Utils.fadeInTextView(titleText, 0);
+                            Utils.fadeInTextView(djNameText, 0);
+                        }
                     }
                     button1.setEnabled(false);
                     button2.setEnabled(true);

@@ -151,6 +151,9 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mWebView.getSettings().setOffscreenPreRaster(true);
+        }
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.addJavascriptInterface(new JSInterfacePodcast(),"JSPODCASTOUT");

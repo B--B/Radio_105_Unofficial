@@ -153,7 +153,7 @@ public class Utils {
     static void fadeOutImageView(final ImageView fadeOutImageView) {
         Animation fadeOut = new AlphaAnimation(1, 0);
         fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setDuration(500);
+        fadeOut.setDuration(250);
 
         fadeOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -173,7 +173,7 @@ public class Utils {
     static void fadeInImageView(final ImageView fadeInImageView, long delay) {
         Animation fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setInterpolator(new AccelerateInterpolator());
-        fadeIn.setDuration(500);
+        fadeIn.setDuration(250);
         fadeIn.setStartOffset(delay);
 
         fadeIn.setAnimationListener(new Animation.AnimationListener() {
@@ -193,7 +193,7 @@ public class Utils {
     static void fadeOutTextView(final TextView mTextView) {
         Animation fadeOut = new AlphaAnimation(1, 0);
         fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setDuration(500);
+        fadeOut.setDuration(250);
 
         fadeOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -213,7 +213,7 @@ public class Utils {
     static void fadeInTextView(final TextView mTextView, final long delay) {
         Animation fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setInterpolator(new AccelerateInterpolator());
-        fadeIn.setDuration(500);
+        fadeIn.setDuration(250);
         fadeIn.setStartOffset(delay);
 
         fadeIn.setAnimationListener(new Animation.AnimationListener() {

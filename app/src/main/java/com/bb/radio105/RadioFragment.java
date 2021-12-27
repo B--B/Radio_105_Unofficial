@@ -156,7 +156,7 @@ public class RadioFragment extends Fragment {
             if (mBound) {
                 mMediaControllerCompat.getTransportControls().pause();
                 Utils.fadeOutImageView(imageArt);
-                Utils.fadeInImageView(imageLogo, 500);
+                Utils.fadeInImageView(imageLogo, 250);
                 Utils.fadeOutTextView(titleText);
                 Utils.fadeOutTextView(djNameText);
             }
@@ -168,9 +168,9 @@ public class RadioFragment extends Fragment {
                     Utils.fadeOutImageView(imageArt);
                     Utils.fadeOutTextView(titleText);
                     Utils.fadeOutTextView(djNameText);
-                    Utils.fadeInImageView(imageLogo, 500);
+                    Utils.fadeInImageView(imageLogo, 250);
                 } else if (imageArt.getVisibility() != View.VISIBLE && imageLogo.getVisibility() != View.VISIBLE) {
-                    Utils.fadeInImageView(imageLogo, 500);
+                    Utils.fadeInImageView(imageLogo, 250);
                 }
             }
         });
@@ -233,9 +233,9 @@ public class RadioFragment extends Fragment {
                 case STATE_PLAYING:
                     if (imageLogo.getVisibility() != View.INVISIBLE || imageArt.getVisibility() != View.VISIBLE) {
                         if (RadioService.fromPauseState) {
-                            Utils.fadeInImageView(imageArt, 500);
-                            Utils.fadeInTextView(titleText, 500);
-                            Utils.fadeInTextView(djNameText, 500);
+                            Utils.fadeInImageView(imageArt, 250);
+                            Utils.fadeInTextView(titleText, 250);
+                            Utils.fadeInTextView(djNameText, 250);
                         } else {
                             Utils.fadeInImageView(imageArt, 0);
                             Utils.fadeInTextView(titleText, 0);
@@ -264,7 +264,7 @@ public class RadioFragment extends Fragment {
                 case STATE_ERROR:
                     if (imageLogo.getVisibility() != View.VISIBLE) {
                         Utils.fadeOutImageView(imageArt);
-                        Utils.fadeInImageView(imageLogo, 500);
+                        Utils.fadeInImageView(imageLogo, 250);
                         Utils.fadeOutTextView(titleText);
                         Utils.fadeOutTextView(djNameText);
                     }

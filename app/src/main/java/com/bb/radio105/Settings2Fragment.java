@@ -85,19 +85,20 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             PreferenceCategory appNotificationPref = findPreference(getString(R.string.app_pref_key));
             PreferenceCategory streamingPref = findPreference(getString(R.string.streaming_pref_key));
             PreferenceCategory miUiEMUIPref = findPreference(getString(R.string.miui_emui_pref_key));
-            PreferenceCategory webViewPref = findPreference(getString(R.string.preferences_webviews));
+            PreferenceCategory webViewPref = findPreference(getString(R.string.webviews_pref_key));
             PreferenceCategory experimentalPref = findPreference(getString(R.string.experimental_key));
             // Preferences
             SwitchPreferenceCompat mediaNotification = findPreference(getString(R.string.notification_type_key));
             SwitchPreferenceCompat serviceKill = findPreference(getString(R.string.service_kill_key));
             SwitchPreferenceCompat webViewCallback = findPreference(getString(R.string.post_callback_key));
+            SwitchPreferenceCompat webViewScreenOn = findPreference(getString(R.string.screen_on_key));
 
             // Android TV
             UiModeManager uiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);
             if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
-                if (mPreferenceScreen != null) {
-                    assert webViewPref != null;
-                    mPreferenceScreen.removePreference(webViewPref);
+                if (webViewPref != null) {
+                    assert webViewScreenOn != null;
+                    webViewPref.removePreference(webViewScreenOn);
                 }
                 if (appNotificationPref != null) {
                     assert mediaNotification != null;

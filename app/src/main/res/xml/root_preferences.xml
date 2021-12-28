@@ -45,13 +45,6 @@
             app:summaryOn="@string/screen_on_summary_on"
             app:title="@string/screen_on_title"
             app:defaultValue="false"/>
-
-        <SwitchPreferenceCompat
-            app:key="@string/post_callback_key"
-            app:summaryOff="@string/post_callback_summary_off"
-            app:summaryOn="@string/post_callback_summary_on"
-            app:title="@string/post_callback_title"
-            app:defaultValue="true"/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -99,6 +92,13 @@
             app:key="@string/hardware_acceleration_key"
             app:title="@string/hardware_acceleration_title"
             app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            app:key="@string/post_callback_key"
+            app:summaryOff="@string/post_callback_summary_off"
+            app:summaryOn="@string/post_callback_summary_on"
+            app:title="@string/post_callback_title"
+            app:defaultValue="true"/>
     </PreferenceCategory>
 
     <PreferenceCategory>

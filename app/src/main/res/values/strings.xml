@@ -88,7 +88,7 @@
     <string name="screen_on_summary_off">Screen will regularly turns off in Podcast and The 105 Zoo sections</string>
 
     <!-- WebView postVisual callback -->
-    <string name="post_callback_key" translatable="false">post_callback</string>
+    <string name="post_callback_key" translatable="false">post_callback_compat</string>
     <string name="post_callback_title">WebViews postVisualStateCallback</string>
     <string name="post_callback_summary_on">WebViews will use a postVisualStateCallback for set visibility when page is loaded in Podcast/Zoo sections.</string>
     <string name="post_callback_summary_off">WebViews will use a safe way for set visibility when page is loaded in Podcast/Zoo sections. This method is slower and can cause sporadic graphical glitches.</string>

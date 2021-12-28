@@ -117,6 +117,7 @@
     <!-- Social Fragment -->
     <string name="contact">Contacts</string>
     <string name="follow">Follow</string>
+    <string name="follow_zoo">Follow The 105 Zoo</string>
     <string name="follow_on_twitter">Follow on Twitter</string>
     <string name="follow_on_instagram">Follow on Instagram</string>
     <string name="follow_on_tiktok">Follow on TikTok</string>
@@ -132,6 +133,9 @@
     <string name="wine_zoo">The 105 Zoo wine shop</string>
     <string name="mr_marketta">Mr Marketta</string>
     <string name="mazzoli_masterclass">Marco Mazzoli Masterclass</string>
+    <string name="zootube">ZooTube</string>
+    <string name="join_facebook_group_zoo">Follow The 105 Zoo on Facebook</string>
+    <string name="follow_on_instagram_zoo">Follow The 105 Zoo on Instagram</string>
 
     <!-- Network Change -->
     <string name="network_change_key" translatable="false">network_change</string>

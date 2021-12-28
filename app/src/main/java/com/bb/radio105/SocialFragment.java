@@ -73,11 +73,14 @@ import androidx.fragment.app.Fragment;
 public class SocialFragment extends Fragment {
     private static final String ARG_CONTACT_EMAIL_ADDRESS = "diretta@105.net";
     private static final String ARG_FACEBOOK_PAGE = "Radio105";
+    private static final String ARG_FACEBOOK_PAGE_ZOO = "THE105ZOO";
     private static final String ARG_TWITTER_PROFILE = "Radio105";
     private static final String ARG_INSTAGRAM_PROFILE = "radio105";
+    private static final String ARG_INSTAGRAM_PROFILE_ZOO = "zoodi105official";
     private static final String ARG_TWITCH_CHANNEL = "radio_105";
     private static final String ARG_TIKTOK_PROFILE = "@Radio105";
     private static final String ARG_YOUTUBE_PROFILE = "UCcm6KpwkAsyZ5U4LtCGjBcA";
+    private static final String ARG_YOUTUBE_PROFILE_ZOO = "UCQ4Bx8VCyE-PciPtEXPZYmg";
     private static final String ARG_PHONE_NUMBER = "393424115105";
     private static final String ARG_TELEGRAM_ID = "1416935972";
 
@@ -94,6 +97,9 @@ public class SocialFragment extends Fragment {
     private TextView telegramMessage;
     private TextView smsMessage;
     // Zoo links
+    private TextView openFacebookGroupZoo;
+    private TextView followInstagramZoo;
+    private TextView youtubeChannelZoo;
     private TextView fumagazzi;
     private TextView zooWine;
     private TextView mrMarketta;
@@ -118,6 +124,9 @@ public class SocialFragment extends Fragment {
         telegramMessage = root.findViewById(R.id.telegram_message);
         smsMessage = root.findViewById(R.id.sms_message);
 
+        openFacebookGroupZoo = root.findViewById(R.id.open_facebook_group_zoo);
+        followInstagramZoo = root.findViewById(R.id.follow_instagram_zoo);
+        youtubeChannelZoo = root.findViewById(R.id.youtube_channel_zoo);
         fumagazzi = root.findViewById(R.id.fumagazzi);
         zooWine = root.findViewById(R.id.wine);
         mrMarketta = root.findViewById(R.id.marketta);
@@ -204,13 +213,32 @@ public class SocialFragment extends Fragment {
 
         smsMessage.setOnClickListener(view10 -> startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + ARG_PHONE_NUMBER))));
 
-        fumagazzi.setOnClickListener(view11 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.fumagazzi.it/"))));
+        openFacebookGroupZoo.setOnClickListener(view11 -> {
+            try {
+                requireContext().getPackageManager().getPackageInfo("com.facebook.katana", 0);
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/" + ARG_FACEBOOK_PAGE_ZOO)));
+            } catch (Exception e) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/" + ARG_FACEBOOK_PAGE_ZOO)));
+            }
+        });
 
-        zooWine.setOnClickListener(view12 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.enotecazoo.com/"))));
+        followInstagramZoo.setOnClickListener(view12 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/_u/" + ARG_INSTAGRAM_PROFILE_ZOO))));
 
-        mrMarketta.setOnClickListener(view13 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mistermarketta.com/"))));
+        youtubeChannelZoo.setOnClickListener(view13 -> {
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube.com/channel/" + ARG_YOUTUBE_PROFILE_ZOO)));
+            } catch (Exception e) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/channel/" + ARG_YOUTUBE_PROFILE_ZOO)));
+            }
+        });
 
-        masterClass.setOnClickListener(view14 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.emme.academy/"))));
+        fumagazzi.setOnClickListener(view14 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.fumagazzi.it/"))));
+
+        zooWine.setOnClickListener(view15 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.enotecazoo.com/"))));
+
+        mrMarketta.setOnClickListener(view16 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mistermarketta.com/"))));
+
+        masterClass.setOnClickListener(view17 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.emme.academy/"))));
     }
 
     public void onDestroyView() {

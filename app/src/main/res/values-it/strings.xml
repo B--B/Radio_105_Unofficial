@@ -102,6 +102,7 @@
     <!-- Social Fragment -->
     <string name="contact">Scrivi alla diretta</string>
     <string name="follow">Segui Radio 105</string>
+    <string name="follow_zoo">Segui lo Zoo di 105</string>
     <string name="follow_on_twitter">Segui su Twitter</string>
     <string name="follow_on_instagram">Segui su Instagram</string>
     <string name="follow_on_tiktok">Segui su TikTok</string>
@@ -117,6 +118,9 @@
     <string name="wine_zoo">EnotecaZoo</string>
     <string name="mr_marketta">Mister Marketta</string>
     <string name="mazzoli_masterclass">Marco Mazzoli Masterclass</string>
+    <string name="zootube">ZooTube</string>
+    <string name="join_facebook_group_zoo">Segui lo Zoo di 105 su Facebook</string>
+    <string name="follow_on_instagram_zoo">Segui lo Zoo di 105 su Instagram</string>
 
     <!-- Network Change -->
     <string name="network_change_off">L\' applicazione non proverà a riconnettere lo streaming radio quando il telefono passa dalla rete mobile alla rete wireless e viceversa</string>

@@ -17,6 +17,8 @@
 package com.bb.radio105;
 
 import static android.content.Context.UI_MODE_SERVICE;
+import static android.support.v4.media.session.PlaybackStateCompat.STATE_PLAYING;
+import static android.support.v4.media.session.PlaybackStateCompat.STATE_STOPPED;
 
 import android.app.UiModeManager;
 import android.content.ComponentName;
@@ -29,7 +31,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,7 +82,7 @@ public class TvFragment extends Fragment {
     public void onStart() {
         super.onStart();
         // Bind music service only if is already running
-        if (RadioService.mState != PlaybackStateCompat.STATE_STOPPED) {
+        if (RadioService.mState != STATE_STOPPED) {
             requireContext().bindService(new Intent(getContext(), RadioService.class), mServiceConnection, 0);
         }
         // Start video streaming
@@ -119,7 +120,7 @@ public class TvFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (RadioService.mState != PlaybackStateCompat.STATE_STOPPED) {
+        if (RadioService.mState != STATE_STOPPED) {
             // Unbind music service
             requireContext().unbindService(mServiceConnection);
         }
@@ -178,7 +179,7 @@ public class TvFragment extends Fragment {
             mRadioServiceBinder = (RadioServiceBinder) service;
             mMediaControllerCompat = new MediaControllerCompat(getContext(), mRadioServiceBinder.getMediaSessionToken());
             // Stop radio streaming if running
-            if (mRadioServiceBinder.getPlaybackState() == PlaybackStateCompat.STATE_PLAYING) {
+            if (RadioService.mState == STATE_PLAYING) {
                 mMediaControllerCompat.getTransportControls().pause();
             }
         }

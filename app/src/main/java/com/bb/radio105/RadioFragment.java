@@ -116,13 +116,10 @@ public class RadioFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (mRadioServiceBinder.getPlaybackState() == STATE_STOPPED) {
-            requireContext().unbindService(mServiceConnection);
-            mRadioServiceBinder = null;
+        requireContext().unbindService(mServiceConnection);
+        mRadioServiceBinder = null;
+        if (RadioService.mState == STATE_STOPPED) {
             requireContext().stopService(startMusicService);
-        } else {
-            requireContext().unbindService(mServiceConnection);
-            mRadioServiceBinder = null;
         }
         startMusicService = null;
         if (mMediaControllerCompat != null) {
@@ -185,7 +182,7 @@ public class RadioFragment extends Fragment {
             mCallback.onPlaybackStateChanged(mMediaControllerCompat.getPlaybackState());
             mMediaControllerCompat.registerCallback(mCallback);
             mBound = true;
-            if (mRadioServiceBinder.getPlaybackState() == STATE_PLAYING) {
+            if (RadioService.mState == STATE_PLAYING) {
                 Drawable imageResource = new BitmapDrawable(getResources(), mRadioServiceBinder.getArt());
                 imageArt.setImageDrawable(imageResource);
                 titleText.setText(mRadioServiceBinder.getTitleString());
@@ -212,7 +209,7 @@ public class RadioFragment extends Fragment {
     private final MediaControllerCompat.Callback mCallback = new MediaControllerCompat.Callback() {
         @Override
         public void onMetadataChanged(MediaMetadataCompat metadata) {
-            if (mRadioServiceBinder.getPlaybackState() == STATE_PLAYING) {
+            if (RadioService.mState == STATE_PLAYING) {
                 Timber.e("Metadata changed during play state, check if the Radio fragment must be updated");
                 if (!Objects.equals(metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE), titleText.getText().toString())) {
                     Timber.e("Title changed, update metadata. Old title: %s%s%s", titleText.getText().toString(), " new title: ", metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));

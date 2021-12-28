@@ -18,7 +18,6 @@ package com.bb.radio105;
 
 import static com.bb.radio105.RadioService.art;
 import static com.bb.radio105.RadioService.djString;
-import static com.bb.radio105.RadioService.mState;
 import static com.bb.radio105.RadioService.mToken;
 import static com.bb.radio105.RadioService.titleString;
 
@@ -42,9 +41,5 @@ class RadioServiceBinder extends Binder {
 
     public String getDjString() {
         return djString;
-    }
-
-    public int getPlaybackState() {
-        return mState;
     }
 }

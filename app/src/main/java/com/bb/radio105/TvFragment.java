@@ -87,7 +87,7 @@ public class TvFragment extends Fragment {
         // Start video streaming
         final String videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
         videoView.requestFocus();
-        videoView.setOnInfoListener(onInfoToPlayStateListener);
+        videoView.setOnPreparedListener(onPreparedListener);
         videoView.setVideoURI(Uri.parse(videoUrl));
 
         UiModeManager mUiModeManager = (UiModeManager) requireActivity().getSystemService(UI_MODE_SERVICE);
@@ -169,21 +169,7 @@ public class TvFragment extends Fragment {
         root = null;
     }
 
-    private final MediaPlayer.OnInfoListener onInfoToPlayStateListener = new MediaPlayer.OnInfoListener() {
-        @Override
-        public boolean onInfo(MediaPlayer mp, int what, int extra) {
-            if (MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START == what) {
-                progressBar.setVisibility(View.GONE);
-            }
-            if (MediaPlayer.MEDIA_INFO_BUFFERING_START == what) {
-                progressBar.setVisibility(View.VISIBLE);
-            }
-            if (MediaPlayer.MEDIA_INFO_BUFFERING_END == what) {
-                progressBar.setVisibility(View.VISIBLE);
-            }
-            return false;
-        }
-    };
+    private final MediaPlayer.OnPreparedListener onPreparedListener = mediaPlayer -> progressBar.setVisibility(View.GONE);
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override

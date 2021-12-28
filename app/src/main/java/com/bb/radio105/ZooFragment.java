@@ -791,7 +791,10 @@ public class ZooFragment extends Fragment implements IPodcastService {
                 String url = request.getUrl().toString();
                 ZooFragment mZooFragment = ZooFragment.this;
                 Bitmap bitmap;
-                if (url.startsWith("https://adv.mediamond.it") || url.startsWith("https://tags.tiqcdn.com/") || url.endsWith("mediaelement-and-player.min.js") || url.endsWith("cookiecuttr.js") || url.endsWith("cookie_law.jsp")) {
+                if (url.startsWith("https://adv.mediamond.it") || url.startsWith("https://tags.tiqcdn.com/") ||
+                        url.endsWith("mediaelement-and-player.min.js") || url.endsWith("cookiecuttr.js") ||
+                        url.endsWith("cookie_law.jsp") || url.endsWith("webtrekk_v3.min.js") ||
+                        url.endsWith("analytics.js")) {
                     Timber.e("Javascript intercepted: %s", url);
                     return new WebResourceResponse("text/javascript", "UTF-8", new ByteArrayInputStream("// Script Blocked".getBytes(StandardCharsets.UTF_8)));
                 } else if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {

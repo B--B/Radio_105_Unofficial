@@ -128,6 +128,10 @@
     <string name="sms_message">Send an SMS</string>
     <string name="youtube_channel">YouTube channel</string>
     <string name="twitch_account">Twitch account</string>
+    <string name="fumagazzi_clocks">Fumagazzi clocks</string>
+    <string name="wine_zoo">The 105 Zoo wine shop</string>
+    <string name="mr_marketta">Mr Marketta</string>
+    <string name="mazzoli_masterclass">Marco Mazzoli Masterclass</string>
 
     <!-- Network Change -->
     <string name="network_change_key" translatable="false">network_change</string>

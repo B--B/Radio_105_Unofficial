@@ -113,6 +113,10 @@
     <string name="sms_message">Invia un SMS</string>
     <string name="youtube_channel">Canale YouTube</string>
     <string name="twitch_account">Account Twitch</string>
+    <string name="fumagazzi_clocks">Orologi Fumagazzi</string>
+    <string name="wine_zoo">EnotecaZoo</string>
+    <string name="mr_marketta">Mister Marketta</string>
+    <string name="mazzoli_masterclass">Marco Mazzoli Masterclass</string>
 
     <!-- Network Change -->
     <string name="network_change_off">L\' applicazione non proverà a riconnettere lo streaming radio quando il telefono passa dalla rete mobile alla rete wireless e viceversa</string>

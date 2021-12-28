@@ -93,6 +93,11 @@ public class SocialFragment extends Fragment {
     private TextView whatsappMessage;
     private TextView telegramMessage;
     private TextView smsMessage;
+    // Zoo links
+    private TextView fumagazzi;
+    private TextView zooWine;
+    private TextView mrMarketta;
+    private TextView masterClass;
 
     private View root;
 
@@ -112,6 +117,11 @@ public class SocialFragment extends Fragment {
         whatsappMessage = root.findViewById(R.id.whatsapp_message);
         telegramMessage = root.findViewById(R.id.telegram_message);
         smsMessage = root.findViewById(R.id.sms_message);
+
+        fumagazzi = root.findViewById(R.id.fumagazzi);
+        zooWine = root.findViewById(R.id.wine);
+        mrMarketta = root.findViewById(R.id.marketta);
+        masterClass = root.findViewById(R.id.masterClass);
 
         return root;
     }
@@ -193,6 +203,14 @@ public class SocialFragment extends Fragment {
         });
 
         smsMessage.setOnClickListener(view10 -> startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + ARG_PHONE_NUMBER))));
+
+        fumagazzi.setOnClickListener(view11 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.fumagazzi.it/"))));
+
+        zooWine.setOnClickListener(view12 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.enotecazoo.com/"))));
+
+        mrMarketta.setOnClickListener(view13 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mistermarketta.com/"))));
+
+        masterClass.setOnClickListener(view14 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.emme.academy/"))));
     }
 
     public void onDestroyView() {

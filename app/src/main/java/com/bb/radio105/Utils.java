@@ -28,12 +28,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -239,5 +243,14 @@ public class Utils {
     static String getUserPreferenceString(Context mContext, String preference, String defaultValue) {
         return PreferenceManager.getDefaultSharedPreferences(mContext)
                 .getString(preference, defaultValue);
+    }
+
+    static void makeWebViewVisible(WebView webView, ProgressBar mProgressBar) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (mProgressBar != null) {
+                mProgressBar.setVisibility(View.INVISIBLE);
+            }
+            webView.setVisibility(View.VISIBLE);
+        }, 200);
     }
 }

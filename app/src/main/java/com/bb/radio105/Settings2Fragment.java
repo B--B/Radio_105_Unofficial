@@ -19,7 +19,6 @@ package com.bb.radio105;
 import android.app.UiModeManager;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -90,7 +89,6 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             // Preferences
             SwitchPreferenceCompat mediaNotification = findPreference(getString(R.string.notification_type_key));
             SwitchPreferenceCompat serviceKill = findPreference(getString(R.string.service_kill_key));
-            SwitchPreferenceCompat webViewCallback = findPreference(getString(R.string.post_callback_key));
             SwitchPreferenceCompat webViewScreenOn = findPreference(getString(R.string.screen_on_key));
 
             // Android TV
@@ -120,13 +118,6 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                 if (mPreferenceScreen != null) {
                     assert miUiEMUIPref != null;
                     mPreferenceScreen.removePreference(miUiEMUIPref);
-                }
-            }
-            // Android API below M
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                if (webViewPref != null) {
-                    assert webViewCallback != null;
-                    webViewPref.removePreference(webViewCallback);
                 }
             }
             // Experimental Options

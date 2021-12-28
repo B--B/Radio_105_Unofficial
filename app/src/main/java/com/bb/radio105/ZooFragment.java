@@ -48,7 +48,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -60,12 +59,15 @@ import android.widget.ProgressBar;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
+import androidx.webkit.WebResourceErrorCompat;
+import androidx.webkit.WebViewClientCompat;
+import androidx.webkit.WebViewCompat;
+import androidx.webkit.WebViewFeature;
 
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -393,10 +395,10 @@ public class ZooFragment extends Fragment implements IPodcastService {
         requireContext().startService(mIntent);
     }
 
-    final WebViewClient mWebViewClient = new WebViewClient() {
+    final WebViewClient mWebViewClient = new WebViewClientCompat() {
 
         @Override
-        public boolean shouldOverrideUrlLoading (WebView webView, WebResourceRequest request) {
+        public boolean shouldOverrideUrlLoading (@NonNull WebView webView, WebResourceRequest request) {
             if (Uri.parse(request.getUrl().toString()).getHost().contains("zoo.105.net")) {
                 return false;
             }
@@ -429,14 +431,9 @@ public class ZooFragment extends Fragment implements IPodcastService {
             super.onPageStarted(webView, url, mBitmap);
         }
 
-        // Suppress lint warns as:
-        // 1 - WebViewCompat cannot be used with AdBlockWebView and postVisualStateCallback is used only if user enables it
-        // 2 - NewApi is a false positive, postCallbackKey is false and switch does not appear with API < M
-        @SuppressLint({"WebViewApiAvailability", "NewApi"})
         @Override
         public void onPageFinished (WebView webView, String url) {
-
-            boolean postCallbackKey = Utils.getUserPreferenceBoolean(requireContext(), getString(R.string.post_callback_key), false);
+            boolean postCallbackKey = Utils.getUserPreferenceBoolean(requireContext(), getString(R.string.post_callback_key), true);
 
             final String legacyPodcastService = "javascript:(function() { " +
                     "var audio = document.querySelector('audio'); " +
@@ -751,48 +748,38 @@ public class ZooFragment extends Fragment implements IPodcastService {
             }
             webView.evaluateJavascript(javaScript, null);
             if (postCallbackKey) {
-                webView.postVisualStateCallback(getId(), new WebView.VisualStateCallback() {
-                    @Override
-                    public void onComplete(long requestId) {
-                        if (mProgressBar != null) {
-                            mProgressBar.setVisibility(View.INVISIBLE);
+                if (WebViewFeature.isFeatureSupported(WebViewFeature.VISUAL_STATE_CALLBACK)) {
+                    final int mPostVisualStateCallbackId = 468;
+                    WebViewCompat.postVisualStateCallback(webView, mPostVisualStateCallbackId, requestId -> {
+                        if (requestId == mPostVisualStateCallbackId) {
+                            if (mProgressBar != null) {
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                            }
+                            webView.setVisibility(View.VISIBLE);
                         }
-                        webView.setVisibility(View.VISIBLE);
-                    }
-                });
+                    });
+                } else {
+                    Timber.e("postVisualStateCallback not supported, fallback to handler method");
+                    Utils.makeWebViewVisible(webView, mProgressBar);
+                }
             } else {
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    if (mProgressBar != null) {
-                        mProgressBar.setVisibility(View.INVISIBLE);
-                    }
-                    webView.setVisibility(View.VISIBLE);
-                }, 200);
+                Utils.makeWebViewVisible(webView, mProgressBar);
             }
             super.onPageFinished(webView, url);
         }
 
-        @RequiresApi(Build.VERSION_CODES.M)
         @Override
-        public void onReceivedError(WebView webView, WebResourceRequest request, WebResourceError error) {
-            // Ignore some connection errors
-            // ERR_FAILED = -1
-            // ERR_ADDRESS_UNREACHABLE = -2
-            // ERR_CONNECTION_REFUSED = -6
-            switch (error.getErrorCode()) {
-                case -1:
-                case -2:
-                case -6:
-                    break;
-                default:
+        public void onReceivedError(@NonNull WebView webView, @NonNull WebResourceRequest request, @NonNull WebResourceErrorCompat error) {
+            if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_RESOURCE_ERROR_GET_CODE)) {
+                // Ignore some connection errors
+                // ERR_FAILED = -1
+                // ERR_ADDRESS_UNREACHABLE = -2
+                // ERR_CONNECTION_REFUSED = -6
+                int errorCode = error.getErrorCode();
+                if (errorCode != -1 && errorCode != -2 && errorCode != -6) {
                     webView.loadUrl(Constants.ErrorPagePath);
-                    break;
+                }
             }
-        }
-
-        @Deprecated
-        @Override
-        public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
-            webView.loadUrl(Constants.ErrorPagePath);
         }
 
         @Nullable

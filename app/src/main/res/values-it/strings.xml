@@ -77,8 +77,8 @@
 
     <!-- WebView postVisual callback -->
     <string name="post_callback_title">WebView postVisualStateCallback</string>
-    <string name="post_callback_summary_on">I WebView useranno una postVisualStateCallback per impostare la visibilità quando una pagina viene caricata nelle sezioni Podcast/Zoo. Questo metodo potrebbe NON essere compatibile con tutti i dispositivi, ma è più veloce e non soffre di glitch grafici</string>
-    <string name="post_callback_summary_off">I WebView useranno un metodo sicuro per impostare la visibilità quando una pagina viene caricata nelle sezioni Podcast/Zoo. Questo metodo è più lento e può causare sporadici glitch grafici, ma è compatibile con la maggior parte dei disposotivi</string>
+    <string name="post_callback_summary_on">I WebView useranno una postVisualStateCallback per impostare la visibilità quando una pagina viene caricata nelle sezioni Podcast/Zoo.</string>
+    <string name="post_callback_summary_off">I WebView useranno un metodo sicuro per impostare la visibilità quando una pagina viene caricata nelle sezioni Podcast/Zoo. Questo metodo è più lento e può causare sporadici glitch grafici.</string>
 
     <!-- Browser alertdialog -->
     <string name="unsupported_title">Link non supportato</string>

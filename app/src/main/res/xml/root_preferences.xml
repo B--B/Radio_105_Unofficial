@@ -51,7 +51,7 @@
             app:summaryOff="@string/post_callback_summary_off"
             app:summaryOn="@string/post_callback_summary_on"
             app:title="@string/post_callback_title"
-            app:defaultValue="false"/>
+            app:defaultValue="true"/>
     </PreferenceCategory>
 
     <PreferenceCategory

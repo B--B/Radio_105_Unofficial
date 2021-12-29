@@ -747,17 +747,15 @@ public class RadioService extends Service implements OnPreparedListener,
                         djString = getString(R.string.blank_line);
                     }
                     if (artElement != null) {
+                        // 105 site use an online resizer for dynamically provide an artwork in the correct size. Unfortunately, the
+                        // artwork fetched have a poor quality. All artworks links have a fixed part "resizer/WIDTH/HEIGHT/true", here
+                        // the original link sizes will be changed to 480x480, for an higher quality image. If for some reason the
+                        // replace won't work the original string will be used.
                         artUrl = artElement.absUrl("src");
                         artUrlResized = artUrl.replaceAll("(resizer/)[^&]*(/true)", "$1480/480$2");
                         Timber.e("artUrl changed, new URL is %s", artUrlResized);
-                    }
-                    // Fetch the album art here
-                    if (artUrlResized != null) {
-                        art = AlbumArtCache.getInstance().getBigImage(artUrlResized.substring(0, 70));
-                        smallIcon = AlbumArtCache.getInstance().getIconImage(artUrlResized.substring(0, 70));
-                        if (art == null | smallIcon == null) {
-                            fetchBitmapFromURL(artUrlResized);
-                        }
+                        // Fetch the album art here
+                        fetchBitmapFromURL(artUrlResized);
                     }
                 },
                 error -> {

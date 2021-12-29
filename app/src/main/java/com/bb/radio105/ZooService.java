@@ -296,10 +296,7 @@ public class ZooService extends Service {
             mSession.setActive(true);
             mState = PlaybackStateCompat.STATE_PLAYING;
             if (podcastImageUrl != null) {
-                art = AlbumArtCache.getInstance().getBigImage(ZooFragment.podcastImageUrl.substring(0, 70));
-                if (art == null) {
-                    fetchBitmapFromURL(ZooFragment.podcastImageUrl);
-                }
+                fetchBitmapFromURL( podcastImageUrl );
             }
             setUpAsForeground(getString(R.string.playing));
         } else {

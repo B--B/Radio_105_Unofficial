@@ -29,7 +29,7 @@ import timber.log.Timber;
 final class AlbumArtCache {
 
     private static final int MAX_ALBUM_ART_CACHE_SIZE = 12*1024*1024;  // 12 MB
-    private static final int MAX_ART_WIDTH = 800;  // pixels
+    private static final int MAX_ART_WIDTH = 480;  // pixels
     private static final int MAX_ART_HEIGHT = 480;  // pixels
 
     // Resolution reasonable for carrying around as an icon (generally in
@@ -63,6 +63,7 @@ final class AlbumArtCache {
         };
     }
 
+    /* These functions are not needed at the moment
     public Bitmap getBigImage(String artUrl) {
         Bitmap[] result = mCache.get(artUrl);
         return result == null ? null : result[BIG_BITMAP_INDEX];
@@ -72,13 +73,10 @@ final class AlbumArtCache {
         Bitmap[] result = mCache.get(artUrl);
         return result == null ? null : result[ICON_BITMAP_INDEX];
     }
+    */
 
     public void fetch(final String artUrl, final FetchListener listener) {
-        // 105 site use an online resizer for dynamically provide an artwork in the correct size. Unfortunately, the
-        // artwork fetched have a poor quality. All artworks links have a fixed part "resizer/WIDTH/HEIGHT/true", here
-        // the original link sizes will be changed to 800x800, for an higher quality image. If for some reason the
-        // replace won't work the original string will be used.
-        Bitmap[] bitmap = mCache.get(artUrl);
+        Bitmap[] bitmap = mCache.get(artUrl.substring(0, 70));
         if (bitmap != null) {
             Timber.e("getOrFetch: album art is in cache, using it %s", artUrl);
             listener.onFetched(bitmap[BIG_BITMAP_INDEX], bitmap[ICON_BITMAP_INDEX]);

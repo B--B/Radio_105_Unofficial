@@ -341,6 +341,10 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
 
         @JavascriptInterface
         public void getPodcastImage(String mString) {
+            // 105 site use an online resizer for dynamically provide an artwork in the correct size. Unfortunately, the
+            // artwork fetched have a poor quality. All artworks links have a fixed part "resizer/WIDTH/HEIGHT/true", here
+            // the original link sizes will be changed to 480x480, for an higher quality image. If for some reason the
+            // replace won't work the original string will be used.
             podcastImageUrl = mString.replaceAll("(resizer/)[^&]*(/true)", "$1480/480$2");
             Timber.e("artUrl changed, new URL is %s", podcastImageUrl);
         }

@@ -452,7 +452,9 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     "        var text = podcastText[0].textContent;" +
                     "        JSZOOOUT.getPodcastTitle(text);" +
                     "        var image = document.querySelector('[itemprop=thumbnailUrl][content]');" +
-                    "        JSZOOOUT.getPodcastImage(image.content);" +
+                    "        if (document.body.contains(image)) { " +
+                    "            JSZOOOUT.getPodcastImage(image.content);" +
+                    "        }" +
                     "    }" +
                     "    var podcastSubText = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
                     "    if (podcastSubText.length) {" +
@@ -480,7 +482,9 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     "        var text = podcastText[0].textContent;" +
                     "        JSZOOOUT.getPodcastTitle(text);" +
                     "        var image = document.querySelector('[itemprop=thumbnailUrl][content]');" +
-                    "        JSZOOOUT.getPodcastImage(image.content);" +
+                    "        if (document.body.contains(image)) { " +
+                    "            JSZOOOUT.getPodcastImage(image.content);" +
+                    "        }" +
                     "    }" +
                     "    var podcastSubText = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
                     "    if (podcastSubText.length) {" +

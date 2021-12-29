@@ -753,8 +753,8 @@ public class RadioService extends Service implements OnPreparedListener,
                     }
                     // Fetch the album art here
                     if (artUrlResized != null) {
-                        art = AlbumArtCache.getInstance().getBigImage(artUrlResized.substring(0, 45));
-                        smallIcon = AlbumArtCache.getInstance().getIconImage(artUrlResized.substring(0, 45));
+                        art = AlbumArtCache.getInstance().getBigImage(artUrlResized.substring(0, 70));
+                        smallIcon = AlbumArtCache.getInstance().getIconImage(artUrlResized.substring(0, 70));
                         if (art == null | smallIcon == null) {
                             fetchBitmapFromURL(artUrlResized);
                         }

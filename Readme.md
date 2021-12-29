@@ -95,7 +95,7 @@
     * For devices running android L and M there are some limitations due to the really old WebView version:
         * Download feature in not available
         * Some videos may not work well, or not work at all
-        * The artwork in notification service doesn't work, a placeholder will be displayed instead
+        * ~~The artwork in notification service doesn't work, a placeholder will be displayed instead~~
 
 4. The 105 Zoo: the complete [zoo.105.net](https://zoo.105.net) site <img src="images/Screenshot_5.png" align="right" height="75" >
     * All ad and banners completely removed
@@ -109,7 +109,7 @@
     * For devices running android L and M there are some limitations due to the really old WebView version:
         * Download feature in not available
         * Some videos may not work well, or not work at all
-        * The artwork in notification service doesn't work, a placeholder will be displayed instead
+        * ~~The artwork in notification service doesn't work, a placeholder will be displayed instead~~
 
 5. Social <img src="images/Screenshot_6.png" align="right" height="75" >
     * Provide links for all Radio 105 social accounts

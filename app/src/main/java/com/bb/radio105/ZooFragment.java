@@ -451,6 +451,10 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     "    if (podcastText.length) {" +
                     "        var text = podcastText[0].textContent;" +
                     "        JSZOOOUT.getPodcastTitle(text);" +
+                    "        var image = document.querySelector('[alt=' + '' + text + '' + ']') ;" +
+                    "        if (document.body.contains(image)) {" +
+                    "            JSZOOOUT.getPodcastImage(image.src);" +
+                    "        }" +
                     "    }" +
                     "    var podcastSubText = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
                     "    if (podcastSubText.length) {" +
@@ -477,15 +481,15 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     "    if (podcastText.length) {" +
                     "        var text = podcastText[0].textContent;" +
                     "        JSZOOOUT.getPodcastTitle(text);" +
+                    "        var image = document.querySelector('[alt=' + '' + text + '' + ']') ;" +
+                    "        if (document.body.contains(image)) {" +
+                    "            JSZOOOUT.getPodcastImage(image.src);" +
+                    "        }" +
                     "    }" +
                     "    var podcastSubText = document.getElementsByClassName('sottotitolo_articolo sottotitolo');" +
                     "    if (podcastSubText.length) {" +
                     "        var text = podcastSubText[0].textContent;" +
                     "        JSZOOOUT.getPodcastSubtitle(text);" +
-                    "    }" +
-                    "    var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
-                    "    if (document.body.contains(image)) {" +
-                    "         JSZOOOUT.getPodcastImage(image.src);" +
                     "    }" +
                     "    console.log('podcastService javascript executed');" +
                     "})()";

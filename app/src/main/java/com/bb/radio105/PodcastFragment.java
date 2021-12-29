@@ -456,6 +456,10 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
                     "    if (podcastSubText.length) {" +
                     "        var text = podcastSubText[0].textContent;" +
                     "        JSPODCASTOUT.getPodcastSubtitle(text);" +
+                    "        var image = document.querySelector('[alt=' + '' + text + '' + ']') ;" +
+                    "        if (document.body.contains(image)) {" +
+                    "            JSPODCASTOUT.getPodcastImage(image.src);" +
+                    "        }" +
                     "    }" +
                     "    console.log('legacyPodcastService javascript executed');" +
                     "})()";
@@ -482,10 +486,10 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
                     "    if (podcastSubText.length) {" +
                     "        var text = podcastSubText[0].textContent;" +
                     "        JSPODCASTOUT.getPodcastSubtitle(text);" +
-                    "    }" +
-                    "    var image = document.querySelector('[title=' + CSS.escape(text) + ']') ;" +
-                    "    if (document.body.contains(image)) {" +
-                    "         JSPODCASTOUT.getPodcastImage(image.src);" +
+                    "        var image = document.querySelector('[alt=' + '' + text + '' + ']') ;" +
+                    "        if (document.body.contains(image)) {" +
+                    "            JSPODCASTOUT.getPodcastImage(image.src);" +
+                    "        }" +
                     "    }" +
                     "    console.log('podcastService javascript executed');" +
                     "})()";

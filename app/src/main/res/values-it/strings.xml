@@ -76,7 +76,7 @@
     <string name="screen_on_summary_off">Lo schermo si spegnerà regolarmente nelle sezioni Podcast e The 105 zoo</string>
 
     <!-- WebView postVisual callback -->
-    <string name="post_callback_title">WebView postVisualStateCallback</string>
+    <string name="post_callback_title">[DEPRECATO] WebView postVisualStateCallback</string>
     <string name="post_callback_summary_on">I WebView useranno una postVisualStateCallback per impostare la visibilità quando una pagina viene caricata nelle sezioni Podcast/Zoo.</string>
     <string name="post_callback_summary_off">I WebView useranno un metodo sicuro per impostare la visibilità quando una pagina viene caricata nelle sezioni Podcast/Zoo. Questo metodo è più lento e può causare sporadici glitch grafici.</string>
 

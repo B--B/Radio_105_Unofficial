@@ -93,7 +93,7 @@
     * If for some reason a link can't be opened, the app will prompt the user to open it in an external browser
     * PiP mode is supported for fullscreen videos in devices running at least android Oreo
     * For devices running android L and M there are some limitations due to the really old WebView version:
-        * Download feature in not available
+        * Download feature is not available
         * Some videos may not work well, or not work at all
         * ~~The artwork in notification service doesn't work, a placeholder will be displayed instead~~
 
@@ -107,7 +107,7 @@
     * If for some reason a link can't be opened, the app will prompt the user to open it in an external browser
     * PiP mode is supported for fullscreen videos in devices running at least android Oreo
     * For devices running android L and M there are some limitations due to the really old WebView version:
-        * Download feature in not available
+        * Download feature is not available
         * Some videos may not work well, or not work at all
         * ~~The artwork in notification service doesn't work, a placeholder will be displayed instead~~
 
@@ -121,7 +121,7 @@
     * Notification type: allow user to choose between a standard or a multimedia notification during the audio streaming *Default: media notification* | **Removed in Android TV devices**
     * WebView Themes: allow users to enable or disable Podcast and The 105 Zoo sections theming *Default: enabled*
     * Screen on: keep the screen on when in podcast and the 105 zoo sections *Default: disabled* | **Removed in Android TV devices**
-    * WebView postVisualStateCallback: use a postVisualStateCallback for set visibility when page is loaded in Podcast/Zoo sections. According to Android Studio documentation this method may NOT be compatible with all devices, but is faster and do not cause graphical glitches *Default: disabled for potential incompatibility with some devices, but everyone should give it a try and keep it enabled if works properly*
+    * ~~WebView postVisualStateCallback: use a postVisualStateCallback for set visibility when page is loaded in Podcast/Zoo sections. According to Android Studio documentation this method may NOT be compatible with all devices, but is faster and do not cause graphical glitches *Default: disabled for potential incompatibility with some devices, but everyone should give it a try and keep it enabled if works properly*~~ --> This option has been deprecated, enabled by default and moved under **Experimental Options** after the migration to WebVieWCompat
     * Stop streaming setting: allow system to stop streaming when app is removed from recent tasks *Default: disabled* | **Removed in Android TV and in MiUi/EMUI devices**
     * Audio devices: pause streaming when an audio device (headset, BT, etc.) is disconnected *Default: enabled*
     * Reconnect stream: restart the radio stream after an error if internet is available  *Default: enabled*

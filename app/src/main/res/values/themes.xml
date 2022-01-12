@@ -4,6 +4,7 @@
         <item name="windowSplashScreenBackground">@color/splash_screen</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_splash_screen_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.Radio105.NoActionBar</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="o_mr1">shortEdges</item>
     </style>
     <!-- Base application theme. -->
     <style name="Theme.Radio105" parent="Theme.Material3.Light.NoActionBar">

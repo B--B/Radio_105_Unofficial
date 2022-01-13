@@ -20,12 +20,15 @@ import static android.content.Context.UI_MODE_SERVICE;
 import static android.support.v4.media.session.PlaybackStateCompat.STATE_PLAYING;
 import static android.support.v4.media.session.PlaybackStateCompat.STATE_STOPPED;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.UiModeManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,6 +46,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
@@ -87,11 +91,16 @@ public class TvFragment extends Fragment {
         if (RadioService.mState != STATE_STOPPED) {
             requireContext().bindService(new Intent(getContext(), RadioService.class), mServiceConnection, 0);
         }
+        // Set the background here avoid wrong color in some cases.
+        // Example: Enter PiP mode -> Exit PiP mode -> Enter app from recent tasks -> Background is black
+        mConstraintLayout.setBackgroundColor(getThemeBackgroundColor());
         // Create the VideoView and set the size
         videoView = new VideoView(requireContext());
         videoView.setId(VideoView.generateViewId());
+        // VideoView will never start if is invisible, a minimum size must be set
+        ConstraintLayout.LayoutParams mLayoutParams = new ConstraintLayout.LayoutParams(1, 0);
+        videoView.setLayoutParams(mLayoutParams);
         mConstraintLayout.addView(videoView);
-        setVideoViewSize();
         // Start video streaming
         final String videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
         videoView.requestFocus();
@@ -180,7 +189,20 @@ public class TvFragment extends Fragment {
         root = null;
     }
 
-    private final MediaPlayer.OnPreparedListener onPreparedListener = mediaPlayer -> progressBar.setVisibility(View.GONE);
+    private final MediaPlayer.OnPreparedListener onPreparedListener = mediaPlayer -> {
+        progressBar.setVisibility( View.GONE );
+        setVideoViewSize();
+        int blackColor = ContextCompat.getColor(requireContext(), R.color.black);
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), getThemeBackgroundColor(), blackColor);
+        colorAnimation.setDuration(500);
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                mConstraintLayout.setBackgroundColor((int) animator.getAnimatedValue());
+            }
+        });
+        colorAnimation.start();
+    };
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
@@ -232,5 +254,20 @@ public class TvFragment extends Fragment {
         } else {
             setVideoViewPortraitSize();
         }
+    }
+
+    /**
+     * Get the background color of the theme used for this activity.
+     *
+     * @return The background color of the current theme.
+     */
+    public int getThemeBackgroundColor() {
+        TypedArray array = requireActivity().getTheme().obtainStyledAttributes(
+                new int[] {
+                        android.R.attr.colorBackground
+                });
+        int backgroundColor = array.getColor(0, 0);
+        array.recycle();
+        return backgroundColor;
     }
 }

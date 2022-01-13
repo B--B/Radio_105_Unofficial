@@ -41,6 +41,8 @@ import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
@@ -55,6 +57,7 @@ public class TvFragment extends Fragment {
     private VideoView videoView;
     private RadioServiceBinder mRadioServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
+    ConstraintLayout mConstraintLayout;
     static boolean isTvPlaying;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -63,9 +66,8 @@ public class TvFragment extends Fragment {
         root = inflater.inflate(R.layout.fragment_tv, container, false);
 
         requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        videoView = root.findViewById(R.id.videoView);
+        mConstraintLayout  = root.findViewById(R.id.tvFragment);
         progressBar = root.findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.VISIBLE);
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Utils.setUpFullScreen(requireActivity());
@@ -85,6 +87,11 @@ public class TvFragment extends Fragment {
         if (RadioService.mState != STATE_STOPPED) {
             requireContext().bindService(new Intent(getContext(), RadioService.class), mServiceConnection, 0);
         }
+        // Create the VideoView and set the size
+        videoView = new VideoView(requireContext());
+        videoView.setId(VideoView.generateViewId());
+        mConstraintLayout.addView(videoView);
+        setVideoViewSize();
         // Start video streaming
         final String videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
         videoView.requestFocus();
@@ -134,8 +141,10 @@ public class TvFragment extends Fragment {
     public void onConfigurationChanged(@NotNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setVideoViewLandscapeSize();
             Utils.setUpFullScreen(requireActivity());
         } else {
+            setVideoViewPortraitSize();
             Utils.restoreScreen(requireActivity());
         }
     }
@@ -165,6 +174,7 @@ public class TvFragment extends Fragment {
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
         }
+        videoView.stopPlayback();
         videoView = null;
         progressBar = null;
         root = null;
@@ -189,4 +199,38 @@ public class TvFragment extends Fragment {
             Timber.e("Service crashed");
         }
     };
+
+    private void setVideoViewLandscapeSize() {
+        ConstraintLayout.LayoutParams mLayoutParams = new ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.MATCH_PARENT);
+        videoView.setLayoutParams(mLayoutParams);
+        ConstraintSet set = new ConstraintSet();
+        set.clone(mConstraintLayout);
+        set.connect(videoView.getId(), ConstraintSet.TOP, mConstraintLayout.getId(), ConstraintSet.TOP, 0);
+        set.connect(videoView.getId(), ConstraintSet.BOTTOM, mConstraintLayout.getId(), ConstraintSet.BOTTOM, 0);
+        set.connect(videoView.getId(), ConstraintSet.LEFT, mConstraintLayout.getId(), ConstraintSet.LEFT, 0);
+        set.connect(videoView.getId(), ConstraintSet.RIGHT, mConstraintLayout.getId(), ConstraintSet.RIGHT, 0);
+        set.applyTo(mConstraintLayout);
+    }
+
+    private void setVideoViewPortraitSize() {
+        ConstraintLayout.LayoutParams mLayoutParams = new ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        videoView.setLayoutParams(mLayoutParams);
+        ConstraintSet set = new ConstraintSet();
+        set.clone(mConstraintLayout);
+        set.connect(videoView.getId(), ConstraintSet.TOP, mConstraintLayout.getId(), ConstraintSet.TOP, 0);
+        set.connect(videoView.getId(), ConstraintSet.BOTTOM, mConstraintLayout.getId(), ConstraintSet.BOTTOM, 0);
+        set.connect(videoView.getId(), ConstraintSet.LEFT, mConstraintLayout.getId(), ConstraintSet.LEFT, 0);
+        set.connect(videoView.getId(), ConstraintSet.RIGHT, mConstraintLayout.getId(), ConstraintSet.RIGHT, 0);
+        set.applyTo(mConstraintLayout);
+    }
+
+    private void setVideoViewSize() {
+        if (requireContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setVideoViewLandscapeSize();
+        } else {
+            setVideoViewPortraitSize();
+        }
+    }
 }

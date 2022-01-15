@@ -22,6 +22,7 @@ import static android.support.v4.media.session.PlaybackStateCompat.STATE_STOPPED
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.PictureInPictureParams;
 import android.app.UiModeManager;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -29,8 +30,10 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -131,6 +134,22 @@ public class TvFragment extends Fragment {
             videoView.start();
         }
         isTvPlaying = true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        videoView.addOnLayoutChangeListener((v, left, top, right, bottom,
+                                             oldLeft, oldTop, oldRight, oldBottom) -> {
+            if (left != oldLeft || right != oldRight || top != oldTop
+                    || bottom != oldBottom) {
+                // The videoView’s bounds changed, update the source hint rect to
+                // reflect its new bounds.
+                final Rect sourceRectHint = new Rect();
+                videoView.getGlobalVisibleRect(sourceRectHint);
+                    requireActivity().setPictureInPictureParams(
+                            new PictureInPictureParams.Builder()
+                                    .setSourceRectHint(sourceRectHint)
+                                    .build());
+                }
+            });
+        }
     }
 
     @Override

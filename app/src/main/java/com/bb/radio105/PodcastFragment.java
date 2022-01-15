@@ -24,6 +24,7 @@ import static com.bb.radio105.PodcastService.mState;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.PictureInPictureParams;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -681,6 +683,22 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
             mViewCallback = mCustomViewCallback;
             ((FrameLayout) requireActivity().getWindow().getDecorView()).addView(fullScreenView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
             Utils.setUpFullScreen(requireActivity());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                fullScreenView.addOnLayoutChangeListener((v, left, top, right, bottom,
+                                                          oldLeft, oldTop, oldRight, oldBottom) -> {
+                    if (left != oldLeft || right != oldRight || top != oldTop
+                            || bottom != oldBottom) {
+                        // The fullScreenView’s bounds changed, update the source hint rect to
+                        // reflect its new bounds.
+                        final Rect sourceRectHint = new Rect();
+                        fullScreenView.getGlobalVisibleRect(sourceRectHint);
+                        requireActivity().setPictureInPictureParams(
+                                new PictureInPictureParams.Builder()
+                                        .setSourceRectHint(sourceRectHint)
+                                        .build());
+                    }
+                });
+            }
         }
 
         @Override

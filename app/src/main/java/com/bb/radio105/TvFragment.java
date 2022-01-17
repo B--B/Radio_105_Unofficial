@@ -22,6 +22,7 @@ import static android.support.v4.media.session.PlaybackStateCompat.STATE_STOPPED
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.PictureInPictureParams;
 import android.app.UiModeManager;
 import android.content.ComponentName;
@@ -74,6 +75,7 @@ public class TvFragment extends Fragment {
     ConstraintLayout mConstraintLayout;
     static boolean isTvPlaying;
     private Boolean isFabVisible = true;
+    private Boolean userManuallyRotateScreen = false;
     private Animation mAnimation;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -94,7 +96,6 @@ public class TvFragment extends Fragment {
 
         progressBar.setVisibility(View.VISIBLE);
 
-
         mAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.rotation);
         root.setOnTouchListener((view, motionEvent) -> {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
@@ -114,6 +115,8 @@ public class TvFragment extends Fragment {
         return root;
     }
 
+    // SourceLockedOrientationActivity is a false positive warn, SCREEN_ORIENTATION_SENSOR is set when the fragment is destroyed
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     public void onStart() {
         super.onStart();
@@ -129,8 +132,10 @@ public class TvFragment extends Fragment {
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                 requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+                userManuallyRotateScreen = true;
             } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+                userManuallyRotateScreen = true;
             }
         });
         mFloatingActionButton.startAnimation(mAnimation);
@@ -235,6 +240,9 @@ public class TvFragment extends Fragment {
             Utils.restoreScreen(requireActivity());
         }
         requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        if (userManuallyRotateScreen) {
+            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        }
         mRadioServiceBinder = null;
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;

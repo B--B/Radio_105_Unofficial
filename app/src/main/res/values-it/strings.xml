@@ -26,6 +26,7 @@
     <string name="important">Importante</string>
     <string name="podcast_service">105 Podcast e Repliche</string>
     <string name="zoo_service">The 105 Zoo</string>
+    <string name="screen_rotation">Ruota Schermo</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Seleziona Tema</string>

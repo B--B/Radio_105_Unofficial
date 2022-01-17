@@ -28,6 +28,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
@@ -38,9 +39,12 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
@@ -53,6 +57,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.jetbrains.annotations.NotNull;
 
 import timber.log.Timber;
@@ -64,8 +70,11 @@ public class TvFragment extends Fragment {
     private VideoView videoView;
     private RadioServiceBinder mRadioServiceBinder;
     private MediaControllerCompat mMediaControllerCompat;
+    private FloatingActionButton mFloatingActionButton;
     ConstraintLayout mConstraintLayout;
     static boolean isTvPlaying;
+    private Boolean isFabVisible = true;
+    private Animation mAnimation;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -75,6 +84,7 @@ public class TvFragment extends Fragment {
         requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mConstraintLayout  = root.findViewById(R.id.tvFragment);
         progressBar = root.findViewById(R.id.progressBar);
+        mFloatingActionButton = root.findViewById(R.id.rotationButton);
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Utils.setUpFullScreen(requireActivity());
@@ -83,6 +93,23 @@ public class TvFragment extends Fragment {
         }
 
         progressBar.setVisibility(View.VISIBLE);
+
+
+        mAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.rotation);
+        root.setOnTouchListener((view, motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                if (!isFabVisible) {
+                    mFloatingActionButton.setVisibility(View.VISIBLE);
+                    mFloatingActionButton.startAnimation(mAnimation);
+                    isFabVisible = true;
+                } else {
+                    mFloatingActionButton.setVisibility(View.GONE);
+                    isFabVisible = false;
+                }
+            }
+            view.performClick();
+            return true;
+        });
 
         return root;
     }
@@ -97,6 +124,16 @@ public class TvFragment extends Fragment {
         // Set the background here avoid wrong color in some cases.
         // Example: Enter PiP mode -> Exit PiP mode -> Enter app from recent tasks -> Background is black
         mConstraintLayout.setBackgroundColor(getThemeBackgroundColor());
+        // Set the rotation button
+        mFloatingActionButton.setOnClickListener(view -> {
+            int orientation = getResources().getConfiguration().orientation;
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+            } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            }
+        });
+        mFloatingActionButton.startAnimation(mAnimation);
         // Create the VideoView and set the size
         videoView = new VideoView(requireContext());
         videoView.setId(VideoView.generateViewId());

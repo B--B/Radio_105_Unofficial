@@ -41,6 +41,7 @@ import android.os.IBinder;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -77,6 +78,7 @@ public class TvFragment extends Fragment {
     private Boolean isFabVisible = true;
     private Boolean userManuallyRotateScreen = false;
     private Animation mAnimation;
+    private OrientationEventListener mOrientationEventListener;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -127,7 +129,7 @@ public class TvFragment extends Fragment {
         // Set the background here avoid wrong color in some cases.
         // Example: Enter PiP mode -> Exit PiP mode -> Enter app from recent tasks -> Background is black
         mConstraintLayout.setBackgroundColor(getThemeBackgroundColor());
-        // Set the rotation button
+        // Set the rotation button...
         mFloatingActionButton.setOnClickListener(view -> {
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -138,6 +140,29 @@ public class TvFragment extends Fragment {
                 userManuallyRotateScreen = true;
             }
         });
+        // And the rotation listener.
+        mOrientationEventListener = new OrientationEventListener(getActivity()) {
+                    @Override
+                    public void onOrientationChanged(int orientation) {
+                        int epsilon = 10;
+                        int portrait = 0;
+                        int leftLandscape = 90;
+                        int reversePortrait = 180;
+                        int rightLandscape = 270;
+                        if ((epsilonCheck(orientation, leftLandscape, epsilon) ||
+                                epsilonCheck(orientation, rightLandscape, epsilon)) && requireActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE) {
+                            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+                        }
+                        if ((epsilonCheck(orientation, portrait, epsilon) ||
+                                epsilonCheck(orientation, reversePortrait, epsilon)) && requireActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT) {
+                            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+                        }
+                    }
+                    private boolean epsilonCheck(int a, int b, int epsilon) {
+                        return a > b - epsilon && a < b + epsilon;
+                    }
+                };
+        mOrientationEventListener.enable();
         mFloatingActionButton.startAnimation(mAnimation);
         // Create the VideoView and set the size
         videoView = new VideoView(requireContext());
@@ -204,6 +229,8 @@ public class TvFragment extends Fragment {
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
         }
+        mOrientationEventListener.disable();
+        mOrientationEventListener = null;
         isTvPlaying = false;
     }
 

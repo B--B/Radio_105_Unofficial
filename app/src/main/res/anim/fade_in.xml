@@ -10,8 +10,14 @@
         android:interpolator="@android:anim/linear_interpolator"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:repeatCount="1"
-        android:repeatMode="reverse"
         android:fromDegrees="0"
+        android:toDegrees="90" />
+    <rotate
+        android:duration="500"
+        android:startOffset="1000"
+        android:interpolator="@android:anim/linear_interpolator"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:fromDegrees="180"
         android:toDegrees="90" />
 </set>

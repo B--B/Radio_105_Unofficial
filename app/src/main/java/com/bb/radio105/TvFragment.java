@@ -45,7 +45,6 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.ProgressBar;
@@ -75,9 +74,8 @@ public class TvFragment extends Fragment {
     private FloatingActionButton mFloatingActionButton;
     ConstraintLayout mConstraintLayout;
     static boolean isTvPlaying;
-    private Boolean isFabVisible = true;
+    private Boolean isFabVisible = false;
     private Boolean userManuallyRotateScreen = false;
-    private Animation mAnimation;
     private OrientationEventListener mOrientationEventListener;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -97,22 +95,6 @@ public class TvFragment extends Fragment {
         }
 
         progressBar.setVisibility(View.VISIBLE);
-
-        mAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.rotation);
-        root.setOnTouchListener((view, motionEvent) -> {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                if (!isFabVisible) {
-                    mFloatingActionButton.setVisibility(View.VISIBLE);
-                    mFloatingActionButton.startAnimation(mAnimation);
-                    isFabVisible = true;
-                } else {
-                    mFloatingActionButton.setVisibility(View.GONE);
-                    isFabVisible = false;
-                }
-            }
-            view.performClick();
-            return true;
-        });
 
         return root;
     }
@@ -163,7 +145,6 @@ public class TvFragment extends Fragment {
                     }
                 };
         mOrientationEventListener.enable();
-        mFloatingActionButton.startAnimation(mAnimation);
         // Create the VideoView and set the size
         videoView = new VideoView(requireContext());
         videoView.setId(VideoView.generateViewId());
@@ -215,6 +196,27 @@ public class TvFragment extends Fragment {
                                     .setSourceRectHint(sourceRectHint)
                                     .build());
                 }
+            });
+        }
+
+        if (mUiModeManager.getCurrentModeType() != Configuration.UI_MODE_TYPE_TELEVISION) {
+            mFloatingActionButton.setAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in));
+            mFloatingActionButton.setVisibility(View.VISIBLE);
+            isFabVisible = true;
+            root.setOnTouchListener((view, motionEvent) -> {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (!isFabVisible) {
+                        mFloatingActionButton.setAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in));
+                        mFloatingActionButton.setVisibility(View.VISIBLE);
+                        isFabVisible = true;
+                    } else {
+                        mFloatingActionButton.setAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out));
+                        mFloatingActionButton.setVisibility(View.INVISIBLE);
+                        isFabVisible = false;
+                    }
+                }
+                view.performClick();
+                return true;
             });
         }
     }

@@ -16,6 +16,7 @@
         android:contentDescription="@string/screen_rotation"
         android:layout_margin="16dp"
         app:fabSize="normal"
+        android:visibility="invisible"
         android:src="@drawable/ic_screen_rotation" />
 
     <ProgressBar

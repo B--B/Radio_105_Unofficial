@@ -106,18 +106,28 @@ public class RadioFragment extends Fragment {
 
     @Override
     public void onStart() {
+        super.onStart();
         startMusicService = new Intent(requireContext(), RadioService.class);
         requireContext().startService(startMusicService);
-        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         requireContext().bindService(new Intent(getContext(), RadioService.class), mServiceConnection, 0);
         buildTransportControls();
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
         requireContext().unbindService(mServiceConnection);
         mRadioServiceBinder = null;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
         if (RadioService.mState == STATE_STOPPED) {
             requireContext().stopService(startMusicService);
         }

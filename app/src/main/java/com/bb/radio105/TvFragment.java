@@ -99,7 +99,7 @@ public class TvFragment extends Fragment {
         return root;
     }
 
-    // SourceLockedOrientationActivity is a false positive warn, SCREEN_ORIENTATION_SENSOR is set when the fragment is destroyed
+    // SourceLockedOrientationActivity is a false positive warn, SCREEN_ORIENTATION_USER is set when the fragment is destroyed
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
     public void onStart() {
@@ -115,10 +115,10 @@ public class TvFragment extends Fragment {
         mFloatingActionButton.setOnClickListener(view -> {
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+                requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
                 userManuallyRotateScreen = true;
             } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+                requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
                 userManuallyRotateScreen = true;
             }
         });
@@ -132,12 +132,12 @@ public class TvFragment extends Fragment {
                         int reversePortrait = 180;
                         int rightLandscape = 270;
                         if ((epsilonCheck(orientation, leftLandscape, epsilon) ||
-                                epsilonCheck(orientation, rightLandscape, epsilon)) && requireActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE) {
-                            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+                                epsilonCheck(orientation, rightLandscape, epsilon)) && requireActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE) {
+                            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
                         }
                         if ((epsilonCheck(orientation, portrait, epsilon) ||
-                                epsilonCheck(orientation, reversePortrait, epsilon)) && requireActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT) {
-                            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+                                epsilonCheck(orientation, reversePortrait, epsilon)) && requireActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT) {
+                            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
                         }
                     }
                     private boolean epsilonCheck(int a, int b, int epsilon) {
@@ -270,7 +270,7 @@ public class TvFragment extends Fragment {
         }
         requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (userManuallyRotateScreen) {
-            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
         }
         mRadioServiceBinder = null;
         if (mMediaControllerCompat != null) {

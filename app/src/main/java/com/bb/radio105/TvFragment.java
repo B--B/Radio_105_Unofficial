@@ -126,6 +126,7 @@ public class TvFragment extends Fragment {
         mOrientationEventListener = new OrientationEventListener(getActivity()) {
                     @Override
                     public void onOrientationChanged(int orientation) {
+                        Timber.e("Orientation changed: %s", orientation);
                         int epsilon = 10;
                         int portrait = 0;
                         int leftLandscape = 90;
@@ -144,7 +145,9 @@ public class TvFragment extends Fragment {
                         return a > b - epsilon && a < b + epsilon;
                     }
                 };
-        mOrientationEventListener.enable();
+        if (mOrientationEventListener.canDetectOrientation()) {
+            mOrientationEventListener.enable();
+        }
         // Create the VideoView and set the size
         videoView = new VideoView(requireContext());
         videoView.setId(VideoView.generateViewId());
@@ -231,8 +234,10 @@ public class TvFragment extends Fragment {
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
         }
-        mOrientationEventListener.disable();
-        mOrientationEventListener = null;
+        if (mOrientationEventListener != null) {
+            mOrientationEventListener.disable();
+            mOrientationEventListener = null;
+        }
         isTvPlaying = false;
     }
 

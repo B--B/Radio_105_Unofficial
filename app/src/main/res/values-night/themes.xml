@@ -7,7 +7,7 @@
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="o_mr1">shortEdges</item>
     </style>
     <!-- Base application theme. -->
-    <style name="Theme.Radio105" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Theme.Radio105" parent="Theme.Material3.Dark">
         <item name="colorPrimary">@color/md_theme_dark_primary</item>
         <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
         <item name="colorPrimaryContainer">@color/md_theme_dark_primaryContainer</item>

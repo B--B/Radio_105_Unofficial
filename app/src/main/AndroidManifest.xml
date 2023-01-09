@@ -26,11 +26,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.105Splash"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
             android:name="com.bb.radio105.MainActivity"
+            android:theme="@style/Theme.105Splash"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|mcc|mnc|screenLayout|smallestScreenSize|density"
             android:supportsPictureInPicture="true"
             android:launchMode="singleTask"

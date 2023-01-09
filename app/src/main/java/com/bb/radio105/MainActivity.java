@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         SplashScreen.installSplashScreen(this);
 
         // Enable dynamic colors
-        DynamicColors.applyIfAvailable(this);
+        DynamicColors.applyToActivityIfAvailable(this);
 
         final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
         // The apps theme is decided depending upon the saved preferences on app startup

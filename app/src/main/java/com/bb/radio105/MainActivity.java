@@ -60,14 +60,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Splash Screen
+        SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
-
-        // Splash Screen
-        SplashScreen.installSplashScreen(this);
 
         // Enable dynamic colors
         DynamicColors.applyToActivityIfAvailable(this);

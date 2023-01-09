@@ -116,22 +116,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     })
                     .show();
         }
-
-        // Start the service worker controller here, actually only an instance is allowed, but
-        // we have two fragments that runs webView. In addition the service worker controller must be
-        // started BEFORE the webView instance, and in this way webView cannot start before the service.
-        /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            ServiceWorkerController mServiceWorkerController = ServiceWorkerController.getInstance();
-            mServiceWorkerController.setServiceWorkerClient(new ServiceWorkerClient() {
-                @Override
-                public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
-                    Log.e(Constants.LOG_TAG, "in service worker. isMainFrame:"+request.isForMainFrame() +": " + request.getUrl());
-                    return null;
-                }
-            });
-            mServiceWorkerController.getServiceWorkerWebSettings().setAllowContentAccess(true);
-            mServiceWorkerController.getServiceWorkerWebSettings().setAllowFileAccess(true);
-        } */
     }
 
     @Override

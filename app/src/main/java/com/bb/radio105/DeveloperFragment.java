@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -34,24 +33,24 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 
+import com.bb.radio105.databinding.FragmentDeveloperBinding;
+
 public class DeveloperFragment extends Fragment {
 
     private static final String ARG_APPLICATION_ID = BuildConfig.APPLICATION_ID;
 
     private View root;
 
-    private TextView sources;
-    private TextView bug;
-    private TextView developerMail;
-    private TextView rateOnPlayStore;
-    private TextView recommendToFriend;
-    private TextView appVersion;
     private String versionNumber;
     private int clickCount = 0;
+    private FragmentDeveloperBinding mFragmentDeveloperBinding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_developer, container, false);
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        mFragmentDeveloperBinding = FragmentDeveloperBinding.inflate(inflater, container, false);
+        root = mFragmentDeveloperBinding.getRoot();
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -61,12 +60,6 @@ public class DeveloperFragment extends Fragment {
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
-        sources = root.findViewById(R.id.sources);
-        bug = root.findViewById(R.id.bug);
-        developerMail = root.findViewById(R.id.developer_mail);
-        rateOnPlayStore = root.findViewById(R.id.rate_play_store);
-        recommendToFriend = root.findViewById(R.id.recommend_to_friend);
-        appVersion = root.findViewById(R.id.app_version);
         versionNumber = BuildConfig.VERSION_NAME;
 
         return root;
@@ -76,18 +69,18 @@ public class DeveloperFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        sources.setOnClickListener(view1 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/B--B/Radio_105_Unofficial"))));
+        mFragmentDeveloperBinding.sources.setOnClickListener(view1 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/B--B/Radio_105_Unofficial"))));
 
-        bug.setOnClickListener(view2 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/B--B/Radio_105_Unofficial/issues"))));
+        mFragmentDeveloperBinding.bug.setOnClickListener(view2 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/B--B/Radio_105_Unofficial/issues"))));
 
-        developerMail.setOnClickListener(view3 -> {
+        mFragmentDeveloperBinding.developerMail.setOnClickListener(view3 -> {
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                     "mailto", "mrczn.bb@gmail.com", null))
                     .putExtra(Intent.EXTRA_EMAIL, "mrczn.bb@gmail.com");
             startActivity(Intent.createChooser(emailIntent, view3.getContext().getString(R.string.send_email)));
         });
 
-        rateOnPlayStore.setOnClickListener(view4 -> {
+        mFragmentDeveloperBinding.ratePlayStore.setOnClickListener(view4 -> {
             // To count with Play market back stack, After pressing back button,
             // to taken back to our application, we need to add following flags to intent.
             int flags = Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
@@ -106,7 +99,7 @@ public class DeveloperFragment extends Fragment {
         final String recommendSubject;
         recommendSubject = getString(R.string.get_the_app);
 
-        recommendToFriend.setOnClickListener(view5 -> {
+        mFragmentDeveloperBinding.recommendToFriend.setOnClickListener(view5 -> {
             String text = getString(R.string.get_the_app) + System.getProperty("line.separator") + Uri.parse("https://play.google.com/store/apps/details?id=" + (ARG_APPLICATION_ID)).toString();
 
             Intent sharingIntent = new Intent(Intent.ACTION_SEND)
@@ -118,8 +111,8 @@ public class DeveloperFragment extends Fragment {
 
         final String appVersionString;
         appVersionString = getString(R.string.app_version) + versionNumber;
-        appVersion.setText(appVersionString);
-        appVersion.setOnClickListener(view6 -> {
+        mFragmentDeveloperBinding.appVersion.setText(appVersionString);
+        mFragmentDeveloperBinding.appVersion.setOnClickListener(view6 -> {
             clickCount ++;
             if (clickCount == 7) {
                 boolean experimentalOptions = Utils.getUserPreferenceBoolean(requireContext(), getString(R.string.experimental_options_key), false);
@@ -142,12 +135,8 @@ public class DeveloperFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        sources = null;
-        bug = null;
-        developerMail = null;
-        rateOnPlayStore = null;
-        recommendToFriend = null;
-        root = null;
         super.onDestroyView();
+        mFragmentDeveloperBinding = null;
+        root = null;
     }
 }

@@ -161,12 +161,26 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission has been granted.
                 Snackbar.make(findViewById(R.id.drawer_layout), R.string.storage_permission_granted,
-                        Snackbar.LENGTH_SHORT)
+                                Snackbar.LENGTH_SHORT)
                         .show();
             } else {
                 // Permission request was denied.
                 Snackbar.make(findViewById(R.id.drawer_layout), R.string.storage_permission_denied,
-                        Snackbar.LENGTH_SHORT)
+                                Snackbar.LENGTH_SHORT)
+                        .show();
+            }
+        }
+        else if (requestCode == Constants.PERMISSION_REQUEST_POST_NOTIFICATIONS) {
+            // Request for storage permission.
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission has been granted.
+                Snackbar.make(findViewById(R.id.drawer_layout), R.string.notification_permission_granted,
+                                Snackbar.LENGTH_SHORT)
+                        .show();
+            } else {
+                // Permission request was denied.
+                Snackbar.make(findViewById(R.id.drawer_layout), R.string.notification_permission_denied,
+                                Snackbar.LENGTH_SHORT)
                         .show();
             }
         }

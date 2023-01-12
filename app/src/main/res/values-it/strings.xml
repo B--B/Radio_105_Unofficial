@@ -92,6 +92,11 @@
     <string name="storage_permission_granted">Applicazione autorizzata a scrivere nella memoria interna. Inizia il download.</string>
     <string name="storage_permission_denied">Il permesso di scrittura nella memoria interna è stato negato.</string>
 
+    <!-- Notification permission -->
+    <string name="post_notification_required">Per poter creare la notifica è necessario il permesso.</string>
+    <string name="notification_permission_granted">Applicazione autorizzata a creare notifiche.</string>
+    <string name="notification_permission_denied">Il permesso di creare notifiche è stato negato, non sarà possibile controllare lo streaming e l\' applicazione potrebbe non funzionare correttamente.</string>
+
     <!-- Reconnect Stream -->
     <string name="no_reconnect">Internet non disponibile, riconnessione fallita</string>
     <string name="reconnect">Internet disponibile, tento di reinizializzare lo streaming</string>

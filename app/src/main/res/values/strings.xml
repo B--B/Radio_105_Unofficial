@@ -64,6 +64,7 @@
     <string name="social"><a href="https://github.com/saschpe/android-social-fragment">Sascha Peilicke</a> for his Android Social Fragment that inspired me</string>
     <string name="mockups"><a href="https://mockuphone.com/">MockUPhone</a> for device mockups in screenshots</string>
     <string name="tester">All my friends that tested my app in these months, for their support, suggestions and bug reports :)</string>
+    <string name="rabbit" translatable="false">A rabbit life</string>
     <string name="bb" tools:ignore="TypographyDashes">Created and Produced by \nB--B</string>
 
     <!-- Notification commands -->
@@ -104,7 +105,11 @@
     <string name="ok">OK</string>
     <string name="storage_permission_granted">Storage permission was granted. Starting download.</string>
     <string name="storage_permission_denied">Storage permission request was denied.</string>
-    <string name="rabbit" translatable="false">A rabbit life</string>
+
+    <!-- Notification permission -->
+    <string name="post_notification_required">Post notification permission is required for notification.</string>
+    <string name="notification_permission_granted">Post notification permission granted.</string>
+    <string name="notification_permission_denied">Post notification permission denied, this will probably break the streaming service.</string>
 
     <!-- Reconnect Stream -->
     <string name="reconnect_key" translatable="false">reconnect_stream</string>

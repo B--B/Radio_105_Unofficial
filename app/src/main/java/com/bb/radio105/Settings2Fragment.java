@@ -16,9 +16,12 @@
 
 package com.bb.radio105;
 
+import android.Manifest;
 import android.app.UiModeManager;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -30,6 +33,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -43,6 +47,8 @@ import java.util.Calendar;
 import java.util.Objects;
 
 import static android.content.Context.UI_MODE_SERVICE;
+
+import com.google.android.material.snackbar.Snackbar;
 
 public class Settings2Fragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener,
         Preference.SummaryProvider<androidx.preference.ListPreference> {
@@ -126,6 +132,32 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                 if (mPreferenceScreen != null) {
                     assert experimentalPref != null;
                     mPreferenceScreen.removePreference(experimentalPref);
+                }
+            }
+            // Notification type listener for Android 13
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (appNotificationPref != null) {
+                    if (mediaNotification != null) {
+                        mediaNotification.setOnPreferenceChangeListener((preference, newValue) -> {
+                            if (newValue.equals(false)) {
+                                if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                                    Snackbar.make(requireView(), R.string.post_notification_required,
+                                            Snackbar.LENGTH_INDEFINITE).setAction(R.string.ok, view -> {
+                                        // Request the permission
+                                        ActivityCompat.requestPermissions(requireActivity(),
+                                                new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                                                Constants.PERMISSION_REQUEST_POST_NOTIFICATIONS);
+                                    }).show();
+                                } else {
+                                    // Request the permission. The result will be received in onRequestPermissionResult().
+                                    ActivityCompat.requestPermissions(requireActivity(),
+                                            new String[]{Manifest.permission.POST_NOTIFICATIONS}, Constants.PERMISSION_REQUEST_POST_NOTIFICATIONS);
+                                }
+                            }
+                            return true;
+                        });
+                    }
                 }
             }
         }

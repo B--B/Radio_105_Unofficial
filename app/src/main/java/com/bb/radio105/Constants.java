@@ -35,6 +35,8 @@ public class Constants {
     static final String ErrorPagePath = "file:///android_asset/index.html";
     // Write storage permission
     static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
+    // Post notification permission
+    static final int PERMISSION_REQUEST_POST_NOTIFICATIONS = 1;
     // Log TAGS
     /* final static String LOG_TAG = MainActivity.class.getSimpleName(); */
     // The volume we set the media player to when we lose audio focus, but are

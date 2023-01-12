@@ -23,11 +23,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Rational;
+import android.util.TypedValue;
+import android.view.Window;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -81,6 +85,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         if (darkMode.equals(darkModeValues[2]))
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
+        // NOTE: For some unknown reason splashscreen 1.0.0 lib breaks status bar dynamic color,
+        // and can be worked around only setting programmatically status bar color.
+        // This is probably caused by a bug in Android splashscreen lib, and can be reproduced everytime creating a new
+        // Navigation Drawer View project and adding dynamic colors support and splashscreen following Google guidelines
+        statusBarHax();
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -186,5 +196,14 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
         // END_INCLUDE(onRequestPermissionsResult)
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private void statusBarHax() {
+        TypedValue mTypedValue = new TypedValue();
+        Resources.Theme mTheme = this.getTheme();
+        mTheme.resolveAttribute(R.attr.colorPrimary, mTypedValue, true);
+        @ColorInt int mColor = mTypedValue.data;
+        Window mWindow = this.getWindow();
+        mWindow.setStatusBarColor(mColor);
     }
 }

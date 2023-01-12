@@ -54,11 +54,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.bb.radio105.databinding.FragmentSocialBinding;
 
 /**
  * Fragment to display links to social networks and direct messages to program on air.
@@ -84,53 +85,14 @@ public class SocialFragment extends Fragment {
     private static final String ARG_PHONE_NUMBER = "393424115105";
     private static final String ARG_TELEGRAM_ID = "1416935972";
 
-    // Social networks links
-    private TextView followTwitter;
-    private TextView openFacebookGroup;
-    private TextView followInstagram;
-    private TextView twitchChannel;
-    private TextView followTikTok;
-    private TextView youtubeChannel;
-    // Feedback links
-    private TextView sendEmail;
-    private TextView whatsappMessage;
-    private TextView telegramMessage;
-    private TextView smsMessage;
-    // Zoo links
-    private TextView openFacebookGroupZoo;
-    private TextView followInstagramZoo;
-    private TextView youtubeChannelZoo;
-    private TextView fumagazzi;
-    private TextView zooWine;
-    private TextView mrMarketta;
-    private TextView masterClass;
-
     private View root;
+    private FragmentSocialBinding mFragmentSocialBinding;
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
+    public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_social, container, false);
-
-        followTwitter = root.findViewById(R.id.follow_twitter);
-        openFacebookGroup = root.findViewById(R.id.open_facebook_group);
-        followInstagram = root.findViewById(R.id.follow_instagram);
-        twitchChannel = root.findViewById(R.id.twitch_account);
-        followTikTok = root.findViewById(R.id.follow_tiktok);
-        youtubeChannel = root.findViewById(R.id.youtube_channel);
-
-        sendEmail = root.findViewById(R.id.send_mail);
-        whatsappMessage = root.findViewById(R.id.whatsapp_message);
-        telegramMessage = root.findViewById(R.id.telegram_message);
-        smsMessage = root.findViewById(R.id.sms_message);
-
-        openFacebookGroupZoo = root.findViewById(R.id.open_facebook_group_zoo);
-        followInstagramZoo = root.findViewById(R.id.follow_instagram_zoo);
-        youtubeChannelZoo = root.findViewById(R.id.youtube_channel_zoo);
-        fumagazzi = root.findViewById(R.id.fumagazzi);
-        zooWine = root.findViewById(R.id.wine);
-        mrMarketta = root.findViewById(R.id.marketta);
-        masterClass = root.findViewById(R.id.masterClass);
+        mFragmentSocialBinding = FragmentSocialBinding.inflate(inflater, container, false);
+        root = mFragmentSocialBinding.getRoot();
 
         return root;
     }
@@ -139,7 +101,7 @@ public class SocialFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        openFacebookGroup.setOnClickListener(view1 -> {
+        mFragmentSocialBinding.openFacebookGroup.setOnClickListener(view1 -> {
             try {
                 requireContext().getPackageManager().getPackageInfo("com.facebook.katana", 0);
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/" + ARG_FACEBOOK_PAGE)));
@@ -148,7 +110,7 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        followTwitter.setOnClickListener(view2 -> {
+        mFragmentSocialBinding.followTwitter.setOnClickListener(view2 -> {
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=" + ARG_TWITTER_PROFILE)));
             } catch (Exception e) {
@@ -156,9 +118,9 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        followInstagram.setOnClickListener(view3 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/_u/" + ARG_INSTAGRAM_PROFILE))));
+        mFragmentSocialBinding.followInstagram.setOnClickListener(view3 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/_u/" + ARG_INSTAGRAM_PROFILE))));
 
-        twitchChannel.setOnClickListener(view4 -> {
+        mFragmentSocialBinding.twitchAccount.setOnClickListener(view4 -> {
             try {
                 requireContext().getPackageManager().getPackageInfo("com.zhiliaoapp.musically", 0);
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.twitch.com/_u/" + ARG_TWITCH_CHANNEL)));
@@ -167,7 +129,7 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        followTikTok.setOnClickListener(view5 -> {
+        mFragmentSocialBinding.followTiktok.setOnClickListener(view5 -> {
             try {
                 requireContext().getPackageManager().getPackageInfo("com.zhiliaoapp.musically", 0);
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://vm.tiktok.com/" + ARG_TIKTOK_PROFILE)));
@@ -176,7 +138,7 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        youtubeChannel.setOnClickListener(view6 -> {
+        mFragmentSocialBinding.youtubeChannel.setOnClickListener(view6 -> {
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube.com/channel/" + ARG_YOUTUBE_PROFILE)));
             } catch (Exception e) {
@@ -184,14 +146,14 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        sendEmail.setOnClickListener(view7 -> {
+        mFragmentSocialBinding.sendMail.setOnClickListener(view7 -> {
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                     "mailto", ARG_CONTACT_EMAIL_ADDRESS, null))
                     .putExtra(Intent.EXTRA_EMAIL, ARG_CONTACT_EMAIL_ADDRESS);
             startActivity(Intent.createChooser(emailIntent, view7.getContext().getString(R.string.send_email)));
         });
 
-        whatsappMessage.setOnClickListener(view8 -> {
+        mFragmentSocialBinding.whatsappMessage.setOnClickListener(view8 -> {
             try {
                 requireContext().getPackageManager().getPackageInfo("com.whatsapp", 0);
                 startActivity(new Intent(Intent.ACTION_SEND, Uri.parse("https://wa.me/" + ARG_PHONE_NUMBER)));
@@ -200,7 +162,7 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        telegramMessage.setOnClickListener(view9 -> {
+        mFragmentSocialBinding.telegramMessage.setOnClickListener(view9 -> {
             /* Open Telegram chat in browser as there' s no way to open a Telegram chat without a username,
             and Radio 105 Telegram account does not have a username.
             try {
@@ -211,9 +173,9 @@ public class SocialFragment extends Fragment {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://web.telegram.org/#/im?p=u" + ARG_TELEGRAM_ID)));
         });
 
-        smsMessage.setOnClickListener(view10 -> startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + ARG_PHONE_NUMBER))));
+        mFragmentSocialBinding.smsMessage.setOnClickListener(view10 -> startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + ARG_PHONE_NUMBER))));
 
-        openFacebookGroupZoo.setOnClickListener(view11 -> {
+        mFragmentSocialBinding.openFacebookGroupZoo.setOnClickListener(view11 -> {
             try {
                 requireContext().getPackageManager().getPackageInfo("com.facebook.katana", 0);
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/" + ARG_FACEBOOK_PAGE_ZOO)));
@@ -222,9 +184,9 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        followInstagramZoo.setOnClickListener(view12 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/_u/" + ARG_INSTAGRAM_PROFILE_ZOO))));
+        mFragmentSocialBinding.followInstagramZoo.setOnClickListener(view12 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://instagram.com/_u/" + ARG_INSTAGRAM_PROFILE_ZOO))));
 
-        youtubeChannelZoo.setOnClickListener(view13 -> {
+        mFragmentSocialBinding.youtubeChannelZoo.setOnClickListener(view13 -> {
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube.com/channel/" + ARG_YOUTUBE_PROFILE_ZOO)));
             } catch (Exception e) {
@@ -232,17 +194,18 @@ public class SocialFragment extends Fragment {
             }
         });
 
-        fumagazzi.setOnClickListener(view14 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.fumagazzi.it/"))));
+        mFragmentSocialBinding.fumagazzi.setOnClickListener(view14 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.fumagazzi.it/"))));
 
-        zooWine.setOnClickListener(view15 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.enotecazoo.com/"))));
+        mFragmentSocialBinding.wine.setOnClickListener(view15 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.enotecazoo.com/"))));
 
-        mrMarketta.setOnClickListener(view16 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mistermarketta.com/"))));
+        mFragmentSocialBinding.marketta.setOnClickListener(view16 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.mistermarketta.com/"))));
 
-        masterClass.setOnClickListener(view17 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.emme.academy/"))));
+        mFragmentSocialBinding.masterClass.setOnClickListener(view17 -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.emme.academy/"))));
     }
 
     public void onDestroyView() {
-        root = null;
         super.onDestroyView();
+        mFragmentSocialBinding = null;
+        root = null;
     }
 }

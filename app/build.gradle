@@ -4,8 +4,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion 33
-    buildToolsVersion '33.0.1'
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.bb.radio105"

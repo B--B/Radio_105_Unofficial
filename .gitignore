@@ -54,9 +54,12 @@ captures/
 .idea/modules.xml
 # Comment next line if keeping position of elements in Navigation Editor is relevant for you
 .idea/navEditor.xml
-# Android Studio Canary (Flamingo)
+# Android Studio Canary (Iguana)
 .idea/compiler.xml
 .idea/kotlinc.xml
+.idea/appInsightsSettings.xml
+.idea/migrations.xml
+.idea/deploymentTargetSelector.xml
 
 # Keystore files
 # Uncomment the following lines if you do not want to check your keystore files in.

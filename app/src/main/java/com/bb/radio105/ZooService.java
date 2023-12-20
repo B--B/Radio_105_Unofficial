@@ -319,7 +319,11 @@ public class ZooService extends Service {
         if (mState != PlaybackStateCompat.STATE_STOPPED) {
             mState = PlaybackStateCompat.STATE_STOPPED;
             updatePlaybackState();
-            stopForeground(true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                stopForeground(STOP_FOREGROUND_REMOVE);
+            } else {
+                stopForeground(true);
+            }
             mSession.setActive(false);
         }
         unregisterAudioNoisyReceiver();

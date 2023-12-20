@@ -105,7 +105,7 @@ public class TvFragment extends Fragment {
         videoView.setLayoutParams(mLayoutParams);
         mConstraintLayout.addView(videoView);
         // Start video streaming
-        final String videoUrl = "https://live2-radio-mediaset-it.akamaized.net/content/hls_h0_clr_vos/live/channel(ec)/index.m3u8";
+        final String videoUrl = "https://live02-seg.msr.cdn.mediaset.net/live/ch-ec/ec-clr.isml/index.m3u8";
         videoView.requestFocus();
         videoView.setOnPreparedListener(onPreparedListener);
         videoView.setVideoURI(Uri.parse(videoUrl));

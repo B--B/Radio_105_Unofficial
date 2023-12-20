@@ -216,7 +216,7 @@ public class TvFragment extends Fragment {
         colorAnimation.setDuration(500);
         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
+            public void onAnimationUpdate(@NonNull ValueAnimator animator) {
                 mConstraintLayout.setBackgroundColor((int) animator.getAnimatedValue());
             }
         });

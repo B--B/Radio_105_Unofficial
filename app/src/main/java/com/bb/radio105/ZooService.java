@@ -51,6 +51,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import java.util.Objects;
+
 import timber.log.Timber;
 
 public class ZooService extends Service {
@@ -97,7 +99,7 @@ public class ZooService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
-        switch (action) {
+        switch (Objects.requireNonNull(action)) {
             case ACTION_PLAY_NOTIFICATION_ZOO:
                 processPlayRequestNotification();
                 break;
@@ -152,8 +154,8 @@ public class ZooService extends Service {
         // Creating notification channel
         createNotificationChannel();
 
-        Intent intent = getPackageManager()
-                .getLaunchIntentForPackage(getPackageName())
+        Intent intent = Objects.requireNonNull(getPackageManager()
+                        .getLaunchIntentForPackage(getPackageName()))
                 .setPackage(null)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         PendingIntent pIntent;
@@ -219,8 +221,8 @@ public class ZooService extends Service {
     @SuppressLint("UnspecifiedImmutableFlag")
     private void updateNotification(String text) {
 
-        Intent intent = getPackageManager()
-                .getLaunchIntentForPackage(getPackageName())
+        Intent intent = Objects.requireNonNull(getPackageManager()
+                        .getLaunchIntentForPackage(getPackageName()))
                 .setPackage(null)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent

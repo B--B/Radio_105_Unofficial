@@ -76,6 +76,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import timber.log.Timber;
@@ -164,7 +165,7 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
         if (Constants.podcastBundle == null) {
             mWebView.loadUrl(url);
         } else {
-            mWebView.restoreState(Constants.podcastBundle.getBundle(Constants.PODCAST_STATE));
+            mWebView.restoreState(Objects.requireNonNull(Constants.podcastBundle.getBundle(Constants.PODCAST_STATE)));
         }
 
         mWebView.setWebViewClient(mWebViewClient);
@@ -400,11 +401,11 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
 
         @Override
         public boolean shouldOverrideUrlLoading (@NonNull WebView webView, WebResourceRequest request) {
-            if (Uri.parse(request.getUrl().toString()).getHost().contains("zoo.105.net")) {
+            if (Objects.requireNonNull(Uri.parse(request.getUrl().toString()).getHost()).contains("zoo.105.net")) {
                 Navigation.findNavController(requireView()).navigate(R.id.nav_zoo);
                 return false;
             }
-            if (Uri.parse(request.getUrl().toString()).getHost().contains("www.105.net")) {
+            if (Objects.requireNonNull(Uri.parse(request.getUrl().toString()).getHost()).contains("www.105.net")) {
                 return false;
             }
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

@@ -59,6 +59,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -467,8 +468,8 @@ public class RadioService extends Service implements OnPreparedListener,
             mNotificationBuilder.setSmallIcon(R.drawable.ic_radio105_notification);
         }
 
-        Intent intent = getPackageManager()
-                .getLaunchIntentForPackage(getPackageName())
+        Intent intent = Objects.requireNonNull(getPackageManager()
+                        .getLaunchIntentForPackage(getPackageName()))
                 .setPackage(null)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent
@@ -545,8 +546,8 @@ public class RadioService extends Service implements OnPreparedListener,
         // Creating notification channel
         createNotificationChannel();
 
-        Intent intent = getPackageManager()
-                .getLaunchIntentForPackage(getPackageName())
+        Intent intent = Objects.requireNonNull(getPackageManager()
+                        .getLaunchIntentForPackage(getPackageName()))
                 .setPackage(null)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         // Use System.currentTimeMillis() to have a unique ID for the pending intent

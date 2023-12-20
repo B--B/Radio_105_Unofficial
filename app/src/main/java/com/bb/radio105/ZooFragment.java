@@ -79,6 +79,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import timber.log.Timber;
@@ -168,7 +169,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
         if (Constants.zooBundle == null) {
             mWebView.loadUrl(url);
         } else {
-            mWebView.restoreState(Constants.zooBundle.getBundle(Constants.ZOO_STATE));
+            mWebView.restoreState(Objects.requireNonNull(Constants.zooBundle.getBundle(Constants.ZOO_STATE)));
         }
 
         mWebView.setWebViewClient(mWebViewClient);
@@ -405,7 +406,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
         @Override
         public boolean shouldOverrideUrlLoading (@NonNull WebView webView, WebResourceRequest request) {
-            if (Uri.parse(request.getUrl().toString()).getHost().contains("zoo.105.net")) {
+            if (Objects.requireNonNull(Uri.parse(request.getUrl().toString()).getHost()).contains("zoo.105.net")) {
                 return false;
             }
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

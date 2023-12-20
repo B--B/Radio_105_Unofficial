@@ -45,6 +45,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -698,6 +699,17 @@ public class RadioService extends Service implements OnPreparedListener,
     private boolean isDeviceOnline() {
         // Try to connect to CloudFlare DNS socket, return true if success
         final AtomicBoolean deviceOnline = new AtomicBoolean(false);
+        Thread thread = getThread(deviceOnline);
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            Timber.e(e, "isDeviceOnline: exception trying to join thread!");
+        }
+        return deviceOnline.get();
+    }
+
+    @NonNull
+    private static Thread getThread(AtomicBoolean deviceOnline) {
         Thread thread = new Thread(() -> {
             try {
                 int timeout = 1500;
@@ -711,12 +723,7 @@ public class RadioService extends Service implements OnPreparedListener,
             }
         });
         thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            Timber.e(e, "isDeviceOnline: exception trying to join thread!");
-        }
-        return deviceOnline.get();
+        return thread;
     }
 
     private void getStreamingMetadata() {

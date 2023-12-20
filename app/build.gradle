@@ -29,6 +29,7 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    namespace 'com.bb.radio105'
 }
 
 dependencies {

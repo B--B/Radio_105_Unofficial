@@ -443,7 +443,7 @@ public class RadioService extends Service implements OnPreparedListener,
     /**
      * Updates the notification.
      */
-    @SuppressLint("UnspecifiedImmutableFlag")
+    @SuppressLint({"UnspecifiedImmutableFlag", "MissingPermission"})
     private void updateNotification(String text) {
         String artUri = null;
         if (artUrl != null) {

@@ -218,7 +218,7 @@ public class ZooService extends Service {
         startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
     }
 
-    @SuppressLint("UnspecifiedImmutableFlag")
+    @SuppressLint({"UnspecifiedImmutableFlag", "MissingPermission"})
     private void updateNotification(String text) {
 
         Intent intent = Objects.requireNonNull(getPackageManager()
@@ -339,6 +339,7 @@ public class ZooService extends Service {
 
     private void fetchBitmapFromURL(String mString) {
         AlbumArtCache.getInstance().fetch(mString, new AlbumArtCache.FetchListener() {
+            @SuppressLint("MissingPermission")
             @Override
             public void onFetched(Bitmap bitmap, Bitmap icon) {
                 art = bitmap;

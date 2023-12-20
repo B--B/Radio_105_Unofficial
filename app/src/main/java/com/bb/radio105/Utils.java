@@ -54,6 +54,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Objects;
 
+import timber.log.Timber;
+
 public class Utils {
     /**
      * Requests the {@link android.Manifest.permission#WRITE_EXTERNAL_STORAGE} permission.
@@ -147,7 +149,7 @@ public class Utils {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Timber.e(e, "getSystemProperty: exception while trying to close input!");
                 }
             }
         }

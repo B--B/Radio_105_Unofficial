@@ -707,14 +707,14 @@ public class RadioService extends Service implements OnPreparedListener,
                 sock.close();
                 deviceOnline.set(true);
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e, "isDeviceOnline: error connecting to socket!");
             }
         });
         thread.start();
         try {
             thread.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Timber.e(e, "isDeviceOnline: exception trying to join thread!");
         }
         return deviceOnline.get();
     }

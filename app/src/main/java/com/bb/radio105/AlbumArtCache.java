@@ -98,7 +98,7 @@ final class AlbumArtCache {
                     new Handler(Looper.getMainLooper()).post(() -> listener.onFetched(
                             bitmaps[BIG_BITMAP_INDEX], bitmaps[ICON_BITMAP_INDEX]));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Timber.e(e, "getOrFetch: error fetching bitmap");
                 }
             });
             thread.start();

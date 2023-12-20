@@ -124,8 +124,13 @@ public class ZooFragment extends Fragment implements IPodcastService {
         //Acquire wake locks
         mWakeLock = ((PowerManager) requireContext().getSystemService(Context.POWER_SERVICE))
                 .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:ZooServiceWakelock");
-        mWifiLock = ((WifiManager) requireContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE))
-                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:ZooServiceWiFiWakelock");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            mWifiLock = ((WifiManager) requireContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE))
+                    .createWifiLock(WifiManager.WIFI_MODE_FULL_LOW_LATENCY, "WARNING:ZooServiceWiFiWakelock");
+        } else {
+            mWifiLock = ((WifiManager) requireContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE))
+                    .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:ZooServiceWiFiWakelock");
+        }
 
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {

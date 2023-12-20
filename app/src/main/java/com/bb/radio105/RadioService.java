@@ -182,8 +182,13 @@ public class RadioService extends Service implements OnPreparedListener,
         Timber.i("debug: Creating service");
 
         // Create the Wifi lock (this does not acquire the lock, this just creates it)
-        mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
-                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "radio105lock");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
+                    .createWifiLock(WifiManager.WIFI_MODE_FULL_LOW_LATENCY, "WARNING:radio105lock");
+        } else {
+            mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
+                    .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:radio105lock");
+        }
 
         mNotificationManager = NotificationManagerCompat.from(this);
 

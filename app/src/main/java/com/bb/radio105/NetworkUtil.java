@@ -68,7 +68,7 @@ public class NetworkUtil {
         }
     }
 
-    interface OnConnectionStatusChange{
+    public interface OnConnectionStatusChange{
         void onChange(boolean type);
     }
 }

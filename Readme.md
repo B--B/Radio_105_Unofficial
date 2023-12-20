@@ -55,7 +55,7 @@
 * The radio streaming can be controlled with wearable devices or Android Auto
 * Can be installed on android TV --> Tested with Android TV emulator
 * Compatible with wearable devices --> Tested with Wear OS emulator and with Xiaomi Band 4 and 5
-* Fully compatible with Android 12 and [Material you](https://material.io/blog/announcing-material-you)
+* Fully compatible with Android 14 and [Material you](https://material.io/blog/announcing-material-you)
 * The version downloadable from Play Store use the new [Android App Bundle](https://developer.android.com/platform/technology/app-bundle) format
 
 <br />
@@ -68,6 +68,7 @@
 * FOREGROUND_SERVICE: needed by the Radio streaming service. Without this Android will kill the streaming service after a few minutes when the screen is off
 * WAKE_LOCK: needed by the radio streaming service when running. Without this there's the possibility that Android turns off the WiFi or send the CPU in deep sleep state when the screen is off even if the streaming service is running
 * WRITE_EXTERNAL_STORAGE: this permission is NOT granted by default and will be asked only when the user tries to download a podcast from podcast or the 105 zoo sections. On Android versions >= 10 the permission is NOT required, the app will use the new scoped storage model implemented in Android 10. More info [here](https://developer.android.com/about/versions/11/privacy/storage)
+* POST_NOTIFICATIONS: this permission is needed only when using the Android standard notification type instead the multimedia notification type, it's disabled by default and user will be prompted to grant the permission when Android standard notification type in settings is enabled
 
 <br />
 <br />

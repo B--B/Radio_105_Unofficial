@@ -370,7 +370,7 @@ public class RadioService extends Service implements OnPreparedListener,
     private void playNextSong() {
         mState = PlaybackStateCompat.STATE_STOPPED;
         relaxResources(false); // release everything except MediaPlayer
-        String manualUrl = "http://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
+        String manualUrl = "https://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
 
         Thread thread = new Thread(() -> {
             try {
@@ -406,7 +406,7 @@ public class RadioService extends Service implements OnPreparedListener,
         updateNotification(getString(R.string.recovering));
         mPlayOnFocusGain = true;
         tryToGetAudioFocus();
-        String manualUrl = "http://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
+        String manualUrl = "https://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
 
         Thread thread = new Thread(() -> {
             try {

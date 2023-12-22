@@ -19,7 +19,6 @@ package com.bb.radio105;
 import android.Manifest;
 import android.app.UiModeManager;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -141,7 +140,8 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                     if (mediaNotification != null) {
                         mediaNotification.setOnPreferenceChangeListener((preference, newValue) -> {
                             if (newValue.equals(false)) {
-                                if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                                if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(),
+                                        Manifest.permission.POST_NOTIFICATIONS)) {
                                     Snackbar.make(requireView(), R.string.post_notification_required,
                                             Snackbar.LENGTH_INDEFINITE).setAction(R.string.ok, view -> {
                                         // Request the permission

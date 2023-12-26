@@ -101,7 +101,6 @@ public class Utils {
 
     static void setUpFullScreen(Activity mActivity) {
         DrawerLayout drawer = mActivity.findViewById(R.id.drawer_layout);
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         final WindowInsetsControllerCompat controllerCompat = new WindowInsetsControllerCompat(mActivity.getWindow(), mActivity.getWindow().getDecorView());
         controllerCompat.hide(WindowInsetsCompat.Type.systemBars());
         controllerCompat.setSystemBarsBehavior(BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
@@ -116,7 +115,6 @@ public class Utils {
 
     static void restoreScreen(Activity mActivity) {
         DrawerLayout drawer = mActivity.findViewById(R.id.drawer_layout);
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         final WindowInsetsControllerCompat controllerCompat = new WindowInsetsControllerCompat(mActivity.getWindow(), mActivity.getWindow().getDecorView());
         controllerCompat.show(WindowInsetsCompat.Type.systemBars());
         controllerCompat.setSystemBarsBehavior(BEHAVIOR_SHOW_BARS_BY_SWIPE);

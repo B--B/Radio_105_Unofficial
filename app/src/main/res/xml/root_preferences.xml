@@ -76,6 +76,16 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        app:title="@string/debug">
+        <SwitchPreferenceCompat
+            app:key="@string/debug_key"
+            app:summaryOff="@string/debugging_summary_off"
+            app:summaryOn="@string/debugging_summary_on"
+            app:title="@string/debugging_title"
+            app:defaultValue="false"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
         app:title="@string/experimental"
         app:key="@string/experimental_key">
         <ListPreference

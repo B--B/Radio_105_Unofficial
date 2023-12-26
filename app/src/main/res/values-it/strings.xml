@@ -103,6 +103,12 @@
     <string name="reconnect_summary_on">L\' applicazione tenterà di riconnettere lo streaming radio automaticamente dopo un errore di riproduzione oppure quando viene rilevato un cambio di rete se internet è disponibile</string>
     <string name="reconnect_title">Riconnessione Streaming</string>
 
+    <!-- Debugging -->
+    <string name="debug">Debugging</string>
+    <string name="debugging_title">Debug e log</string>
+    <string name="debugging_summary_on">Debug e log abilitati</string>
+    <string name="debugging_summary_off">Debug e log disabilitati</string>
+
     <!-- Social Fragment -->
     <string name="contact">Scrivi alla diretta</string>
     <string name="follow">Segui Radio 105</string>

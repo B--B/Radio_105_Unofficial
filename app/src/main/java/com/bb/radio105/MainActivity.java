@@ -58,6 +58,7 @@ import java.util.Objects;
 
 import timber.log.Timber;
 
+import static timber.log.Timber.DebugTree;
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -68,8 +69,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
 
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
+        boolean isDebuggingEnabled = Utils.getUserPreferenceBoolean(getBaseContext(), getString(R.string.debug_key), false);
+
+        if (BuildConfig.DEBUG || isDebuggingEnabled) {
+            Timber.plant(new DebugTree());
         }
 
         // Enable dynamic colors

@@ -118,6 +118,15 @@
     <string name="reconnect_summary_on">App will try to automatically restart the stream if a media player audio occur and an internet connection is available</string>
     <string name="reconnect_title">Restart Radio stream</string>
 
+    <!-- Debugging -->
+    <string name="debug_key" translatable="false">debugging</string>
+    <string name="debug">Debugging</string>
+    <string name="debugging_title">Debug and logging</string>
+    <string name="debugging_summary_on">Debug and logging enabled</string>
+    <string name="debugging_summary_off">Debug and logging disabled</string>
+
+
+
     <!-- Social Fragment -->
     <string name="contact">Contacts</string>
     <string name="follow">Follow</string>

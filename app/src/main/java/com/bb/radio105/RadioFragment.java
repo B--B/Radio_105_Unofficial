@@ -137,29 +137,16 @@ public class RadioFragment extends Fragment {
         mFragmentRadioBinding.button1.setOnClickListener(v -> {
             if (mBound) {
                 mMediaControllerCompat.getTransportControls().play();
-                Utils.fadeOutImageView(mFragmentRadioBinding.imageLogo);
             }
         });
         mFragmentRadioBinding.button2.setOnClickListener(v -> {
             if (mBound) {
                 mMediaControllerCompat.getTransportControls().pause();
-                Utils.fadeOutImageView(mFragmentRadioBinding.imageArt);
-                Utils.fadeInImageView(mFragmentRadioBinding.imageLogo, 250);
-                Utils.fadeOutTextView(mFragmentRadioBinding.titleText);
-                Utils.fadeOutTextView(mFragmentRadioBinding.djNameText);
             }
         });
         mFragmentRadioBinding.button3.setOnClickListener(v -> {
             if (mBound) {
                 mMediaControllerCompat.getTransportControls().stop();
-                if (mFragmentRadioBinding.imageArt.getVisibility() == View.VISIBLE) {
-                    Utils.fadeOutImageView(mFragmentRadioBinding.imageArt);
-                    Utils.fadeOutTextView(mFragmentRadioBinding.titleText);
-                    Utils.fadeOutTextView(mFragmentRadioBinding.djNameText);
-                    Utils.fadeInImageView(mFragmentRadioBinding.imageLogo, 250);
-                } else if (mFragmentRadioBinding.imageArt.getVisibility() != View.VISIBLE && mFragmentRadioBinding.imageLogo.getVisibility() != View.VISIBLE) {
-                    Utils.fadeInImageView(mFragmentRadioBinding.imageLogo, 250);
-                }
             }
         });
     }
@@ -221,6 +208,7 @@ public class RadioFragment extends Fragment {
                 case STATE_PLAYING:
                     if (mFragmentRadioBinding.imageLogo.getVisibility() != View.INVISIBLE || mFragmentRadioBinding.imageArt.getVisibility() != View.VISIBLE) {
                         if (RadioService.fromPauseState) {
+                            Utils.fadeOutImageView(mFragmentRadioBinding.imageLogo);
                             Utils.fadeInImageView(mFragmentRadioBinding.imageArt, 250);
                             Utils.fadeInTextView(mFragmentRadioBinding.titleText, 250);
                             Utils.fadeInTextView(mFragmentRadioBinding.djNameText, 250);
@@ -238,16 +226,31 @@ public class RadioFragment extends Fragment {
                     mFragmentRadioBinding.button1.setEnabled(true);
                     mFragmentRadioBinding.button2.setEnabled(false);
                     mFragmentRadioBinding.button3.setEnabled(true);
+                    if (mFragmentRadioBinding.imageLogo.getVisibility() != View.VISIBLE) {
+                        Utils.fadeOutImageView(mFragmentRadioBinding.imageArt);
+                        Utils.fadeInImageView(mFragmentRadioBinding.imageLogo, 250);
+                        Utils.fadeOutTextView(mFragmentRadioBinding.titleText);
+                        Utils.fadeOutTextView(mFragmentRadioBinding.djNameText);
+                    }
                     break;
                 case STATE_BUFFERING:
                     mFragmentRadioBinding.button1.setEnabled(false);
                     mFragmentRadioBinding.button2.setEnabled(false);
                     mFragmentRadioBinding.button3.setEnabled(true);
+                    Utils.fadeOutImageView(mFragmentRadioBinding.imageLogo);
                     break;
                 case STATE_STOPPED:
                     mFragmentRadioBinding.button1.setEnabled(true);
                     mFragmentRadioBinding.button2.setEnabled(false);
                     mFragmentRadioBinding.button3.setEnabled(false);
+                    if (mFragmentRadioBinding.imageArt.getVisibility() == View.VISIBLE) {
+                        Utils.fadeOutImageView(mFragmentRadioBinding.imageArt);
+                        Utils.fadeOutTextView(mFragmentRadioBinding.titleText);
+                        Utils.fadeOutTextView(mFragmentRadioBinding.djNameText);
+                        Utils.fadeInImageView(mFragmentRadioBinding.imageLogo, 250);
+                    } else if (mFragmentRadioBinding.imageArt.getVisibility() != View.VISIBLE && mFragmentRadioBinding.imageLogo.getVisibility() != View.VISIBLE) {
+                        Utils.fadeInImageView(mFragmentRadioBinding.imageLogo, 250);
+                    }
                     break;
                 case STATE_ERROR:
                     if (mFragmentRadioBinding.imageLogo.getVisibility() != View.VISIBLE) {

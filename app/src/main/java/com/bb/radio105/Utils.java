@@ -24,7 +24,10 @@ import static androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRAN
 import android.Manifest;
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -254,5 +257,18 @@ public class Utils {
             }
             webView.setVisibility(View.VISIBLE);
         }, 200);
+    }
+
+    static void restartApp(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
+        assert intent != null;
+        ComponentName componentName = intent.getComponent();
+        Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+        // Required for API 34 and later
+        // Ref: https://developer.android.com/about/versions/14/behavior-changes-14#safer-intents
+        mainIntent.setPackage(context.getPackageName());
+        context.startActivity(mainIntent);
+        Runtime.getRuntime().exit(0);
     }
 }

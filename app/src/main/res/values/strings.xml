@@ -31,6 +31,7 @@
     <string name="important">Important</string>
     <string name="podcast_service">105 Podcast</string>
     <string name="zoo_service">The 105 Zoo</string>
+    <string name="debug_dialog">To enable or disable debugging and logging functions the App must be restarted. Restart now?</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Select Theme</string>

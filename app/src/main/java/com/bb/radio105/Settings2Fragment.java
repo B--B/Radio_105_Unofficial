@@ -75,9 +75,11 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
 
         private AlertDialog thanksDialog;
         private AlertDialog miUiEMUIDialog;
+        private AlertDialog debugDialog;
         private ImageView mImageView;
         private Boolean isThanksDialogShowing = false;
         private Boolean isMiUiEMUIDialogShowing = false;
+        private Boolean isDebugDialogShowing = false;
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -134,7 +136,6 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                 }
             }
             // Notification type listener for Android 13
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (appNotificationPref != null) {
                     if (mediaNotification != null) {
@@ -170,6 +171,9 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             } else if (p.getKey().equals(getString(R.string.miui_emui_dialog_key))) {
                 showMiUiEMUIDialog();
                 isMiUiEMUIDialogShowing = true;
+            } else if (p.getKey().equals(getString(R.string.debug_key))) {
+                showDebugDialog();
+                isDebugDialogShowing = true;
             }
             return false;
         }
@@ -198,6 +202,8 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
                 showThanksDialog();
             } else if (isMiUiEMUIDialogShowing) {
                 showMiUiEMUIDialog();
+            } else if (isDebugDialogShowing) {
+                showDebugDialog();
             }
             super.onResume();
         }
@@ -212,6 +218,9 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             } else if (miUiEMUIDialog != null) {
                 miUiEMUIDialog.dismiss();
                 miUiEMUIDialog = null;
+            } else if (debugDialog != null) {
+                debugDialog.dismiss();
+                debugDialog = null;
             }
             super.onDestroyView();
         }
@@ -269,6 +278,26 @@ public class Settings2Fragment extends Fragment implements SharedPreferences.OnS
             miUiEMUIDialog.setIcon(R.drawable.ic_radio_105_logo);
             miUiEMUIDialog.setTitle(R.string.miui_emui_dialog);
             miUiEMUIDialog.show();
+        }
+
+        private void showDebugDialog() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+            LayoutInflater inflater = requireActivity().getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.debug_dialog, null, false);
+            builder.setView(dialogView).
+                    setOnCancelListener(dialog -> isDebugDialogShowing = false);
+            builder.setView(dialogView).
+                    setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+                        dialog.cancel();
+                        Utils.restartApp(requireContext());
+                    });
+            builder.setView(dialogView).
+                    setNegativeButton(getString(R.string.cancel), (dialog, which) ->
+                            dialog.cancel());
+            debugDialog = builder.create();
+            debugDialog.setIcon(R.drawable.ic_debug);
+            debugDialog.setTitle(R.string.debugging_title);
+            debugDialog.show();
         }
     }
 

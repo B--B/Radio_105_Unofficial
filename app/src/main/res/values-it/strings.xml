@@ -26,6 +26,7 @@
     <string name="important">Importante</string>
     <string name="podcast_service">105 Podcast e Repliche</string>
     <string name="zoo_service">The 105 Zoo</string>
+    <string name="debug_dialog">Per abilitare o disabilitare il debug e le funzioni di logging l\' App deve essere riavviata. Riavviare ora?</string>
 
     <!-- Theme Preferences -->
     <string name="theme_title">Seleziona Tema</string>

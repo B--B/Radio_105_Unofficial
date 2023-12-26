@@ -26,10 +26,11 @@
         android:banner="@mipmap/ic_banner"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:enableOnBackInvokedCallback="true"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.105Splash"
-        tools:targetApi="m">
+        tools:targetApi="tiramisu">
         <activity
             android:name="com.bb.radio105.MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|mcc|mnc|screenLayout|smallestScreenSize|density"

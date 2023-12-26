@@ -63,7 +63,6 @@
     <string name="loading">In Caricamento…</string>
     <string name="playing">In Riproduzione</string>
     <string name="in_pause">In Pausa</string>
-    <string name="recovering">Ripristino Streaming…</string>
 
     <!-- WebViews Themes -->
     <string name="webviews_themes_title">Temi</string>
@@ -100,8 +99,8 @@
     <!-- Reconnect Stream -->
     <string name="no_reconnect">Internet non disponibile, riconnessione fallita</string>
     <string name="reconnect">Internet disponibile, tento di reinizializzare lo streaming</string>
-    <string name="reconnect_summary_off">L\' applicazione non tenterà di riconnettere lo streaming radio automaticamente dopo un errore di riproduzione</string>
-    <string name="reconnect_summary_on">L\' applicazione tenterà di riconnettere lo streaming radio automaticamente dopo un errore di riproduzione se internet è disponibile</string>
+    <string name="reconnect_summary_off">L\' applicazione non tenterà di riconnettere lo streaming radio automaticamente dopo un errore di riproduzione oppure quando viene rilevato un cambio di rete</string>
+    <string name="reconnect_summary_on">L\' applicazione tenterà di riconnettere lo streaming radio automaticamente dopo un errore di riproduzione oppure quando viene rilevato un cambio di rete se internet è disponibile</string>
     <string name="reconnect_title">Riconnessione Streaming</string>
 
     <!-- Social Fragment -->
@@ -128,9 +127,6 @@
     <string name="follow_on_instagram_zoo">Segui lo Zoo di 105 su Instagram</string>
 
     <!-- Network Change -->
-    <string name="network_change_off">L\' applicazione non proverà a riconnettere lo streaming radio quando il telefono passa dalla rete mobile alla rete wireless e viceversa</string>
-    <string name="network_change_on">L\' applicazione proverà a riconnettere lo streaming radio quando il telefono passa dalla rete mobile alla rete wireless e viceversa</string>
-    <string name="network_change_title">Cambio di Rete</string>
     <string name="radio_105">Radio 105</string>
 
     <!-- Notification Type -->

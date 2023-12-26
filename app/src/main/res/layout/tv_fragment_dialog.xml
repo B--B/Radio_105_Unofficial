@@ -5,7 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
-        android:id="@+id/tv_dialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -13,7 +12,6 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_dialog_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/tv_screen_on"

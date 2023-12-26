@@ -45,7 +45,6 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -56,16 +55,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
 import java.util.Calendar;
 import java.util.Objects;
 import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import timber.log.Timber;
 
@@ -181,6 +176,11 @@ public class RadioService extends Service implements OnPreparedListener,
         super.onCreate();
         Timber.i("debug: Creating service");
 
+        // Register a network callback for devices running N and above
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            NetworkUtil.registerNetworkCallback(getApplicationContext());
+        }
+
         // Create the Wifi lock (this does not acquire the lock, this just creates it)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
@@ -244,20 +244,8 @@ public class RadioService extends Service implements OnPreparedListener,
 
         // actually play the song
         if (mState == PlaybackStateCompat.STATE_STOPPED || mState == PlaybackStateCompat.STATE_ERROR) {
-            NetworkUtil.checkNetworkInfo(this, type -> {
-                boolean networkInfo = Utils.getUserPreferenceBoolean(this, getString(R.string.network_change_key), true);
-                if (networkInfo) {
-                    if (mState == PlaybackStateCompat.STATE_PLAYING) {
-                        if (type) {
-                            // Restart the stream. Don't use MediaSession callback as we are
-                            // already onPlay and the stream will restart in a few moments
-                            if (mWifiLock.isHeld()) mWifiLock.release();
-                            recoverStream();
-                        }
-                    }
-                }
-            });
-            // If we're stopped, just go ahead to the next song and start playing
+
+            // If we're stopped, just go ahead and start playing
             playNextSong();
         } else if (mState == PlaybackStateCompat.STATE_PAUSED) {
             // If we're paused, just continue playback.
@@ -301,7 +289,6 @@ public class RadioService extends Service implements OnPreparedListener,
             giveUpAudioFocus();
             updatePlaybackState(null);
             unregisterAudioNoisyReceiver();
-            NetworkUtil.unregisterNetworkCallback();
         }
         fromPauseState = false;
     }
@@ -392,41 +379,6 @@ public class RadioService extends Service implements OnPreparedListener,
                 mPlayer.prepare();
 
                 // Acquire the WiFi lock
-                mWifiLock.acquire();
-            } catch (IOException ex) {
-                Timber.e("IOException playing next song: %s", ex.getMessage());
-                updatePlaybackState(ex.getMessage());
-            }
-        });
-        thread.start();
-    }
-
-    private void recoverStream() {
-        mState = PlaybackStateCompat.STATE_STOPPED;
-        updateNotification(getString(R.string.recovering));
-        mPlayOnFocusGain = true;
-        tryToGetAudioFocus();
-        String manualUrl = "https://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
-
-        Thread thread = new Thread(() -> {
-            try {
-                createMediaPlayerIfNeeded();
-                AudioAttributes.Builder b = new AudioAttributes.Builder();
-                b.setUsage(AudioAttributes.USAGE_MEDIA);
-                mPlayer.setAudioAttributes(b.build());
-                mPlayer.setDataSource(manualUrl);
-
-                mState = PlaybackStateCompat.STATE_BUFFERING;
-                updatePlaybackState(null);
-
-                // starts preparing the media player in the background. When it's done, it will call
-                // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
-                // the listener to 'this').
-                //
-                // Until the media player is prepared, we *cannot* call start() on it!
-                mPlayer.prepare();
-
-                // Acquire th WiFi lock
                 mWifiLock.acquire();
             } catch (IOException ex) {
                 Timber.e("IOException playing next song: %s", ex.getMessage());
@@ -605,7 +557,6 @@ public class RadioService extends Service implements OnPreparedListener,
      * the Error state. We warn the user about the error and reset the media player.
      */
     public boolean onError(MediaPlayer mp, int what, int extra) {
-
         boolean reconnect = Utils.getUserPreferenceBoolean(this, getString(R.string.reconnect_key), true);
 
         Toast.makeText(getApplicationContext(), getString(R.string.error),
@@ -617,7 +568,11 @@ public class RadioService extends Service implements OnPreparedListener,
 
         if (reconnect) {
             // Try to restart the service immediately if we have a working internet connection
-            if (isDeviceOnline()) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                // Android below N does not have registerDefaultNetworkCallback
+                NetworkUtil.setNetworkConnected();
+            }
+            if (NetworkUtil.isNetworkConnected) {
                 mState = PlaybackStateCompat.STATE_STOPPED;
                 Toast.makeText(getApplicationContext(), getString(R.string.reconnect),
                         Toast.LENGTH_SHORT).show();
@@ -630,6 +585,9 @@ public class RadioService extends Service implements OnPreparedListener,
                 updatePlaybackState(getString(R.string.error_cannot_recover));
             }
         } else {
+            // Tell the user that streaming service cannot be recovered because the option is disabled
+            Toast.makeText(getApplicationContext(), getString(R.string.error_no_recover),
+                    Toast.LENGTH_SHORT).show();
             updatePlaybackState(getString(R.string.error_no_recover));
         }
         return true; // true indicates we handled the error
@@ -638,6 +596,9 @@ public class RadioService extends Service implements OnPreparedListener,
     @Override
     public void onDestroy() {
         // Service is being killed, so make sure we release our resources
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            NetworkUtil.unregisterNetworkCallback();
+        }
         stopSelf();
         mState = PlaybackStateCompat.STATE_STOPPED;
         relaxResources(true);
@@ -703,36 +664,6 @@ public class RadioService extends Service implements OnPreparedListener,
             }
         }
         configAndStartMediaPlayer();
-    }
-
-    private boolean isDeviceOnline() {
-        // Try to connect to CloudFlare DNS socket, return true if success
-        final AtomicBoolean deviceOnline = new AtomicBoolean(false);
-        Thread thread = getThread(deviceOnline);
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            Timber.e(e, "isDeviceOnline: exception trying to join thread!");
-        }
-        return deviceOnline.get();
-    }
-
-    @NonNull
-    private static Thread getThread(AtomicBoolean deviceOnline) {
-        Thread thread = new Thread(() -> {
-            try {
-                int timeout = 1500;
-                Socket sock = new Socket();
-                SocketAddress mSocketAddress = new InetSocketAddress("1.1.1.1", 53);
-                sock.connect(mSocketAddress, timeout);
-                sock.close();
-                deviceOnline.set(true);
-            } catch (Exception e) {
-                Timber.e(e, "isDeviceOnline: error connecting to socket!");
-            }
-        });
-        thread.start();
-        return thread;
     }
 
     private void getStreamingMetadata() {

@@ -25,50 +25,48 @@ import android.net.NetworkInfo;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 public class NetworkUtil {
 
     static ConnectivityManager mConnectivityManager;
     static ConnectivityManager.NetworkCallback mNetworkCallback;
 
-    public static void checkNetworkInfo(Context context, final OnConnectionStatusChange onConnectionStatusChange) {
-
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    static void registerNetworkCallback(Context context) {
         mConnectivityManager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-
             NetworkCapabilities capabilities = mConnectivityManager.getNetworkCapabilities(mConnectivityManager.getActiveNetwork());
             if (capabilities == null) {
-                onConnectionStatusChange.onChange(false);
+                isNetworkConnected = false;
             }
             mNetworkCallback = (new ConnectivityManager.NetworkCallback() {
                 @Override
                 public void onAvailable(@NonNull Network network) {
-                    onConnectionStatusChange.onChange(true);
+                    isNetworkConnected = true;
                 }
                 @Override
                 public void onLost(@NonNull Network network) {
-                    onConnectionStatusChange.onChange(false);
+                    isNetworkConnected = false;
                 }
             });
             mConnectivityManager.registerDefaultNetworkCallback(mNetworkCallback);
-        } else {
-            // For android version below Nougat api 24
-            NetworkInfo networkInfo = mConnectivityManager.getActiveNetworkInfo();
-            onConnectionStatusChange.onChange(networkInfo!= null && networkInfo.isConnectedOrConnecting());
-        }
     }
 
-    public static void unregisterNetworkCallback() {
+    static void unregisterNetworkCallback() {
         if (mConnectivityManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 mConnectivityManager.unregisterNetworkCallback(mNetworkCallback);
                 mNetworkCallback = null;
             }
             mConnectivityManager = null;
-        }
     }
 
-    public interface OnConnectionStatusChange{
-        void onChange(boolean type);
+    static boolean isNetworkConnected = false;
+
+    static void setNetworkConnected()
+    {
+        // For android version below Nougat api 24
+        NetworkInfo networkInfo = mConnectivityManager.getActiveNetworkInfo();
+        assert networkInfo != null;
+        isNetworkConnected = networkInfo.isConnectedOrConnecting();
     }
 }

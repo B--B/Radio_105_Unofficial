@@ -17,7 +17,6 @@
         android:contentDescription="@string/miui_logo" />
 
     <ImageView
-        android:id="@+id/imageView2"
         android:layout_width="wrap_content"
         android:layout_height="70dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -49,7 +48,6 @@
             android:layout_margin="15dp"/>
 
         <TextView
-            android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/miui_emui_dialog_text_part_2"

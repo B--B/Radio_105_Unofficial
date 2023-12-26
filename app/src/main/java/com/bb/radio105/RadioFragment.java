@@ -61,6 +61,10 @@ public class RadioFragment extends Fragment {
         mFragmentRadioBinding = FragmentRadioBinding.inflate(inflater, container, false);
         root = mFragmentRadioBinding.getRoot();
 
+        mFragmentRadioBinding.imageArt.setVisibility(View.INVISIBLE);
+        mFragmentRadioBinding.imageLogo.setVisibility(View.INVISIBLE);
+        mFragmentRadioBinding.titleText.setVisibility(View.INVISIBLE);
+        mFragmentRadioBinding.djNameText.setVisibility(View.INVISIBLE);
         mFragmentRadioBinding.button1.setEnabled(false);
         mFragmentRadioBinding.button2.setEnabled(false);
         mFragmentRadioBinding.button3.setEnabled(false);

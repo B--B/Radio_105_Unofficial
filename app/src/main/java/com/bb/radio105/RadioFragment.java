@@ -33,7 +33,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -61,14 +60,6 @@ public class RadioFragment extends Fragment {
 
         mFragmentRadioBinding = FragmentRadioBinding.inflate(inflater, container, false);
         root = mFragmentRadioBinding.getRoot();
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
-            @Override
-            public void handleOnBackPressed() {
-                requireActivity().moveTaskToBack(true);
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         mFragmentRadioBinding.button1.setEnabled(false);
         mFragmentRadioBinding.button2.setEnabled(false);

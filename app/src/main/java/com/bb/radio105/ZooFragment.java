@@ -64,7 +64,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 import androidx.webkit.WebResourceErrorCompat;
 import androidx.webkit.WebViewClientCompat;
@@ -99,6 +98,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     static String podcastImageUrl;
     private PowerManager.WakeLock mWakeLock;
     private WifiManager.WifiLock mWifiLock;
+    private OnBackPressedCallback mOnBackPressedCallback;
 
     @SuppressLint("SetJavaScriptEnabled")
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -132,18 +132,15 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:ZooServiceWiFiWakelock");
         }
 
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+        mOnBackPressedCallback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
                 if (mWebView.canGoBack()) {
                     mWebView.goBack();
-                } else {
-                    Navigation.findNavController(root).navigate(R.id.nav_home);
                 }
             }
         };
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
+        requireActivity().getOnBackPressedDispatcher().addCallback(mOnBackPressedCallback);
 
         mWebView = root.findViewById(R.id.webView_zoo);
         mProgressBar = root.findViewById(R.id.loading_zoo);
@@ -278,6 +275,8 @@ public class ZooFragment extends Fragment implements IPodcastService {
         }
         mProgressBar = null;
         root = null;
+        mOnBackPressedCallback.remove();
+        mOnBackPressedCallback = null;
         // Restore Glide memory values
         GlideApp.get(requireContext()).setMemoryCategory(MemoryCategory.NORMAL);
         super.onDestroyView();
@@ -834,6 +833,14 @@ public class ZooFragment extends Fragment implements IPodcastService {
                 Timber.e("Image load failed with error %s", e);
                 return super.shouldInterceptRequest(view, request);
             }
+        }
+
+        @Override
+        public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
+            // Disable the on-back press callback if there are no more questions in the
+            // WebView to go back to, allowing us to exit the WebView and go back to
+            // the fragment.
+            mOnBackPressedCallback.setEnabled(view.canGoBack());
         }
     };
 

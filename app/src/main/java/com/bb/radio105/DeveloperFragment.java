@@ -26,11 +26,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 
 import com.bb.radio105.databinding.FragmentDeveloperBinding;
@@ -51,14 +49,6 @@ public class DeveloperFragment extends Fragment {
 
         mFragmentDeveloperBinding = FragmentDeveloperBinding.inflate(inflater, container, false);
         root = mFragmentDeveloperBinding.getRoot();
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
-            @Override
-            public void handleOnBackPressed() {
-                 Navigation.findNavController(root).navigate(R.id.nav_home);
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         versionNumber = BuildConfig.VERSION_NAME;
 

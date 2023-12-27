@@ -248,6 +248,11 @@ public class Utils {
                 .getString(preference, defaultValue);
     }
 
+    static int getUserPreferenceInt(Context mContext, String preference) {
+        return PreferenceManager.getDefaultSharedPreferences(mContext)
+                .getInt(preference, 0);
+    }
+
     static void makeWebViewVisible(WebView webView, ProgressBar mProgressBar) {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (mProgressBar != null) {

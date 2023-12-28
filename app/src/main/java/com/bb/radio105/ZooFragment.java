@@ -865,7 +865,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
             fullScreenView = view;
             mViewCallback = mCustomViewCallback;
             ((FrameLayout)requireActivity().getWindow().getDecorView()).addView(fullScreenView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-            Utils.setUpFullScreen(requireActivity());
+            Utils.setUpFullScreen(requireActivity(), requireActivity().getContentResolver());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 fullScreenView.addOnLayoutChangeListener((v, left, top, right, bottom,
                                                      oldLeft, oldTop, oldRight, oldBottom) -> {
@@ -888,7 +888,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
         public void onHideCustomView() {
             ((FrameLayout)requireActivity().getWindow().getDecorView()).removeView(fullScreenView);
             fullScreenView = null;
-            Utils.restoreScreen(requireActivity());
+            Utils.restoreScreen(requireActivity(), requireActivity().getContentResolver());
             mViewCallback.onCustomViewHidden();
             mViewCallback = null;
         }

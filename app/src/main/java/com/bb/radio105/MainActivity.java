@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     private AppBarConfiguration mAppBarConfiguration;
     private ReviewManager reviewManager;
+    private DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +100,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         drawer.setFitsSystemWindows(true);
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -149,9 +149,20 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
     @Override
+    protected void onStart() {
+        if (Utils.isGestureNavigationEnabled(this.getContentResolver())) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        } else {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
+        super.onStart();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         unregisterComponentCallbacks(this);
+        drawer = null;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

@@ -25,6 +25,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -33,6 +34,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -99,8 +101,11 @@ public class Utils {
         downloadManager.enqueue(request);
     }
 
-    static void setUpFullScreen(Activity mActivity) {
+    static void setUpFullScreen(Activity mActivity, ContentResolver mContentResolver) {
         DrawerLayout drawer = mActivity.findViewById(R.id.drawer_layout);
+        if (!isGestureNavigationEnabled(mContentResolver)) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
         final WindowInsetsControllerCompat controllerCompat = new WindowInsetsControllerCompat(mActivity.getWindow(), mActivity.getWindow().getDecorView());
         controllerCompat.hide(WindowInsetsCompat.Type.systemBars());
         controllerCompat.setSystemBarsBehavior(BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
@@ -113,8 +118,11 @@ public class Utils {
         }
     }
 
-    static void restoreScreen(Activity mActivity) {
+    static void restoreScreen(Activity mActivity, ContentResolver mContentResolver) {
         DrawerLayout drawer = mActivity.findViewById(R.id.drawer_layout);
+        if (!isGestureNavigationEnabled(mContentResolver)) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
         final WindowInsetsControllerCompat controllerCompat = new WindowInsetsControllerCompat(mActivity.getWindow(), mActivity.getWindow().getDecorView());
         controllerCompat.show(WindowInsetsCompat.Type.systemBars());
         controllerCompat.setSystemBarsBehavior(BEHAVIOR_SHOW_BARS_BY_SWIPE);
@@ -273,5 +281,9 @@ public class Utils {
         mainIntent.setPackage(context.getPackageName());
         context.startActivity(mainIntent);
         Runtime.getRuntime().exit(0);
+    }
+
+    static boolean isGestureNavigationEnabled(ContentResolver mContentResolver) {
+        return Settings.Secure.getInt(mContentResolver, "navigation_mode", 0) == 2;
     }
 }

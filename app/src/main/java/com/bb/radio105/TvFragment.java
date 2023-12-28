@@ -77,9 +77,9 @@ public class TvFragment extends Fragment {
         progressBar = root.findViewById(R.id.progressBar);
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Utils.setUpFullScreen(requireActivity());
+            Utils.setUpFullScreen(requireActivity(), requireActivity().getContentResolver());
         } else {
-            Utils.restoreScreen(requireActivity());
+            Utils.restoreScreen(requireActivity(), requireActivity().getContentResolver());
         }
 
         progressBar.setVisibility(View.VISIBLE);
@@ -170,10 +170,10 @@ public class TvFragment extends Fragment {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setVideoViewLandscapeSize();
-            Utils.setUpFullScreen(requireActivity());
+            Utils.setUpFullScreen(requireActivity(), requireActivity().getContentResolver());
         } else {
             setVideoViewPortraitSize();
-            Utils.restoreScreen(requireActivity());
+            Utils.restoreScreen(requireActivity(), requireActivity().getContentResolver());
         }
     }
 
@@ -182,11 +182,11 @@ public class TvFragment extends Fragment {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
         if (isInPictureInPictureMode) {
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                Utils.setUpFullScreen(requireActivity());
+                Utils.setUpFullScreen(requireActivity(), requireActivity().getContentResolver());
             }
         } else {
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                Utils.restoreScreen(requireActivity());
+                Utils.restoreScreen(requireActivity(), requireActivity().getContentResolver());
             }
         }
     }
@@ -195,7 +195,7 @@ public class TvFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Utils.restoreScreen(requireActivity());
+            Utils.restoreScreen(requireActivity(), requireActivity().getContentResolver());
         }
         requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mRadioServiceBinder = null;

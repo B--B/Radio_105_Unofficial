@@ -16,6 +16,7 @@
 
 package com.bb.radio105;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
@@ -67,6 +68,22 @@ public class DeveloperFragment extends Fragment {
                     "mailto", "mrczn.bb@gmail.com", null))
                     .putExtra(Intent.EXTRA_EMAIL, "mrczn.bb@gmail.com");
             startActivity(Intent.createChooser(emailIntent, view3.getContext().getString(R.string.send_email)));
+        });
+
+        mFragmentDeveloperBinding.ratePlayStore.setOnClickListener(view4 -> {
+            // To count with Play market back stack, After pressing back button,
+            // to taken back to our application, we need to add following flags to intent.
+            int flags = Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
+            flags |= Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
+            Intent goToMarket = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=" + ARG_APPLICATION_ID))
+                    .addFlags(flags);
+            try {
+                startActivity(goToMarket);
+            } catch (ActivityNotFoundException e) {
+                startActivity(new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=" + ARG_APPLICATION_ID)));
+            }
         });
 
         final String recommendSubject;

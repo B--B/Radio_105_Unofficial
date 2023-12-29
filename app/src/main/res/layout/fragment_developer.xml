@@ -120,6 +120,27 @@
             app:layout_constraintTop_toBottomOf="@+id/developer_mail" />
 
         <TextView
+            android:id="@+id/rate_play_store"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:drawablePadding="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:padding="8dp"
+            android:text="@string/rate_us_in_the_play_store"
+            android:textSize="20sp"
+            app:drawableStartCompat="@drawable/ic_star"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/support_title" />
+
+        <TextView
             android:id="@+id/recommend_to_friend"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -138,7 +159,7 @@
             app:drawableStartCompat="@drawable/ic_share"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/support_title" />
+            app:layout_constraintTop_toBottomOf="@+id/rate_play_store" />
 
         <View style="@style/separator"
             app:layout_constraintEnd_toEndOf="parent"

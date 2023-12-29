@@ -196,6 +196,7 @@
     <string name="bug_report">Report a Bug</string>
     <string name="developer_mail">Send me a Mail</string>
     <string name="support_me">Support the app</string>
+    <string name="rate_us_in_the_play_store">Rate the app in the Play Store</string>
     <string name="recommend_to_a_friend">Recommend the app to a friend</string>
     <string name="share_via">Share via…</string>
     <string name="get_the_app">Get 105 Unofficial app for Android</string>
@@ -212,6 +213,5 @@
     <string name="is_first_start_key" translatable="false">firstStart</string>
     <string name="do_not_show_again_key" translatable="false">doNotAskAgain</string>
     <string name="experimental_options_key" translatable="false">experimental</string>
-    <string name="app_open_count_key" translatable="false">appOpenCount</string>
 
 </resources>

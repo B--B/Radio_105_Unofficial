@@ -47,13 +47,9 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.play.core.review.ReviewInfo;
-import com.google.android.play.core.review.ReviewManager;
-import com.google.android.play.core.review.ReviewManagerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +61,6 @@ import static timber.log.Timber.DebugTree;
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private AppBarConfiguration mAppBarConfiguration;
-    private ReviewManager reviewManager;
     private DrawerLayout drawer;
 
     @Override
@@ -79,8 +74,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         if (BuildConfig.DEBUG || isDebuggingEnabled) {
             Timber.plant(new DebugTree());
         }
-
-        Editor editor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
 
         // Enable dynamic colors
         DynamicColors.applyToActivityIfAvailable(this);
@@ -124,20 +117,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     .setTitle(R.string.disclaimer_title)
                     .setMessage(R.string.disclaimer)
                     .setNeutralButton(R.string.ok, (arg0, arg1) -> {
+                        Editor editor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                         editor.putBoolean(getString(R.string.is_first_start_key), false);
                         editor.apply();
                     })
                     .show();
-        }
-
-        int openCount = Utils.getUserPreferenceInt(getBaseContext(), getString(R.string.app_open_count_key));
-        Timber.e("App open count: %s", openCount);
-        if (openCount == 10) {
-            Timber.e("Showing Play Store rate dialog");
-            showRateApp();
-            editor.putInt(getString(R.string.app_open_count_key), 0).apply();
-        } else {
-            editor.putInt(getString(R.string.app_open_count_key), ++openCount).apply();
         }
     }
 
@@ -229,19 +213,5 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         mTheme.resolveAttribute(R.attr.colorPrimary, mTypedValue, true);
         @ColorInt int mColor = mTypedValue.data;
         return mColor;
-    }
-
-    private void showRateApp() {
-        reviewManager = ReviewManagerFactory.create(this);
-        Task<ReviewInfo> request = reviewManager.requestReviewFlow();
-        request.addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                ReviewInfo reviewInfo = task.getResult();
-                Task<Void> flow = reviewManager.launchReviewFlow(this, reviewInfo);
-                flow.addOnCompleteListener(task1 -> Timber.e("Successfully completed rating activity"));
-            } else {
-                Timber.e("Review Error: %s", Objects.requireNonNull(task.getException()).getMessage());
-            }
-        });
     }
 }

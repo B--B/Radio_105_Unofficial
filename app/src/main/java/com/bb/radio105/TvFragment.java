@@ -198,6 +198,7 @@ public class TvFragment extends Fragment {
             Utils.restoreScreen(requireActivity(), requireActivity().getContentResolver());
         }
         requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        requireActivity().getWindow().setNavigationBarColor(getThemeBackgroundColor());
         mRadioServiceBinder = null;
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
@@ -218,6 +219,7 @@ public class TvFragment extends Fragment {
             @Override
             public void onAnimationUpdate(@NonNull ValueAnimator animator) {
                 mConstraintLayout.setBackgroundColor((int) animator.getAnimatedValue());
+                requireActivity().getWindow().setNavigationBarColor((int) animator.getAnimatedValue());
             }
         });
         colorAnimation.start();
@@ -280,10 +282,10 @@ public class TvFragment extends Fragment {
      *
      * @return The background color of the current theme.
      */
-    public int getThemeBackgroundColor() {
+    int getThemeBackgroundColor() {
         TypedArray array = requireActivity().getTheme().obtainStyledAttributes(
                 new int[] {
-                        android.R.attr.colorBackground
+                        android.R.attr.background
                 });
         int backgroundColor = array.getColor(0, 0);
         array.recycle();

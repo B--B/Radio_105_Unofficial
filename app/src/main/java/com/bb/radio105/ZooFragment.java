@@ -791,8 +791,26 @@ public class ZooFragment extends Fragment implements IPodcastService {
                 // ERR_ADDRESS_UNREACHABLE = -2
                 // ERR_CONNECTION_REFUSED = -6
                 int errorCode = error.getErrorCode();
-                if (errorCode != -1 && errorCode != -2 && errorCode != -6) {
-                    webView.loadUrl(Constants.ErrorPagePath);
+                switch (errorCode) {
+                    case WebViewClient.ERROR_AUTHENTICATION:
+                    case WebViewClient.ERROR_BAD_URL:
+                    case WebViewClient.ERROR_FAILED_SSL_HANDSHAKE:
+                    case WebViewClient.ERROR_FILE:
+                    case WebViewClient.ERROR_FILE_NOT_FOUND:
+                    case WebViewClient.ERROR_IO:
+                    case WebViewClient.ERROR_PROXY_AUTHENTICATION:
+                    case WebViewClient.ERROR_REDIRECT_LOOP:
+                    case WebViewClient.ERROR_TIMEOUT:
+                    case WebViewClient.ERROR_TOO_MANY_REQUESTS:
+                    case WebViewClient.ERROR_UNSAFE_RESOURCE:
+                    case WebViewClient.ERROR_UNSUPPORTED_AUTH_SCHEME:
+                    case WebViewClient.ERROR_UNSUPPORTED_SCHEME:
+                        webView.loadUrl(Constants.ErrorPagePath);
+                        break;
+                    case WebViewClient.ERROR_CONNECT:
+                    case WebViewClient.ERROR_HOST_LOOKUP:
+                    case WebViewClient.ERROR_UNKNOWN:
+                        break;
                 }
             }
         }

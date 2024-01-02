@@ -23,14 +23,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Rational;
-import android.util.TypedValue;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -208,10 +206,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
     private int primaryColor() {
-        TypedValue mTypedValue = new TypedValue();
-        Resources.Theme mTheme = this.getTheme();
-        mTheme.resolveAttribute(R.attr.colorPrimary, mTypedValue, true);
-        @ColorInt int mColor = mTypedValue.data;
+        TypedArray array = this.getTheme().obtainStyledAttributes(
+                new int[] {
+                        android.R.attr.colorPrimary
+                });
+        int mColor = array.getColor(0, 0);
+        array.recycle();
         return mColor;
     }
 }

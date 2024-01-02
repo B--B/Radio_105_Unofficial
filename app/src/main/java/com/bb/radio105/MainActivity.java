@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
-import android.content.res.TypedArray;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         // Enable dynamic colors
         DynamicColors.applyToActivityIfAvailable(this);
-        getWindow().setStatusBarColor(primaryColor());
+        getWindow().setStatusBarColor(Utils.getThemeColor(this, android.R.attr.colorPrimary));
 
         final String[] darkModeValues = getResources().getStringArray(R.array.theme_values);
         // The apps theme is decided depending upon the saved preferences on app startup
@@ -203,15 +202,5 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
         // END_INCLUDE(onRequestPermissionsResult)
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    private int primaryColor() {
-        TypedArray array = this.getTheme().obtainStyledAttributes(
-                new int[] {
-                        android.R.attr.colorPrimary
-                });
-        int mColor = array.getColor(0, 0);
-        array.recycle();
-        return mColor;
     }
 }

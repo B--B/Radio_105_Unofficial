@@ -29,7 +29,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -96,7 +95,7 @@ public class TvFragment extends Fragment {
         }
         // Set the background here avoid wrong color in some cases.
         // Example: Enter PiP mode -> Exit PiP mode -> Enter app from recent tasks -> Background is black
-        mConstraintLayout.setBackgroundColor(getThemeBackgroundColor());
+        mConstraintLayout.setBackgroundColor(Utils.getThemeColor(requireActivity(), android.R.attr.background));
         // Create the VideoView and set the size
         videoView = new VideoView(requireContext());
         videoView.setId(VideoView.generateViewId());
@@ -198,7 +197,7 @@ public class TvFragment extends Fragment {
             Utils.restoreScreen(requireActivity(), requireActivity().getContentResolver());
         }
         requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        requireActivity().getWindow().setNavigationBarColor(getThemeBackgroundColor());
+        requireActivity().getWindow().setNavigationBarColor(Utils.getThemeColor(requireActivity(), android.R.attr.background));
         mRadioServiceBinder = null;
         if (mMediaControllerCompat != null) {
             mMediaControllerCompat = null;
@@ -213,7 +212,7 @@ public class TvFragment extends Fragment {
         progressBar.setVisibility( View.GONE );
         setVideoViewSize();
         int blackColor = ContextCompat.getColor(requireContext(), R.color.black);
-        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), getThemeBackgroundColor(), blackColor);
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), Utils.getThemeColor(requireActivity(), android.R.attr.background), blackColor);
         colorAnimation.setDuration(500);
         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -275,20 +274,5 @@ public class TvFragment extends Fragment {
         } else {
             setVideoViewPortraitSize();
         }
-    }
-
-    /**
-     * Get the background color of the theme used for this activity.
-     *
-     * @return The background color of the current theme.
-     */
-    int getThemeBackgroundColor() {
-        TypedArray array = requireActivity().getTheme().obtainStyledAttributes(
-                new int[] {
-                        android.R.attr.background
-                });
-        int backgroundColor = array.getColor(0, 0);
-        array.recycle();
-        return backgroundColor;
     }
 }

@@ -29,6 +29,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -280,5 +281,15 @@ public class Utils {
 
     static boolean isGestureNavigationEnabled(ContentResolver mContentResolver) {
         return Settings.Secure.getInt(mContentResolver, "navigation_mode", 0) == 2;
+    }
+
+    static int getThemeColor(Activity mActivity, int color) {
+        TypedArray array = mActivity.getTheme().obtainStyledAttributes(
+                new int[] {
+                        color
+                });
+        int mColor = array.getColor(0, 0);
+        array.recycle();
+        return mColor;
     }
 }

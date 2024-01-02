@@ -90,7 +90,7 @@ public class DeveloperFragment extends Fragment {
         recommendSubject = getString(R.string.get_the_app);
 
         mFragmentDeveloperBinding.recommendToFriend.setOnClickListener(view5 -> {
-            String text = getString(R.string.get_the_app) + System.getProperty("line.separator") + Uri.parse("https://play.google.com/store/apps/details?id=" + (ARG_APPLICATION_ID)).toString();
+            String text = getString(R.string.get_the_app) + System.lineSeparator() + Uri.parse("https://play.google.com/store/apps/details?id=" + (ARG_APPLICATION_ID)).toString();
 
             Intent sharingIntent = new Intent(Intent.ACTION_SEND)
                     .setType("text/plain")

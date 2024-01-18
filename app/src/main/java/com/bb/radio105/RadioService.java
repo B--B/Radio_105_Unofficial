@@ -94,6 +94,7 @@ public class RadioService extends Service implements OnPreparedListener,
     private String artUrlResized;
     private volatile boolean mAudioNoisyReceiverRegistered;
     static boolean fromPauseState = false;
+    private boolean fromErrorState = false;
 
     // Binder given to clients
     private final IBinder mIBinder = new RadioServiceBinder();
@@ -356,7 +357,9 @@ public class RadioService extends Service implements OnPreparedListener,
      */
     private void playNextSong() {
         mState = PlaybackStateCompat.STATE_STOPPED;
-        relaxResources(false); // release everything except MediaPlayer
+        if (!fromErrorState) {
+            relaxResources(false); // release everything except MediaPlayer
+        }
         String manualUrl = "https://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
 
         Thread thread = new Thread(() -> {
@@ -369,7 +372,11 @@ public class RadioService extends Service implements OnPreparedListener,
 
                 mState = PlaybackStateCompat.STATE_BUFFERING;
                 updatePlaybackState(null);
-                setUpAsForeground(getString(R.string.loading));
+                if (!fromErrorState) {
+                    setUpAsForeground(getString(R.string.loading));
+                } else {
+                    updateNotification(getString(R.string.loading));
+                }
 
                 // starts preparing the media player in the background. When it's done, it will call
                 // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
@@ -380,6 +387,9 @@ public class RadioService extends Service implements OnPreparedListener,
 
                 // Acquire the WiFi lock
                 mWifiLock.acquire();
+
+                // Reset fromErrorState boolean
+                fromErrorState = false;
             } catch (IOException ex) {
                 Timber.e("IOException playing next song: %s", ex.getMessage());
                 updatePlaybackState(ex.getMessage());
@@ -557,22 +567,24 @@ public class RadioService extends Service implements OnPreparedListener,
      * the Error state. We warn the user about the error and reset the media player.
      */
     public boolean onError(MediaPlayer mp, int what, int extra) {
+        fromErrorState = true;
         boolean reconnect = Utils.getUserPreferenceBoolean(this, getString(R.string.reconnect_key), true);
 
         Toast.makeText(getApplicationContext(), getString(R.string.error),
                 Toast.LENGTH_SHORT).show();
         Timber.e("Error: what =  %s, extra = %s", what, extra);
 
-        relaxResources(true);
-        giveUpAudioFocus();
-
         if (reconnect) {
-            // Try to restart the service immediately if we have a working internet connection
+            // Try to restart the streaming immediately if we have a working internet connection
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
                 // Android below N does not have registerDefaultNetworkCallback
                 NetworkUtil.setNetworkConnected();
             }
             if (NetworkUtil.isNetworkConnected) {
+                // Reset media player state
+                mPlayer.reset();
+                mPlayer.release();
+                mPlayer = null;
                 mState = PlaybackStateCompat.STATE_STOPPED;
                 Toast.makeText(getApplicationContext(), getString(R.string.reconnect),
                         Toast.LENGTH_SHORT).show();
@@ -583,12 +595,20 @@ public class RadioService extends Service implements OnPreparedListener,
                 Toast.makeText(getApplicationContext(), getString(R.string.no_reconnect),
                         Toast.LENGTH_SHORT).show();
                 updatePlaybackState(getString(R.string.error_cannot_recover));
+
+                // No internet connection available, release all resources
+                relaxResources(true);
+                giveUpAudioFocus();
             }
         } else {
             // Tell the user that streaming service cannot be recovered because the option is disabled
             Toast.makeText(getApplicationContext(), getString(R.string.error_no_recover),
                     Toast.LENGTH_SHORT).show();
             updatePlaybackState(getString(R.string.error_no_recover));
+
+            // Service died and reconnect option is disabled, we can release all resources
+            relaxResources(true);
+            giveUpAudioFocus();
         }
         return true; // true indicates we handled the error
     }

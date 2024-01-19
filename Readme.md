@@ -125,8 +125,8 @@
     * ~~WebView postVisualStateCallback: use a postVisualStateCallback for set visibility when page is loaded in Podcast/Zoo sections. According to Android Studio documentation this method may NOT be compatible with all devices, but is faster and do not cause graphical glitches *Default: disabled for potential incompatibility with some devices, but everyone should give it a try and keep it enabled if works properly*~~ --> This option has been deprecated, enabled by default and moved under **Experimental Options** after the migration to WebVieWCompat
     * Stop streaming setting: allow system to stop streaming when app is removed from recent tasks *Default: disabled* | **Removed in Android TV and in MiUi/EMUI devices**
     * Audio devices: pause streaming when an audio device (headset, BT, etc.) is disconnected *Default: enabled*
-    * Reconnect stream: restart the radio stream after an error if internet is available  *Default: enabled*
-    * Network change: restart the radio stream immediately when the device switch from mobile network to WiFi and vice versa *Default: enabled*
+    * HTTPS/HTTP connection: switch between HTTPS/HTTP connection for Radio streaming service *Default: HTTPS*
+    * Reconnect stream: restart the radio stream after an error or a network change if internet is available  *Default: enabled*
     * Experimental Options: this section may contain option in unsafe/not working/testing phase **Hidden by default --> On <ins>Developer Fragment</ins> tap 7 times on app version TextView**
 
 7. Developer Info <img src="images/Screenshot_10.png" align="right" height="75" >

@@ -70,7 +70,7 @@ public class BitmapHelper {
             is = new BufferedInputStream(urlConnection.getInputStream());
             is.mark(MAX_READ_LIMIT_PER_IMG);
             int scaleFactor = findScaleFactor(width, height, is);
-            Timber.e("Scaling bitmap %s%s%s%s%s%s%s%s", uri, " by factor ", scaleFactor, " to support ",
+            Timber.d("Scaling bitmap %s%s%s%s%s%s%s%s", uri, " by factor ", scaleFactor, " to support ",
                     width, "x", height, "requested dimension");
             is.reset();
             return scaleBitmap(scaleFactor, is);

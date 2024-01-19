@@ -227,7 +227,7 @@ public class TvFragment extends Fragment {
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Timber.e("Connection successful");
+            Timber.i("Connection successful");
             mRadioServiceBinder = (RadioServiceBinder) service;
             mMediaControllerCompat = new MediaControllerCompat(getContext(), mRadioServiceBinder.getMediaSessionToken());
             // Stop radio streaming if running

@@ -214,7 +214,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
         }
         final Bundle currentWebViewState = new Bundle(ClassLoader.getSystemClassLoader());
         if (mWebView.saveState(currentWebViewState) == null) {
-            Timber.d("onStop: failed to obtain WebView state to save!");
+            Timber.e("onStop: failed to obtain WebView state to save!");
         }
         Constants.zooBundle.putBundle(Constants.ZOO_STATE, currentWebViewState);
     }
@@ -257,7 +257,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
         mWakeLock = null;
         mWifiLock = null;
         if (mState !=  PlaybackStateCompat.STATE_STOPPED) {
-            Timber.e("Stopping Podcast Service");
+            Timber.i("Stopping Podcast Service");
             isMediaPlayingPodcast = false;
             stopPodcast();
             podcastTitle = null;
@@ -293,7 +293,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Timber.e("Connection successful");
+            Timber.i("Connection successful");
             mRadioServiceBinder = (RadioServiceBinder) service;
             mMediaControllerCompat = new MediaControllerCompat(getContext(), mRadioServiceBinder.getMediaSessionToken());
         }
@@ -306,13 +306,13 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
     @Override
     public void playbackState(String playbackState) {
-        Timber.e("Playback state changed, new state is %s", playbackState);
+        Timber.i("Playback state changed, new state is %s", playbackState);
         if (playbackState.equals("Play")) {
             mWebView.evaluateJavascript("javascript:(player.play());", null);
             // FIXME: this shit is necessary as 105.net closes the connection if the audio is paused for a few minutes.
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (!isMediaPlayingPodcast) {
-                    Timber.e("!HACK! Trying to start the stream again");
+                    Timber.d("!HACK! Trying to start the stream again");
                     mWebView.evaluateJavascript("javascript:(function() { player.pause(); player.play();})()", null);
                 }
             }, 100);
@@ -325,7 +325,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
     class JSInterfaceZoo {
         @JavascriptInterface
         public void mediaZooAction(String mString) {
-            Timber.e("isMediaPlayingPodcast is %s", mString);
+            Timber.i("isMediaPlayingPodcast is %s", mString);
             isMediaPlayingPodcast = Boolean.parseBoolean(mString);
             if (isMediaPlayingPodcast) {
                 if (!mWakeLock.isHeld()) {
@@ -339,7 +339,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     requireContext().unbindService(mServiceConnection);
                 }
                 if (mState ==  PlaybackStateCompat.STATE_STOPPED || mState ==  PlaybackStateCompat.STATE_PAUSED) {
-                    Timber.e("Received play request from ZooFragment");
+                    Timber.i("Received play request from ZooFragment");
                     playPodcast();
                 }
             } else {
@@ -350,7 +350,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                     mWifiLock.release();
                 }
                 if (mState ==  PlaybackStateCompat.STATE_PLAYING) {
-                    Timber.e("Received pause request from ZooFragment");
+                    Timber.i("Received pause request from ZooFragment");
                     pausePodcast();
                 }
             }
@@ -358,13 +358,13 @@ public class ZooFragment extends Fragment implements IPodcastService {
 
         @JavascriptInterface
         public void getPodcastTitle(String mString) {
-            Timber.e("Podcast title is %s", mString);
+            Timber.i("Podcast title is %s", mString);
             podcastTitle = mString;
         }
 
         @JavascriptInterface
         public void getPodcastSubtitle(String mString) {
-            Timber.e("Podcast subtitle is %s", mString);
+            Timber.i("Podcast subtitle is %s", mString);
             podcastSubtitle = mString;
         }
 
@@ -375,12 +375,12 @@ public class ZooFragment extends Fragment implements IPodcastService {
             // the original link sizes will be changed to 480x480, for an higher quality image. If for some reason the
             // replace won't work the original string will be used.
             podcastImageUrl = mString.replaceAll("(resizer/)[^&]*(/true)", "$1480/480$2");
-            Timber.e("artUrl changed, new URL is %s", podcastImageUrl);
+            Timber.i("artUrl changed, new URL is %s", podcastImageUrl);
         }
 
         @JavascriptInterface
         public void getVideoFullscreenState(String mString) {
-            Timber.e("isVideoInFullscreen is %s", mString);
+            Timber.i("isVideoInFullscreen is %s", mString);
             isVideoInFullscreen = Boolean.parseBoolean(mString);
         }
     }
@@ -774,7 +774,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                         }
                     });
                 } else {
-                    Timber.e("postVisualStateCallback not supported, fallback to handler method");
+                    Timber.d("postVisualStateCallback not supported, fallback to handler method");
                     Utils.makeWebViewVisible(webView, mProgressBar);
                 }
             } else {
@@ -828,7 +828,7 @@ public class ZooFragment extends Fragment implements IPodcastService {
                         url.endsWith("mediaelement-and-player.min.js") || url.endsWith("cookiecuttr.js") ||
                         url.endsWith("cookie_law.jsp") || url.endsWith("webtrekk_v3.min.js") ||
                         url.endsWith("analytics.js")) {
-                    Timber.e("Javascript intercepted: %s", url);
+                    Timber.d("Javascript intercepted: %s", url);
                     return new WebResourceResponse("text/javascript", "UTF-8", new ByteArrayInputStream("// Script Blocked".getBytes(StandardCharsets.UTF_8)));
                 } else if (url.toLowerCase(Locale.ROOT).endsWith(".jpg") || url.toLowerCase(Locale.ROOT).endsWith(".jpeg")) {
                     bitmap = GlideApp.with(view).asBitmap().diskCacheStrategy(DiskCacheStrategy.ALL).load(url).submit().get();

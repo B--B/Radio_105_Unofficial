@@ -276,7 +276,7 @@ public class PodcastService extends Service {
     }
 
     private void processPlayRequestNotification() {
-        Timber.e("Processing play request from notification");
+        Timber.d("Processing play request from notification");
         registerAudioNoisyReceiver();
         PodcastFragment.mIPodcastService.playbackState("Play");
         mState = PlaybackStateCompat.STATE_PLAYING;
@@ -284,7 +284,7 @@ public class PodcastService extends Service {
     }
 
     private void processPauseRequestNotification() {
-        Timber.e("Processing pause request from notification");
+        Timber.d("Processing pause request from notification");
         PodcastFragment.mIPodcastService.playbackState("Pause");
         mState = PlaybackStateCompat.STATE_PAUSED;
         updateNotification(getString(R.string.in_pause));
@@ -292,7 +292,7 @@ public class PodcastService extends Service {
     }
 
     private void processPlayRequest() {
-        Timber.e("Processing play request");
+        Timber.d("Processing play request");
         registerAudioNoisyReceiver();
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
             mSession.setActive(true);
@@ -308,14 +308,14 @@ public class PodcastService extends Service {
     }
 
     private void processPauseRequest() {
-        Timber.e("Processing pause request");
+        Timber.d("Processing pause request");
         mState = PlaybackStateCompat.STATE_PAUSED;
         updateNotification(getString(R.string.in_pause));
         unregisterAudioNoisyReceiver();
     }
 
     private void processStopRequest() {
-        Timber.e("Processing stop request");
+        Timber.d("Processing stop request");
         if (mState != PlaybackStateCompat.STATE_STOPPED) {
             mState = PlaybackStateCompat.STATE_STOPPED;
             updatePlaybackState();

@@ -78,12 +78,12 @@ final class AlbumArtCache {
     public void fetch(final String artUrl, final FetchListener listener) {
         Bitmap[] bitmap = mCache.get(artUrl.substring(0, 70));
         if (bitmap != null) {
-            Timber.e("getOrFetch: album art is in cache, using it %s", artUrl);
+            Timber.i("getOrFetch: album art is in cache, using it %s", artUrl);
             listener.onFetched(bitmap[BIG_BITMAP_INDEX], bitmap[ICON_BITMAP_INDEX]);
             return;
         }
 
-        Timber.e("getOrFetch: starting thread to fetch %s", artUrl);
+        Timber.d("getOrFetch: starting thread to fetch %s", artUrl);
 
             Thread thread = new Thread(() -> {
                 Bitmap[] bitmaps;

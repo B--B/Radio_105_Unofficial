@@ -280,7 +280,7 @@ public class RadioService extends Service implements OnPreparedListener,
     private void processStopRequest() {
         if (scheduler != null) {
             scheduler.shutdown();
-            Timber.e("Stopped metadata scheduler");
+            Timber.i("Stopped metadata scheduler");
         }
         if (mState == PlaybackStateCompat.STATE_PLAYING || mState == PlaybackStateCompat.STATE_PAUSED || mState == PlaybackStateCompat.STATE_BUFFERING) {
             mState = PlaybackStateCompat.STATE_STOPPED;
@@ -366,7 +366,7 @@ public class RadioService extends Service implements OnPreparedListener,
         } else {
             manualUrl = "http://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
         }
-        Timber.e("Starting RadioService with url: %s", manualUrl);
+        Timber.i("Starting RadioService with url: %s", manualUrl);
 
         Thread thread = new Thread(() -> {
             try {
@@ -705,7 +705,7 @@ public class RadioService extends Service implements OnPreparedListener,
         // Formulate the request and handle the response.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
-                    Timber.e("Received metadata: %s", response);
+                    Timber.i("Received metadata: %s", response);
                     Document document = Jsoup.parse(response);
                     Element titleElement = document.selectFirst(".nome");
                     Element djElement = document.selectFirst(".dj_in_onda");
@@ -725,7 +725,7 @@ public class RadioService extends Service implements OnPreparedListener,
                         // replace won't work the original string will be used.
                         artUrl = artElement.absUrl("src");
                         artUrlResized = artUrl.replaceAll("(resizer/)[^&]*(/true)", "$1480/480$2");
-                        Timber.e("artUrl changed, new URL is %s", artUrlResized);
+                        Timber.i("artUrl changed, new URL is %s", artUrlResized);
                         // Fetch the album art here
                         fetchBitmapFromURL(artUrlResized);
                     }

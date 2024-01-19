@@ -149,7 +149,7 @@ public class RadioFragment extends Fragment {
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Timber.e("Connection successful");
+            Timber.i("Connection successful");
             mRadioServiceBinder = (RadioServiceBinder) service;
             mMediaControllerCompat = new MediaControllerCompat(getContext(), mRadioServiceBinder.getMediaSessionToken());
             mCallback.onPlaybackStateChanged(mMediaControllerCompat.getPlaybackState());
@@ -183,22 +183,24 @@ public class RadioFragment extends Fragment {
         @Override
         public void onMetadataChanged(MediaMetadataCompat metadata) {
             if (RadioService.mState == STATE_PLAYING) {
-                Timber.e("Metadata changed during play state, check if the Radio fragment must be updated");
+                Timber.d("Metadata changed during play state, check if the Radio fragment must be updated");
                 if (!Objects.equals(metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE), mFragmentRadioBinding.titleText.getText().toString())) {
-                    Timber.e("Title changed, update metadata. Old title: %s%s%s", mFragmentRadioBinding.titleText.getText().toString(), " new title: ", metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
+                    Timber.i("Title changed, update metadata. Old title: %s%s%s", mFragmentRadioBinding.titleText.getText().toString(), " new title: ", metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
                     Drawable imageResource = new BitmapDrawable(getResources(), metadata.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART));
                     mFragmentRadioBinding.imageArt.setImageDrawable(imageResource);
                     mFragmentRadioBinding.titleText.setText(metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
                     mFragmentRadioBinding.djNameText.setText(metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
+                } else {
+                    Timber.i("Title not changed, no need to update metadata.");
                 }
             } else {
-                Timber.e("Metadata changed, but we are not in play state");
+                Timber.i("Metadata changed, but we are not in play state");
             }
         }
 
         @Override
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
-            Timber.e("Playback state changed, new state is: %s", state.getState());
+            Timber.i("Playback state changed, new state is: %s", state.getState());
             switch (state.getState()) {
                 case STATE_PLAYING:
                     if (mFragmentRadioBinding.imageLogo.getVisibility() != View.INVISIBLE || mFragmentRadioBinding.imageArt.getVisibility() != View.VISIBLE) {

@@ -298,18 +298,20 @@ public class RadioService extends Service implements OnPreparedListener,
      * Releases resources used by the service for playback. This includes the "foreground service"
      * status and notification, the wake locks and possibly the MediaPlayer.
      *
-     * @param releaseMediaPlayer Indicates whether the Media Player should also be released or not
+     * @param releaseForegroundService Indicates whether the foreground service should also be released or not
      */
-    private void relaxResources(boolean releaseMediaPlayer) {
+    private void relaxResources(boolean releaseForegroundService) {
         // stop being a foreground service
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            stopForeground(STOP_FOREGROUND_REMOVE);
-        } else {
-            stopForeground(true);
+        if (releaseForegroundService) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                stopForeground(STOP_FOREGROUND_REMOVE);
+            } else {
+                stopForeground(true);
+            }
         }
 
         // stop and release the Media Player, if it's available
-        if (releaseMediaPlayer && mPlayer != null) {
+        if (mPlayer != null) {
             mPlayer.reset();
             mPlayer.release();
             mPlayer = null;
@@ -357,9 +359,6 @@ public class RadioService extends Service implements OnPreparedListener,
      */
     private void playNextSong() {
         mState = PlaybackStateCompat.STATE_STOPPED;
-        if (!fromErrorState) {
-            relaxResources(false); // release everything except MediaPlayer
-        }
         String manualUrl = "https://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
 
         Thread thread = new Thread(() -> {
@@ -582,9 +581,7 @@ public class RadioService extends Service implements OnPreparedListener,
             }
             if (NetworkUtil.isNetworkConnected) {
                 // Reset media player state
-                mPlayer.reset();
-                mPlayer.release();
-                mPlayer = null;
+                relaxResources(false);
                 mState = PlaybackStateCompat.STATE_STOPPED;
                 Toast.makeText(getApplicationContext(), getString(R.string.reconnect),
                         Toast.LENGTH_SHORT).show();

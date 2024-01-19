@@ -40,8 +40,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -67,6 +69,8 @@ public class ZooService extends Service {
     // Media Session
     private MediaSessionCompat mSession;
     private PlaybackStateCompat.Builder stateBuilder;
+    private PowerManager.WakeLock mWakeLock;
+    private WifiManager.WifiLock mWifiLock;
 
     // Current local media player state
     static int mState = PlaybackStateCompat.STATE_STOPPED;
@@ -78,6 +82,17 @@ public class ZooService extends Service {
     public void onCreate() {
         super.onCreate();
         Timber.i("debug: Creating service");
+
+        // Create Wifi and Partial lock (this does not acquire the locks, this just creates them)
+        mWakeLock = ((PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE))
+                .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WARNING:ZooServiceWakelock");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            mWifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE))
+                    .createWifiLock(WifiManager.WIFI_MODE_FULL_LOW_LATENCY, "WARNING:ZooServiceWiFiWakelock");
+        } else {
+            mWifiLock = ((WifiManager) getApplicationContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE))
+                    .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "WARNING:ZooServiceWiFiWakelock");
+        }
 
         mNotificationManager = NotificationManagerCompat.from(this);
 
@@ -139,6 +154,9 @@ public class ZooService extends Service {
     @Override
     public void onDestroy() {
         // Service is being killed, so make sure we release our resources
+        releaseWakeLocks();
+        mWakeLock = null;
+        mWifiLock = null;
         processStopRequest();
         stopSelf();
         mNotificationBuilder = null;
@@ -277,6 +295,7 @@ public class ZooService extends Service {
 
     private void processPlayRequestNotification() {
         Timber.d("Processing play request from notification");
+        acquireWakeLocks();
         registerAudioNoisyReceiver();
         ZooFragment.mIPodcastService.playbackState("Play");
         mState = PlaybackStateCompat.STATE_PLAYING;
@@ -285,6 +304,7 @@ public class ZooService extends Service {
 
     private void processPauseRequestNotification() {
         Timber.d("Processing pause request from notification");
+        releaseWakeLocks();
         ZooFragment.mIPodcastService.playbackState("Pause");
         mState = PlaybackStateCompat.STATE_PAUSED;
         updateNotification(getString(R.string.in_pause));
@@ -293,6 +313,7 @@ public class ZooService extends Service {
 
     private void processPlayRequest() {
         Timber.d("Processing play request");
+        acquireWakeLocks();
         registerAudioNoisyReceiver();
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
             mSession.setActive(true);
@@ -309,6 +330,7 @@ public class ZooService extends Service {
 
     private void processPauseRequest() {
         Timber.d("Processing pause request");
+        releaseWakeLocks();
         mState = PlaybackStateCompat.STATE_PAUSED;
         updateNotification(getString(R.string.in_pause));
         unregisterAudioNoisyReceiver();
@@ -316,6 +338,7 @@ public class ZooService extends Service {
 
     private void processStopRequest() {
         Timber.d("Processing stop request");
+        releaseWakeLocks();
         if (mState != PlaybackStateCompat.STATE_STOPPED) {
             mState = PlaybackStateCompat.STATE_STOPPED;
             updatePlaybackState();
@@ -361,6 +384,25 @@ public class ZooService extends Service {
                 mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
             }
         });
+    }
+
+    @SuppressLint("WakelockTimeout")
+    private void acquireWakeLocks() {
+        if (!mWakeLock.isHeld()) {
+            mWakeLock.acquire();
+        }
+        if (!mWifiLock.isHeld()) {
+            mWifiLock.acquire();
+        }
+    }
+
+    private void releaseWakeLocks() {
+        if (mWakeLock.isHeld()) {
+            mWakeLock.release();
+        }
+        if (mWifiLock.isHeld()) {
+            mWifiLock.release();
+        }
     }
 
     // AudioBecomingNoisy broadcast receiver

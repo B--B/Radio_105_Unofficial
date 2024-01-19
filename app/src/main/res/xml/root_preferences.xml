@@ -48,7 +48,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        app:title="@string/preferences_stop_service"
+        app:title="@string/preferences_radio_service"
         app:key="@string/streaming_pref_key">
         <SwitchPreferenceCompat
             app:key="@string/service_kill_key"
@@ -70,10 +70,7 @@
             app:summaryOn="@string/https_summary_on"
             app:title="@string/https_title"
             app:defaultValue="true"/>
-    </PreferenceCategory>
 
-    <PreferenceCategory
-        app:title="@string/preferences_reconnect">
         <SwitchPreferenceCompat
             app:key="@string/reconnect_key"
             app:summaryOff="@string/reconnect_summary_off"

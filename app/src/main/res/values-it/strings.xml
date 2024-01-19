@@ -15,8 +15,7 @@
     <string name="title_activity_settings">Impostazioni</string>
     <string name="radio">105 FM Radio Streaming</string>
     <string name="error">Errore del media player! Inizio il reset.</string>
-    <string name="preferences_reconnect">Ripristino Streaming</string>
-    <string name="preferences_stop_service">Ferma/Pausa Servizio Streaming</string>
+    <string name="preferences_radio_service">Servizio Streaming Radio</string>
     <string name="preferences_theming">Tema App e Notifica</string>
     <string name="preferences_webviews">Sezioni Podcast e Zoo</string>
     <string name="copyright_info">&#169; Radio 105 e il logo Radio 105 &#8482; sono proprietà di RadioMediaset SpA. Tutti i diritti riservati.</string>

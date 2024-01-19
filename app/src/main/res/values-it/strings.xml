@@ -71,6 +71,11 @@
     <string name="webviews_themes_summary_off">Le sezioni Podcast e The 105 Zoo useranno il tema standard utilizzato nei siti web ufficiali</string>
 
     <!-- Screen always on -->
+    <string name="https_title">HTTPS/HTTP Connection</string>
+    <string name="https_summary_on">Il servizio di streaming radio userà una connessione HTTPS</string>
+    <string name="https_summary_off">Il servizio di streaming radio userà una connessione HTTP</string>
+
+    <!-- Screen always on -->
     <string name="screen_on_title">Schermo Sempre Acceso</string>
     <string name="screen_on_summary_on">Lo schermo rimarrà sempre acceso nelle sezioni Podcast e The 105 zoo</string>
     <string name="screen_on_summary_off">Lo schermo si spegnerà regolarmente nelle sezioni Podcast e The 105 zoo</string>

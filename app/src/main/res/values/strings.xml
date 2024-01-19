@@ -83,6 +83,12 @@
     <string name="webviews_themes_summary_off">Podcast and The 105 Zoo sections will use the standard theme from official web sites</string>
 
     <!-- Screen always on -->
+    <string name="https_key" translatable="false">use_https</string>
+    <string name="https_title">HTTPS/HTTP Connection</string>
+    <string name="https_summary_on">Radio streaming service will use an HTTPS connection</string>
+    <string name="https_summary_off">Radio streaming service will use an HTTP connection</string>
+
+    <!-- Screen always on -->
     <string name="screen_on_key" translatable="false">screen_on</string>
     <string name="screen_on_title">Screen Always On</string>
     <string name="screen_on_summary_on">Screen will stay always on in Podcast/The 105 Zoo section</string>
@@ -125,8 +131,6 @@
     <string name="debugging_title">Debug and logging</string>
     <string name="debugging_summary_on">Debug and logging enabled</string>
     <string name="debugging_summary_off">Debug and logging disabled</string>
-
-
 
     <!-- Social Fragment -->
     <string name="contact">Contacts</string>

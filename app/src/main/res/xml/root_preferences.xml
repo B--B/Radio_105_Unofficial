@@ -63,6 +63,13 @@
             app:summaryOn="@string/noisy_key_summary_on"
             app:title="@string/noisy_key_title"
             app:defaultValue="true"/>
+
+        <SwitchPreferenceCompat
+            app:key="@string/https_key"
+            app:summaryOff="@string/https_summary_off"
+            app:summaryOn="@string/https_summary_on"
+            app:title="@string/https_title"
+            app:defaultValue="true"/>
     </PreferenceCategory>
 
     <PreferenceCategory

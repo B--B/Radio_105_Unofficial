@@ -359,7 +359,14 @@ public class RadioService extends Service implements OnPreparedListener,
      */
     private void playNextSong() {
         mState = PlaybackStateCompat.STATE_STOPPED;
-        String manualUrl = "https://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
+        boolean isUsingHTTPS = Utils.getUserPreferenceBoolean(this, getString(R.string.https_key), true);
+        String manualUrl;
+        if (isUsingHTTPS) {
+            manualUrl = "https://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
+        } else {
+            manualUrl = "http://icy.unitedradio.it/Radio105.mp3"; // initialize Uri here
+        }
+        Timber.e("Starting RadioService with url: %s", manualUrl);
 
         Thread thread = new Thread(() -> {
             try {

@@ -18,7 +18,7 @@ package com.bb.radio105;
 
 import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
 
-import static androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_SWIPE;
+import static androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_DEFAULT;
 import static androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE;
 
 import android.Manifest;
@@ -126,7 +126,7 @@ public class Utils {
         }
         final WindowInsetsControllerCompat controllerCompat = new WindowInsetsControllerCompat(mActivity.getWindow(), mActivity.getWindow().getDecorView());
         controllerCompat.show(WindowInsetsCompat.Type.systemBars());
-        controllerCompat.setSystemBarsBehavior(BEHAVIOR_SHOW_BARS_BY_SWIPE);
+        controllerCompat.setSystemBarsBehavior(BEHAVIOR_DEFAULT);
         Objects.requireNonNull(((AppCompatActivity) mActivity).getSupportActionBar()).show();
         drawer.setFitsSystemWindows(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

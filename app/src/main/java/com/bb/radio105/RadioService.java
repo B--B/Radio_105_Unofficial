@@ -240,6 +240,9 @@ public class RadioService extends Service implements OnPreparedListener,
             // Set the task for retrieving the metadata every hour
             scheduler = Executors.newSingleThreadScheduledExecutor();
             Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Rome"));
+            // TODO: scheduleAtFixedRate is dangerous because can be executed thousands of times if
+            //  process changes from cached to unchached. We should never hit that issue because the
+            //  service cannot be cached when it's in use, but better safe than sorry.
             scheduler.scheduleAtFixedRate(this::getStreamingMetadata, millisToNextHour(calendar), 60*60*1000, TimeUnit.MILLISECONDS);
         }
 

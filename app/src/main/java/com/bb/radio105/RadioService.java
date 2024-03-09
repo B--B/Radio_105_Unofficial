@@ -236,14 +236,14 @@ public class RadioService extends Service implements OnPreparedListener,
 
         // Get streaming metadata
         getStreamingMetadata();
-        if (scheduler == null) {
+        if (scheduler == null || scheduler.isTerminated()) {
             // Set the task for retrieving the metadata every hour
             scheduler = Executors.newSingleThreadScheduledExecutor();
             Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Europe/Rome"));
-            // TODO: scheduleAtFixedRate is dangerous because can be executed thousands of times if
-            //  process changes from cached to unchached. We should never hit that issue because the
-            //  service cannot be cached when it's in use, but better safe than sorry.
-            scheduler.scheduleAtFixedRate(this::getStreamingMetadata, millisToNextHour(calendar), 60*60*1000, TimeUnit.MILLISECONDS);
+            long initialDelay = millisToNextHourWithDelay(calendar);
+            Timber.i("Scheduler will run with an initial delay of %s", initialDelay);
+            final long delayBetweenExecutions = 60 * 60 * 1000;
+            scheduler.scheduleWithFixedDelay(this::getStreamingMetadata, initialDelay, delayBetweenExecutions, TimeUnit.MILLISECONDS);
         }
 
         // actually play the song
@@ -773,20 +773,18 @@ public class RadioService extends Service implements OnPreparedListener,
         });
     }
 
-    static long millisToNextHour(Calendar calendar) {
+    static long millisToNextHourWithDelay(Calendar calendar) {
         int minutes = calendar.get(Calendar.MINUTE);
         int seconds = calendar.get(Calendar.SECOND);
         int millis = calendar.get(Calendar.MILLISECOND);
+        int secondsToNextHour = 59 - seconds;
+        int millisToNextHour = 1000 - millis;
         int minutesToNextHour;
-        int secondsToNextHour;
-        int millisToNextHour;
-        if (minutes < 2) {
-            minutesToNextHour = 1 - minutes;
+        if (minutes >= 2) {
+            minutesToNextHour = 60 - minutes + 2;
         } else {
-            minutesToNextHour = 61 - minutes;
+            minutesToNextHour = 2 - minutes;
         }
-        secondsToNextHour = 59 - seconds;
-        millisToNextHour = 1000 - millis;
         return minutesToNextHour*60*1000 + secondsToNextHour*1000 + millisToNextHour;
     }
 

@@ -499,6 +499,8 @@ public class PodcastFragment extends Fragment implements IPodcastService  {
                     " if (element.length) { element[0].style.display = 'hide' }; } else {" +
                     "var element = document.getElementsByClassName('breadcrumbs_orizzontale vc_breadcrumbs null');" +
                     " if (element.length) { element[0].style.display = 'show' }; } " +
+                    "var element = document.getElementsByClassName('rti-privacy-visible');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
                     "var element = document.getElementsByClassName('bannervcms banner_728x90_leaderboard ');" +
                     " if (element.length) { element[0].style.display = 'none' }; " +
                     "var element = document.getElementsByClassName('container-fluid skin-visible vc_bg_yellow vc_bb6_darkgrey vc_z50 hidden-sm hidden-xs affix-top');" +

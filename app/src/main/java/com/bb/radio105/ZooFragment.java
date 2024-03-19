@@ -641,6 +641,8 @@ public class ZooFragment extends Fragment implements IPodcastService {
             final String javaScript = "javascript:(function() { " +
                     "var element = document.getElementsByClassName('player-container vc_mediaelementjs');" +
                     " if (element.length) { element[0].style.width = '100%' }; " +
+                    "var element = document.getElementsByClassName('rti-privacy-visible');" +
+                    " if (element.length) { element[0].style.display = 'none' }; " +
                     "var element = document.getElementsByClassName('container');" +
                     " if (element.length) { element[0].style.display = 'none' }; " +
                     "var element = document.getElementsByClassName('clear');" +
